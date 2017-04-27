@@ -1,0 +1,19 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "e8z2npKenG/OKVkeNq2vuo9Z7TA=",
+			"path": "github.com/IBM-Bluemix/bluemix-cli-sdk/bluemix/trace",
+			"revision": "a8973ea35522fc9cfc66a3650d2bdb844db414da",
+			"revisionTime": "2017-04-18T07:49:24Z"
+		},
+		{
+			"checksumSHA1": "Kl5QSCLdt6HhR3TGnmUEuSybtFU=",
+			"path": "github.com/IBM-Bluemix/bluemix-cli-sdk/common/file_helpers",
+			"revision": "a8973ea35522fc9cfc66a3650d2bdb844db414da",
+			"revisionTime": "2017-04-18T07:49:24Z"
+		}
+	],
+	"rootPath": "github.com/IBM-Bluemix/bluemix-go"
+}
