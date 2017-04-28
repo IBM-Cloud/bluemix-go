@@ -6,11 +6,11 @@ import (
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
+	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 )
 
 //ErrCodeServiceDoesnotExist ...
-var ErrCodeServiceDoesnotExist = "ServiceDoesnotExist"
+const ErrCodeServiceDoesnotExist = "ServiceDoesnotExist"
 
 //ServiceOffering model
 type ServiceOffering struct {
@@ -93,11 +93,11 @@ type ServiceOfferings interface {
 }
 
 type serviceOfferrings struct {
-	client *CFAPIClient
+	client *cfAPIClient
 	config *bluemix.Config
 }
 
-func newServiceOfferingAPI(c *CFAPIClient) ServiceOfferings {
+func newServiceOfferingAPI(c *cfAPIClient) ServiceOfferings {
 	return &serviceOfferrings{
 		client: c,
 		config: c.config,

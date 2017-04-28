@@ -32,11 +32,11 @@ type Subnets interface {
 }
 
 type subnet struct {
-	client *ClusterClient
+	client *clusterClient
 	config *bluemix.Config
 }
 
-func newSubnetAPI(c *ClusterClient) Subnets {
+func newSubnetAPI(c *clusterClient) Subnets {
 	return &subnet{
 		client: c,
 		config: c.config,

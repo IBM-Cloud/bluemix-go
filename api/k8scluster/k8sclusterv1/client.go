@@ -7,11 +7,11 @@ import (
 	"strings"
 
 	"github.com/IBM-Bluemix/bluemix-cli-sdk/bluemix/trace"
+	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/authentication"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"github.com/IBM-Bluemix/bluemix-go/http"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 )
 
@@ -40,8 +40,7 @@ type TokenRefresher interface {
 	RefreshToken() (string, error)
 }
 
-//ClusterClient ...
-type ClusterClient struct {
+type clusterClient struct {
 	IAMTokenRefresher TokenRefresher
 	BaseURL           URLGetter
 	OnError           ErrHandler
@@ -52,7 +51,7 @@ type ClusterClient struct {
 }
 
 //NewClient ...
-func NewClient(s *session.Session) (*ClusterClient, error) {
+func NewClient(s *session.Session) (Client, error) {
 	config := s.Config.Copy()
 
 	_, err := config.EndpointLocator.ContainerEndpoint()
@@ -76,7 +75,7 @@ func NewClient(s *session.Session) (*ClusterClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	client := &ClusterClient{
+	client := &clusterClient{
 		BaseURL:           baseURL,
 		IAMTokenRefresher: tokenRefreher,
 		config:            config,
@@ -85,27 +84,27 @@ func NewClient(s *session.Session) (*ClusterClient, error) {
 	return client, nil
 }
 
-//Clusters API
-func (c *ClusterClient) Clusters() Clusters {
+//Clusters implements Clusters API
+func (c *clusterClient) Clusters() Clusters {
 	return newClusterAPI(c)
 }
 
-//Workers API
-func (c *ClusterClient) Workers() Workers {
+//Workers implements Cluster Workers API
+func (c *clusterClient) Workers() Workers {
 	return newWorkerAPI(c)
 }
 
-//Subnets API
-func (c *ClusterClient) Subnets() Subnets {
+//Subnets implements Cluster Subnets API
+func (c *clusterClient) Subnets() Subnets {
 	return newSubnetAPI(c)
 }
 
-//Webhooks API
-func (c *ClusterClient) Webhooks() Webhooks {
+//Webhooks implements Cluster WebHooks API
+func (c *clusterClient) WebHooks() Webhooks {
 	return newWebhookAPI(c)
 }
 
-func (c *ClusterClient) sendRequest(r *rest.Request, respV interface{}) (*gohttp.Response, error) {
+func (c *clusterClient) sendRequest(r *rest.Request, respV interface{}) (*gohttp.Response, error) {
 	httpClient := c.HTTPClient
 	if httpClient == nil {
 		httpClient = gohttp.DefaultClient
@@ -114,12 +113,6 @@ func (c *ClusterClient) sendRequest(r *rest.Request, respV interface{}) (*gohttp
 	restClient := &rest.Client{
 		DefaultHeader: http.DefaultClusterAuthHeader(c.config),
 		HTTPClient:    httpClient,
-	}
-	if c.config.MaxRetries != nil {
-		restClient.MaxRetries = *c.config.MaxRetries
-	}
-	if c.config.RetryDelay != nil {
-		restClient.RetryDelay = *c.config.RetryDelay
 	}
 
 	if c.Before != nil {
@@ -163,8 +156,7 @@ func (c *ClusterClient) sendRequest(r *rest.Request, respV interface{}) (*gohttp
 	return resp, err
 }
 
-//Get ...
-func (c *ClusterClient) get(path string, respV interface{}, targetHeader ...interface{}) (*gohttp.Response, error) {
+func (c *clusterClient) get(path string, respV interface{}, targetHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.GetRequest(c.url(path))
 	for _, t := range targetHeader {
 		addToRequestHeader(t, r)
@@ -172,8 +164,7 @@ func (c *ClusterClient) get(path string, respV interface{}, targetHeader ...inte
 	return c.sendRequest(r, respV)
 }
 
-//Put ...
-func (c *ClusterClient) put(path string, data interface{}, respV interface{}, targetHeader ...interface{}) (*gohttp.Response, error) {
+func (c *clusterClient) put(path string, data interface{}, respV interface{}, targetHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.PutRequest(c.url(path)).Body(data)
 	for _, t := range targetHeader {
 		addToRequestHeader(t, r)
@@ -181,8 +172,7 @@ func (c *ClusterClient) put(path string, data interface{}, respV interface{}, ta
 	return c.sendRequest(r, respV)
 }
 
-//Patch ...
-func (c *ClusterClient) patch(path string, data interface{}, respV interface{}, targetHeader ...interface{}) (*gohttp.Response, error) {
+func (c *clusterClient) patch(path string, data interface{}, respV interface{}, targetHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.PatchRequest(c.url(path)).Body(data)
 	for _, t := range targetHeader {
 		addToRequestHeader(t, r)
@@ -190,8 +180,7 @@ func (c *ClusterClient) patch(path string, data interface{}, respV interface{}, 
 	return c.sendRequest(r, respV)
 }
 
-//Post ...
-func (c *ClusterClient) post(path string, data interface{}, respV interface{}, targetHeader ...interface{}) (*gohttp.Response, error) {
+func (c *clusterClient) post(path string, data interface{}, respV interface{}, targetHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.PostRequest(c.url(path)).Body(data)
 	for _, t := range targetHeader {
 		addToRequestHeader(t, r)
@@ -199,8 +188,7 @@ func (c *ClusterClient) post(path string, data interface{}, respV interface{}, t
 	return c.sendRequest(r, respV)
 }
 
-//Delete ...
-func (c *ClusterClient) delete(path string, targetHeader ...interface{}) (*gohttp.Response, error) {
+func (c *clusterClient) delete(path string, targetHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.DeleteRequest(c.url(path))
 	for _, t := range targetHeader {
 		addToRequestHeader(t, r)
@@ -208,7 +196,7 @@ func (c *ClusterClient) delete(path string, targetHeader ...interface{}) (*gohtt
 	return c.sendRequest(r, nil)
 }
 
-func (c *ClusterClient) url(path string) string {
+func (c *clusterClient) url(path string) string {
 	if c.BaseURL == nil {
 		return path
 	}
@@ -226,11 +214,6 @@ func cleanPath(p string) string {
 	return path.Clean(p)
 }
 
-//SetHTTPClient ...
-func (c *ClusterClient) SetHTTPClient(httpClient *gohttp.Client) {
-	c.HTTPClient = httpClient
-}
-
 const (
 	orgIDHeader     = "X-Auth-Resource-Org"
 	spaceIDHeader   = "X-Auth-Resource-Space"
@@ -240,7 +223,6 @@ const (
 	slAPIKeyHeader   = "X-Auth-Softlayer-APIKey"
 )
 
-//addToRequestHeader ...
 func addToRequestHeader(h interface{}, r *rest.Request) {
 	switch v := h.(type) {
 	case *ClusterTargetHeader:

@@ -5,11 +5,11 @@ import (
 
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
+	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 )
 
 //ErrCodeServicePlanDoesNotExist ...
-var ErrCodeServicePlanDoesNotExist = "ServicePlanDoesNotExist"
+const ErrCodeServicePlanDoesNotExist = "ServicePlanDoesNotExist"
 
 //ServicePlan ...
 type ServicePlan struct {
@@ -65,11 +65,11 @@ type ServicePlans interface {
 }
 
 type servicePlan struct {
-	client *CFAPIClient
+	client *cfAPIClient
 	config *bluemix.Config
 }
 
-func newServicePlanAPI(c *CFAPIClient) ServicePlans {
+func newServicePlanAPI(c *cfAPIClient) ServicePlans {
 	return &servicePlan{
 		client: c,
 		config: c.config,

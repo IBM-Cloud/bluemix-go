@@ -15,7 +15,7 @@ import (
 const (
 	contentType               = "Content-Type"
 	jsonContentType           = "application/json"
-	formURLEncodedContentType = "application/x-www-form-urlencoded"
+	formUrlEncodedContentType = "application/x-www-form-urlencoded"
 )
 
 // File represents a file upload in the POST request
@@ -31,7 +31,7 @@ type File struct {
 // Request is a REST request. It also acts like a HTTP request builder.
 type Request struct {
 	method string
-	rawURL string
+	rawUrl string
 	header http.Header
 
 	queryParams url.Values
@@ -44,10 +44,10 @@ type Request struct {
 	body interface{}
 }
 
-// NewRequest creates a new REST request with the given rawURL.
-func NewRequest(rawURL string) *Request {
+// NewRequest creates a new REST request with the given rawUrl.
+func NewRequest(rawUrl string) *Request {
 	return &Request{
-		rawURL:      rawURL,
+		rawUrl:      rawUrl,
 		header:      http.Header{},
 		queryParams: url.Values{},
 		formParams:  url.Values{},
@@ -61,45 +61,41 @@ func (r *Request) Method(method string) *Request {
 	return r
 }
 
-// GetRequest creates a REST request with GET method and the given rawURL.
-func GetRequest(rawURL string) *Request {
-	return NewRequest(rawURL).Method("GET")
+// GetRequest creates a REST request with GET method and the given rawUrl.
+func GetRequest(rawUrl string) *Request {
+	return NewRequest(rawUrl).Method("GET")
 }
 
-// HeadRequest creates a REST request with HEAD method and the given rawURL.
-func HeadRequest(rawURL string) *Request {
-	return NewRequest(rawURL).Method("HEAD")
+// HeadRequest creates a REST request with HEAD method and the given rawUrl.
+func HeadRequest(rawUrl string) *Request {
+	return NewRequest(rawUrl).Method("HEAD")
 }
 
-// PostRequest creates a REST request with POST method and the given rawURL.
-func PostRequest(rawURL string) *Request {
-	return NewRequest(rawURL).Method("POST")
+// PostRequest creates a REST request with POST method and the given rawUrl.
+func PostRequest(rawUrl string) *Request {
+	return NewRequest(rawUrl).Method("POST")
 }
 
-func PostRequestWithBody(rawURL string, requestBody *bytes.Buffer) (*http.Request, error) {
-	return http.NewRequest("POST", rawURL, requestBody)
-}
-
-// PutRequest creates a REST request with PUT method and the given rawURL.
-func PutRequest(rawURL string) *Request {
-	return NewRequest(rawURL).Method("PUT")
+// PutRequest creates a REST request with PUT method and the given rawUrl.
+func PutRequest(rawUrl string) *Request {
+	return NewRequest(rawUrl).Method("PUT")
 }
 
 // DeleteRequest creates a REST request with DELETE method and the given
-// rawURL.
-func DeleteRequest(rawURL string) *Request {
-	return NewRequest(rawURL).Method("DELETE")
+// rawUrl.
+func DeleteRequest(rawUrl string) *Request {
+	return NewRequest(rawUrl).Method("DELETE")
 }
 
 // PatchRequest creates a REST request with PATCH method and the given
-// rawURL.
-func PatchRequest(rawURL string) *Request {
-	return NewRequest(rawURL).Method("PATCH")
+// rawUrl.
+func PatchRequest(rawUrl string) *Request {
+	return NewRequest(rawUrl).Method("PATCH")
 }
 
 // Creates a request with HTTP OPTIONS.
-func OptionsRequest(rawURL string) *Request {
-	return NewRequest(rawURL).Method("OPTIONS")
+func OptionsRequest(rawUrl string) *Request {
+	return NewRequest(rawUrl).Method("OPTIONS")
 }
 
 // Add adds the key, value pair to the request header. It appends to any
@@ -171,10 +167,10 @@ func (r *Request) Build() (*http.Request, error) {
 }
 
 func (r *Request) buildURL() (string, error) {
-	if r.rawURL == "" || len(r.queryParams) == 0 {
-		return r.rawURL, nil
+	if r.rawUrl == "" || len(r.queryParams) == 0 {
+		return r.rawUrl, nil
 	}
-	u, err := url.Parse(r.rawURL)
+	u, err := url.Parse(r.rawUrl)
 	if err != nil {
 		return "", err
 	}
@@ -257,7 +253,7 @@ func escapeQuotes(s string) string {
 }
 
 func (r *Request) buildFormFields() (io.Reader, error) {
-	r.header.Set(contentType, formURLEncodedContentType)
+	r.header.Set(contentType, formUrlEncodedContentType)
 	return strings.NewReader(r.formParams.Encode()), nil
 }
 

@@ -89,11 +89,11 @@ type Accounts interface {
 }
 
 type account struct {
-	client *AccountClient
+	client *accountClient
 	config *bluemix.Config
 }
 
-func newAccountAPI(c *AccountClient) Accounts {
+func newAccountAPI(c *accountClient) Accounts {
 	return &account{
 		client: c,
 		config: c.config,

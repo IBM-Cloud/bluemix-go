@@ -5,12 +5,12 @@ import (
 	"time"
 
 	"github.com/IBM-Bluemix/bluemix-cli-sdk/bluemix/trace"
+	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/authentication"
 	"github.com/IBM-Bluemix/bluemix-go/endpoints"
 	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	"github.com/IBM-Bluemix/bluemix-go/http"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
 
 //Session ...

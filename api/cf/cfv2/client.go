@@ -8,11 +8,11 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/authentication"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"github.com/IBM-Bluemix/bluemix-go/http"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 )
 
@@ -70,8 +70,7 @@ type TokenRefresher interface {
 	RefreshToken() (string, error)
 }
 
-//CFAPIClient ...
-type CFAPIClient struct {
+type cfAPIClient struct {
 	UAATokenRefresher TokenRefresher
 	BaseURL           URLGetter
 	OnError           ErrHandler
@@ -82,7 +81,7 @@ type CFAPIClient struct {
 }
 
 //NewClient ...
-func NewClient(s *session.Session) (*CFAPIClient, error) {
+func NewClient(s *session.Session) (Client, error) {
 	config := s.Config.Copy()
 
 	_, err := config.EndpointLocator.CFAPIEndpoint()
@@ -106,7 +105,7 @@ func NewClient(s *session.Session) (*CFAPIClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	client := &CFAPIClient{
+	client := &cfAPIClient{
 		BaseURL:           baseURL,
 		UAATokenRefresher: tokenRefreher,
 		config:            config,
@@ -115,38 +114,37 @@ func NewClient(s *session.Session) (*CFAPIClient, error) {
 	return client, nil
 }
 
-//Organizations API
-func (c *CFAPIClient) Organizations() Organizations {
+//Organizations implements Organizations APIs
+func (c *cfAPIClient) Organizations() Organizations {
 	return newOrganizationAPI(c)
 }
 
-//Spaces API
-func (c *CFAPIClient) Spaces() Spaces {
+//Spaces implements Spaces APIs
+func (c *cfAPIClient) Spaces() Spaces {
 	return newSpacesAPI(c)
 }
 
-//ServicePlans API
-func (c *CFAPIClient) ServicePlans() ServicePlans {
+//ServicePlans implements ServicePlans APIs
+func (c *cfAPIClient) ServicePlans() ServicePlans {
 	return newServicePlanAPI(c)
 }
 
-//ServiceOfferings API
-func (c *CFAPIClient) ServiceOfferings() ServiceOfferings {
+//ServiceOfferings implements ServiceOfferings APIs
+func (c *cfAPIClient) ServiceOfferings() ServiceOfferings {
 	return newServiceOfferingAPI(c)
 }
 
-//ServiceInstances API
-func (c *CFAPIClient) ServiceInstances() ServiceInstances {
+//ServiceInstances implements ServiceInstances APIs
+func (c *cfAPIClient) ServiceInstances() ServiceInstances {
 	return newServiceInstanceAPI(c)
 }
 
-//ServiceKeys API
-func (c *CFAPIClient) ServiceKeys() ServiceKeys {
+//ServiceKeys implements ServiceKey APIs
+func (c *cfAPIClient) ServiceKeys() ServiceKeys {
 	return newServiceKeyAPI(c)
 }
 
-//SendRequest ...
-func (c *CFAPIClient) sendRequest(r *rest.Request, respV interface{}) (*gohttp.Response, error) {
+func (c *cfAPIClient) sendRequest(r *rest.Request, respV interface{}) (*gohttp.Response, error) {
 	httpClient := c.HTTPClient
 	if httpClient == nil {
 		httpClient = gohttp.DefaultClient
@@ -197,33 +195,27 @@ func (c *CFAPIClient) sendRequest(r *rest.Request, respV interface{}) (*gohttp.R
 	return resp, err
 }
 
-//Get ...
-func (c *CFAPIClient) get(path string, respV interface{}) (*gohttp.Response, error) {
+func (c *cfAPIClient) get(path string, respV interface{}) (*gohttp.Response, error) {
 	return c.sendRequest(rest.GetRequest(c.url(path)), respV)
 }
 
-//Put ...
-func (c *CFAPIClient) put(path string, data interface{}, respV interface{}) (*gohttp.Response, error) {
+func (c *cfAPIClient) put(path string, data interface{}, respV interface{}) (*gohttp.Response, error) {
 	return c.sendRequest(rest.PutRequest(c.url(path)).Body(data), respV)
 }
 
-//Patch ...
-func (c *CFAPIClient) patch(path string, data interface{}, respV interface{}) (*gohttp.Response, error) {
+func (c *cfAPIClient) patch(path string, data interface{}, respV interface{}) (*gohttp.Response, error) {
 	return c.sendRequest(rest.PatchRequest(c.url(path)).Body(data), respV)
 }
 
-//Post ...
-func (c *CFAPIClient) post(path string, data interface{}, respV interface{}) (*gohttp.Response, error) {
+func (c *cfAPIClient) post(path string, data interface{}, respV interface{}) (*gohttp.Response, error) {
 	return c.sendRequest(rest.PostRequest(c.url(path)).Body(data), respV)
 }
 
-//Delete ...
-func (c *CFAPIClient) delete(path string) (*gohttp.Response, error) {
+func (c *cfAPIClient) delete(path string) (*gohttp.Response, error) {
 	return c.sendRequest(rest.DeleteRequest(c.url(path)), nil)
 }
 
-//GetPaginated ...
-func (c *CFAPIClient) getPaginated(path string, resource interface{}, cb func(interface{}) bool) (resp *gohttp.Response, err error) {
+func (c *cfAPIClient) getPaginated(path string, resource interface{}, cb func(interface{}) bool) (resp *gohttp.Response, err error) {
 	for path != "" {
 		paginatedResources := NewPaginatedResources(resource)
 
@@ -250,17 +242,12 @@ func (c *CFAPIClient) getPaginated(path string, resource interface{}, cb func(in
 	return
 }
 
-func (c *CFAPIClient) url(path string) string {
+func (c *cfAPIClient) url(path string) string {
 	if c.BaseURL == nil {
 		return path
 	}
 
 	return c.BaseURL() + cleanPath(path)
-}
-
-//SetHTTPClient ...
-func (c *CFAPIClient) SetHTTPClient(httpClient *gohttp.Client) {
-	c.HTTPClient = httpClient
 }
 
 func cleanPath(p string) string {

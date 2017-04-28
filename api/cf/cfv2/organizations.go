@@ -5,8 +5,8 @@ import (
 
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 
+	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
 
 //ErrCodeOrgDoesnotExist ...
@@ -51,11 +51,11 @@ type Organizations interface {
 }
 
 type organization struct {
-	client *CFAPIClient
+	client *cfAPIClient
 	config *bluemix.Config
 }
 
-func newOrganizationAPI(c *CFAPIClient) Organizations {
+func newOrganizationAPI(c *cfAPIClient) Organizations {
 	return &organization{
 		client: c,
 		config: c.config,

@@ -95,11 +95,11 @@ type Clusters interface {
 }
 
 type clusters struct {
-	client *ClusterClient
+	client *clusterClient
 	config *bluemix.Config
 }
 
-func newClusterAPI(c *ClusterClient) Clusters {
+func newClusterAPI(c *clusterClient) Clusters {
 	return &clusters{
 		client: c,
 		config: c.config,

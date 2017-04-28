@@ -38,11 +38,11 @@ type Workers interface {
 }
 
 type worker struct {
-	client *ClusterClient
+	client *clusterClient
 	config *bluemix.Config
 }
 
-func newWorkerAPI(c *ClusterClient) Workers {
+func newWorkerAPI(c *clusterClient) Workers {
 	return &worker{
 		client: c,
 		config: c.config,

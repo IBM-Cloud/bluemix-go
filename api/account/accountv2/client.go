@@ -1,23 +1,18 @@
 package accountv2
 
 import (
-	"crypto/x509"
 	"encoding/json"
 	"fmt"
-	"net"
 	gohttp "net/http"
-	"net/url"
 	"path"
 	"reflect"
 	"strings"
 
-	"golang.org/x/net/websocket"
-
+	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/authentication"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"github.com/IBM-Bluemix/bluemix-go/http"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 )
 
@@ -30,7 +25,7 @@ type Client interface {
 }
 
 //ErrCodeNoAccountExists ...
-var ErrCodeNoAccountExists = "NoAccountExists"
+const ErrCodeNoAccountExists = "NoAccountExists"
 
 //PaginatedResources ...
 type PaginatedResources struct {
@@ -73,8 +68,7 @@ type TokenRefresher interface {
 	RefreshToken() (string, error)
 }
 
-//AccountClient ...
-type AccountClient struct {
+type accountClient struct {
 	UAATokenRefresher TokenRefresher
 	BaseURL           URLGetter
 	OnError           ErrHandler
@@ -85,7 +79,7 @@ type AccountClient struct {
 }
 
 //NewClient ...
-func NewClient(s *session.Session) (*AccountClient, error) {
+func NewClient(s *session.Session) (Client, error) {
 	config := s.Config.Copy()
 
 	_, err := config.EndpointLocator.AccountManagementEndpoint()
@@ -109,7 +103,7 @@ func NewClient(s *session.Session) (*AccountClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	client := &AccountClient{
+	client := &accountClient{
 		BaseURL:           baseURL,
 		UAATokenRefresher: tokenRefreher,
 		config:            config,
@@ -119,12 +113,11 @@ func NewClient(s *session.Session) (*AccountClient, error) {
 }
 
 //Accounts API
-func (c *AccountClient) Accounts() Accounts {
+func (c *accountClient) Accounts() Accounts {
 	return newAccountAPI(c)
 }
 
-//SendRequest ...
-func (c *AccountClient) sendRequest(r *rest.Request, respV interface{}) (*gohttp.Response, error) {
+func (c *accountClient) sendRequest(r *rest.Request, respV interface{}) (*gohttp.Response, error) {
 	httpClient := c.HTTPClient
 	if httpClient == nil {
 		httpClient = gohttp.DefaultClient
@@ -151,7 +144,7 @@ func (c *AccountClient) sendRequest(r *rest.Request, respV interface{}) (*gohttp
 	}
 
 	if err != nil {
-		err = WrapNetworkErrors(resp.Request.URL.Host, err)
+		err = bmxerror.WrapNetworkErrors(resp.Request.URL.Host, err)
 	}
 
 	// if token is invalid, refresh and try again
@@ -175,61 +168,27 @@ func (c *AccountClient) sendRequest(r *rest.Request, respV interface{}) (*gohttp
 	return resp, err
 }
 
-//WrapNetworkErrors ...
-func WrapNetworkErrors(host string, err error) error {
-	var innerErr error
-	switch typedErr := err.(type) {
-	case *url.Error:
-		innerErr = typedErr.Err
-	case *websocket.DialError:
-		innerErr = typedErr.Err
-	}
-
-	if innerErr != nil {
-		switch typedInnerErr := innerErr.(type) {
-		case x509.UnknownAuthorityError:
-			return bmxerror.NewInvalidSSLCert(host, "unknown authority")
-		case x509.HostnameError:
-			return bmxerror.NewInvalidSSLCert(host, "not valid for the requested host")
-		case x509.CertificateInvalidError:
-			return bmxerror.NewInvalidSSLCert(host, "")
-		case *net.OpError:
-			if typedInnerErr.Op == "dial" {
-				return fmt.Errorf("%s\n%s", err.Error(), "TIP: If you are behind a firewall and require an HTTP proxy, verify the https_proxy environment variable is correctly set. Else, check your network connection.")
-			}
-		}
-	}
-
-	return err
-}
-
-//Get ...
-func (c *AccountClient) get(path string, respV interface{}) (*gohttp.Response, error) {
+func (c *accountClient) get(path string, respV interface{}) (*gohttp.Response, error) {
 	return c.sendRequest(rest.GetRequest(c.url(path)), respV)
 }
 
-//Put ...
-func (c *AccountClient) put(path string, data interface{}, respV interface{}) (*gohttp.Response, error) {
+func (c *accountClient) put(path string, data interface{}, respV interface{}) (*gohttp.Response, error) {
 	return c.sendRequest(rest.PutRequest(c.url(path)).Body(data), respV)
 }
 
-//Patch ...
-func (c *AccountClient) patch(path string, data interface{}, respV interface{}) (*gohttp.Response, error) {
+func (c *accountClient) patch(path string, data interface{}, respV interface{}) (*gohttp.Response, error) {
 	return c.sendRequest(rest.PatchRequest(c.url(path)).Body(data), respV)
 }
 
-//Post ...
-func (c *AccountClient) post(path string, data interface{}, respV interface{}) (*gohttp.Response, error) {
+func (c *accountClient) post(path string, data interface{}, respV interface{}) (*gohttp.Response, error) {
 	return c.sendRequest(rest.PostRequest(c.url(path)).Body(data), respV)
 }
 
-//Delete ...
-func (c *AccountClient) delete(path string) (*gohttp.Response, error) {
+func (c *accountClient) delete(path string) (*gohttp.Response, error) {
 	return c.sendRequest(rest.DeleteRequest(c.url(path)), nil)
 }
 
-//GetPaginated ...
-func (c *AccountClient) getPaginated(path string, resource interface{}, cb func(interface{}) bool) (resp *gohttp.Response, err error) {
+func (c *accountClient) getPaginated(path string, resource interface{}, cb func(interface{}) bool) (resp *gohttp.Response, err error) {
 	for path != "" {
 		paginatedResources := NewPaginatedResources(resource)
 
@@ -256,17 +215,12 @@ func (c *AccountClient) getPaginated(path string, resource interface{}, cb func(
 	return
 }
 
-func (c *AccountClient) url(path string) string {
+func (c *accountClient) url(path string) string {
 	if c.BaseURL == nil {
 		return path
 	}
 
 	return c.BaseURL() + cleanPath(path)
-}
-
-//SetHTTPClient ...
-func (c *AccountClient) SetHTTPClient(httpClient *gohttp.Client) {
-	c.HTTPClient = httpClient
 }
 
 func cleanPath(p string) string {

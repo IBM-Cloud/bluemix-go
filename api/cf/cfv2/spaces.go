@@ -3,9 +3,9 @@ package cfv2
 import (
 	"fmt"
 
+	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
 
 //Space ...
@@ -18,7 +18,7 @@ type Space struct {
 }
 
 //ErrCodeSpaceDoesnotExist ...
-var ErrCodeSpaceDoesnotExist = "SpaceDoesnotExist"
+const ErrCodeSpaceDoesnotExist = "SpaceDoesnotExist"
 
 //SpaceResource ...
 type SpaceResource struct {
@@ -54,11 +54,11 @@ type Spaces interface {
 }
 
 type spaces struct {
-	client *CFAPIClient
+	client *cfAPIClient
 	config *bluemix.Config
 }
 
-func newSpacesAPI(c *CFAPIClient) Spaces {
+func newSpacesAPI(c *cfAPIClient) Spaces {
 	return &spaces{
 		client: c,
 		config: c.config,

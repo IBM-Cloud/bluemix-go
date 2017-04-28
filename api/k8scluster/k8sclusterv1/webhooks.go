@@ -20,11 +20,11 @@ type Webhooks interface {
 }
 
 type webhook struct {
-	client *ClusterClient
+	client *clusterClient
 	config *bluemix.Config
 }
 
-func newWebhookAPI(c *ClusterClient) Webhooks {
+func newWebhookAPI(c *clusterClient) Webhooks {
 	return &webhook{
 		client: c,
 		config: c.config,

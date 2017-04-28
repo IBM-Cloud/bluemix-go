@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
+	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 )
 
 //ServiceInstanceCreateRequest ...
@@ -122,11 +122,11 @@ type ServiceInstances interface {
 }
 
 type serviceInstance struct {
-	client *CFAPIClient
+	client *cfAPIClient
 	config *bluemix.Config
 }
 
-func newServiceInstanceAPI(c *CFAPIClient) ServiceInstances {
+func newServiceInstanceAPI(c *cfAPIClient) ServiceInstances {
 	return &serviceInstance{
 		client: c,
 		config: c.config,

@@ -2,14 +2,14 @@ package cfv2
 
 import (
 	"fmt"
-	
-	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
+
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
+	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
+	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 )
 
 //ErrCodeServiceKeyDoesNotExist ...
-var ErrCodeServiceKeyDoesNotExist = "erviceKeyDoesNotExist"
+const ErrCodeServiceKeyDoesNotExist = "erviceKeyDoesNotExist"
 
 //ServiceKeyRequest ...
 type ServiceKeyRequest struct {
@@ -78,11 +78,11 @@ type ServiceKeys interface {
 }
 
 type serviceKey struct {
-	client *CFAPIClient
+	client *cfAPIClient
 	config *bluemix.Config
 }
 
-func newServiceKeyAPI(c *CFAPIClient) ServiceKeys {
+func newServiceKeyAPI(c *cfAPIClient) ServiceKeys {
 	return &serviceKey{
 		client: c,
 		config: c.config,
@@ -102,7 +102,6 @@ func (r *serviceKey) Create(serviceInstanceGUID string, keyName string, params m
 	}
 	return &serviceKeyFields, nil
 }
-
 
 func (r *serviceKey) Delete(serviceKeyGUID string) error {
 	rawURL := fmt.Sprintf("/v2/service_keys/%s", serviceKeyGUID)
@@ -154,5 +153,3 @@ func (r *serviceKey) listServiceKeysWithPath(path string) ([]ServiceKey, error) 
 	})
 	return serviceKeys, err
 }
-
-
