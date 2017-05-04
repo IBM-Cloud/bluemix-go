@@ -96,7 +96,9 @@ type AccountQueryResponse struct {
 
 //Accounts ...
 type Accounts interface {
+	List() ([]Account, error)
 	FindByOrg(orgGUID string, region string) (*Account, error)
+	FindByOwner(userID string) (*Account, error)
 }
 
 type account struct {
@@ -110,7 +112,7 @@ func newAccountAPI(c *client.Client) Accounts {
 }
 
 //FindByOrg ...
-func (r *account) FindByOrg(orgGUID, region string) (*Account, error) {
+func (a *account) FindByOrg(orgGUID, region string) (*Account, error) {
 	type organizationRegion struct {
 		GUID   string `json:"guid"`
 		Region string `json:"region"`
@@ -128,7 +130,7 @@ func (r *account) FindByOrg(orgGUID, region string) (*Account, error) {
 	}
 
 	queryResp := AccountQueryResponse{}
-	response, err := r.client.Post("/coe/v2/getaccounts", payLoad, &queryResp)
+	response, err := a.client.Post("/coe/v2/getaccounts", payLoad, &queryResp)
 	if err != nil {
 
 		if response.StatusCode == 404 {
@@ -146,4 +148,38 @@ func (r *account) FindByOrg(orgGUID, region string) (*Account, error) {
 
 	return nil, bmxerror.New(ErrCodeNoAccountExists,
 		fmt.Sprintf("No account exists in the given region: %q and the given org: %q", region, orgGUID))
+}
+
+func (a *account) List() ([]Account, error) {
+	var accounts []Account
+	resp, err := a.client.GetPaginated("/coe/v2/accounts", AccountResource{}, func(resource interface{}) bool {
+		if accountResource, ok := resource.(AccountResource); ok {
+			accounts = append(accounts, accountResource.ToModel())
+			return true
+		}
+		return false
+	})
+
+	if resp.StatusCode == 404 || len(accounts) == 0 {
+		return nil, bmxerror.New(ErrCodeNoAccountExists,
+			fmt.Sprintf("No Account exists"))
+	}
+
+	return accounts, err
+}
+
+//FindByOwner ...
+func (a *account) FindByOwner(userID string) (*Account, error) {
+	accounts, err := a.List()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, a := range accounts {
+		if a.OwnerUserID == userID {
+			return &a, nil
+		}
+	}
+	return nil, bmxerror.New(ErrCodeNoAccountExists,
+		fmt.Sprintf("No account exists for the user %q", userID))
 }

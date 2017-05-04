@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -13,11 +14,13 @@ import (
 
 func main() {
 	var org string
+	var ownerUserID string
 	flag.StringVar(&org, "org", "", "Bluemix Organization")
+	flag.StringVar(&ownerUserID, "owner_id", "", "Owner user id, for example - abc@c.com")
 
 	flag.Parse()
 
-	if org == "" {
+	if org == "" || ownerUserID == "" {
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -49,6 +52,19 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(myAccount.Name, myAccount.CountryCode, myAccount.OwnerUserID)
+	log.Println(myAccount.Name, myAccount.CountryCode, myAccount.OwnerUserID, myAccount.GUID)
 
+	myAccount, err = accountAPI.FindByOwner(ownerUserID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(myAccount.Name, myAccount.CountryCode, myAccount.OwnerUserID, myAccount.GUID)
+
+	allAccounts, err := accountAPI.List()
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, acc := range allAccounts {
+		fmt.Println(acc.OwnerUserID, acc.GUID)
+	}
 }
