@@ -33,6 +33,14 @@ You must export the following environment variables.
 * IBMID - This is the IBM ID
 * IBMID_PASSWORD - This is the password for the above ID
 
-The default region is _us_south_. You can override it in the Config struct. You can also provide the value via environment variables; either via _BM_REGION_ or _BLUEMIX_REGION_
+OR
+
+* BM_API_KEY/BLUEMIX_API_KEY - This is the Bluemix API Key. Login to [Bluemix](https://console.ng.bluemix.net) to create one if you don't already have one. Follow Manage -> Account -> Users. Click on _Bluemix API Keys_
+
+The default region is _us_south_. You can override it in the Config struct. You can also provide the value via environment variables; either via _BM_REGION_ or _BLUEMIX_REGION_. Valid regions are -
+* us-south
+* eu-gb
+* au-syd
+
 
 

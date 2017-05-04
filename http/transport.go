@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/bluemix/trace"
+	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
 
 // TraceLoggingTransport is a thin wrapper around Transport. It dumps HTTP
@@ -65,7 +65,8 @@ func (r *TraceLoggingTransport) dumpRequest(req *http.Request, start time.Time) 
 func (r *TraceLoggingTransport) dumpResponse(res *http.Response, start time.Time) {
 	end := time.Now()
 
-	dumpedResponse, err := httputil.DumpResponse(res, true)
+	shouldDisplayBody := !strings.Contains(res.Header.Get("Content-Type"), "application/zip")
+	dumpedResponse, err := httputil.DumpResponse(res, shouldDisplayBody)
 	if err != nil {
 		trace.Logger.Printf("An error occurred while dumping response:\n%v\n", err)
 		return

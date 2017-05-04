@@ -3,7 +3,7 @@ package k8sclusterv1
 import (
 	"fmt"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
+	"github.com/IBM-Bluemix/bluemix-go/client"
 )
 
 //Subnet ...
@@ -32,21 +32,19 @@ type Subnets interface {
 }
 
 type subnet struct {
-	client *clusterClient
-	config *bluemix.Config
+	client *client.Client
 }
 
-func newSubnetAPI(c *clusterClient) Subnets {
+func newSubnetAPI(c *client.Client) Subnets {
 	return &subnet{
 		client: c,
-		config: c.config,
 	}
 }
 
 //GetSubnets ...
 func (r *subnet) List(target *ClusterTargetHeader) ([]Subnet, error) {
 	subnets := []Subnet{}
-	_, err := r.client.get("/v1/subnets", &subnets, target)
+	_, err := r.client.Get("/v1/subnets", &subnets, target)
 	if err != nil {
 		return nil, err
 	}
@@ -57,6 +55,6 @@ func (r *subnet) List(target *ClusterTargetHeader) ([]Subnet, error) {
 //AddSubnetToCluster ...
 func (r *subnet) AddSubnet(name string, subnetID string, target *ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/subnets/%s", name, subnetID)
-	_, err := r.client.put(rawURL, nil, nil, target)
+	_, err := r.client.Put(rawURL, nil, nil, target.ToMap())
 	return err
 }

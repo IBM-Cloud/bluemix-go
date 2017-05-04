@@ -12,6 +12,11 @@ func Int(v int) *int {
 	return &v
 }
 
+// String returns a pointer to the string value
+func String(v string) *string {
+	return &v
+}
+
 // Duration returns a pointer to the time.Duration
 func Duration(v time.Duration) *time.Duration {
 	return &v

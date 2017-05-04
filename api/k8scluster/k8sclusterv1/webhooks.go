@@ -3,7 +3,7 @@ package k8sclusterv1
 import (
 	"fmt"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
+	"github.com/IBM-Bluemix/bluemix-go/client"
 )
 
 //WebHook is the web hook
@@ -20,22 +20,20 @@ type Webhooks interface {
 }
 
 type webhook struct {
-	client *clusterClient
-	config *bluemix.Config
+	client *client.Client
 }
 
-func newWebhookAPI(c *clusterClient) Webhooks {
+func newWebhookAPI(c *client.Client) Webhooks {
 	return &webhook{
 		client: c,
-		config: c.config,
 	}
 }
 
-//WebHooks ...
+//List ...
 func (r *webhook) List(name string, target *ClusterTargetHeader) ([]WebHook, error) {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/webhooks", name)
 	webhooks := []WebHook{}
-	_, err := r.client.get(rawURL, &webhooks, target)
+	_, err := r.client.Get(rawURL, &webhooks, target.ToMap())
 	if err != nil {
 		return nil, err
 	}
@@ -43,9 +41,9 @@ func (r *webhook) List(name string, target *ClusterTargetHeader) ([]WebHook, err
 	return webhooks, err
 }
 
-//AddWebHook ...
+//Add ...
 func (r *webhook) Add(name string, params WebHook, target *ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/webhooks", name)
-	_, err := r.client.post(rawURL, params, nil, target)
+	_, err := r.client.Post(rawURL, params, nil, target.ToMap())
 	return err
 }

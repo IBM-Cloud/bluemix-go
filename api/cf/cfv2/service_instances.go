@@ -3,8 +3,8 @@ package cfv2
 import (
 	"fmt"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
+	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
 
 //ServiceInstanceCreateRequest ...
@@ -122,14 +122,12 @@ type ServiceInstances interface {
 }
 
 type serviceInstance struct {
-	client *cfAPIClient
-	config *bluemix.Config
+	client *client.Client
 }
 
-func newServiceInstanceAPI(c *cfAPIClient) ServiceInstances {
+func newServiceInstanceAPI(c *client.Client) ServiceInstances {
 	return &serviceInstance{
 		client: c,
-		config: c.config,
 	}
 }
 
@@ -143,7 +141,7 @@ func (s *serviceInstance) Create(name, planGUID, spaceGUID string, params map[st
 	}
 	rawURL := "/v2/service_instances?accepts_incomplete=true&async=true"
 	serviceFields := ServiceInstanceFields{}
-	_, err := s.client.post(rawURL, payload, &serviceFields)
+	_, err := s.client.Post(rawURL, payload, &serviceFields)
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +151,7 @@ func (s *serviceInstance) Create(name, planGUID, spaceGUID string, params map[st
 func (s *serviceInstance) Get(instanceGUID string) (*ServiceInstanceFields, error) {
 	rawURL := fmt.Sprintf("/v2/service_instances/%s", instanceGUID)
 	serviceFields := ServiceInstanceFields{}
-	_, err := s.client.get(rawURL, &serviceFields)
+	_, err := s.client.Get(rawURL, &serviceFields)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +182,7 @@ func (s *serviceInstance) FindByName(instanceName string) (*ServiceInstance, err
 
 func (s *serviceInstance) Delete(instanceGUID string) error {
 	rawURL := fmt.Sprintf("/v2/service_instances/%s", instanceGUID)
-	_, err := s.client.delete(rawURL)
+	_, err := s.client.Delete(rawURL)
 	return err
 }
 
@@ -197,7 +195,7 @@ func (s *serviceInstance) Update(newName, instanceGUID, planGUID string, params 
 	}
 	rawURL := fmt.Sprintf("/v2/service_instances/%s?accepts_incomplete=true&async=true", instanceGUID)
 	serviceFields := ServiceInstanceFields{}
-	_, err := s.client.put(rawURL, payload, &serviceFields)
+	_, err := s.client.Put(rawURL, payload, &serviceFields)
 	if err != nil {
 		return nil, err
 	}
@@ -206,7 +204,7 @@ func (s *serviceInstance) Update(newName, instanceGUID, planGUID string, params 
 
 func (s *serviceInstance) listServicesWithPath(path string) ([]ServiceInstance, error) {
 	var services []ServiceInstance
-	_, err := s.client.getPaginated(path, ServiceInstanceResource{}, func(resource interface{}) bool {
+	_, err := s.client.GetPaginated(path, ServiceInstanceResource{}, func(resource interface{}) bool {
 		if serviceInstanceResource, ok := resource.(ServiceInstanceResource); ok {
 			services = append(services, serviceInstanceResource.ToModel())
 			return true

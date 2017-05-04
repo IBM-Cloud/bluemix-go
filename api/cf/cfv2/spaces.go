@@ -3,9 +3,9 @@ package cfv2
 import (
 	"fmt"
 
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
+	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
 
 //Space ...
@@ -54,19 +54,16 @@ type Spaces interface {
 }
 
 type spaces struct {
-	client *cfAPIClient
-	config *bluemix.Config
+	client *client.Client
 }
 
-func newSpacesAPI(c *cfAPIClient) Spaces {
+func newSpacesAPI(c *client.Client) Spaces {
 	return &spaces{
 		client: c,
-		config: c.config,
 	}
 }
 
 func (r *spaces) FindByNameInOrg(orgGUID string, name string) (*Space, error) {
-	region := r.config.Region
 	rawURL := fmt.Sprintf("/v2/organizations/%s/spaces", orgGUID)
 	req := rest.GetRequest(rawURL).Query("q", "name:"+name)
 
@@ -83,7 +80,7 @@ func (r *spaces) FindByNameInOrg(orgGUID string, name string) (*Space, error) {
 	}
 	if len(spaces) == 0 {
 		return nil, bmxerror.New(ErrCodeSpaceDoesnotExist,
-			fmt.Sprintf("Given space:  %q doesn't exist in given org: %q in the given region: %q", name, orgGUID, region))
+			fmt.Sprintf("Given space:  %q doesn't exist in given org: %q", name, orgGUID))
 
 	}
 	return &spaces[0], nil
@@ -104,7 +101,7 @@ func (r *spaces) ListSpacesInOrg(orgGUID string) ([]Space, error) {
 
 func (r *spaces) listSpacesWithPath(path string) ([]Space, error) {
 	var spaces []Space
-	_, err := r.client.getPaginated(path, SpaceResource{}, func(resource interface{}) bool {
+	_, err := r.client.GetPaginated(path, SpaceResource{}, func(resource interface{}) bool {
 		if spaceResource, ok := resource.(SpaceResource); ok {
 			spaces = append(spaces, spaceResource.ToFields())
 			return true

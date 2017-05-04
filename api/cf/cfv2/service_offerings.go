@@ -3,10 +3,10 @@ package cfv2
 import (
 	"fmt"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
+	"github.com/IBM-Bluemix/bluemix-go/client"
 
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
+	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
 
 //ErrCodeServiceDoesnotExist ...
@@ -93,14 +93,12 @@ type ServiceOfferings interface {
 }
 
 type serviceOfferrings struct {
-	client *cfAPIClient
-	config *bluemix.Config
+	client *client.Client
 }
 
-func newServiceOfferingAPI(c *cfAPIClient) ServiceOfferings {
+func newServiceOfferingAPI(c *client.Client) ServiceOfferings {
 	return &serviceOfferrings{
 		client: c,
-		config: c.config,
 	}
 }
 
@@ -132,12 +130,12 @@ func (r *serviceOfferrings) FindByLabel(serviceName string) (*ServiceOffering, e
 	//May not be found and no error
 
 	return nil, bmxerror.New(ErrCodeServiceDoesnotExist,
-		fmt.Sprintf("Given service %q doesn't exist in the given region %q", serviceName, r.config.Region))
+		fmt.Sprintf("Given service %q doesn't exist", serviceName))
 
 }
 
 func (r *serviceOfferrings) listServicesOfferingWithPath(path string, cb func(ServiceOfferingResource) bool) error {
-	_, err := r.client.getPaginated(path, ServiceOfferingResource{}, func(resource interface{}) bool {
+	_, err := r.client.GetPaginated(path, ServiceOfferingResource{}, func(resource interface{}) bool {
 		if serviceOfferingResource, ok := resource.(ServiceOfferingResource); ok {
 			return cb(serviceOfferingResource)
 		}

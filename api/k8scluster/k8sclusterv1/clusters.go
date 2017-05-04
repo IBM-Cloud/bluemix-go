@@ -9,10 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/bluemix/trace"
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/file_helpers"
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
+	"github.com/IBM-Bluemix/bluemix-go/client"
 	"github.com/IBM-Bluemix/bluemix-go/helpers"
+	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
 
 //ClusterInfo ...
@@ -46,10 +45,36 @@ type ClusterTargetHeader struct {
 	AccountID string
 }
 
+const (
+	orgIDHeader     = "X-Auth-Resource-Org"
+	spaceIDHeader   = "X-Auth-Resource-Space"
+	accountIDHeader = "X-Auth-Resource-Account"
+
+	slUserNameHeader = "X-Auth-Softlayer-Username"
+	slAPIKeyHeader   = "X-Auth-Softlayer-APIKey"
+)
+
+//ToMap ...
+func (c ClusterTargetHeader) ToMap() map[string]string {
+	m := make(map[string]string, 3)
+	m[orgIDHeader] = c.OrgID
+	m[spaceIDHeader] = c.SpaceID
+	m[accountIDHeader] = c.AccountID
+	return m
+}
+
 //ClusterSoftlayerHeader ...
 type ClusterSoftlayerHeader struct {
 	SoftLayerUsername string
 	SoftLayerAPIKey   string
+}
+
+//ToMap ...
+func (c ClusterSoftlayerHeader) ToMap() map[string]string {
+	m := make(map[string]string, 2)
+	m[slAPIKeyHeader] = c.SoftLayerAPIKey
+	m[slUserNameHeader] = c.SoftLayerUsername
+	return m
 }
 
 //ClusterCreateRequest ...
@@ -95,34 +120,33 @@ type Clusters interface {
 }
 
 type clusters struct {
-	client *clusterClient
-	config *bluemix.Config
+	client *client.Client
 }
 
-func newClusterAPI(c *clusterClient) Clusters {
+func newClusterAPI(c *client.Client) Clusters {
 	return &clusters{
 		client: c,
-		config: c.config,
 	}
 }
 
 //Create ...
 func (r *clusters) Create(params *ClusterCreateRequest, target *ClusterTargetHeader) (ClusterCreateResponse, error) {
 	var cluster ClusterCreateResponse
-	_, err := r.client.post("/v1/clusters", params, &cluster, target)
+	_, err := r.client.Post("/v1/clusters", params, &cluster, target.ToMap())
 	return cluster, err
 }
 
 //Delete ...
 func (r *clusters) Delete(name string, target *ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s", name)
-	_, err := r.client.delete(rawURL, target)
+	_, err := r.client.Delete(rawURL, target)
 	return err
 }
 
+//List ...
 func (r *clusters) List(target *ClusterTargetHeader) ([]ClusterInfo, error) {
 	clusters := []ClusterInfo{}
-	_, err := r.client.get("/v1/clusters", &clusters, target)
+	_, err := r.client.Get("/v1/clusters", &clusters, target.ToMap())
 	if err != nil {
 		return nil, err
 	}
@@ -130,10 +154,11 @@ func (r *clusters) List(target *ClusterTargetHeader) ([]ClusterInfo, error) {
 	return clusters, err
 }
 
+//Find ...
 func (r *clusters) Find(name string, target *ClusterTargetHeader) (ClusterInfo, error) {
 	rawURL := fmt.Sprintf("/v1/clusters/%s", name)
 	cluster := ClusterInfo{}
-	_, err := r.client.get(rawURL, &cluster, target)
+	_, err := r.client.Get(rawURL, &cluster, target.ToMap())
 	if err != nil {
 		return cluster, err
 	}
@@ -141,9 +166,10 @@ func (r *clusters) Find(name string, target *ClusterTargetHeader) (ClusterInfo, 
 	return cluster, err
 }
 
+//GetClusterConfig ...
 func (r *clusters) GetClusterConfig(name, dir string, target *ClusterTargetHeader) (string, error) {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/config", name)
-	if !file_helpers.FileExists(dir) {
+	if !helpers.FileExists(dir) {
 		return "", fmt.Errorf("Path: %q, to download the config doesn't exist", dir)
 	}
 
@@ -159,8 +185,8 @@ func (r *clusters) GetClusterConfig(name, dir string, target *ClusterTargetHeade
 		return "", err
 	}
 	defer out.Close()
-	defer file_helpers.RemoveFile(downloadPath)
-	_, err = r.client.get(rawURL, out, target)
+	defer helpers.RemoveFile(downloadPath)
+	_, err = r.client.Get(rawURL, out, target.ToMap())
 	if err != nil {
 		return "", err
 	}
@@ -203,17 +229,20 @@ func (r *clusters) GetClusterConfig(name, dir string, target *ClusterTargetHeade
 
 }
 
+//UnsetCredentials ...
 func (r *clusters) UnsetCredentials(target *ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/credentials")
-	_, err := r.client.delete(rawURL, target)
+	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
 }
 
+//SetCredentials ...
 func (r *clusters) SetCredentials(slUsername, slAPIKey string, target *ClusterTargetHeader) error {
-	_, err := r.client.post("/v1/credentials", nil, nil, target, &ClusterSoftlayerHeader{
+	slHeader := &ClusterSoftlayerHeader{
 		SoftLayerAPIKey:   slAPIKey,
 		SoftLayerUsername: slUsername,
-	})
+	}
+	_, err := r.client.Post("/v1/credentials", nil, nil, target.ToMap(), slHeader.ToMap())
 	return err
 }
 
@@ -230,14 +259,13 @@ func (r *clusters) BindService(params *ServiceBindRequest, target *ClusterTarget
 		NamespaceID:             params.NamespaceID,
 	}
 	var cluster ServiceBindResponse
-	fmt.Println(params)
-	_, err := r.client.post(rawURL, payLoad, &cluster, target)
+	_, err := r.client.Post(rawURL, payLoad, &cluster, target.ToMap())
 	return cluster, err
 }
 
 //UnBindService ...
 func (r *clusters) UnBindService(clusterNameOrID, namespaceID, serviceInstanceGUID string, target *ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/services/%s/%s", clusterNameOrID, namespaceID, serviceInstanceGUID)
-	_, err := r.client.delete(rawURL, target)
+	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
 }

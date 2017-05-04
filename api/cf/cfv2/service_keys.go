@@ -3,9 +3,9 @@ package cfv2
 import (
 	"fmt"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
+	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
 
 //ErrCodeServiceKeyDoesNotExist ...
@@ -78,14 +78,12 @@ type ServiceKeys interface {
 }
 
 type serviceKey struct {
-	client *cfAPIClient
-	config *bluemix.Config
+	client *client.Client
 }
 
-func newServiceKeyAPI(c *cfAPIClient) ServiceKeys {
+func newServiceKeyAPI(c *client.Client) ServiceKeys {
 	return &serviceKey{
 		client: c,
-		config: c.config,
 	}
 }
 
@@ -96,7 +94,7 @@ func (r *serviceKey) Create(serviceInstanceGUID string, keyName string, params m
 		Name:                keyName,
 		Params:              params,
 	}
-	_, err := r.client.post("/v2/service_keys", reqParam, &serviceKeyFields)
+	_, err := r.client.Post("/v2/service_keys", reqParam, &serviceKeyFields)
 	if err != nil {
 		return nil, err
 	}
@@ -105,14 +103,14 @@ func (r *serviceKey) Create(serviceInstanceGUID string, keyName string, params m
 
 func (r *serviceKey) Delete(serviceKeyGUID string) error {
 	rawURL := fmt.Sprintf("/v2/service_keys/%s", serviceKeyGUID)
-	_, err := r.client.delete(rawURL)
+	_, err := r.client.Delete(rawURL)
 	return err
 }
 
 func (r *serviceKey) Get(guid string) (*ServiceKeyFields, error) {
 	rawURL := fmt.Sprintf("/v2/service_keys/%s", guid)
 	serviceKeyFields := ServiceKeyFields{}
-	_, err := r.client.get(rawURL, &serviceKeyFields)
+	_, err := r.client.Get(rawURL, &serviceKeyFields)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +142,7 @@ func (r *serviceKey) FindByName(serviceInstanceGUID string, keyName string) (*Se
 
 func (r *serviceKey) listServiceKeysWithPath(path string) ([]ServiceKey, error) {
 	var serviceKeys []ServiceKey
-	_, err := r.client.getPaginated(path, ServiceKeyResource{}, func(resource interface{}) bool {
+	_, err := r.client.GetPaginated(path, ServiceKeyResource{}, func(resource interface{}) bool {
 		if serviceKeyResource, ok := resource.(ServiceKeyResource); ok {
 			serviceKeys = append(serviceKeys, serviceKeyResource.ToModel())
 			return true

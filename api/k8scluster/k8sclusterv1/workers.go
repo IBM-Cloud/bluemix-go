@@ -3,7 +3,7 @@ package k8sclusterv1
 import (
 	"fmt"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
+	"github.com/IBM-Bluemix/bluemix-go/client"
 )
 
 //Worker ...
@@ -38,21 +38,20 @@ type Workers interface {
 }
 
 type worker struct {
-	client *clusterClient
-	config *bluemix.Config
+	client *client.Client
 }
 
-func newWorkerAPI(c *clusterClient) Workers {
+func newWorkerAPI(c *client.Client) Workers {
 	return &worker{
 		client: c,
-		config: c.config,
 	}
 }
 
+//Get ...
 func (r *worker) Get(id string, target *ClusterTargetHeader) (Worker, error) {
 	rawURL := fmt.Sprintf("/v1/workers/%s", id)
 	worker := Worker{}
-	_, err := r.client.get(rawURL, &worker, target)
+	_, err := r.client.Get(rawURL, &worker, target.ToMap())
 	if err != nil {
 		return worker, err
 	}
@@ -62,28 +61,29 @@ func (r *worker) Get(id string, target *ClusterTargetHeader) (Worker, error) {
 
 func (r *worker) Add(name string, params WorkerParam, target *ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/workers", name)
-	_, err := r.client.post(rawURL, params, nil, target)
+	_, err := r.client.Post(rawURL, params, nil, target.ToMap())
 	return err
 }
 
-//DeleteWorker ...
+//Delete ...
 func (r *worker) Delete(name string, workerID string, target *ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/workers/%s", name, workerID)
-	_, err := r.client.delete(rawURL, target)
+	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
 }
 
-//UpdateWorker ...
+//Update ...
 func (r *worker) Update(name string, workerID string, params WorkerParam, target *ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/workers/%s", name, workerID)
-	_, err := r.client.put(rawURL, params, nil, target)
+	_, err := r.client.Put(rawURL, params, nil, target.ToMap())
 	return err
 }
 
+//List ...
 func (r *worker) List(name string, target *ClusterTargetHeader) ([]Worker, error) {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/workers", name)
 	workers := []Worker{}
-	_, err := r.client.get(rawURL, &workers, target)
+	_, err := r.client.Get(rawURL, &workers, target.ToMap())
 	if err != nil {
 		return nil, err
 	}

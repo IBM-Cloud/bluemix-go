@@ -4,13 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/bluemix/trace"
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
-	"github.com/IBM-Bluemix/bluemix-go/authentication"
 	"github.com/IBM-Bluemix/bluemix-go/endpoints"
 	"github.com/IBM-Bluemix/bluemix-go/helpers"
-	"github.com/IBM-Bluemix/bluemix-go/http"
+	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
 
 //Session ...
@@ -34,9 +31,15 @@ func New(configs ...*bluemix.Config) (*Session, error) {
 	if len(c.IBMID) == 0 {
 		c.IBMID = helpers.EnvFallBack([]string{"IBMID"}, "")
 	}
+
 	if len(c.IBMIDPassword) == 0 {
 		c.IBMIDPassword = helpers.EnvFallBack([]string{"IBMID_PASSWORD"}, "")
 	}
+
+	if len(c.BluemixAPIKey) == 0 {
+		c.BluemixAPIKey = helpers.EnvFallBack([]string{"BM_API_KEY", "BLUEMIX_API_KEY"}, "")
+	}
+
 	if len(c.Region) == 0 {
 		c.Region = helpers.EnvFallBack([]string{"BM_REGION", "BLUEMIX_REGION"}, "us-south")
 	}
@@ -79,24 +82,12 @@ func New(configs ...*bluemix.Config) (*Session, error) {
 		trace.Logger = trace.NewLogger("true")
 	}
 
-	err := c.ValidateConfig()
-
-	if err != nil {
-		return sess, err
-	}
-
-	if c.UAAAccessToken == "" || c.UAARefreshToken == "" {
-		restClient := rest.NewClient()
-		restClient.HTTPClient = http.NewHTTPClient(c)
-		iam, err := authentication.NewIAMAuthRepository(c, restClient)
-		if err != nil {
-			return sess, err
-		}
-		err = iam.AuthenticatePassword(c.IBMID, c.IBMIDPassword)
-		if err != nil {
-			return sess, err
-		}
-	}
-
 	return sess, nil
+}
+
+//Copy allows sessions to create a copy of it and optionally override any defaults via the config
+func (s *Session) Copy(cfgs ...*bluemix.Config) *Session {
+	return &Session{
+		Config: s.Config.Copy(cfgs...),
+	}
 }

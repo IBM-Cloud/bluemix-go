@@ -3,14 +3,25 @@ package cfv2
 import (
 	"fmt"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
+	"github.ibm.com/ashishth/bluemix-go/rest"
 
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
+	"github.com/IBM-Bluemix/bluemix-go/client"
 )
 
 //ErrCodeOrgDoesnotExist ...
 var ErrCodeOrgDoesnotExist = "OrgDoesnotExist"
+
+//Metadata ...
+type Metadata struct {
+	GUID string `json:"guid"`
+	URL  string `json:"url"`
+}
+
+//Resource ...
+type Resource struct {
+	Metadata Metadata
+}
 
 //OrgResource ...
 type OrgResource struct {
@@ -51,28 +62,25 @@ type Organizations interface {
 }
 
 type organization struct {
-	client *cfAPIClient
-	config *bluemix.Config
+	client *client.Client
 }
 
-func newOrganizationAPI(c *cfAPIClient) Organizations {
+func newOrganizationAPI(c *client.Client) Organizations {
 	return &organization{
 		client: c,
-		config: c.config,
 	}
 }
 
 //FindByName ...
-func (r *organization) FindByName(name string) (*Organization, error) {
-	region := r.config.Region
-	path, err := r.urlOfOrgWithName(name, false)
+func (o *organization) FindByName(name string) (*Organization, error) {
+	path, err := o.urlOfOrgWithName(name, false)
 	if err != nil {
 		return nil, err
 	}
 
 	var org Organization
 	var found bool
-	err = r.listOrgResourcesWithPath(path, func(orgResource OrgResource) bool {
+	err = o.listOrgResourcesWithPath(path, func(orgResource OrgResource) bool {
 		org = orgResource.ToFields()
 		found = true
 		return false
@@ -88,12 +96,12 @@ func (r *organization) FindByName(name string) (*Organization, error) {
 
 	//May not be found and no error
 	return nil, bmxerror.New(ErrCodeOrgDoesnotExist,
-		fmt.Sprintf("Given org %q doesn't exist in the given region %q", name, region))
+		fmt.Sprintf("Given org %q doesn't exist", name))
 
 }
 
-func (r *organization) listOrgResourcesWithPath(path string, cb func(OrgResource) bool) error {
-	_, err := r.client.getPaginated(path, OrgResource{}, func(resource interface{}) bool {
+func (o *organization) listOrgResourcesWithPath(path string, cb func(OrgResource) bool) error {
+	_, err := o.client.GetPaginated(path, OrgResource{}, func(resource interface{}) bool {
 		if orgResource, ok := resource.(OrgResource); ok {
 			return cb(orgResource)
 		}
@@ -102,16 +110,16 @@ func (r *organization) listOrgResourcesWithPath(path string, cb func(OrgResource
 	return err
 }
 
-func (r *organization) urlOfOrgWithName(name string, inline bool) (string, error) {
+func (o *organization) urlOfOrgWithName(name string, inline bool) (string, error) {
 	req := rest.GetRequest("/v2/organizations").Query("q", fmt.Sprintf("name:%s", name))
 
 	if inline {
 		req.Query("inline-relations-depth", "1")
 	}
-	return r.url(req)
+	return o.url(req)
 }
 
-func (r *organization) url(req *rest.Request) (string, error) {
+func (o *organization) url(req *rest.Request) (string, error) {
 	httpReq, err := req.Build()
 	if err != nil {
 		return "", err

@@ -11,14 +11,6 @@ import (
 	"github.com/IBM-Bluemix/bluemix-go"
 )
 
-const (
-	userAgentHeader      = "User-Agent"
-	authorizationHeader  = "Authorization"
-	uaaAccessTokenHeader = "X-Auth-Uaa-Token"
-
-	iamRefreshTokenHeader = "X-Auth-Refresh-Token"
-)
-
 //NewHTTPClient ...
 func NewHTTPClient(config *bluemix.Config) *http.Client {
 	return &http.Client{
@@ -40,24 +32,6 @@ func makeTransport(config *bluemix.Config) http.RoundTripper {
 			InsecureSkipVerify: config.SSLDisable,
 		},
 	})
-}
-
-//DefaultHeader ...
-func DefaultHeader(c *bluemix.Config) http.Header {
-	h := http.Header{}
-	h.Set(userAgentHeader, UserAgent())
-	h.Set(authorizationHeader, c.UAAAccessToken)
-	return h
-}
-
-//DefaultClusterAuthHeader ...
-func DefaultClusterAuthHeader(c *bluemix.Config) http.Header {
-	h := http.Header{}
-	h.Set(userAgentHeader, UserAgent())
-	h.Set(authorizationHeader, c.IAMAccessToken)
-	h.Set(iamRefreshTokenHeader, c.IAMRefreshToken)
-	h.Set(uaaAccessTokenHeader, c.UAAAccessToken)
-	return h
 }
 
 //UserAgent ...

@@ -4,9 +4,9 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
+	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
 
 //IAMError ...
@@ -42,9 +42,16 @@ type IAMAuthRepository struct {
 
 //NewIAMAuthRepository ...
 func NewIAMAuthRepository(config *bluemix.Config, client *rest.Client) (*IAMAuthRepository, error) {
-	endpoint, err := config.EndpointLocator.IAMEndpoint()
-	if err != nil {
-		return nil, err
+	var endpoint string
+
+	if config.TokenProviderEndpoint != nil {
+		endpoint = *config.TokenProviderEndpoint
+	} else {
+		var err error
+		endpoint, err = config.EndpointLocator.IAMEndpoint()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &IAMAuthRepository{

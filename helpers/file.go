@@ -1,4 +1,4 @@
-package file_helpers
+package helpers
 
 import (
 	"fmt"

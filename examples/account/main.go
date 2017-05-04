@@ -5,10 +5,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/bluemix/trace"
 	"github.com/IBM-Bluemix/bluemix-go/api/account/accountv2"
 	"github.com/IBM-Bluemix/bluemix-go/api/cf/cfv2"
 	"github.com/IBM-Bluemix/bluemix-go/session"
+	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
 
 func main() {
@@ -28,7 +28,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	client, err := cfv2.NewClient(sess)
+	client, err := cfv2.New(sess)
 
 	if err != nil {
 		log.Fatal(err)
@@ -40,12 +40,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	accClient, err := accountv2.NewClient(sess)
+	accClient, err := accountv2.New(sess)
 	if err != nil {
 		log.Fatal(err)
 	}
 	accountAPI := accClient.Accounts()
-	myAccount, err := accountAPI.FindByOrg(myorg.GUID)
+	myAccount, err := accountAPI.FindByOrg(myorg.GUID, "us-south")
 	if err != nil {
 		log.Fatal(err)
 	}

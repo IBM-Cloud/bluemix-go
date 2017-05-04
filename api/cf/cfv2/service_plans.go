@@ -3,9 +3,9 @@ package cfv2
 import (
 	"fmt"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
+	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
 
 //ErrCodeServicePlanDoesNotExist ...
@@ -65,14 +65,12 @@ type ServicePlans interface {
 }
 
 type servicePlan struct {
-	client *cfAPIClient
-	config *bluemix.Config
+	client *client.Client
 }
 
-func newServicePlanAPI(c *cfAPIClient) ServicePlans {
+func newServicePlanAPI(c *client.Client) ServicePlans {
 	return &servicePlan{
 		client: c,
-		config: c.config,
 	}
 }
 
@@ -107,7 +105,7 @@ func (r *servicePlan) GetServicePlan(serviceOfferingGUID string, planType string
 
 func (r *servicePlan) listServicesPlanWithPath(path string) ([]ServicePlan, error) {
 	var servicePlans []ServicePlan
-	_, err := r.client.getPaginated(path, ServicePlanResource{}, func(resource interface{}) bool {
+	_, err := r.client.GetPaginated(path, ServicePlanResource{}, func(resource interface{}) bool {
 		if servicePlanResource, ok := resource.(ServicePlanResource); ok {
 			servicePlans = append(servicePlans, servicePlanResource.ToFields())
 			return true
