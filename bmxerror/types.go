@@ -46,6 +46,12 @@ func (r requestError) Error() string {
 	return fmt.Sprintf("Request failed with status code: %d, %s: %s", r.statusCode, r.code, r.description)
 }
 
-func (r requestError) StatusCode() string {
+func (r requestError) Code() string {
 	return r.code
+}
+func (r requestError) Description() string {
+	return r.description
+}
+func (r requestError) StatusCode() int {
+	return r.statusCode
 }
