@@ -45,26 +45,21 @@ package rest
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 )
 
-var ErrEmptyResponseBody = errors.New("empty response body")
+const (
+	//ErrCodeEmptyResponse ...
+	ErrCodeEmptyResponse = "EmptyResponseBody"
+)
 
-type ErrorResponse struct {
-	// Response status code
-	StatusCode int
-
-	// Response text
-	Message string
-}
-
-func (e *ErrorResponse) Error() string {
-	return fmt.Sprintf("Error response from server. Status code: %v; message: %v", e.StatusCode, e.Message)
-}
+//ErrEmptyResponseBody ...
+var ErrEmptyResponseBody = bmxerror.New(ErrCodeEmptyResponse, "empty response body")
 
 // Client is a REST client. It's recommend that a client be created with the
 // NewClient() method.
@@ -120,7 +115,7 @@ func (c *Client) Do(r *Request, respV interface{}, errV interface{}) (*http.Resp
 			}
 		}
 
-		return resp, &ErrorResponse{resp.StatusCode, string(raw)}
+		return resp, bmxerror.NewRequestFailure("ServerErrorResponse", string(raw), resp.StatusCode)
 	}
 
 	if respV != nil {
