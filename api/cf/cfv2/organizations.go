@@ -3,7 +3,7 @@ package cfv2
 import (
 	"fmt"
 
-	"github.ibm.com/ashishth/bluemix-go/rest"
+	"github.com/IBM-Bluemix/bluemix-go/rest"
 
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"github.com/IBM-Bluemix/bluemix-go/client"
