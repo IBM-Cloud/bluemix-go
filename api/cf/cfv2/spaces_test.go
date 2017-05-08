@@ -6,7 +6,6 @@ import (
 
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/client"
-	bluemixHttp "github.com/IBM-Bluemix/bluemix-go/http"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 
 	. "github.com/onsi/ginkgo"
@@ -493,14 +492,11 @@ func newSpaces(url string) Spaces {
 		log.Fatal(err)
 	}
 	conf := sess.Config.Copy()
-	conf.HTTPClient = bluemixHttp.NewHTTPClient(conf)
 	conf.Endpoint = &url
-
 	client := client.Client{
 		Config:           conf,
 		ServiceName:      bluemix.CfService,
 		HandlePagination: Paginate,
 	}
-
 	return newSpacesAPI(&client)
 }

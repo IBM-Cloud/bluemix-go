@@ -39,14 +39,15 @@ func New(sess *session.Session) (ClusterServiceAPI, error) {
 			"User-Agent": []string{http.UserAgent()},
 		},
 	})
-	if config.IAMAccessToken == "" {
-		authentication.PopulateTokens(tokenRefreher, config)
-	}
-
 	if err != nil {
 		return nil, err
 	}
-
+	if config.IAMAccessToken == "" {
+		err := authentication.PopulateTokens(tokenRefreher, config)
+		if err != nil {
+			return nil, err
+		}
+	}
 	if config.HTTPClient == nil {
 		config.HTTPClient = http.NewHTTPClient(config)
 	}

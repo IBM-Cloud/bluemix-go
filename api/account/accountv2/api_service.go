@@ -40,7 +40,10 @@ func New(sess *session.Session) (AccountServiceAPI, error) {
 		return nil, err
 	}
 	if config.UAAAccessToken == "" {
-		authentication.PopulateTokens(tokenRefreher, config)
+		err := authentication.PopulateTokens(tokenRefreher, config)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if config.HTTPClient == nil {

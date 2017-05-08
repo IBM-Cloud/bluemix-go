@@ -42,14 +42,15 @@ func New(sess *session.Session) (CfServiceAPI, error) {
 			"User-Agent": []string{http.UserAgent()},
 		},
 	})
-	if config.UAAAccessToken == "" {
-		authentication.PopulateTokens(tokenRefreher, config)
-	}
-
 	if err != nil {
 		return nil, err
 	}
-
+	if config.UAAAccessToken == "" || config.UAARefreshToken == "" {
+		err := authentication.PopulateTokens(tokenRefreher, config)
+		if err != nil {
+			return nil, err
+		}
+	}
 	if config.HTTPClient == nil {
 		config.HTTPClient = http.NewHTTPClient(config)
 	}
