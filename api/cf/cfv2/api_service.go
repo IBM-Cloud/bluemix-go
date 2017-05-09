@@ -22,6 +22,7 @@ type CfServiceAPI interface {
 	ServiceKeys() ServiceKeys
 	ServicePlans() ServicePlans
 	ServiceOfferings() ServiceOfferings
+	SpaceQuotas() SpaceQuotas
 }
 
 //CfService holds the client
@@ -41,14 +42,15 @@ func New(sess *session.Session) (CfServiceAPI, error) {
 			"User-Agent": []string{http.UserAgent()},
 		},
 	})
-	if config.UAAAccessToken == "" {
-		authentication.PopulateTokens(tokenRefreher, config)
-	}
-
 	if err != nil {
 		return nil, err
 	}
-
+	if config.UAAAccessToken == "" || config.UAARefreshToken == "" {
+		err := authentication.PopulateTokens(tokenRefreher, config)
+		if err != nil {
+			return nil, err
+		}
+	}
 	if config.HTTPClient == nil {
 		config.HTTPClient = http.NewHTTPClient(config)
 	}
@@ -93,4 +95,9 @@ func (c *cfService) ServiceInstances() ServiceInstances {
 //ServiceKeys implements ServiceKey APIs
 func (c *cfService) ServiceKeys() ServiceKeys {
 	return newServiceKeyAPI(c.Client)
+}
+
+//SpaceQuotas implements SpaceQuota APIs
+func (c *cfService) SpaceQuotas() SpaceQuotas {
+	return newSpaceQuotasAPI(c.Client)
 }
