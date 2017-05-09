@@ -90,6 +90,10 @@ var _ = Describe("Webhooks", func() {
 				webhooks, err := newWebhook(server.URL()).List("test", target)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(webhooks).ShouldNot(BeNil())
+				for _, wObj := range webhooks {
+					Expect(wObj).ShouldNot(BeNil())
+					Expect(wObj.Type).Should(Equal("slack"))
+				}
 			})
 		})
 		Context("When retrieving available webhooks is unsuccessful", func() {

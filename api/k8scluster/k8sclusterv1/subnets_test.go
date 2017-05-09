@@ -95,6 +95,11 @@ var _ = Describe("Subnets", func() {
 				subnets, err := newSubnet(server.URL()).List(target)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(subnets).ShouldNot(BeNil())
+				for _, sObj := range subnets {
+					Expect(sObj).ShouldNot(BeNil())
+					Expect(sObj.ID).Should(Equal("535642"))
+					Expect(sObj.Type).Should(Equal("private"))
+				}
 			})
 		})
 		Context("When retrieving available subnets is unsuccessful", func() {

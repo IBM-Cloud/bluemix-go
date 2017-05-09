@@ -68,7 +68,7 @@ var _ = Describe("Workers", func() {
 	})
 	//Get
 	Describe("Get", func() {
-		Context("When retrieving available workers is successful", func() {
+		Context("When retrieving worker is successful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
@@ -88,9 +88,10 @@ var _ = Describe("Workers", func() {
 				worker, err := newWorker(server.URL()).Get("abc-123-def-ghi", target)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(worker).ShouldNot(BeNil())
+				Expect(worker.State).Should(Equal("normal"))
 			})
 		})
-		Context("When retrieving available workers is unsuccessful", func() {
+		Context("When retrieving worker is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
@@ -111,6 +112,58 @@ var _ = Describe("Workers", func() {
 				Expect(err).To(HaveOccurred())
 				Expect(worker.ID).Should(Equal(""))
 				Expect(worker.State).Should(Equal(""))
+			})
+		})
+	})
+	//List
+	Describe("List", func() {
+		Context("When retrieving available workers of a cluster is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workers"),
+						ghttp.RespondWith(http.StatusOK, `[{"Billing":"","ErrorMessage":"","Isolation":"","MachineType":"free","KubeVersion":"","PrivateIP":"","PublicIP":"","PrivateVlan":"vlan","PublicVlan":"vlan","state":"normal","status":"ready"}]`),
+					),
+				)
+			})
+
+			It("should return available workers ", func() {
+				target := &ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				worker, err := newWorker(server.URL()).List("myCluster", target)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(worker).ShouldNot(BeNil())
+				for _, wObj := range worker {
+					Expect(wObj).ShouldNot(BeNil())
+					Expect(wObj.State).Should(Equal("normal"))
+				}
+			})
+		})
+		Context("When retrieving available workers is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workers"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to retrieve workers`),
+					),
+				)
+			})
+
+			It("should return error during retrieveing workers", func() {
+				target := &ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				worker, err := newWorker(server.URL()).List("myCluster", target)
+				Expect(err).To(HaveOccurred())
+				Expect(worker).Should(BeNil())
+				Expect(len(worker)).Should(Equal(0))
 			})
 		})
 	})
