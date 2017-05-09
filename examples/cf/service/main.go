@@ -17,6 +17,9 @@ func main() {
 	var space string
 	flag.StringVar(&space, "space", "", "Bluemix Space")
 
+	var skipDeletion bool
+	flag.BoolVar(&skipDeletion, "no-delete", false, "If provided will delete the resources created")
+
 	flag.Parse()
 
 	if org == "" || space == "" {
@@ -83,15 +86,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = serviceKeys.Delete(myRetrievedKeys.GUID)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = serviceInstanceAPI.Delete(myService.Metadata.GUID)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	log.Println(myorg.GUID, myspace.GUID, plan.GUID, myService.Metadata.GUID, mykeys.Metadata.GUID, myRetrievedKeys)
+
+	if !skipDeletion {
+		err = serviceKeys.Delete(myRetrievedKeys.GUID)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = serviceInstanceAPI.Delete(myService.Metadata.GUID)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+	}
+
 }

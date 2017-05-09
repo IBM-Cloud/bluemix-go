@@ -14,12 +14,9 @@ func main() {
 	var org string
 	flag.StringVar(&org, "org", "", "Bluemix Organization")
 
-	var space string
-	flag.StringVar(&space, "space", "", "Bluemix Space")
-
 	flag.Parse()
 
-	if org == "" || space == "" {
+	if org == "" {
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -32,10 +29,6 @@ func main() {
 
 	client, err := cfv2.New(sess)
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	orgAPI := client.Organizations()
 	myorg, err := orgAPI.FindByName(org)
 
@@ -43,41 +36,37 @@ func main() {
 		log.Fatal(err)
 	}
 
-	spaceAPI := client.Spaces()
-	myspace, err := spaceAPI.FindByNameInOrg(myorg.GUID, space)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println(myorg.GUID, myspace.GUID)
-
 	quotaAPI := client.SpaceQuotas()
+
 	myquota, err := quotaAPI.Create("test1", myorg.GUID, 1024, 1024, 50, 150, false)
+
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	newspace, err := spaceAPI.Create("test", myorg.GUID, myquota.Metadata.GUID)
-	if err != nil {
-		log.Fatal(err)
-	}
+	myquota, err = quotaAPI.Get(myquota.Metadata.GUID)
 
-	newspace, err = spaceAPI.Get(newspace.Metadata.GUID)
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println(myquota.Metadata.GUID)
 
-	newspace, err = spaceAPI.Update("testupdate", newspace.Metadata.GUID)
-	if err != nil {
-		log.Fatal(err)
-	}
+	myquota, err = quotaAPI.Update("testnew", myquota.Metadata.GUID, myorg.GUID, 1024, 1024, 50, 150, false)
 
-	err = spaceAPI.Delete(newspace.Metadata.GUID)
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println(myquota.Metadata.GUID)
+
+	quota, err := quotaAPI.FindByName("testnew", myorg.GUID)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(quota)
 
 	err = quotaAPI.Delete(myquota.Metadata.GUID)
+
 	if err != nil {
 		log.Fatal(err)
 	}
