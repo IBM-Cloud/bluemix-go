@@ -2,11 +2,11 @@ package cfv2
 
 import (
 	"fmt"
-
-	"github.com/IBM-Bluemix/bluemix-go/rest"
+	"strconv"
 
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
 
 //ErrCodeOrgDoesnotExist ...
@@ -58,7 +58,11 @@ type Organization struct {
 
 //Organizations ...
 type Organizations interface {
+	Create(name string) error
+	List() ([]Organization, error)
 	FindByName(orgName string) (*Organization, error)
+	Delete(guid string, recursive bool) error
+	Update(guid string, newName string) error
 }
 
 type organization struct {
@@ -69,6 +73,55 @@ func newOrganizationAPI(c *client.Client) Organizations {
 	return &organization{
 		client: c,
 	}
+}
+
+func (o *organization) Create(name string) error {
+	body := struct {
+		Name string `json:"name"`
+	}{
+		Name: name,
+	}
+	_, err := o.client.Post("/v2/organizations", body, nil)
+	return err
+}
+
+func (o *organization) Update(guid string, newName string) error {
+	rawURL := fmt.Sprintf("/v2/organizations/%s", guid)
+	body := struct {
+		Name string `json:"name"`
+	}{
+		Name: newName,
+	}
+	_, err := o.client.Put(rawURL, body, nil)
+	return err
+}
+
+func (o *organization) Delete(guid string, recursive bool) error {
+	req := rest.DeleteRequest(fmt.Sprintf("/v2/organizations/%s", guid)).
+		Query("recursive", strconv.FormatBool(recursive))
+
+	path, pathErr := o.url(req)
+	if pathErr != nil {
+		return pathErr
+	}
+
+	_, err := o.client.Delete(path, nil, nil)
+	return err
+}
+
+func (o *organization) List() ([]Organization, error) {
+	req := rest.GetRequest("/v2/organizations")
+	path, err := o.url(req)
+	if err != nil {
+		return []Organization{}, err
+	}
+
+	var orgs []Organization
+	err = o.listOrgResourcesWithPath(path, func(orgResource OrgResource) bool {
+		orgs = append(orgs, orgResource.ToFields())
+		return true
+	})
+	return orgs, err
 }
 
 //FindByName ...
