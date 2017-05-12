@@ -3,6 +3,7 @@ package endpoints
 import (
 	"fmt"
 
+	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"github.com/IBM-Bluemix/bluemix-go/helpers"
 )
 
@@ -14,6 +15,11 @@ type EndpointLocator interface {
 	IAMEndpoint() (string, error)
 	UAAEndpoint() (string, error)
 }
+
+const (
+	//ErrCodeServiceEndpoint ...
+	ErrCodeServiceEndpoint = "ServiceEndpointDoesnotExist"
+)
 
 var regionToEndpoint = map[string]map[string]string{
 	"cf": {
@@ -62,7 +68,7 @@ func (e *endpointLocator) CFAPIEndpoint() (string, error) {
 		return helpers.EnvFallBack([]string{"IBMCLOUD_CF_API_ENDPOINT"}, ep), nil
 
 	}
-	return "", fmt.Errorf("Cloud Foundry endpoint doesn't exist for region: %q", e.region)
+	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Cloud Foundry endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) UAAEndpoint() (string, error) {
@@ -71,7 +77,7 @@ func (e *endpointLocator) UAAEndpoint() (string, error) {
 		return helpers.EnvFallBack([]string{"IBMCLOUD_UAA_ENDPOINT"}, ep), nil
 
 	}
-	return "", fmt.Errorf("UAA endpoint doesn't exist for region: %q", e.region)
+	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("UAA endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) AccountManagementEndpoint() (string, error) {
@@ -80,7 +86,7 @@ func (e *endpointLocator) AccountManagementEndpoint() (string, error) {
 		return helpers.EnvFallBack([]string{"IBMCLOUD_ACCOUNT_MANAGEMENT_API_ENDPOINT"}, ep), nil
 
 	}
-	return "", fmt.Errorf("Account Management endpoint doesn't exist for region: %q", e.region)
+	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Account Management endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) IAMEndpoint() (string, error) {
@@ -89,7 +95,7 @@ func (e *endpointLocator) IAMEndpoint() (string, error) {
 		return helpers.EnvFallBack([]string{"IBMCLOUD_IAM_API_ENDPOINT"}, ep), nil
 
 	}
-	return "", fmt.Errorf("IAM  endpoint doesn't exist for region: %q", e.region)
+	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("IAM  endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) ClusterEndpoint() (string, error) {
@@ -97,5 +103,5 @@ func (e *endpointLocator) ClusterEndpoint() (string, error) {
 		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
 		return helpers.EnvFallBack([]string{"IBMCLOUD_CS_API_ENDPOINT"}, ep), nil
 	}
-	return "", fmt.Errorf("Container Service endpoint doesn't exist for region: %q", e.region)
+	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Container Service endpoint doesn't exist for region: %q", e.region))
 }
