@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
-	"github.com/IBM-Bluemix/bluemix-go/client"
 )
 
 const (
@@ -12,8 +11,15 @@ const (
 	ErrCodeInvalidToken = "InvalidToken"
 )
 
+//TokenProvider ...
+type TokenProvider interface {
+	RefreshToken() (string, error)
+	AuthenticatePassword(string, string) error
+	AuthenticateAPIKey(string) error
+}
+
 //PopulateTokens populate the relevant tokens in the bluemix Config using the token provider
-func PopulateTokens(tokenProvider client.TokenProvider, c *bluemix.Config) error {
+func PopulateTokens(tokenProvider TokenProvider, c *bluemix.Config) error {
 	if c.IBMID != "" && c.IBMIDPassword != "" {
 		err := tokenProvider.AuthenticatePassword(c.IBMID, c.IBMIDPassword)
 		return err

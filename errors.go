@@ -1,9 +1,9 @@
 package bluemix
 
 const (
-	//ErrMissingRegionCode ..
-	ErrMissingRegionCode = "MissingRegion"
+	//ErrCodeInvalidRegion ..
+	ErrCodeInvalidRegion = "InvalidRegion"
 
-	//ErrInvalidConfigurationCode ..
-	ErrInvalidConfigurationCode = "InvalidConfiguration"
+	//ErrCodeMissingCredentials ..
+	ErrCodeMissingCredentials = "InsufficientCrdentials"
 )

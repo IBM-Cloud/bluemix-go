@@ -1,12 +1,10 @@
 package session
 
 import (
-	"fmt"
-	"time"
+	"net/http"
 
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/endpoints"
-	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
 
@@ -28,66 +26,20 @@ func New(configs ...*bluemix.Config) (*Session, error) {
 		Config: c,
 	}
 
-	if len(c.IBMID) == 0 {
-		c.IBMID = helpers.EnvFallBack([]string{"IBMID"}, "")
-	}
-
-	if len(c.IBMIDPassword) == 0 {
-		c.IBMIDPassword = helpers.EnvFallBack([]string{"IBMID_PASSWORD"}, "")
-	}
-
-	if len(c.BluemixAPIKey) == 0 {
-		c.BluemixAPIKey = helpers.EnvFallBack([]string{"BM_API_KEY", "BLUEMIX_API_KEY"}, "")
-	}
-
-	if len(c.Region) == 0 {
-		c.Region = helpers.EnvFallBack([]string{"BM_REGION", "BLUEMIX_REGION"}, "us-south")
-	}
-	if c.MaxRetries == nil {
-		c.MaxRetries = helpers.Int(3)
-	}
-	if c.HTTPTimeout == 0 {
-		c.HTTPTimeout = 180 * time.Second
-		timeout := helpers.EnvFallBack([]string{"BM_TIMEOUT", "BLUEMIX_TIMEOUT"}, "180")
-		timeoutDuration, err := time.ParseDuration(fmt.Sprintf("%ss", timeout))
-		if err != nil {
-			fmt.Printf("BM_TIMEOUT or BLUEMIX_TIMEOUT has invalid time format. Default timeout will be set to %q", c.HTTPTimeout)
-		}
-		if err == nil {
-			c.HTTPTimeout = timeoutDuration
-		}
-	}
-
-	if c.RetryDelay == nil {
-		c.RetryDelay = helpers.Duration(30 * time.Second)
-	}
-	if c.EndpointLocator == nil {
+	if c.Region != "" && c.EndpointLocator == nil {
 		c.EndpointLocator = endpoints.NewEndpointLocator(c.Region)
 	}
 
-	if len(c.IAMAccessToken) == 0 {
-		c.IAMAccessToken = helpers.EnvFallBack([]string{"IBMCLOUD_IAM_TOKEN"}, "")
-	}
-	if len(c.IAMRefreshToken) == 0 {
-		c.IAMRefreshToken = helpers.EnvFallBack([]string{"IBMCLOUD_IAM_REFRESH_TOKEN"}, "")
-	}
-	if len(c.UAAAccessToken) == 0 {
-		c.UAAAccessToken = helpers.EnvFallBack([]string{"IBMCLOUD_UAA_TOKEN"}, "")
-	}
-	if len(c.UAARefreshToken) == 0 {
-		c.UAARefreshToken = helpers.EnvFallBack([]string{"IBMCLOUD_UAA_REFRESH_TOKEN"}, "")
+	if c.HTTPClient == nil {
+		c.HTTPClient = &http.Client{
+			Timeout: c.HTTPTimeout,
+		}
 	}
 
 	if c.Debug {
 		trace.Logger = trace.NewLogger("true")
 	}
 
-	return sess, nil
-}
-
-//Copy allows sessions to create a copy of it and optionally override any defaults via the config
-func (s *Session) Copy(cfgs ...*bluemix.Config) *Session {
-	return &Session{
-		Config: s.Config.Copy(cfgs...),
-	}
+	err := c.Validate()
+	return sess, err
 }

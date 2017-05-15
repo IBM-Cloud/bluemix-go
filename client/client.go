@@ -3,7 +3,6 @@ package client
 
 import (
 	"fmt"
-	"log"
 	"path"
 	"strings"
 
@@ -11,45 +10,46 @@ import (
 
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-go/http"
 
 	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
 
-//TokenProvider ...
-type TokenProvider interface {
+//EndpointOptions ...
+type EndpointOptions struct {
+	APIEndpoint           string
+	TokenProviderEndpoint string
+}
+
+//TokenRefresher ...
+type TokenRefresher interface {
 	RefreshToken() (string, error)
-	AuthenticatePassword(string, string) error
-	AuthenticateAPIKey(string) error
 }
 
 //HandlePagination ...
 type HandlePagination func(c *Client, path string, resource interface{}, cb func(interface{}) bool) (resp *gohttp.Response, err error)
 
+//DefaultHeader ...
+type DefaultHeader interface {
+	DefaultHeader() gohttp.Header
+}
+
 //Client is the base client for all service api client
 type Client struct {
 	Config           *bluemix.Config
-	DefaultHeader    gohttp.Header
-	ServiceName      bluemix.ServiceName
-	TokenRefresher   TokenProvider
+	DefaultHeader    func() gohttp.Header
+	TokenRefresher   TokenRefresher
 	HandlePagination HandlePagination
-}
-
-//Config stores any generic service client configurations
-type Config struct {
-	Config   *bluemix.Config
-	Endpoint string
+	Endpoint         string
 }
 
 //New ...
-func New(c *bluemix.Config, serviceName bluemix.ServiceName, refresher TokenProvider, pagination HandlePagination) *Client {
-	config := c.Copy()
+func New(c *bluemix.Config, refresher TokenRefresher, pagination HandlePagination, defaultHeader func() gohttp.Header, endpoint string) *Client {
 	return &Client{
-		Config:           config,
-		ServiceName:      serviceName,
+		Config:           c,
 		TokenRefresher:   refresher,
 		HandlePagination: pagination,
-		DefaultHeader:    getDefaultAuthHeaders(serviceName, c),
+		DefaultHeader:    defaultHeader,
+		Endpoint:         endpoint,
 	}
 }
 
@@ -60,7 +60,7 @@ func (c *Client) sendRequest(r *rest.Request, respV interface{}) (*gohttp.Respon
 	}
 
 	restClient := &rest.Client{
-		DefaultHeader: c.DefaultHeader,
+		DefaultHeader: c.DefaultHeader(),
 		HTTPClient:    httpClient,
 	}
 
@@ -81,7 +81,7 @@ func (c *Client) sendRequest(r *rest.Request, respV interface{}) (*gohttp.Respon
 		_, err := c.TokenRefresher.RefreshToken()
 		switch err.(type) {
 		case nil:
-			restClient.DefaultHeader = getDefaultAuthHeaders(c.ServiceName, c.Config)
+			restClient.DefaultHeader = c.DefaultHeader()
 			resp, err = restClient.Do(r, respV, nil)
 		case *bmxerror.InvalidTokenError:
 			return resp, bmxerror.NewRequestFailure("InvalidToken", fmt.Sprintf("%v", err), 401)
@@ -153,7 +153,7 @@ func (c *Client) GetPaginated(path string, resource interface{}, cb func(interfa
 }
 
 func (c *Client) url(path string) string {
-	return *c.Config.Endpoint + cleanPath(path)
+	return c.Endpoint + cleanPath(path)
 }
 
 func cleanPath(p string) string {
@@ -164,30 +164,4 @@ func cleanPath(p string) string {
 		p = "/" + p
 	}
 	return path.Clean(p)
-}
-
-const (
-	userAgentHeader      = "User-Agent"
-	authorizationHeader  = "Authorization"
-	uaaAccessTokenHeader = "X-Auth-Uaa-Token"
-
-	iamRefreshTokenHeader = "X-Auth-Refresh-Token"
-)
-
-func getDefaultAuthHeaders(serviceName bluemix.ServiceName, c *bluemix.Config) gohttp.Header {
-	h := gohttp.Header{}
-	switch serviceName {
-	case bluemix.CfService, bluemix.AccountService:
-		h.Set(userAgentHeader, http.UserAgent())
-		h.Set(authorizationHeader, c.UAAAccessToken)
-
-	case bluemix.ClusterService:
-		h.Set(userAgentHeader, http.UserAgent())
-		h.Set(authorizationHeader, c.IAMAccessToken)
-		h.Set(iamRefreshTokenHeader, c.IAMRefreshToken)
-		h.Set(uaaAccessTokenHeader, c.UAAAccessToken)
-	default:
-		log.Println("Unknown service")
-	}
-	return h
 }

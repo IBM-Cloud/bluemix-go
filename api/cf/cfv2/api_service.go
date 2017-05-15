@@ -3,7 +3,6 @@ package cfv2
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/authentication"
 	"github.com/IBM-Bluemix/bluemix-go/client"
 	"github.com/IBM-Bluemix/bluemix-go/http"
@@ -31,12 +30,9 @@ type cfService struct {
 }
 
 //New ...
-func New(sess *session.Session) (CfServiceAPI, error) {
-	config := sess.Config.Copy()
-	err := config.ValidateConfigForService(bluemix.CfService)
-	if err != nil {
-		return nil, err
-	}
+func New(sess *session.Session, endpoints ...client.EndpointOptions) (CfServiceAPI, error) {
+	config := sess.Config
+
 	tokenRefreher, err := authentication.NewUAARepository(config, &rest.Client{
 		DefaultHeader: gohttp.Header{
 			"User-Agent": []string{http.UserAgent()},
@@ -45,12 +41,19 @@ func New(sess *session.Session) (CfServiceAPI, error) {
 	if err != nil {
 		return nil, err
 	}
-	if config.UAAAccessToken == "" || config.UAARefreshToken == "" {
+	if config.UAAAccessToken == nil || config.UAARefreshToken == nil {
 		err := authentication.PopulateTokens(tokenRefreher, config)
 		if err != nil {
 			return nil, err
 		}
 	}
+	defaultHeader := func() gohttp.Header {
+		h := gohttp.Header{}
+		h.Set(userAgentHeader, http.UserAgent())
+		h.Set(authorizationHeader, *config.UAAAccessToken)
+		return h
+	}
+
 	if config.HTTPClient == nil {
 		config.HTTPClient = http.NewHTTPClient(config)
 	}
@@ -63,7 +66,7 @@ func New(sess *session.Session) (CfServiceAPI, error) {
 	}
 
 	return &cfService{
-		Client: client.New(config, bluemix.CfService, tokenRefreher, Paginate),
+		Client: client.New(config, tokenRefreher, Paginate, defaultHeader),
 	}, nil
 }
 
