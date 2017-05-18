@@ -139,7 +139,7 @@ func (r *clusters) Create(params *ClusterCreateRequest, target *ClusterTargetHea
 //Delete ...
 func (r *clusters) Delete(name string, target *ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s", name)
-	_, err := r.client.Delete(rawURL, target)
+	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
 }
 

@@ -44,7 +44,7 @@ func newSubnetAPI(c *client.Client) Subnets {
 //GetSubnets ...
 func (r *subnet) List(target *ClusterTargetHeader) ([]Subnet, error) {
 	subnets := []Subnet{}
-	_, err := r.client.Get("/v1/subnets", &subnets, target)
+	_, err := r.client.Get("/v1/subnets", &subnets, target.ToMap())
 	if err != nil {
 		return nil, err
 	}
