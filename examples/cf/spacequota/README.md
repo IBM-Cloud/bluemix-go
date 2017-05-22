@@ -7,7 +7,7 @@ This creates a space quota in specified organization.After successfull creation 
 Example: 
 
 ```
-go run main.go -org example.com
+go run main.go -org example.com -spacequota "myspacequota" -newspacequota "newspacequota"
 ```
 
 

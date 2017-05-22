@@ -52,7 +52,18 @@ func main() {
 	log.Println(myorg.GUID, myspace.GUID)
 
 	quotaAPI := client.SpaceQuotas()
-	myquota, err := quotaAPI.Create("test1", myorg.GUID, 1024, 1024, 50, 150, false)
+
+	createRequest := cfv2.SpaceQuotaCreateRequest{
+		Name:                    "test1",
+		OrgGUID:                 myorg.GUID,
+		MemoryLimitInMB:         1024,
+		InstanceMemoryLimitInMB: 1024,
+		RoutesLimit:             50,
+		ServicesLimit:           150,
+		NonBasicServicesAllowed: false,
+	}
+
+	myquota, err := quotaAPI.Create(createRequest)
 	if err != nil {
 		log.Fatal(err)
 	}
