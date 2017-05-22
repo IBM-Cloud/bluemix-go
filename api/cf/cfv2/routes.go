@@ -1,10 +1,12 @@
 package cfv2
 
 import (
-	"fmt"
+
 	//"strconv"
 
 	//"github.com/IBM-Bluemix/bluemix-go/bmxerror"
+	"fmt"
+
 	"github.com/IBM-Bluemix/bluemix-go/client"
 	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
@@ -12,13 +14,16 @@ import (
 //ErrCodeRouteDoesnotExist ...
 var ErrCodeRouteDoesnotExist = "RouteDoesnotExist"
 
-type RouteCreateRequest struct {
-	Host       string `json:"host"`
+//RouteRequest ...
+type RouteRequest struct {
+	Host       string `json:"host,omitempty"`
 	SpaceGUID  string `json:"space_guid"`
-	DomainGUID string `json:"domain_guid"`
+	DomainGUID string `json:"domain_guid,omitempty"`
+	Path       string `json:"path,omitempty"`
+	Port       int    `json:"port,omitempty"`
 }
 
-//Metadata ...
+//RouteMetadata ...
 type RouteMetadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
@@ -35,6 +40,7 @@ type RouteResource struct {
 	Entity RouteEntity
 }
 
+//RouteFields ...
 type RouteFields struct {
 	Metadata RouteMetadata
 	Entity   RouteEntity
@@ -56,11 +62,14 @@ type Route struct {
 	Name string
 }
 
-//Apps ...
+//Routes ...
 type Routes interface {
 	GetSharedDomains(domain string) (*Route, error)
 	Find(hostname, domainGUID string) ([]Route, error)
-	Create(host, domainGUID, spaceGUID string) (*RouteFields, error)
+	Create(req RouteRequest) (*RouteFields, error)
+	Get(routeGUID string) (*RouteFields, error)
+	Update(routeGUID string, req RouteRequest) (*RouteFields, error)
+	Delete(routeGUID string, async bool) error
 }
 
 type route struct {
@@ -73,16 +82,25 @@ func newRouteAPI(c *client.Client) Routes {
 	}
 }
 
+func (r *route) Get(routeGUID string) (*RouteFields, error) {
+	rawURL := fmt.Sprintf("/v2/routes/%s", routeGUID)
+	routeFields := RouteFields{}
+	_, err := r.client.Get(rawURL, &routeFields, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &routeFields, nil
+}
+
 func (r *route) GetSharedDomains(domainName string) (*Route, error) {
 	rawURL := "/v2/shared_domains"
 	req := rest.GetRequest(rawURL).Query("q", "name:"+domainName)
-	fmt.Println(req, "\n\n")
 	httpReq, err := req.Build()
 	if err != nil {
 		return nil, err
 	}
 	path := httpReq.URL.String()
-	domain, err := r.listRouteWithPath(path)
+	domain, err := listRouteWithPath(r.client, path)
 	if err != nil {
 		return nil, err
 	}
@@ -92,38 +110,56 @@ func (r *route) GetSharedDomains(domainName string) (*Route, error) {
 func (r *route) Find(hostname, domainGUID string) ([]Route, error) {
 	rawURL := "/v2/routes?inline-relations-depth=1"
 	req := rest.GetRequest(rawURL).Query("q", "host:"+hostname+";domain_guid:"+domainGUID)
-	fmt.Println(req, "\n\n")
 	httpReq, err := req.Build()
-	fmt.Println(httpReq, "\n\n", "\n\n")
 	if err != nil {
 		return nil, err
 	}
 	path := httpReq.URL.String()
-	route, err := r.listRouteWithPath(path)
+	route, err := listRouteWithPath(r.client, path)
 	if err != nil {
 		return nil, err
 	}
 	return route, nil
 }
 
-func (r *route) Create(host, domainGUID, spaceGUID string) (*RouteFields, error) {
-	payload := RouteCreateRequest{
-		Host:       host,
-		DomainGUID: domainGUID,
-		SpaceGUID:  spaceGUID,
-	}
+func (r *route) Create(req RouteRequest) (*RouteFields, error) {
 	rawURL := "/v2/routes?async=true&inline-relations-depth=1"
 	routeFields := RouteFields{}
-	_, err := r.client.Post(rawURL, payload, &routeFields)
+	_, err := r.client.Post(rawURL, req, &routeFields)
 	if err != nil {
 		return nil, err
 	}
 	return &routeFields, nil
 }
 
-func (r *route) listRouteWithPath(path string) ([]Route, error) {
+func (r *route) Update(routeGUID string, req RouteRequest) (*RouteFields, error) {
+	rawURL := fmt.Sprintf("/v2/routes/%s", routeGUID)
+	routeFields := RouteFields{}
+	_, err := r.client.Put(rawURL, req, &routeFields)
+	if err != nil {
+		return nil, err
+	}
+	return &routeFields, nil
+}
+
+func (r *route) Delete(routeGUID string, async bool) error {
+	rawURL := fmt.Sprintf("/v2/route/%s", routeGUID)
+	req := rest.GetRequest(rawURL).Query("recursive", "true")
+	if async {
+		req.Query("async", "true")
+	}
+	httpReq, err := req.Build()
+	if err != nil {
+		return err
+	}
+	path := httpReq.URL.String()
+	_, err = r.client.Delete(path)
+	return err
+}
+
+func listRouteWithPath(c *client.Client, path string) ([]Route, error) {
 	var route []Route
-	_, err := r.client.GetPaginated(path, RouteResource{}, func(resource interface{}) bool {
+	_, err := c.GetPaginated(path, RouteResource{}, func(resource interface{}) bool {
 		if routeResource, ok := resource.(RouteResource); ok {
 			route = append(route, routeResource.ToFields())
 			return true
