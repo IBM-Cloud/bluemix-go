@@ -41,6 +41,17 @@ var _ = Describe("EndPoints", func() {
 		})
 	})
 
+	Context("When region is eu-de", func() {
+		locator := newEndpointLocator("eu-de")
+
+		It("should return endpoints with region eu-de", func() {
+			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.eu-de.bluemix.net"))
+			Expect(locator.UAAEndpoint()).To(Equal("https://login.eu-de.bluemix.net/UAALoginServerWAR"))
+			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.eu-de.bluemix.net"))
+			Expect(locator.IAMEndpoint()).To(Equal("https://iam.eu-de.bluemix.net"))
+		})
+	})
+
 	Context("When region is not supported", func() {
 		locator := newEndpointLocator("in")
 

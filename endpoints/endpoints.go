@@ -26,22 +26,26 @@ var regionToEndpoint = map[string]map[string]string{
 		"us-south": "https://api.ng.bluemix.net",
 		"eu-gb":    "https://api.eu-gb.bluemix.net",
 		"au-syd":   "https://api.au-syd.bluemix.net",
+		"eu-de":    "https://api.eu-de.bluemix.net",
 	},
 	"iam": {
 		"us-south": "https://iam.ng.bluemix.net",
 		"eu-gb":    "https://iam.eu-gb.bluemix.net",
 		"au-syd":   "https://iam.au-syd.bluemix.net",
+		"eu-de":    "https://iam.eu-de.bluemix.net",
 	},
 
 	"uaa": {
 		"us-south": "https://login.ng.bluemix.net/UAALoginServerWAR",
 		"eu-gb":    "https://login.eu-gb.bluemix.net/UAALoginServerWAR",
 		"au-syd":   "https://login.au-syd.bluemix.net/UAALoginServerWAR",
+		"eu-de":    "https://login.eu-de.bluemix.net/UAALoginServerWAR",
 	},
 	"account": {
 		"us-south": "https://accountmanagement.ng.bluemix.net",
 		"eu-gb":    "https://accountmanagement.eu-gb.bluemix.net",
 		"au-syd":   "https://accountmanagement.au-syd.bluemix.net",
+		"eu-de":    "https://accountmanagement.eu-de.bluemix.net",
 	},
 	"cs": {
 		"us-south": "https://us-south.containers.bluemix.net",
