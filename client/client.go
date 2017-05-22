@@ -53,7 +53,8 @@ func New(c *bluemix.Config, serviceName bluemix.ServiceName, refresher TokenProv
 	}
 }
 
-func (c *Client) sendRequest(r *rest.Request, respV interface{}) (*gohttp.Response, error) {
+//SendRequest ...
+func (c *Client) SendRequest(r *rest.Request, respV interface{}) (*gohttp.Response, error) {
 	httpClient := c.Config.HTTPClient
 	if httpClient == nil {
 		httpClient = gohttp.DefaultClient
@@ -95,47 +96,47 @@ func (c *Client) sendRequest(r *rest.Request, respV interface{}) (*gohttp.Respon
 
 //Get ...
 func (c *Client) Get(path string, respV interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
-	r := rest.GetRequest(c.url(path))
+	r := rest.GetRequest(c.URL(path))
 	for _, t := range extraHeader {
 		addToRequestHeader(t, r)
 	}
-	return c.sendRequest(r, respV)
+	return c.SendRequest(r, respV)
 }
 
 //Put ...
 func (c *Client) Put(path string, data interface{}, respV interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
-	r := rest.PutRequest(c.url(path)).Body(data)
+	r := rest.PutRequest(c.URL(path)).Body(data)
 	for _, t := range extraHeader {
 		addToRequestHeader(t, r)
 	}
-	return c.sendRequest(r, respV)
+	return c.SendRequest(r, respV)
 }
 
 //Patch ...
 func (c *Client) Patch(path string, data interface{}, respV interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
-	r := rest.PatchRequest(c.url(path)).Body(data)
+	r := rest.PatchRequest(c.URL(path)).Body(data)
 	for _, t := range extraHeader {
 		addToRequestHeader(t, r)
 	}
-	return c.sendRequest(r, respV)
+	return c.SendRequest(r, respV)
 }
 
 //Post ...
 func (c *Client) Post(path string, data interface{}, respV interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
-	r := rest.PostRequest(c.url(path)).Body(data)
+	r := rest.PostRequest(c.URL(path)).Body(data)
 	for _, t := range extraHeader {
 		addToRequestHeader(t, r)
 	}
-	return c.sendRequest(r, respV)
+	return c.SendRequest(r, respV)
 }
 
 //Delete ...
 func (c *Client) Delete(path string, extraHeader ...interface{}) (*gohttp.Response, error) {
-	r := rest.DeleteRequest(c.url(path))
+	r := rest.DeleteRequest(c.URL(path))
 	for _, t := range extraHeader {
 		addToRequestHeader(t, r)
 	}
-	return c.sendRequest(r, nil)
+	return c.SendRequest(r, nil)
 }
 
 func addToRequestHeader(h interface{}, r *rest.Request) {
@@ -152,7 +153,8 @@ func (c *Client) GetPaginated(path string, resource interface{}, cb func(interfa
 	return c.HandlePagination(c, path, resource, cb)
 }
 
-func (c *Client) url(path string) string {
+//URL ...
+func (c *Client) URL(path string) string {
 	return *c.Config.Endpoint + cleanPath(path)
 }
 

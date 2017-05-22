@@ -1,24 +1,35 @@
 package cfv2
 
 import (
-	"bytes"
 	"fmt"
-	"io"
-	"log"
-	"mime/multipart"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"github.com/IBM-Bluemix/bluemix-go/client"
 	"github.com/IBM-Bluemix/bluemix-go/rest"
+	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
 
-//ErrCodeAppAlreadyExist ...
-var ErrCodeAppAlreadyExist = "AppAlreadyExist"
+const (
+	//ErrCodeAppDoesnotExist ...
+	ErrCodeAppDoesnotExist = "AppADoesnotExist"
 
-const TimeOutError = "Timeout"
+	//AppRunningState ...
+	AppRunningState = "RUNNING"
+
+	//AppStartedState ...
+	AppStartedState = "STARTED"
+
+	//AppStagedState ...
+	AppStagedState = "STAGED"
+
+	//AppPendingState ...
+	AppPendingState = "PENDING"
+
+	//DefaultRetryDelayForStatusCheck ...
+	DefaultRetryDelayForStatusCheck = 10 * time.Second
+)
 
 //AppCreateRequest ...
 type AppCreateRequest struct {
@@ -33,7 +44,8 @@ type AppCreateRequest struct {
 	Command                  string `json:"command,omitempty"`
 	BuildPack                string `json:"buildpack,omitempty"`
 	HealthCheckType          string `json:"health_check_type,omitempty"`
-	HealthCheckTimeout       int    `json:"health_check_type,omitempty"`
+	HealthCheckHTTPEndpoint  string `json:"health_check_http_endpoint,omitempty"`
+	HealthCheckTimeout       int    `json:"health_check_timeout,omitempty"`
 	Diego                    bool   `json:"diego,omitempty"`
 	EnableSSH                bool   `json:"enable_ssh,omitempty"`
 	DockerImage              string `json:"docker_image,omitempty"`
@@ -47,7 +59,7 @@ type AppsStateUpdateRequest struct {
 	State string `json:"state"`
 }
 
-//Metadata ...
+//AppMetadata ...
 type AppMetadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
@@ -84,11 +96,13 @@ type AppResource struct {
 	Entity AppEntity
 }
 
+//AppFields ...
 type AppFields struct {
 	Metadata AppMetadata
 	Entity   AppEntity
 }
 
+//AppSummaryFields ...
 type AppSummaryFields struct {
 	GUID             string `json:"guid"`
 	Name             string `json:"name"`
@@ -97,12 +111,9 @@ type AppSummaryFields struct {
 	RunningInstances int    `json:"running_instances"`
 }
 
+//AppStats ...
 type AppStats struct {
 	State string `json:"state"`
-}
-
-type statTime struct {
-	time.Time
 }
 
 //ToFields ..
@@ -132,15 +143,24 @@ type Apps interface {
 	Get(appGUID string) (*AppFields, error)
 	Update(appGUID string, appPayload *AppCreateRequest) (*AppFields, error)
 	Delete(appGUID string) error
-	Exists(spaceGUID string, name string) ([]App, error)
-	BindRoute(appGUID, routeGUID string) (*AppFields, error)
-	Start(appGUID string, async bool) (*AppFields, error)
+	FindByName(spaceGUID, name string) (*App, error)
+
+	Start(appGUID string, timeout time.Duration) (*AppFields, error)
 	Upload(path string, name string) (*AppFields, error)
 	Summary(appGUID string) (*AppSummaryFields, error)
 	Stat(appGUID string) (map[string]AppStats, error)
-	CheckAppStatus(waitForThisState, appGUID string) (bool, error)
-	CheckInstanceStatus(waitForThisState, appGUID string) (bool, error)
+	WaitForAppStatus(waitForThisState, appGUID string, timeout time.Duration) (string, error)
+	WaitForInstanceStatus(waitForThisState, appGUID string, timeout time.Duration) (string, error)
 	Instances(appGUID string) (map[string]AppStats, error)
+
+	//Routes related
+	BindRoute(appGUID, routeGUID string) (*AppFields, error)
+	ListRoutes(appGUID string) ([]Route, error)
+	DeleteRoute(appGUID, routeGUID string) error
+
+	//Service bindings
+	DeleteServiceBinding(appGUID, servicebindingGUID string) error
+	ListServiceBindings(appGUID string) ([]ServiceBinding, error)
 }
 
 type app struct {
@@ -153,7 +173,7 @@ func newAppAPI(c *client.Client) Apps {
 	}
 }
 
-func (r *app) Exists(spaceGUID string, name string) ([]App, error) {
+func (r *app) FindByName(spaceGUID string, name string) (*App, error) {
 	rawURL := fmt.Sprintf("/v2/spaces/%s/apps", spaceGUID)
 	req := rest.GetRequest(rawURL).Query("q", "name:"+name)
 	httpReq, err := req.Build()
@@ -165,16 +185,15 @@ func (r *app) Exists(spaceGUID string, name string) ([]App, error) {
 	if err != nil {
 		return nil, err
 	}
-	if len(apps) != 0 {
-		return nil, bmxerror.New(ErrCodeAppAlreadyExist,
-			fmt.Sprintf("Given app:  %q already exist in given space: %q", name, spaceGUID))
+	if len(apps) == 0 {
+		return nil, bmxerror.New(ErrCodeAppDoesnotExist,
+			fmt.Sprintf("Given app:  %q doesn't exist in given space: %q", name, spaceGUID))
 
 	}
-	return apps, nil
+	return &apps[0], nil
 }
 
 func (r *app) Create(appPayload *AppCreateRequest) (*AppFields, error) {
-
 	rawURL := "/v2/apps?async=true"
 	appFields := AppFields{}
 	_, err := r.client.Post(rawURL, appPayload, &appFields)
@@ -185,7 +204,6 @@ func (r *app) Create(appPayload *AppCreateRequest) (*AppFields, error) {
 }
 
 func (r *app) BindRoute(appGUID, routeGUID string) (*AppFields, error) {
-
 	rawURL := fmt.Sprintf("/v2/apps/%s/routes/%s", appGUID, routeGUID)
 	appFields := AppFields{}
 	_, err := r.client.Put(rawURL, nil, &appFields)
@@ -193,6 +211,33 @@ func (r *app) BindRoute(appGUID, routeGUID string) (*AppFields, error) {
 		return nil, err
 	}
 	return &appFields, nil
+}
+
+func (r *app) ListRoutes(appGUID string) ([]Route, error) {
+	rawURL := fmt.Sprintf("/v2/apps/%s/routes", appGUID)
+	req := rest.GetRequest(rawURL)
+	httpReq, err := req.Build()
+	if err != nil {
+		return nil, err
+	}
+	path := httpReq.URL.String()
+	route, err := listRouteWithPath(r.client, path)
+	if err != nil {
+		return nil, err
+	}
+	return route, nil
+}
+
+func (r *app) DeleteRoute(appGUID, routeGUID string) error {
+	rawURL := fmt.Sprintf("/v2/apps/%s/routes/%s", appGUID, routeGUID)
+	_, err := r.client.Delete(rawURL)
+	return err
+}
+
+func (r *app) DeleteServiceBinding(appGUID, sbGUID string) error {
+	rawURL := fmt.Sprintf("/v2/apps/%s/service_bindings/%s", appGUID, sbGUID)
+	_, err := r.client.Delete(rawURL)
+	return err
 }
 
 func (r *app) listAppWithPath(path string) ([]App, error) {
@@ -207,59 +252,34 @@ func (r *app) listAppWithPath(path string) ([]App, error) {
 	return apps, err
 }
 
-func (r *app) newfileUploadRequest(rawURL string, params map[string]string, paramName, path string) (*AppFields, error) {
-
-	file, err := os.Open(path)
+func (r *app) Upload(appGUID string, zipPath string) (*AppFields, error) {
+	req := rest.PutRequest(r.client.URL("/v2/apps/"+appGUID+"/bits")).Query("async", "false")
+	file, err := os.Open(zipPath)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile(paramName, filepath.Base(path))
+	f := rest.File{
+		Name:    file.Name(),
+		Content: file,
+	}
+
+	req.File("application", f)
+	req.Field("resources", "[]")
+	appFields := &AppFields{}
+
+	_, err = r.client.SendRequest(req, appFields)
+
 	if err != nil {
-		return nil, err
+		return appFields, err
 	}
-	_, err = io.Copy(part, file)
-
-	for key, val := range params {
-		_ = writer.WriteField(key, val)
-	}
-	err = writer.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	h := map[string]string{
-		"Content-Type": writer.FormDataContentType(),
-	}
-	appFields := AppFields{}
-	_, err = r.client.Put(rawURL, body, &appFields, h)
-	if err != nil {
-		return nil, err
-	}
-
-	return &appFields, err
-
+	return appFields, err
 }
 
-func (r *app) Upload(appGUID string, zippath string) (*AppFields, error) {
-
-	extraParams := map[string]string{
-
-		"resources": "[]",
-	}
-	uploadResp, err := r.newfileUploadRequest("/v2/apps/"+appGUID+"/bits?async=false", extraParams, "application", zippath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return uploadResp, err
-}
-
-func (r *app) Start(appGUID string, async bool) (*AppFields, error) {
+func (r *app) Start(appGUID string, maxWaitTime time.Duration) (*AppFields, error) {
 	payload := AppsStateUpdateRequest{
-		State: "STARTED",
+		State: AppStartedState,
 	}
 	rawURL := fmt.Sprintf("/v2/apps/%s", appGUID)
 	appFields := AppFields{}
@@ -267,27 +287,21 @@ func (r *app) Start(appGUID string, async bool) (*AppFields, error) {
 	if err != nil {
 		return nil, err
 	}
-	if !async {
-		isFinished, err := r.CheckAppStatus("STAGED", appGUID)
-		if isFinished {
-			fmt.Println("APP is staged.")
-			// Check instance is in running state
-			isRunning, err := r.CheckInstanceStatus("RUNNING", appGUID)
-			if isRunning {
-				fmt.Println("All Instance  is Running.")
-				return &appFields, nil
-			} else {
-				return nil, err
-			}
-		} else {
-			return nil, err
-		}
+	if maxWaitTime == 0 {
+		return &appFields, nil
+	}
+	_, err = r.WaitForAppStatus(AppStagedState, appGUID, maxWaitTime)
+	if err != nil {
+		return &appFields, err
+	}
+	_, err = r.WaitForInstanceStatus(AppRunningState, appGUID, maxWaitTime)
+	if err != nil {
+		return &appFields, err
 	}
 	return &appFields, nil
 }
 
 func (r *app) Get(appGUID string) (*AppFields, error) {
-
 	rawURL := fmt.Sprintf("/v2/apps/%s", appGUID)
 	appFields := AppFields{}
 	_, err := r.client.Get(rawURL, &appFields, nil)
@@ -298,7 +312,6 @@ func (r *app) Get(appGUID string) (*AppFields, error) {
 }
 
 func (r *app) Summary(appGUID string) (*AppSummaryFields, error) {
-
 	rawURL := fmt.Sprintf("/v2/apps/%s/summary", appGUID)
 	appFields := AppSummaryFields{}
 	_, err := r.client.Get(rawURL, &appFields, nil)
@@ -309,7 +322,6 @@ func (r *app) Summary(appGUID string) (*AppSummaryFields, error) {
 }
 
 func (r *app) Stat(appGUID string) (map[string]AppStats, error) {
-
 	rawURL := fmt.Sprintf("/v2/apps/%s/stats", appGUID)
 	appStats := map[string]AppStats{}
 	_, err := r.client.Get(rawURL, &appStats, nil)
@@ -347,7 +359,6 @@ func (r *app) List() ([]App, error) {
 }
 
 func (r *app) Update(appGUID string, appPayload *AppCreateRequest) (*AppFields, error) {
-
 	rawURL := fmt.Sprintf("/v2/apps/%s", appGUID)
 	appFields := AppFields{}
 	_, err := r.client.Put(rawURL, appPayload, &appFields)
@@ -363,62 +374,84 @@ func (r *app) Delete(appGUID string) error {
 	return err
 }
 
-func (r *app) CheckAppStatus(waitForThisState, appGUID string) (bool, error) {
-
-	timeout := time.After(10 * time.Minute)
-	tick := time.Tick(5 * time.Second)
-
-	// Keep trying until we're timed out or got a result or got an error
+func (r *app) WaitForAppStatus(waitForThisState, appGUID string, maxWaitTime time.Duration) (string, error) {
+	timeout := time.After(maxWaitTime)
+	tick := time.Tick(DefaultRetryDelayForStatusCheck)
+	var status = AppPendingState
 	for {
 		select {
-		// Got a timeout! fail with a timeout error
 		case <-timeout:
-			return false, bmxerror.New(TimeOutError, "Time out while waiting for the app to start")
-		// Got a tick, we should check the App package status
+			trace.Logger.Printf("Timed out while checking the app status for %q.  Waited for %q for the state to be %q", appGUID, maxWaitTime, waitForThisState)
+			return status, nil
 		case <-tick:
 			apps, err := r.Get(appGUID)
 			if err != nil {
-				return false, err
+				return status, err
 			}
-			fmt.Println("apps.Entity.PackageState  ===>>> ", apps.Entity.PackageState)
-			if apps.Entity.PackageState == waitForThisState {
-				return true, nil
+			status = apps.Entity.PackageState
+			trace.Logger.Println("apps.Entity.PackageState  ===>>> ", apps.Entity.PackageState)
+			if status == waitForThisState {
+				return status, nil
+			}
+		}
+	}
+}
 
+func (r *app) WaitForInstanceStatus(waitForThisState, appGUID string, maxWaitTime time.Duration) (string, error) {
+	timeout := time.After(maxWaitTime)
+	tick := time.Tick(DefaultRetryDelayForStatusCheck)
+	var status = "UNKNOWN"
+	for {
+		select {
+		case <-timeout:
+			trace.Logger.Printf("Timed out while checking the app status for %q. Waited for %q for the state to be %q", appGUID, maxWaitTime, waitForThisState)
+			return status, nil
+		case <-tick:
+			appStat, err := r.Stat(appGUID)
+			if err != nil {
+				return status, err
 			}
+			stateCount := 0
+			for k, v := range appStat {
+				fmt.Printf("Instance[%s] State is %s", k, v)
+				if v.State == waitForThisState {
+					stateCount++
+				}
+			}
+			if stateCount == len(appStat) {
+				return waitForThisState, nil
+			}
+
 		}
 	}
 
 }
 
-func (r *app) CheckInstanceStatus(waitForThisState, appGUID string) (bool, error) {
+//TODO pull the wait logic in a auxiliary function which can be used by all
 
-	timeout := time.After(10 * time.Minute)
-	tick := time.Tick(5 * time.Second)
-
-	// Keep trying until we're timed out or got a result or got an error
-	for {
-		select {
-		// Got a timeout! fail with a timeout error
-		case <-timeout:
-			return false, bmxerror.New(TimeOutError, "Time out while waiting for the instance to start")
-		// Got a tick, we should check the instance status
-		case <-tick:
-			appStat, err := r.Stat(appGUID)
-			if err != nil {
-				return false, err
-			}
-			running := 0
-			for k, v := range appStat {
-				fmt.Printf("Instance[%s] State is %s", k, v)
-				if v.State == waitForThisState {
-					running = running + 1
-				}
-			}
-			if running == len(appStat) {
-				return true, nil
-			}
-
-		}
+func (r *app) ListServiceBindings(appGUID string) ([]ServiceBinding, error) {
+	rawURL := fmt.Sprintf("/v2/apps/%s/service_bindings", appGUID)
+	req := rest.GetRequest(rawURL)
+	httpReq, err := req.Build()
+	if err != nil {
+		return nil, err
 	}
+	path := httpReq.URL.String()
+	sb, err := listServiceBindingWithPath(r.client, path)
+	if err != nil {
+		return nil, err
+	}
+	return sb, nil
+}
 
+func listServiceBindingWithPath(c *client.Client, path string) ([]ServiceBinding, error) {
+	var sb []ServiceBinding
+	_, err := c.GetPaginated(path, ServiceBindingResource{}, func(resource interface{}) bool {
+		if sbResource, ok := resource.(ServiceBindingResource); ok {
+			sb = append(sb, sbResource.ToFields())
+			return true
+		}
+		return false
+	})
+	return sb, err
 }
