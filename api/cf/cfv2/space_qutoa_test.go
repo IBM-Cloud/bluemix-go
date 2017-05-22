@@ -57,7 +57,18 @@ var _ = Describe("SpaceQuotas", func() {
 			})
 
 			It("should return SpaceQuota created", func() {
-				myspacequota, err := newSpaceQuotas(server.URL()).Create("test-quota", "3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", 1024, 1024, 50, 150, false)
+
+				payload := SpaceQuotaCreateRequest{
+					Name:                    "test-quota",
+					OrgGUID:                 "3c1b6f9d-ffe5-43b5-ab91-7be2331dc546",
+					MemoryLimitInMB:         1024,
+					InstanceMemoryLimitInMB: 1024,
+					RoutesLimit:             50,
+					ServicesLimit:           150,
+					NonBasicServicesAllowed: false,
+				}
+
+				myspacequota, err := newSpaceQuotas(server.URL()).Create(payload)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(myspacequota).ShouldNot(BeNil())
 				Expect(myspacequota.Metadata.GUID).Should(Equal("be829072-3137-418c-9607-c84e7d77e22a"))
@@ -78,7 +89,18 @@ var _ = Describe("SpaceQuotas", func() {
 			})
 
 			It("should return error during spacequota creation", func() {
-				myspacequota, err := newSpaceQuotas(server.URL()).Create("test-quota", "3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", 1024, 1024, 50, 150, false)
+
+				payload := SpaceQuotaCreateRequest{
+					Name:                    "test-quota",
+					OrgGUID:                 "3c1b6f9d-ffe5-43b5-ab91-7be2331dc546",
+					MemoryLimitInMB:         1024,
+					InstanceMemoryLimitInMB: 1024,
+					RoutesLimit:             50,
+					ServicesLimit:           150,
+					NonBasicServicesAllowed: false,
+				}
+
+				myspacequota, err := newSpaceQuotas(server.URL()).Create(payload)
 				Expect(err).To(HaveOccurred())
 				Expect(myspacequota).Should(BeNil())
 			})
@@ -181,7 +203,18 @@ var _ = Describe("SpaceQuotas", func() {
 			})
 
 			It("should return spacequota update", func() {
-				myspacequota, err := newSpaceQuotas(server.URL()).Update("testspacequotaupdate", "be829072-3137-418c-9607-c84e7d77e22a", "3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", 1024, 1024, 50, 150, false)
+
+				payload := SpaceQuotaUpdateRequest{
+					Name:                    "testspacequotaupdate",
+					OrgGUID:                 "3c1b6f9d-ffe5-43b5-ab91-7be2331dc546",
+					MemoryLimitInMB:         1024,
+					InstanceMemoryLimitInMB: 1024,
+					RoutesLimit:             50,
+					ServicesLimit:           150,
+					NonBasicServicesAllowed: false,
+				}
+
+				myspacequota, err := newSpaceQuotas(server.URL()).Update(payload, "be829072-3137-418c-9607-c84e7d77e22a")
 				Expect(err).NotTo(HaveOccurred())
 				Expect(myspacequota).ShouldNot(BeNil())
 				Expect(myspacequota.Metadata.GUID).Should(Equal("be829072-3137-418c-9607-c84e7d77e22a"))
@@ -201,7 +234,18 @@ var _ = Describe("SpaceQuotas", func() {
 			})
 
 			It("should return error spacequota updated", func() {
-				myspacequota, err := newSpaceQuotas(server.URL()).Update("test-quota", "be829072-3137-418c-9607-c84e7d77e22a", "3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", 1024, 1024, 50, 150, false)
+
+				payload := SpaceQuotaUpdateRequest{
+					Name:                    "test-quota",
+					OrgGUID:                 "3c1b6f9d-ffe5-43b5-ab91-7be2331dc546",
+					MemoryLimitInMB:         1024,
+					InstanceMemoryLimitInMB: 1024,
+					RoutesLimit:             50,
+					ServicesLimit:           150,
+					NonBasicServicesAllowed: false,
+				}
+
+				myspacequota, err := newSpaceQuotas(server.URL()).Update(payload, "be829072-3137-418c-9607-c84e7d77e22a")
 				Expect(err).To(HaveOccurred())
 				Expect(myspacequota).Should(BeNil())
 			})

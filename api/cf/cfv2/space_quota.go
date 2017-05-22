@@ -13,8 +13,8 @@ import (
 type SpaceQuotaCreateRequest struct {
 	Name                    string `json:"name"`
 	OrgGUID                 string `json:"organization_guid"`
-	MemoryLimitInMB         int64  `json:"memory_limit,,omitempty"`
-	InstanceMemoryLimitInMB int64  `json:"instance_memory_limit,,omitempty"`
+	MemoryLimitInMB         int64  `json:"memory_limit,omitempty"`
+	InstanceMemoryLimitInMB int64  `json:"instance_memory_limit,omitempty"`
 	RoutesLimit             int    `json:"total_routes,omitempty"`
 	ServicesLimit           int    `json:"total_services,omitempty"`
 	NonBasicServicesAllowed bool   `json:"non_basic_services_allowed"`
@@ -23,14 +23,15 @@ type SpaceQuotaCreateRequest struct {
 //SpaceQuotaUpdateRequest ...
 type SpaceQuotaUpdateRequest struct {
 	Name                    string `json:"name"`
-	OrgGUID                 string `json:"organization_guid"`
-	MemoryLimitInMB         int64  `json:"memory_limit,,omitempty"`
-	InstanceMemoryLimitInMB int64  `json:"instance_memory_limit,,omitempty"`
+	OrgGUID                 string `json:"organization_guid,omitempty"`
+	MemoryLimitInMB         int64  `json:"memory_limit,omitempty"`
+	InstanceMemoryLimitInMB int64  `json:"instance_memory_limit,omitempty"`
 	RoutesLimit             int    `json:"total_routes,omitempty"`
 	ServicesLimit           int    `json:"total_services,omitempty"`
 	NonBasicServicesAllowed bool   `json:"non_basic_services_allowed"`
 }
 
+//SpaceQuota ...
 type SpaceQuota struct {
 	GUID                    string
 	Name                    string
@@ -60,11 +61,13 @@ type SpaceQuotaMetadata struct {
 //ErrCodeSpaceQuotaDoesnotExist ...
 const ErrCodeSpaceQuotaDoesnotExist = "SpaceQuotaDoesnotExist"
 
+//SpaceQuotaResource ...
 type SpaceQuotaResource struct {
 	Resource
 	Entity SpaceQuotaEntity
 }
 
+//SpaceQuotaEntity ...
 type SpaceQuotaEntity struct {
 	Name                    string      `json:"name"`
 	NonBasicServicesAllowed bool        `json:"non_basic_services_allowed"`
@@ -78,6 +81,7 @@ type SpaceQuotaEntity struct {
 	AppTaskLimit            json.Number `json:"app_task_limit"`
 }
 
+//ToFields ...
 func (resource SpaceQuotaResource) ToFields() SpaceQuota {
 	entity := resource.Entity
 
@@ -99,8 +103,8 @@ func (resource SpaceQuotaResource) ToFields() SpaceQuota {
 //SpaceQuotas ...
 type SpaceQuotas interface {
 	FindByName(name, orgGUID string) (*SpaceQuota, error)
-	Create(name, orgGUID string, memoryLimit, instanceMemoryLimit int64, routesLimit, servicesLimit int, serviceAllowed bool) (*SpaceQuotaFields, error)
-	Update(newName, spaceQuotaGUID, orgGUID string, memoryLimit, instanceMemoryLimit int64, routesLimit, servicesLimit int, serviceAllowed bool) (*SpaceQuotaFields, error)
+	Create(createRequest SpaceQuotaCreateRequest) (*SpaceQuotaFields, error)
+	Update(updateRequest SpaceQuotaUpdateRequest, spaceQuotaGUID string) (*SpaceQuotaFields, error)
 	Delete(spaceQuotaGUID string) error
 	Get(spaceQuotaGUID string) (*SpaceQuotaFields, error)
 }
@@ -157,19 +161,10 @@ func (r *spaceQuota) listSpaceQuotaWithPath(path string) ([]SpaceQuota, error) {
 	return spaceQuota, err
 }
 
-func (r *spaceQuota) Create(name, orgGUID string, memoryLimit, instanceMemoryLimit int64, routesLimit, servicesLimit int, serviceAllowed bool) (*SpaceQuotaFields, error) {
-	payload := SpaceQuotaCreateRequest{
-		Name:                    name,
-		OrgGUID:                 orgGUID,
-		MemoryLimitInMB:         memoryLimit,
-		InstanceMemoryLimitInMB: instanceMemoryLimit,
-		RoutesLimit:             routesLimit,
-		ServicesLimit:           servicesLimit,
-		NonBasicServicesAllowed: serviceAllowed,
-	}
+func (r *spaceQuota) Create(createRequest SpaceQuotaCreateRequest) (*SpaceQuotaFields, error) {
 	rawURL := "/v2/space_quota_definitions?accepts_incomplete=true&async=true"
 	spaceQuotaFields := SpaceQuotaFields{}
-	_, err := r.client.Post(rawURL, payload, &spaceQuotaFields)
+	_, err := r.client.Post(rawURL, createRequest, &spaceQuotaFields)
 	if err != nil {
 		return nil, err
 	}
@@ -187,19 +182,10 @@ func (r *spaceQuota) Get(spaceQuotaGUID string) (*SpaceQuotaFields, error) {
 	return &spaceQuotaFields, err
 }
 
-func (r *spaceQuota) Update(newName, spaceQuotaGUID, orgGUID string, memoryLimit, instanceMemoryLimit int64, routesLimit, servicesLimit int, serviceAllowed bool) (*SpaceQuotaFields, error) {
-	payload := SpaceQuotaUpdateRequest{
-		Name:                    newName,
-		OrgGUID:                 orgGUID,
-		MemoryLimitInMB:         memoryLimit,
-		InstanceMemoryLimitInMB: instanceMemoryLimit,
-		RoutesLimit:             routesLimit,
-		ServicesLimit:           servicesLimit,
-		NonBasicServicesAllowed: serviceAllowed,
-	}
+func (r *spaceQuota) Update(updateRequest SpaceQuotaUpdateRequest, spaceQuotaGUID string) (*SpaceQuotaFields, error) {
 	rawURL := fmt.Sprintf("/v2/space_quota_definitions/%s?accepts_incomplete=true&async=true", spaceQuotaGUID)
 	spaceQuotaFields := SpaceQuotaFields{}
-	_, err := r.client.Put(rawURL, payload, &spaceQuotaFields)
+	_, err := r.client.Put(rawURL, updateRequest, &spaceQuotaFields)
 	if err != nil {
 		return nil, err
 	}
@@ -212,6 +198,7 @@ func (r *spaceQuota) Delete(spaceQuotaGUID string) error {
 	return err
 }
 
+//NumberToInt ...
 func NumberToInt(number json.Number, defaultValue int) int {
 	if number != "" {
 		i, err := number.Int64()
