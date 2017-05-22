@@ -14,9 +14,15 @@ func main() {
 	var org string
 	flag.StringVar(&org, "org", "", "Bluemix Organization")
 
+	var spacequota string
+	flag.StringVar(&spacequota, "spacequota", "", "Bluemix Space Quota Definition")
+
+	var newspacequota string
+	flag.StringVar(&newspacequota, "newspacequota", "", "Bluemix Space Quota Definition")
+
 	flag.Parse()
 
-	if org == "" {
+	if org == "" || spacequota == "" || newspacequota == "" {
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -29,6 +35,10 @@ func main() {
 
 	client, err := cfv2.New(sess)
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	orgAPI := client.Organizations()
 	myorg, err := orgAPI.FindByName(org)
 
@@ -36,36 +46,48 @@ func main() {
 		log.Fatal(err)
 	}
 
-	quotaAPI := client.SpaceQuotas()
+	createRequest := cfv2.SpaceQuotaCreateRequest{
+		Name:                    spacequota,
+		OrgGUID:                 myorg.GUID,
+		MemoryLimitInMB:         1024,
+		InstanceMemoryLimitInMB: 1024,
+		RoutesLimit:             50,
+		ServicesLimit:           150,
+		NonBasicServicesAllowed: false,
+	}
 
-	myquota, err := quotaAPI.Create("test1", myorg.GUID, 1024, 1024, 50, 150, false)
+	spaceQuotaAPI := client.SpaceQuotas()
+	_, err = spaceQuotaAPI.Create(createRequest)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	myquota, err = quotaAPI.Get(myquota.Metadata.GUID)
+	quota, err := spaceQuotaAPI.FindByName(spacequota, myorg.GUID)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(myquota.Metadata.GUID)
 
-	myquota, err = quotaAPI.Update("testnew", myquota.Metadata.GUID, myorg.GUID, 1024, 1024, 50, 150, false)
+	updateRequest := cfv2.SpaceQuotaUpdateRequest{
+		Name: newspacequota,
+	}
+
+	_, err = spaceQuotaAPI.Update(updateRequest, quota.GUID)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(myquota.Metadata.GUID)
 
-	quota, err := quotaAPI.FindByName("testnew", myorg.GUID)
+	quota, err = spaceQuotaAPI.FindByName(newspacequota, myorg.GUID)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(quota)
 
-	err = quotaAPI.Delete(myquota.Metadata.GUID)
+	log.Println(quota.GUID, myorg.GUID)
+
+	err = spaceQuotaAPI.Delete(quota.GUID)
 
 	if err != nil {
 		log.Fatal(err)
