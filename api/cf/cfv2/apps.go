@@ -33,25 +33,26 @@ const (
 
 //AppCreateRequest ...
 type AppCreateRequest struct {
-	Name                     string `json:"name"`
-	Memory                   int    `json:"memory,omitempty"`
-	Instances                int    `json:"instances,omitempty"`
-	DiskQuota                int    `json:"disk_quota,omitempty"`
-	SpaceGUID                string `json:"space_guid"`
-	StackGUID                string `json:"stack_guid,omitempty"`
-	State                    string `json:"state,omitempty"`
-	DetectedStartCommand     string `json:"detected_start_command,omitempty"`
-	Command                  string `json:"command,omitempty"`
-	BuildPack                string `json:"buildpack,omitempty"`
-	HealthCheckType          string `json:"health_check_type,omitempty"`
-	HealthCheckHTTPEndpoint  string `json:"health_check_http_endpoint,omitempty"`
-	HealthCheckTimeout       int    `json:"health_check_timeout,omitempty"`
-	Diego                    bool   `json:"diego,omitempty"`
-	EnableSSH                bool   `json:"enable_ssh,omitempty"`
-	DockerImage              string `json:"docker_image,omitempty"`
-	StagingFailedReason      string `json:"staging_failed_reason,omitempty"`
-	StagingFailedDescription string `json:"staging_failed_description,omitempty"`
-	Ports                    []int  `json:"ports,omitempty"`
+	Name                     string                 `json:"name"`
+	Memory                   int                    `json:"memory,omitempty"`
+	Instances                int                    `json:"instances,omitempty"`
+	DiskQuota                int                    `json:"disk_quota,omitempty"`
+	SpaceGUID                string                 `json:"space_guid"`
+	StackGUID                string                 `json:"stack_guid,omitempty"`
+	State                    string                 `json:"state,omitempty"`
+	DetectedStartCommand     string                 `json:"detected_start_command,omitempty"`
+	Command                  string                 `json:"command,omitempty"`
+	BuildPack                string                 `json:"buildpack,omitempty"`
+	HealthCheckType          string                 `json:"health_check_type,omitempty"`
+	HealthCheckTimeout       int                    `json:"health_check_timeout,omitempty"`
+	Diego                    bool                   `json:"diego,omitempty"`
+	EnableSSH                bool                   `json:"enable_ssh,omitempty"`
+	DockerImage              string                 `json:"docker_image,omitempty"`
+	StagingFailedReason      string                 `json:"staging_failed_reason,omitempty"`
+	StagingFailedDescription string                 `json:"staging_failed_description,omitempty"`
+	Ports                    []int                  `json:"ports,omitempty"`
+	DockerCredentialsJSON    map[string]interface{} `json:"docker_credentials_json,omitempty"`
+	EnvironmentJSON          map[string]interface{} `json:"environment_json,omitempty"`
 }
 
 //AppsStateUpdateRequest ...
@@ -144,7 +145,6 @@ type Apps interface {
 	Update(appGUID string, appPayload *AppCreateRequest) (*AppFields, error)
 	Delete(appGUID string) error
 	FindByName(spaceGUID, name string) (*App, error)
-
 	Start(appGUID string, timeout time.Duration) (*AppFields, error)
 	Upload(path string, name string) (*AppFields, error)
 	Summary(appGUID string) (*AppSummaryFields, error)
@@ -156,7 +156,7 @@ type Apps interface {
 	//Routes related
 	BindRoute(appGUID, routeGUID string) (*AppFields, error)
 	ListRoutes(appGUID string) ([]Route, error)
-	DeleteRoute(appGUID, routeGUID string) error
+	UnBindRoute(appGUID, routeGUID string) error
 
 	//Service bindings
 	DeleteServiceBinding(appGUID, servicebindingGUID string) error
@@ -228,7 +228,7 @@ func (r *app) ListRoutes(appGUID string) ([]Route, error) {
 	return route, nil
 }
 
-func (r *app) DeleteRoute(appGUID, routeGUID string) error {
+func (r *app) UnBindRoute(appGUID, routeGUID string) error {
 	rawURL := fmt.Sprintf("/v2/apps/%s/routes/%s", appGUID, routeGUID)
 	_, err := r.client.Delete(rawURL)
 	return err
