@@ -1,10 +1,6 @@
 package cfv2
 
 import (
-
-	//"strconv"
-
-	//"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"fmt"
 
 	"github.com/IBM-Bluemix/bluemix-go/client"
@@ -31,7 +27,16 @@ type RouteMetadata struct {
 
 //RouteEntity ...
 type RouteEntity struct {
-	Name string `json:"name"`
+	Host                string `json:"host"`
+	Path                string `json:"path"`
+	DomainGUID          string `json:"domain_guid"`
+	SpaceGUID           string `json:"space_guid"`
+	ServiceInstanceGUID string `json:"service_instance_guid"`
+	Port                int    `json:"port"`
+	DomainURL           string `json:"domain_url"`
+	SpaceURL            string `json:"space_url"`
+	AppsURL             string `json:"apps_url"`
+	RouteMappingURL     string `json:"route_mapping_url"`
 }
 
 //RouteResource ...
@@ -51,20 +56,37 @@ func (resource RouteResource) ToFields() Route {
 	entity := resource.Entity
 
 	return Route{
-		GUID: resource.Metadata.GUID,
-		Name: entity.Name,
+		GUID:                resource.Metadata.GUID,
+		Host:                entity.Host,
+		Path:                entity.Path,
+		DomainGUID:          entity.DomainGUID,
+		SpaceGUID:           entity.SpaceGUID,
+		ServiceInstanceGUID: entity.ServiceInstanceGUID,
+		Port:                entity.Port,
+		DomainURL:           entity.DomainURL,
+		SpaceURL:            entity.SpaceURL,
+		AppsURL:             entity.AppsURL,
+		RouteMappingURL:     entity.RouteMappingURL,
 	}
 }
 
 //Route model
 type Route struct {
-	GUID string
-	Name string
+	GUID                string
+	Host                string
+	Path                string
+	DomainGUID          string
+	SpaceGUID           string
+	ServiceInstanceGUID string
+	Port                int
+	DomainURL           string
+	SpaceURL            string
+	AppsURL             string
+	RouteMappingURL     string
 }
 
 //Routes ...
 type Routes interface {
-	GetSharedDomains(domain string) (*Route, error)
 	Find(hostname, domainGUID string) ([]Route, error)
 	Create(req RouteRequest) (*RouteFields, error)
 	Get(routeGUID string) (*RouteFields, error)
@@ -90,21 +112,6 @@ func (r *route) Get(routeGUID string) (*RouteFields, error) {
 		return nil, err
 	}
 	return &routeFields, nil
-}
-
-func (r *route) GetSharedDomains(domainName string) (*Route, error) {
-	rawURL := "/v2/shared_domains"
-	req := rest.GetRequest(rawURL).Query("q", "name:"+domainName)
-	httpReq, err := req.Build()
-	if err != nil {
-		return nil, err
-	}
-	path := httpReq.URL.String()
-	domain, err := listRouteWithPath(r.client, path)
-	if err != nil {
-		return nil, err
-	}
-	return &domain[0], nil
 }
 
 func (r *route) Find(hostname, domainGUID string) ([]Route, error) {

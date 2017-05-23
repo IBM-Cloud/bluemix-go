@@ -123,13 +123,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	routeAPI := client.Routes()
-	domain, err := routeAPI.GetSharedDomains("mybluemix.net")
+	sharedDomainAPI := client.SharedDomains()
+	domain, err := sharedDomainAPI.FindByName("mybluemix.net")
 	fmt.Println(domain)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	routeAPI := client.Routes()
 	route, err := routeAPI.Find(routeName, domain.GUID)
 	fmt.Println(route)
 	if err != nil {
