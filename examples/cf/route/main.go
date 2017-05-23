@@ -57,9 +57,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	routesAPI := client.Routes()
+	sharedDomainAPI := client.SharedDomains()
 
-	sd, err := routesAPI.GetSharedDomains("mybluemix.net")
+	sd, err := sharedDomainAPI.FindByName("mybluemix.net")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	routesAPI := client.Routes()
 
 	payload := cfv2.RouteRequest{
 		Host:       host,
