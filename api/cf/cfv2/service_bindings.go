@@ -30,7 +30,7 @@ type ServiceBindingEntity struct {
 //ServiceBindingResource ...
 type ServiceBindingResource struct {
 	Resource
-	Entity RouteEntity
+	Entity ServiceBindingEntity
 }
 
 //ServiceBindingFields ...
@@ -41,8 +41,10 @@ type ServiceBindingFields struct {
 
 //ServiceBinding model
 type ServiceBinding struct {
-	GUID string
-	Name string
+	GUID                string
+	ServiceInstanceGUID string
+	AppGUID             string
+	Credentials         map[string]interface{}
 }
 
 //ToFields ..
@@ -50,8 +52,10 @@ func (resource ServiceBindingResource) ToFields() ServiceBinding {
 	entity := resource.Entity
 
 	return ServiceBinding{
-		GUID: resource.Metadata.GUID,
-		Name: entity.Name,
+		GUID:                resource.Metadata.GUID,
+		ServiceInstanceGUID: entity.ServiceInstanceGUID,
+		AppGUID:             entity.AppGUID,
+		Credentials:         entity.Credentials,
 	}
 }
 
