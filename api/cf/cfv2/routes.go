@@ -150,7 +150,7 @@ func (r *route) Update(routeGUID string, req RouteRequest) (*RouteFields, error)
 }
 
 func (r *route) Delete(routeGUID string, async bool) error {
-	rawURL := fmt.Sprintf("/v2/route/%s", routeGUID)
+	rawURL := fmt.Sprintf("/v2/routes/%s", routeGUID)
 	req := rest.GetRequest(rawURL).Query("recursive", "true")
 	if async {
 		req.Query("async", "true")

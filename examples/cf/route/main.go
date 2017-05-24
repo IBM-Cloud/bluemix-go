@@ -84,4 +84,10 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println(*updatedRoute)
+
+	err = routesAPI.Delete(r.Metadata.GUID, true)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
