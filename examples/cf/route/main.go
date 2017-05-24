@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/IBM-Bluemix/bluemix-go/api/cf/cfv2"
+	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
@@ -77,9 +78,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	payload.Host = newHost
+	updatePayload := cfv2.RouteUpdateRequest{
+		Host: helpers.String(newHost),
+		Path: helpers.String(""),
+	}
 
-	updatedRoute, err := routesAPI.Update(r.Metadata.GUID, payload)
+	updatedRoute, err := routesAPI.Update(r.Metadata.GUID, updatePayload)
 	if err != nil {
 		log.Fatal(err)
 	}

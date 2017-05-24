@@ -19,6 +19,13 @@ type RouteRequest struct {
 	Port       int    `json:"port,omitempty"`
 }
 
+//RouteUpdateRequest ...
+type RouteUpdateRequest struct {
+	Host *string `json:"host,omitempty"`
+	Path *string `json:"path,omitempty"`
+	Port *int    `json:"port,omitempty"`
+}
+
 //RouteMetadata ...
 type RouteMetadata struct {
 	GUID string `json:"guid"`
@@ -90,7 +97,7 @@ type Routes interface {
 	Find(hostname, domainGUID string) ([]Route, error)
 	Create(req RouteRequest) (*RouteFields, error)
 	Get(routeGUID string) (*RouteFields, error)
-	Update(routeGUID string, req RouteRequest) (*RouteFields, error)
+	Update(routeGUID string, req RouteUpdateRequest) (*RouteFields, error)
 	Delete(routeGUID string, async bool) error
 }
 
@@ -139,7 +146,7 @@ func (r *route) Create(req RouteRequest) (*RouteFields, error) {
 	return &routeFields, nil
 }
 
-func (r *route) Update(routeGUID string, req RouteRequest) (*RouteFields, error) {
+func (r *route) Update(routeGUID string, req RouteUpdateRequest) (*RouteFields, error) {
 	rawURL := fmt.Sprintf("/v2/routes/%s", routeGUID)
 	routeFields := RouteFields{}
 	_, err := r.client.Put(rawURL, req, &routeFields)
