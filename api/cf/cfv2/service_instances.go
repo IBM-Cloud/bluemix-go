@@ -11,17 +11,17 @@ import (
 type ServiceInstanceCreateRequest struct {
 	Name      string                 `json:"name"`
 	SpaceGUID string                 `json:"space_guid"`
-	PlanGUID  string                 `json:"service_plan_guid,omitempty"`
+	PlanGUID  string                 `json:"service_plan_guid"`
 	Params    map[string]interface{} `json:"parameters,omitempty"`
 	Tags      []string               `json:"tags,omitempty"`
 }
 
 //ServiceInstanceUpdateRequest ...
 type ServiceInstanceUpdateRequest struct {
-	Name     string                 `json:"name"`
-	PlanGUID string                 `json:"service_plan_guid,omitempty"`
-	Params   map[string]interface{} `json:"parameters,omitempty"`
-	Tags     []string               `json:"tags"`
+	Name     *string                 `json:"name,omitempty"`
+	PlanGUID *string                 `json:"service_plan_guid,omitempty"`
+	Params   *map[string]interface{} `json:"parameters,omitempty"`
+	Tags     *[]string               `json:"tags,omitempty"`
 }
 
 //ServiceInstance ...
@@ -114,8 +114,8 @@ func (resource ServiceInstanceResource) ToModel() ServiceInstance {
 
 //ServiceInstances ...
 type ServiceInstances interface {
-	Create(name, planGUID, spaceGUID string, params map[string]interface{}, tags []string) (*ServiceInstanceFields, error)
-	Update(newName, instanceGUID, planGUID string, params map[string]interface{}, tags []string) (*ServiceInstanceFields, error)
+	Create(createRequest ServiceInstanceCreateRequest) (*ServiceInstanceFields, error)
+	Update(updateRequest ServiceInstanceUpdateRequest, instanceGUID string) (*ServiceInstanceFields, error)
 	Delete(instanceGUID string) error
 	FindByName(instanceName string) (*ServiceInstance, error)
 	Get(instanceGUID string) (*ServiceInstanceFields, error)
@@ -131,17 +131,10 @@ func newServiceInstanceAPI(c *client.Client) ServiceInstances {
 	}
 }
 
-func (s *serviceInstance) Create(name, planGUID, spaceGUID string, params map[string]interface{}, tags []string) (*ServiceInstanceFields, error) {
-	payload := ServiceInstanceCreateRequest{
-		Name:      name,
-		PlanGUID:  planGUID,
-		SpaceGUID: spaceGUID,
-		Params:    params,
-		Tags:      tags,
-	}
+func (s *serviceInstance) Create(createRequest ServiceInstanceCreateRequest) (*ServiceInstanceFields, error) {
 	rawURL := "/v2/service_instances?accepts_incomplete=true&async=true"
 	serviceFields := ServiceInstanceFields{}
-	_, err := s.client.Post(rawURL, payload, &serviceFields)
+	_, err := s.client.Post(rawURL, createRequest, &serviceFields)
 	if err != nil {
 		return nil, err
 	}
@@ -186,16 +179,10 @@ func (s *serviceInstance) Delete(instanceGUID string) error {
 	return err
 }
 
-func (s *serviceInstance) Update(newName, instanceGUID, planGUID string, params map[string]interface{}, tags []string) (*ServiceInstanceFields, error) {
-	payload := ServiceInstanceUpdateRequest{
-		Name:     newName,
-		PlanGUID: planGUID,
-		Params:   params,
-		Tags:     tags,
-	}
+func (s *serviceInstance) Update(updateRequest ServiceInstanceUpdateRequest, instanceGUID string) (*ServiceInstanceFields, error) {
 	rawURL := fmt.Sprintf("/v2/service_instances/%s?accepts_incomplete=true&async=true", instanceGUID)
 	serviceFields := ServiceInstanceFields{}
-	_, err := s.client.Put(rawURL, payload, &serviceFields)
+	_, err := s.client.Put(rawURL, updateRequest, &serviceFields)
 	if err != nil {
 		return nil, err
 	}

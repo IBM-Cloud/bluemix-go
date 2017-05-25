@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/IBM-Bluemix/bluemix-go/api/cf/cfv2"
+	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
@@ -17,12 +18,18 @@ func main() {
 	var space string
 	flag.StringVar(&space, "space", "", "Bluemix Space")
 
+	var name string
+	flag.StringVar(&name, "name", "", "Service Instance Name")
+
+	var newname string
+	flag.StringVar(&newname, "newname", "", "Service Instance Name")
+
 	var skipDeletion bool
 	flag.BoolVar(&skipDeletion, "no-delete", false, "If provided will delete the resources created")
 
 	flag.Parse()
 
-	if org == "" || space == "" {
+	if org == "" || space == "" || name == "" || newname == "" {
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -65,12 +72,21 @@ func main() {
 	}
 
 	serviceInstanceAPI := client.ServiceInstances()
-	myService, err := serviceInstanceAPI.Create("myservice", plan.GUID, myspace.GUID, nil, nil)
+	createRequest := cfv2.ServiceInstanceCreateRequest{
+		Name:      name,
+		PlanGUID:  plan.GUID,
+		SpaceGUID: myspace.GUID,
+	}
+	myService, err := serviceInstanceAPI.Create(createRequest)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	updatedInstance, err := serviceInstanceAPI.Update("New instance", myService.Metadata.GUID, plan.GUID, nil, nil)
+	updateRequest := cfv2.ServiceInstanceUpdateRequest{
+		Name:     helpers.String(newname),
+		PlanGUID: helpers.String(plan.GUID),
+	}
+	updatedInstance, err := serviceInstanceAPI.Update(updateRequest, myService.Metadata.GUID)
 	if err != nil {
 		log.Fatal(err)
 	}
