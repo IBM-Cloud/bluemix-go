@@ -513,7 +513,7 @@ var _ = Describe("Apps", func() {
 				})
 
 				It("should return app update", func() {
-					var appUpdatePayload = &AppCreateRequest{
+					var appUpdatePayload = &AppUpdateRequest{
 						Name:      "testappupdate",
 						SpaceGUID: "211b690c-1241-496e-b6ae-e487b7ebe4e8",
 					}
@@ -538,7 +538,7 @@ var _ = Describe("Apps", func() {
 				})
 
 				It("should return error when app updated", func() {
-					var appUpdatePayload = &AppCreateRequest{
+					var appUpdatePayload = &AppUpdateRequest{
 						Name:      "testappupdate",
 						SpaceGUID: "211b690c-1241-496e-b6ae-e487b7ebe4e8",
 					}
