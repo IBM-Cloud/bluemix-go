@@ -89,6 +89,17 @@ func main() {
 	}
 	fmt.Println(*updatedRoute)
 
+	routeFilter := cfv2.RouteFilter{
+		DomainGUID: sd.GUID,
+		Host:       helpers.String(newHost),
+	}
+
+	routes, err := spaceAPI.ListRoutes(myspace.GUID, routeFilter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(routes)
+
 	err = routesAPI.Delete(r.Metadata.GUID, true)
 	if err != nil {
 		log.Fatal(err)
