@@ -49,7 +49,8 @@ type PrivateDomain struct {
 
 //PrivateDomains ...
 type PrivateDomains interface {
-	FindByName(orgGUID, domainName string) (*PrivateDomain, error)
+	FindByNameInOrg(orgGUID, domainName string) (*PrivateDomain, error)
+	FindByName(domainName string) (*PrivateDomain, error)
 }
 
 type privateDomain struct {
@@ -62,8 +63,26 @@ func newPrivateDomainAPI(c *client.Client) PrivateDomains {
 	}
 }
 
-func (d *privateDomain) FindByName(orgGUID, domainName string) (*PrivateDomain, error) {
+func (d *privateDomain) FindByNameInOrg(orgGUID, domainName string) (*PrivateDomain, error) {
 	rawURL := fmt.Sprintf("/v2/organizations/%s/private_domains", orgGUID)
+	req := rest.GetRequest(rawURL).Query("q", "name:"+domainName)
+	httpReq, err := req.Build()
+	if err != nil {
+		return nil, err
+	}
+	path := httpReq.URL.String()
+	domain, err := listPrivateDomainWithPath(d.client, path)
+	if err != nil {
+		return nil, err
+	}
+	if len(domain) == 0 {
+		return nil, bmxerror.New(ErrCodePrivateDomainDoesnotExist, fmt.Sprintf("Private Domain: %q doesn't exist", domainName))
+	}
+	return &domain[0], nil
+}
+
+func (d *privateDomain) FindByName(domainName string) (*PrivateDomain, error) {
+	rawURL := fmt.Sprintf("/v2/private_domains")
 	req := rest.GetRequest(rawURL).Query("q", "name:"+domainName)
 	httpReq, err := req.Build()
 	if err != nil {
