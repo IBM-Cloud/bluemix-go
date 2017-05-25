@@ -26,6 +26,15 @@ func main() {
 	var space string
 	flag.StringVar(&space, "space", "", "Bluemix Space")
 
+	var diego bool
+	flag.BoolVar(&diego, "diego", false, "Bluemix Diego")
+
+	var dockerImage string
+	flag.StringVar(&dockerImage, "docker", "", "Docker image")
+
+	var sharedDomain string
+	flag.StringVar(&sharedDomain, "shared_domain", "mybluemix.net", "Bluemix shared domain")
+
 	var timeout time.Duration
 	flag.DurationVar(&timeout, "timeout", 120*time.Second, "Maximum time to wait for application to start")
 
@@ -34,6 +43,12 @@ func main() {
 
 	var buildpack string
 	flag.StringVar(&buildpack, "buildpack", "", "Bluemix buildpack")
+
+	var serviceOffering string
+	flag.StringVar(&serviceOffering, "so", "cleardb", "Bluemix Service Offering")
+
+	var servicePlan string
+	flag.StringVar(&servicePlan, "plan", "spark", "Bluemix Service Plan")
 
 	var instance int
 	flag.IntVar(&instance, "instance", 2, "Bluemix App Instance")
@@ -85,12 +100,12 @@ func main() {
 	log.Println(myorg.GUID, myspace.GUID)
 
 	serviceOfferingAPI := client.ServiceOfferings()
-	myserviceOff, err := serviceOfferingAPI.FindByLabel("cloudantNoSQLDB")
+	myserviceOff, err := serviceOfferingAPI.FindByLabel(serviceOffering)
 	if err != nil {
 		log.Fatal(err)
 	}
 	servicePlanAPI := client.ServicePlans()
-	plan, err := servicePlanAPI.GetServicePlan(myserviceOff.GUID, "Lite")
+	plan, err := servicePlanAPI.GetServicePlan(myserviceOff.GUID, servicePlan)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -109,22 +124,23 @@ func main() {
 	}
 
 	var appPayload = &cfv2.AppCreateRequest{
-		Name:      name,
-		SpaceGUID: myspace.GUID,
-		BuildPack: buildpack,
-		Instances: instance,
-		Memory:    memory,
-		DiskQuota: diskQuota,
+		Name:        name,
+		SpaceGUID:   myspace.GUID,
+		BuildPack:   buildpack,
+		Instances:   instance,
+		Memory:      memory,
+		DiskQuota:   diskQuota,
+		Diego:       diego,
+		DockerImage: dockerImage,
 	}
 
 	newapp, err := appAPI.Create(appPayload)
-	fmt.Println(newapp)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	sharedDomainAPI := client.SharedDomains()
-	domain, err := sharedDomainAPI.FindByName("mybluemix.net")
+	domain, err := sharedDomainAPI.FindByName(sharedDomain)
 	fmt.Println(domain)
 	if err != nil {
 		log.Fatal(err)
@@ -162,23 +178,30 @@ func main() {
 		}
 
 	}
+	if dockerImage == "" {
+		uploadResponse, err := appAPI.Upload(newapp.Metadata.GUID, path)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println(uploadResponse)
+	}
 
-	_, err = appAPI.Upload(newapp.Metadata.GUID, path)
+	appState, err := appAPI.Start(newapp.Metadata.GUID, timeout)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	app, err := appAPI.Start(newapp.Metadata.GUID, timeout)
-	if err != nil {
-		log.Fatal(err)
+	if appState.PackageState != cfv2.AppStagedState {
+		log.Fatalf("Application couldn't be staged, current status is  %s", appState.PackageState)
 	}
-	log.Println("App status is", app.Entity.State)
+	if appState.InstanceState != cfv2.AppRunningState {
+		log.Fatalf("Application is not yet running, current status is  %s", appState.InstanceState)
+	}
 
 	sbAPI := client.ServiceBindings()
 
 	sb, err := sbAPI.Create(cfv2.ServiceBindingRequest{
 		ServiceInstanceGUID: myService.Metadata.GUID,
-		AppGUID:             app.Metadata.GUID,
+		AppGUID:             newapp.Metadata.GUID,
 	})
 
 	if err != nil {
@@ -206,14 +229,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	appInstances, err := appAPI.Instances(newapp.Metadata.GUID)
+	appInstances, err := appAPI.Instances(updateapp.Metadata.GUID)
 	fmt.Println(appInstances)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if clean {
-		err = appAPI.Delete(newapp.Metadata.GUID)
+		err = appAPI.Delete(updateapp.Metadata.GUID)
 		if err != nil {
 			log.Fatal(err)
 		}
