@@ -218,7 +218,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var appUpdatePayload = &cfv2.AppCreateRequest{
+	var appUpdatePayload = &cfv2.AppUpdateRequest{
 		Name:      "testappupdate",
 		SpaceGUID: myspace.GUID,
 	}
