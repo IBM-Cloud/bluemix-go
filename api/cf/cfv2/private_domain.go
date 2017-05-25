@@ -11,6 +11,18 @@ import (
 //ErrCodePrivateDomainDoesnotExist ...
 var ErrCodePrivateDomainDoesnotExist = "PrivateDomainDoesnotExist"
 
+//PrivateDomainRequest ...
+type PrivateDomainRequest struct {
+	Name    string `json:"name,omitempty"`
+	OrgGUID string `json:"owning_organization_guid,omitempty"`
+}
+
+//PrivateDomaineMetadata ...
+type PrivateDomainMetadata struct {
+	GUID string `json:"guid"`
+	URL  string `json:"url"`
+}
+
 //PrivateDomainEntity ...
 type PrivateDomainEntity struct {
 	Name                   string `json:"name"`
@@ -23,6 +35,12 @@ type PrivateDomainEntity struct {
 type PrivateDomainResource struct {
 	Resource
 	Entity PrivateDomainEntity
+}
+
+//PrivateDomainFields ...
+type PrivateDomainFields struct {
+	Metadata PrivateDomainMetadata
+	Entity   PrivateDomainEntity
 }
 
 //ToFields ..
@@ -51,6 +69,9 @@ type PrivateDomain struct {
 type PrivateDomains interface {
 	FindByNameInOrg(orgGUID, domainName string) (*PrivateDomain, error)
 	FindByName(domainName string) (*PrivateDomain, error)
+	Create(req PrivateDomainRequest) (*PrivateDomainFields, error)
+	Get(privateDomainGUID string) (*PrivateDomainFields, error)
+	Delete(privateDomainGUID string, async bool) error
 }
 
 type privateDomain struct {
@@ -109,4 +130,39 @@ func listPrivateDomainWithPath(c *client.Client, path string) ([]PrivateDomain, 
 		return false
 	})
 	return privateDomain, err
+}
+
+func (d *privateDomain) Create(req PrivateDomainRequest) (*PrivateDomainFields, error) {
+	rawURL := "/v2/private_domains"
+	privateDomainFields := PrivateDomainFields{}
+	_, err := d.client.Post(rawURL, req, &privateDomainFields)
+	if err != nil {
+		return nil, err
+	}
+	return &privateDomainFields, nil
+}
+
+func (d *privateDomain) Get(privateDomainGUID string) (*PrivateDomainFields, error) {
+	rawURL := fmt.Sprintf("/v2/private_domains/%s", privateDomainGUID)
+	privateDomainFields := PrivateDomainFields{}
+	_, err := d.client.Get(rawURL, &privateDomainFields, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &privateDomainFields, nil
+}
+
+func (d *privateDomain) Delete(privateDomainGUID string, async bool) error {
+	rawURL := fmt.Sprintf("/v2/private_domains/%s", privateDomainGUID)
+	req := rest.GetRequest(rawURL).Query("recursive", "true")
+	if async {
+		req.Query("async", "true")
+	}
+	httpReq, err := req.Build()
+	if err != nil {
+		return err
+	}
+	path := httpReq.URL.String()
+	_, err = d.client.Delete(path)
+	return err
 }
