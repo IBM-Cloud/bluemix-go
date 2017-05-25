@@ -96,7 +96,12 @@ func main() {
 	}
 
 	serviceInstanceAPI := client.ServiceInstances()
-	myService, err := serviceInstanceAPI.Create(serviceInstanceName, plan.GUID, myspace.GUID, nil, nil)
+	serviceInstanceCreateRequest := cfv2.ServiceInstanceCreateRequest{
+		Name:      serviceInstanceName,
+		PlanGUID:  plan.GUID,
+		SpaceGUID: myspace.GUID,
+	}
+	myService, err := serviceInstanceAPI.Create(serviceInstanceCreateRequest)
 	if err != nil {
 		log.Fatal(err)
 	}
