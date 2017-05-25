@@ -194,19 +194,25 @@ func (r *spaces) Delete(spaceGUID string) error {
 
 func (r *spaces) ListRoutes(spaceGUID string, routeFilter RouteFilter) ([]Route, error) {
 	rawURL := fmt.Sprintf("/v2/spaces/%s/routes", spaceGUID)
-	query := "domain_guid:" + routeFilter.DomainGUID + ";"
+	req := rest.GetRequest(rawURL)
+	var query string
+	if routeFilter.DomainGUID != "" {
+		query = "domain_guid:" + routeFilter.DomainGUID + ";"
+	}
 	if routeFilter.Host != nil {
 		query += "host:" + *routeFilter.Host + ";"
 	}
 	if routeFilter.Path != nil {
 		query += "path:" + *routeFilter.Path + ";"
 	}
-
 	if routeFilter.Port != nil {
 		query += "port:" + strconv.Itoa(*routeFilter.Port) + ";"
 	}
 
-	req := rest.GetRequest(rawURL).Query("q", query)
+	if len(query) > 0 {
+		req.Query("q", query)
+	}
+
 	httpReq, err := req.Build()
 	if err != nil {
 		return nil, err
