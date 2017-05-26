@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/IBM-Bluemix/bluemix-go/api/cf/cfv2"
+	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
@@ -75,7 +76,7 @@ func main() {
 	}
 
 	updatedInstance, err := serviceInstanceAPI.Update(myService.Metadata.GUID, cfv2.ServiceInstanceUpdateRequest{
-		Name: "New instance",
+		Name: helpers.String("New instance"),
 	})
 	if err != nil {
 		log.Fatal(err)
