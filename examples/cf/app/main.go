@@ -132,8 +132,8 @@ func main() {
 	}
 
 	var appPayload = &cfv2.AppRequest{
-		Name:               name,
-		SpaceGUID:          myspace.GUID,
+		Name:               helpers.String(name),
+		SpaceGUID:          helpers.String(myspace.GUID),
 		BuildPack:          helpers.String(buildpack),
 		Instances:          instance,
 		Memory:             memory,
@@ -229,8 +229,8 @@ func main() {
 	}
 
 	//Update name, buildpack
-	appPayload.Name = "testappupdate"
-	appPayload.SpaceGUID = myspace.GUID
+	appPayload.Name = helpers.String("testappupdate")
+	appPayload.SpaceGUID = helpers.String(myspace.GUID)
 	appPayload.BuildPack = helpers.String(newBuildPack)
 
 	updateapp, err := appAPI.Update(newapp.Metadata.GUID, appPayload)
