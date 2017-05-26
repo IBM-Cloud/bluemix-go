@@ -33,6 +33,9 @@ const (
 	//AppPendingState ...
 	AppPendingState = "PENDING"
 
+	//AppStoppedState ...
+	AppStoppedState = "STOPPED"
+
 	//AppFailedState ...
 	AppFailedState = "FAILED"
 
@@ -74,27 +77,30 @@ type AppsStateUpdateRequest struct {
 
 //AppEntity ...
 type AppEntity struct {
-	Name                     string `json:"name"`
-	SpaceGUID                string `json:"space_guid"`
-	StackGUID                string `json:"stack_guid"`
-	State                    string `json:"state"`
-	PackageState             string `json:"package_state"`
-	Memory                   int    `json:"memory"`
-	Instances                int    `json:"instances"`
-	DiskQuota                int    `json:"disk_quota"`
-	Version                  string `json:"version"`
-	Command                  string `json:"command"`
-	Console                  bool   `json:"console"`
-	Debug                    string `json:"debug"`
-	StagingTaskID            string `json:"staging_task_id"`
-	HealthCheckType          string `json:"health_check_type"`
-	HealthCheckTimeout       int    `json:"health_check_timeout"`
-	StagingFailedReason      string `json:"staging_failed_reason"`
-	StagingFailedDescription string `json:"staging_failed_description"`
-	Diego                    bool   `json:"diego"`
-	DockerImage              string `json:"docker_image"`
-	EnableSSH                bool   `json:"enable_ssh"`
-	Ports                    []int  `json:"ports"`
+	Name                     string                 `json:"name"`
+	SpaceGUID                string                 `json:"space_guid"`
+	StackGUID                string                 `json:"stack_guid"`
+	State                    string                 `json:"state"`
+	PackageState             string                 `json:"package_state"`
+	Memory                   int                    `json:"memory"`
+	Instances                int                    `json:"instances"`
+	DiskQuota                int                    `json:"disk_quota"`
+	Version                  string                 `json:"version"`
+	BuildPack                string                 `json:"buildpack"`
+	Command                  string                 `json:"command"`
+	Console                  bool                   `json:"console"`
+	Debug                    string                 `json:"debug"`
+	StagingTaskID            string                 `json:"staging_task_id"`
+	HealthCheckType          string                 `json:"health_check_type"`
+	HealthCheckTimeout       int                    `json:"health_check_timeout"`
+	StagingFailedReason      string                 `json:"staging_failed_reason"`
+	StagingFailedDescription string                 `json:"staging_failed_description"`
+	Diego                    bool                   `json:"diego"`
+	DockerImage              string                 `json:"docker_image"`
+	EnableSSH                bool                   `json:"enable_ssh"`
+	Ports                    []int                  `json:"ports"`
+	DockerCredentialsJSON    map[string]interface{} `json:"docker_credentials_json"`
+	EnvironmentJSON          map[string]interface{} `json:"environment_json"`
 }
 
 //AppResource ...
