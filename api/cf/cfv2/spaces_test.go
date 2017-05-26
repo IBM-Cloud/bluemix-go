@@ -6,6 +6,7 @@ import (
 
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 
 	. "github.com/onsi/ginkgo"
@@ -47,7 +48,11 @@ var _ = Describe("Spaces", func() {
 			})
 
 			It("should return Spaces created", func() {
-				myspace, err := newSpaces(server.URL()).Create("testspace", "3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", "")
+				payload := SpaceCreateRequest{
+					Name:    "testspace",
+					OrgGUID: "3c1b6f9d-ffe5-43b5-ab91-7be2331dc546",
+				}
+				myspace, err := newSpaces(server.URL()).Create(payload)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(myspace).ShouldNot(BeNil())
 				Expect(myspace.Metadata.GUID).Should(Equal("64ff2b7d-b6d9-48c6-94a2-7f4ba670d67b"))
@@ -69,7 +74,11 @@ var _ = Describe("Spaces", func() {
 			})
 
 			It("should return error when space is created", func() {
-				myspace, err := newSpaces(server.URL()).Create("testspace", "3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", "")
+				payload := SpaceCreateRequest{
+					Name:    "testspace",
+					OrgGUID: "3c1b6f9d-ffe5-43b5-ab91-7be2331dc546",
+				}
+				myspace, err := newSpaces(server.URL()).Create(payload)
 				Expect(err).To(HaveOccurred())
 				Expect(myspace).Should(BeNil())
 			})
@@ -159,7 +168,10 @@ var _ = Describe("Spaces", func() {
 			})
 
 			It("should return space update", func() {
-				myspace, err := newSpaces(server.URL()).Update("testspaceupdate", "64ff2b7d-b6d9-48c6-94a2-7f4ba670d67b")
+				payload := SpaceUpdateRequest{
+					Name: helpers.String("testspaceupdate"),
+				}
+				myspace, err := newSpaces(server.URL()).Update("64ff2b7d-b6d9-48c6-94a2-7f4ba670d67b", payload)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(myspace).ShouldNot(BeNil())
 				Expect(myspace.Metadata.GUID).Should(Equal("64ff2b7d-b6d9-48c6-94a2-7f4ba670d67b"))
@@ -180,7 +192,10 @@ var _ = Describe("Spaces", func() {
 			})
 
 			It("should return error when space updated", func() {
-				myspace, err := newSpaces(server.URL()).Update("testspaceupdate", "64ff2b7d-b6d9-48c6-94a2-7f4ba670d67b")
+				payload := SpaceUpdateRequest{
+					Name: helpers.String("testspaceupdate"),
+				}
+				myspace, err := newSpaces(server.URL()).Update("64ff2b7d-b6d9-48c6-94a2-7f4ba670d67b", payload)
 				Expect(err).To(HaveOccurred())
 				Expect(myspace).Should(BeNil())
 			})

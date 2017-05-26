@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/IBM-Bluemix/bluemix-go/api/cf/cfv2"
+	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
@@ -68,7 +69,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	newspace, err := spaceAPI.Create("test", myorg.GUID, myquota.Metadata.GUID)
+	spaceCreateRequest := cfv2.SpaceCreateRequest{
+		Name:           "test",
+		OrgGUID:        myorg.GUID,
+		SpaceQuotaGUID: myquota.Metadata.GUID,
+	}
+	newspace, err := spaceAPI.Create(spaceCreateRequest)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -78,7 +84,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	newspace, err = spaceAPI.Update("testupdate", newspace.Metadata.GUID)
+	spaceUpdateRequest := cfv2.SpaceUpdateRequest{
+		Name: helpers.String("testupdate"),
+	}
+	newspace, err = spaceAPI.Update(newspace.Metadata.GUID, spaceUpdateRequest)
 	if err != nil {
 		log.Fatal(err)
 	}

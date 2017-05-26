@@ -6,6 +6,7 @@ import (
 
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	bluemixHttp "github.com/IBM-Bluemix/bluemix-go/http"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 
@@ -347,7 +348,7 @@ var _ = Describe("ServiceInstances", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v2/service_instances/e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", "accepts_incomplete=true&async=true"),
-						ghttp.VerifyBody([]byte(`{"name":"new-name","parameters":{"the_service_broker":"new service broker"},"tags":null}`)),
+						ghttp.VerifyBody([]byte(`{"name":"new-name","parameters":{"the_service_broker":"new service broker"}}`)),
 						ghttp.RespondWith(http.StatusAccepted, `{
 						  "metadata": {
 						    "guid": "e764af7b-1603-4ba3-b4bf-0b0da98f7ec2",
@@ -389,7 +390,7 @@ var _ = Describe("ServiceInstances", func() {
 			It("Should update ServiceInstance", func() {
 				param := map[string]interface{}{"the_service_broker": "new service broker"}
 				si, err := newServiceInstances(server.URL()).Update("e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", ServiceInstanceUpdateRequest{
-					Name:   "new-name",
+					Name:   helpers.String("new-name"),
 					Params: param,
 				})
 
@@ -408,7 +409,7 @@ var _ = Describe("ServiceInstances", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v2/service_instances/e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", "accepts_incomplete=true&async=true"),
-						ghttp.VerifyBody([]byte(`{"name":"new-name","tags":null}`)),
+						ghttp.VerifyBody([]byte(`{"name":"new-name"}`)),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to update`),
 					),
 				)
@@ -417,7 +418,7 @@ var _ = Describe("ServiceInstances", func() {
 			It("Should return error when updated", func() {
 				si, err := newServiceInstances(server.URL()).Update(
 					"e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", ServiceInstanceUpdateRequest{
-						Name: "new-name",
+						Name: helpers.String("new-name"),
 					})
 
 				Expect(err).To(HaveOccurred())

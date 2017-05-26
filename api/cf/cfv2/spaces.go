@@ -18,7 +18,7 @@ type SpaceCreateRequest struct {
 
 //SpaceUpdateRequest ...
 type SpaceUpdateRequest struct {
-	Name string `json:"name"`
+	Name *string `json:"name,omitempty"`
 }
 
 //Space ...
@@ -83,8 +83,8 @@ type RouteFilter struct {
 type Spaces interface {
 	ListSpacesInOrg(orgGUID string) ([]Space, error)
 	FindByNameInOrg(orgGUID string, name string) (*Space, error)
-	Create(name, orgGUID, spaceQuotaGUID string) (*SpaceFields, error)
-	Update(newName, spaceGUID string) (*SpaceFields, error)
+	Create(req SpaceCreateRequest) (*SpaceFields, error)
+	Update(spaceGUID string, req SpaceUpdateRequest) (*SpaceFields, error)
 	Delete(spaceGUID string) error
 	Get(spaceGUID string) (*SpaceFields, error)
 	ListRoutes(spaceGUID string, req RouteFilter) ([]Route, error)
@@ -147,15 +147,10 @@ func (r *spaces) listSpacesWithPath(path string) ([]Space, error) {
 	})
 	return spaces, err
 }
-func (r *spaces) Create(name, orgGUID, spaceQuotaGUID string) (*SpaceFields, error) {
-	payload := SpaceCreateRequest{
-		Name:           name,
-		OrgGUID:        orgGUID,
-		SpaceQuotaGUID: spaceQuotaGUID,
-	}
+func (r *spaces) Create(req SpaceCreateRequest) (*SpaceFields, error) {
 	rawURL := "/v2/spaces?accepts_incomplete=true&async=true"
 	spaceFields := SpaceFields{}
-	_, err := r.client.Post(rawURL, payload, &spaceFields)
+	_, err := r.client.Post(rawURL, req, &spaceFields)
 	if err != nil {
 		return nil, err
 	}
@@ -173,13 +168,10 @@ func (r *spaces) Get(spaceGUID string) (*SpaceFields, error) {
 	return &spaceFields, err
 }
 
-func (r *spaces) Update(newName, spaceGUID string) (*SpaceFields, error) {
-	payload := SpaceUpdateRequest{
-		Name: newName,
-	}
+func (r *spaces) Update(spaceGUID string, req SpaceUpdateRequest) (*SpaceFields, error) {
 	rawURL := fmt.Sprintf("/v2/spaces/%s?accepts_incomplete=true&async=true", spaceGUID)
 	spaceFields := SpaceFields{}
-	_, err := r.client.Put(rawURL, payload, &spaceFields)
+	_, err := r.client.Put(rawURL, req, &spaceFields)
 	if err != nil {
 		return nil, err
 	}
