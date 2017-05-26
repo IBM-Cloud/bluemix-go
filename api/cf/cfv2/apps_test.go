@@ -316,8 +316,8 @@ var _ = Describe("Apps", func() {
 
 			It("should create the apps", func() {
 				var appPayload = &AppRequest{
-					Name:      "testapp",
-					SpaceGUID: "211b690c-1241-496e-b6ae-e487b7ebe4e8",
+					Name:      helpers.String("testapp"),
+					SpaceGUID: helpers.String("211b690c-1241-496e-b6ae-e487b7ebe4e8"),
 					BuildPack: helpers.String("nodejs_buildpack"),
 					Instances: 2,
 					Memory:    128,
@@ -345,8 +345,8 @@ var _ = Describe("Apps", func() {
 			})
 			It("should return error while creating app", func() {
 				var appPayload = &AppRequest{
-					Name:      "testapp",
-					SpaceGUID: "211b690c-1241-496e-b6ae-e487b7ebe4e8",
+					Name:      helpers.String("testapp"),
+					SpaceGUID: helpers.String("211b690c-1241-496e-b6ae-e487b7ebe4e8"),
 					BuildPack: helpers.String("nodejs_buildpack"),
 					Instances: 2,
 					Memory:    128,
@@ -515,8 +515,8 @@ var _ = Describe("Apps", func() {
 
 				It("should return app update", func() {
 					var appUpdatePayload = &AppRequest{
-						Name:      "testappupdate",
-						SpaceGUID: "211b690c-1241-496e-b6ae-e487b7ebe4e8",
+						Name:      helpers.String("testappupdate"),
+						SpaceGUID: helpers.String("211b690c-1241-496e-b6ae-e487b7ebe4e8"),
 					}
 					myapp, err := newApps(server.URL()).Update("26d673fd-7e64-49b1-9d00-20c0edc9094b", appUpdatePayload)
 					Expect(err).NotTo(HaveOccurred())
@@ -540,8 +540,8 @@ var _ = Describe("Apps", func() {
 
 				It("should return error when app updated", func() {
 					var appUpdatePayload = &AppRequest{
-						Name:      "testappupdate",
-						SpaceGUID: "211b690c-1241-496e-b6ae-e487b7ebe4e8",
+						Name:      helpers.String("testappupdate"),
+						SpaceGUID: helpers.String("211b690c-1241-496e-b6ae-e487b7ebe4e8"),
 					}
 					myapp, err := newApps(server.URL()).Update("26d673fd-7e64-49b1-9d00-20c0edc9094b", appUpdatePayload)
 					Expect(err).To(HaveOccurred())

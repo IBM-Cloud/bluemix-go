@@ -45,23 +45,23 @@ const (
 
 //AppRequest ...
 type AppRequest struct {
-	Name                     string                  `json:"name,omitempty"`
+	Name                     *string                 `json:"name,omitempty"`
 	Memory                   int                     `json:"memory,omitempty"`
 	Instances                int                     `json:"instances,omitempty"`
 	DiskQuota                int                     `json:"disk_quota,omitempty"`
-	SpaceGUID                string                  `json:"space_guid,omitempty"`
-	StackGUID                string                  `json:"stack_guid,omitempty"`
-	State                    string                  `json:"state,omitempty"`
-	DetectedStartCommand     string                  `json:"detected_start_command,omitempty"`
+	SpaceGUID                *string                 `json:"space_guid,omitempty"`
+	StackGUID                *string                 `json:"stack_guid,omitempty"`
+	State                    *string                 `json:"state,omitempty"`
+	DetectedStartCommand     *string                 `json:"detected_start_command,omitempty"`
 	Command                  *string                 `json:"command,omitempty"`
 	BuildPack                *string                 `json:"buildpack,omitempty"`
-	HealthCheckType          string                  `json:"health_check_type,omitempty"`
+	HealthCheckType          *string                 `json:"health_check_type,omitempty"`
 	HealthCheckTimeout       int                     `json:"health_check_timeout,omitempty"`
 	Diego                    bool                    `json:"diego,omitempty"`
 	EnableSSH                bool                    `json:"enable_ssh,omitempty"`
-	DockerImage              string                  `json:"docker_image,omitempty"`
-	StagingFailedReason      string                  `json:"staging_failed_reason,omitempty"`
-	StagingFailedDescription string                  `json:"staging_failed_description,omitempty"`
+	DockerImage              *string                 `json:"docker_image,omitempty"`
+	StagingFailedReason      *string                 `json:"staging_failed_reason,omitempty"`
+	StagingFailedDescription *string                 `json:"staging_failed_description,omitempty"`
 	Ports                    []int                   `json:"ports,omitempty"`
 	DockerCredentialsJSON    *map[string]interface{} `json:"docker_credentials_json,omitempty"`
 	EnvironmentJSON          *map[string]interface{} `json:"environment_json,omitempty"`
