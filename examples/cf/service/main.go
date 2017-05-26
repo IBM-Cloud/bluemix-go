@@ -65,12 +65,18 @@ func main() {
 	}
 
 	serviceInstanceAPI := client.ServiceInstances()
-	myService, err := serviceInstanceAPI.Create("myservice", plan.GUID, myspace.GUID, nil, nil)
+	myService, err := serviceInstanceAPI.Create(cfv2.ServiceInstanceCreateRequest{
+		Name:      "myservice",
+		PlanGUID:  plan.GUID,
+		SpaceGUID: myspace.GUID,
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	updatedInstance, err := serviceInstanceAPI.Update("New instance", myService.Metadata.GUID, plan.GUID, nil, nil)
+	updatedInstance, err := serviceInstanceAPI.Update(myService.Metadata.GUID, cfv2.ServiceInstanceUpdateRequest{
+		Name: "New instance",
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
