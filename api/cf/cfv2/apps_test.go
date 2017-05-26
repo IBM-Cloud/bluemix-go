@@ -6,6 +6,7 @@ import (
 
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 
 	. "github.com/onsi/ginkgo"
@@ -314,10 +315,10 @@ var _ = Describe("Apps", func() {
 			})
 
 			It("should create the apps", func() {
-				var appPayload = &AppCreateRequest{
+				var appPayload = &AppRequest{
 					Name:      "testapp",
 					SpaceGUID: "211b690c-1241-496e-b6ae-e487b7ebe4e8",
-					BuildPack: "nodejs_buildpack",
+					BuildPack: helpers.String("nodejs_buildpack"),
 					Instances: 2,
 					Memory:    128,
 					DiskQuota: 512,
@@ -343,10 +344,10 @@ var _ = Describe("Apps", func() {
 				)
 			})
 			It("should return error while creating app", func() {
-				var appPayload = &AppCreateRequest{
+				var appPayload = &AppRequest{
 					Name:      "testapp",
 					SpaceGUID: "211b690c-1241-496e-b6ae-e487b7ebe4e8",
-					BuildPack: "nodejs_buildpack",
+					BuildPack: helpers.String("nodejs_buildpack"),
 					Instances: 2,
 					Memory:    128,
 					DiskQuota: 512,
@@ -513,7 +514,7 @@ var _ = Describe("Apps", func() {
 				})
 
 				It("should return app update", func() {
-					var appUpdatePayload = &AppUpdateRequest{
+					var appUpdatePayload = &AppRequest{
 						Name:      "testappupdate",
 						SpaceGUID: "211b690c-1241-496e-b6ae-e487b7ebe4e8",
 					}
@@ -538,7 +539,7 @@ var _ = Describe("Apps", func() {
 				})
 
 				It("should return error when app updated", func() {
-					var appUpdatePayload = &AppUpdateRequest{
+					var appUpdatePayload = &AppRequest{
 						Name:      "testappupdate",
 						SpaceGUID: "211b690c-1241-496e-b6ae-e487b7ebe4e8",
 					}

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/IBM-Bluemix/bluemix-go/api/cf/cfv2"
+	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
@@ -42,7 +43,10 @@ func main() {
 	flag.StringVar(&routeName, "route", "", "Bluemix app route")
 
 	var buildpack string
-	flag.StringVar(&buildpack, "buildpack", "", "Bluemix buildpack")
+	flag.StringVar(&buildpack, "buildpack", "https://github.com/cloudfoundry/nodejs-buildpack.git", "Bluemix buildpack")
+
+	var newBuildPack string
+	flag.StringVar(&newBuildPack, "new_buildpack", "", "Bluemix buildpack")
 
 	var serviceOffering string
 	flag.StringVar(&serviceOffering, "so", "cleardb", "Bluemix Service Offering")
@@ -123,15 +127,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var appPayload = &cfv2.AppCreateRequest{
-		Name:        name,
-		SpaceGUID:   myspace.GUID,
-		BuildPack:   buildpack,
-		Instances:   instance,
-		Memory:      memory,
-		DiskQuota:   diskQuota,
-		Diego:       diego,
-		DockerImage: dockerImage,
+	var appPayload = &cfv2.AppRequest{
+		Name:               name,
+		SpaceGUID:          myspace.GUID,
+		BuildPack:          helpers.String(buildpack),
+		Instances:          instance,
+		Memory:             memory,
+		DiskQuota:          diskQuota,
+		Diego:              diego,
+		HealthCheckTimeout: 10,
+		//DockerImage: helpers.String(dockerImage),
 	}
 
 	newapp, err := appAPI.Create(appPayload)
@@ -218,12 +223,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var appUpdatePayload = &cfv2.AppUpdateRequest{
-		Name:      "testappupdate",
-		SpaceGUID: myspace.GUID,
-	}
 
-	updateapp, err := appAPI.Update(newapp.Metadata.GUID, appUpdatePayload)
+	//Update name, buildpack
+	appPayload.Name = "testappupdate"
+	appPayload.SpaceGUID = myspace.GUID
+	appPayload.BuildPack = helpers.String(newBuildPack)
+
+	updateapp, err := appAPI.Update(newapp.Metadata.GUID, appPayload)
 	fmt.Println(updateapp)
 	if err != nil {
 		log.Fatal(err)
