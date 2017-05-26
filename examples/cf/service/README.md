@@ -7,7 +7,7 @@ This creates a service instance of specified service offering and plan type. Aft
 Example: 
 
 ```
-go run main.go -org example.com -space test
+go run main.go -org example.com -space test -name myservice -newname mynewservice
 ```
  
 If user doesn't want to delete service instance and service key
@@ -15,7 +15,7 @@ If user doesn't want to delete service instance and service key
 Example:
 
 ```
-go run main.go -org example.com -space test -no-delete true
+go run main.go -org example.com -space test -name myservice -newname mynewservice -no-delete true
 ```
 
 

@@ -6,6 +6,7 @@ import (
 
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	bluemixHttp "github.com/IBM-Bluemix/bluemix-go/http"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 
@@ -69,7 +70,14 @@ var _ = Describe("ServiceInstances", func() {
 			It("Should create ServiceInstances", func() {
 				param := map[string]interface{}{"the_service_broker": "wants this object"}
 				tags := []string{"accounting", "mongodb"}
-				si, err := newServiceInstances(server.URL()).Create("my-service-instance", "817b7e86-551c-416a-bfbc-c96feb4e4a64", "ba013e75-1da1-4eaa-b30d-0f258211e4c1", param, tags)
+				payload := ServiceInstanceCreateRequest{
+					Name:      "my-service-instance",
+					PlanGUID:  "817b7e86-551c-416a-bfbc-c96feb4e4a64",
+					SpaceGUID: "ba013e75-1da1-4eaa-b30d-0f258211e4c1",
+					Params:    param,
+					Tags:      tags,
+				}
+				si, err := newServiceInstances(server.URL()).Create(payload)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(si).NotTo(BeNil())
 				Expect(si.Metadata.GUID).To(Equal("519b0d69-19e4-4009-a363-461eb117cf32"))
@@ -92,7 +100,12 @@ var _ = Describe("ServiceInstances", func() {
 			})
 
 			It("Should return error when created", func() {
-				si, err := newServiceInstances(server.URL()).Create("my-service-instance", "817b7e86-551c-416a-bfbc-c96feb4e4a64", "ba013e75-1da1-4eaa-b30d-0f258211e4c1", nil, nil)
+				payload := ServiceInstanceCreateRequest{
+					Name:      "my-service-instance",
+					PlanGUID:  "817b7e86-551c-416a-bfbc-c96feb4e4a64",
+					SpaceGUID: "ba013e75-1da1-4eaa-b30d-0f258211e4c1",
+				}
+				si, err := newServiceInstances(server.URL()).Create(payload)
 				Expect(err).To(HaveOccurred())
 				Expect(si).Should(BeNil())
 			})
@@ -336,7 +349,7 @@ var _ = Describe("ServiceInstances", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v2/service_instances/e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", "accepts_incomplete=true&async=true"),
-						ghttp.VerifyBody([]byte(`{"name":"new-name","service_plan_guid":"7dadd367-5603-4211-8986-d4d99dfab31c","parameters":{"the_service_broker":"new service broker"},"tags":null}`)),
+						ghttp.VerifyBody([]byte(`{"name":"new-name","service_plan_guid":"7dadd367-5603-4211-8986-d4d99dfab31c","parameters":{"the_service_broker":"new service broker"},"tags":["accounting"]}`)),
 						ghttp.RespondWith(http.StatusAccepted, `{
 						  "metadata": {
 						    "guid": "e764af7b-1603-4ba3-b4bf-0b0da98f7ec2",
@@ -377,7 +390,14 @@ var _ = Describe("ServiceInstances", func() {
 
 			It("Should update ServiceInstance", func() {
 				param := map[string]interface{}{"the_service_broker": "new service broker"}
-				si, err := newServiceInstances(server.URL()).Update("new-name", "e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", "7dadd367-5603-4211-8986-d4d99dfab31c", param, nil)
+				tags := []string{"accounting"}
+				payload := ServiceInstanceUpdateRequest{
+					Name:     helpers.String("new-name"),
+					PlanGUID: helpers.String("7dadd367-5603-4211-8986-d4d99dfab31c"),
+					Params:   helpers.Map(param),
+					Tags:     helpers.List(tags),
+				}
+				si, err := newServiceInstances(server.URL()).Update(payload, "e764af7b-1603-4ba3-b4bf-0b0da98f7ec2")
 				Expect(err).NotTo(HaveOccurred())
 				Expect(si).NotTo(BeNil())
 				Expect(si.Metadata.GUID).To(Equal("e764af7b-1603-4ba3-b4bf-0b0da98f7ec2"))
@@ -393,14 +413,18 @@ var _ = Describe("ServiceInstances", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v2/service_instances/e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", "accepts_incomplete=true&async=true"),
-						ghttp.VerifyBody([]byte(`{"name":"new-name","service_plan_guid":"7dadd367-5603-4211-8986-d4d99dfab31c","tags":null}`)),
+						ghttp.VerifyBody([]byte(`{"name":"new-name","service_plan_guid":"7dadd367-5603-4211-8986-d4d99dfab31c"}`)),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to update`),
 					),
 				)
 			})
 
 			It("Should return error when updated", func() {
-				si, err := newServiceInstances(server.URL()).Update("new-name", "e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", "7dadd367-5603-4211-8986-d4d99dfab31c", nil, nil)
+				payload := ServiceInstanceUpdateRequest{
+					Name:     helpers.String("new-name"),
+					PlanGUID: helpers.String("7dadd367-5603-4211-8986-d4d99dfab31c"),
+				}
+				si, err := newServiceInstances(server.URL()).Update(payload, "e764af7b-1603-4ba3-b4bf-0b0da98f7ec2")
 				Expect(err).To(HaveOccurred())
 				Expect(si).Should(BeNil())
 			})

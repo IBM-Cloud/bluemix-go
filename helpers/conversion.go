@@ -21,3 +21,13 @@ func String(v string) *string {
 func Duration(v time.Duration) *time.Duration {
 	return &v
 }
+
+// Map returns a pointer to the map
+func Map(v map[string]interface{}) *map[string]interface{} {
+	return &v
+}
+
+// List returns a pointer to the list
+func List(v []string) *[]string {
+	return &v
+}
