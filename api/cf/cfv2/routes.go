@@ -16,7 +16,7 @@ type RouteRequest struct {
 	SpaceGUID  string `json:"space_guid"`
 	DomainGUID string `json:"domain_guid,omitempty"`
 	Path       string `json:"path,omitempty"`
-	Port       int    `json:"port,omitempty"`
+	Port       *int   `json:"port,omitempty"`
 }
 
 //RouteUpdateRequest ...
@@ -39,7 +39,7 @@ type RouteEntity struct {
 	DomainGUID          string `json:"domain_guid"`
 	SpaceGUID           string `json:"space_guid"`
 	ServiceInstanceGUID string `json:"service_instance_guid"`
-	Port                int    `json:"port"`
+	Port                *int   `json:"port"`
 	DomainURL           string `json:"domain_url"`
 	SpaceURL            string `json:"space_url"`
 	AppsURL             string `json:"apps_url"`
@@ -85,7 +85,7 @@ type Route struct {
 	DomainGUID          string
 	SpaceGUID           string
 	ServiceInstanceGUID string
-	Port                int
+	Port                *int
 	DomainURL           string
 	SpaceURL            string
 	AppsURL             string
