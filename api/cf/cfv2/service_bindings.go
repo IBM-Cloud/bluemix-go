@@ -47,6 +47,12 @@ type ServiceBinding struct {
 	Credentials         map[string]interface{}
 }
 
+//ServiceBindingsFilter ...
+type ServiceBindingsFilter struct {
+	AppGUID             *string
+	ServiceInstanceGUID *string
+}
+
 //ToFields ..
 func (resource ServiceBindingResource) ToFields() ServiceBinding {
 	entity := resource.Entity
@@ -64,6 +70,7 @@ type ServiceBindings interface {
 	Create(req ServiceBindingRequest) (*ServiceBindingFields, error)
 	Get(guid string) (*ServiceBindingFields, error)
 	Delete(guid string, async bool) error
+	List(req ServiceBindingsFilter) ([]ServiceBinding, error)
 }
 
 type serviceBinding struct {
@@ -109,4 +116,41 @@ func (r *serviceBinding) Delete(guid string, async bool) error {
 	path := httpReq.URL.String()
 	_, err = r.client.Delete(path)
 	return err
+}
+
+func (r *serviceBinding) List(filter ServiceBindingsFilter) ([]ServiceBinding, error) {
+	rawURL := "/v2/service_bindings"
+	req := rest.GetRequest(rawURL)
+	var query string
+	if filter.AppGUID != nil {
+		query = "app_guid:" + *filter.AppGUID + ";"
+	}
+	if filter.ServiceInstanceGUID != nil {
+		query += "service_instance_guid:" + *filter.ServiceInstanceGUID + ";"
+	}
+	if len(query) > 0 {
+		req.Query("q", query)
+	}
+	httpReq, err := req.Build()
+	if err != nil {
+		return nil, err
+	}
+	path := httpReq.URL.String()
+	bindings, err := listServiceBindingWithPath(r.client, path)
+	if err != nil {
+		return nil, err
+	}
+	return bindings, nil
+}
+
+func listServiceBindingWithPath(c *client.Client, path string) ([]ServiceBinding, error) {
+	var sb []ServiceBinding
+	_, err := c.GetPaginated(path, ServiceBindingResource{}, func(resource interface{}) bool {
+		if sbResource, ok := resource.(ServiceBindingResource); ok {
+			sb = append(sb, sbResource.ToFields())
+			return true
+		}
+		return false
+	})
+	return sb, err
 }

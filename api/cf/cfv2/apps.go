@@ -503,15 +503,3 @@ func (r *app) ListServiceBindings(appGUID string) ([]ServiceBinding, error) {
 	}
 	return sb, nil
 }
-
-func listServiceBindingWithPath(c *client.Client, path string) ([]ServiceBinding, error) {
-	var sb []ServiceBinding
-	_, err := c.GetPaginated(path, ServiceBindingResource{}, func(resource interface{}) bool {
-		if sbResource, ok := resource.(ServiceBindingResource); ok {
-			sb = append(sb, sbResource.ToFields())
-			return true
-		}
-		return false
-	})
-	return sb, err
-}
