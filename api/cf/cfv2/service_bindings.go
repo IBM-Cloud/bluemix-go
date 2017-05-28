@@ -2,6 +2,7 @@ package cfv2
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/IBM-Bluemix/bluemix-go/client"
 	"github.com/IBM-Bluemix/bluemix-go/rest"
@@ -47,12 +48,6 @@ type ServiceBinding struct {
 	Credentials         map[string]interface{}
 }
 
-//ServiceBindingsFilter ...
-type ServiceBindingsFilter struct {
-	AppGUID             *string
-	ServiceInstanceGUID *string
-}
-
 //ToFields ..
 func (resource ServiceBindingResource) ToFields() ServiceBinding {
 	entity := resource.Entity
@@ -70,7 +65,7 @@ type ServiceBindings interface {
 	Create(req ServiceBindingRequest) (*ServiceBindingFields, error)
 	Get(guid string) (*ServiceBindingFields, error)
 	Delete(guid string, async bool) error
-	List(req ServiceBindingsFilter) ([]ServiceBinding, error)
+	List(filters ...string) ([]ServiceBinding, error)
 }
 
 type serviceBinding struct {
@@ -118,18 +113,11 @@ func (r *serviceBinding) Delete(guid string, async bool) error {
 	return err
 }
 
-func (r *serviceBinding) List(filter ServiceBindingsFilter) ([]ServiceBinding, error) {
+func (r *serviceBinding) List(filters ...string) ([]ServiceBinding, error) {
 	rawURL := "/v2/service_bindings"
 	req := rest.GetRequest(rawURL)
-	var query string
-	if filter.AppGUID != nil {
-		query = "app_guid:" + *filter.AppGUID + ";"
-	}
-	if filter.ServiceInstanceGUID != nil {
-		query += "service_instance_guid:" + *filter.ServiceInstanceGUID + ";"
-	}
-	if len(query) > 0 {
-		req.Query("q", query)
+	if len(filters) > 0 {
+		req.Query("q", strings.Join(filters, ""))
 	}
 	httpReq, err := req.Build()
 	if err != nil {
