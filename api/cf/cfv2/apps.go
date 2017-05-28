@@ -7,6 +7,7 @@ import (
 
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	"github.com/IBM-Bluemix/bluemix-go/rest"
 	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
@@ -70,11 +71,6 @@ type AppRequest struct {
 	EnvironmentJSON          *map[string]interface{} `json:"environment_json,omitempty"`
 }
 
-//AppsStateUpdateRequest ...
-type AppsStateUpdateRequest struct {
-	State string `json:"state"`
-}
-
 //AppEntity ...
 type AppEntity struct {
 	Name                     string                 `json:"name"`
@@ -86,17 +82,17 @@ type AppEntity struct {
 	Instances                int                    `json:"instances"`
 	DiskQuota                int                    `json:"disk_quota"`
 	Version                  string                 `json:"version"`
-	BuildPack                string                 `json:"buildpack"`
-	Command                  string                 `json:"command"`
+	BuildPack                *string                `json:"buildpack"`
+	Command                  *string                `json:"command"`
 	Console                  bool                   `json:"console"`
-	Debug                    string                 `json:"debug"`
+	Debug                    *string                `json:"debug"`
 	StagingTaskID            string                 `json:"staging_task_id"`
 	HealthCheckType          string                 `json:"health_check_type"`
-	HealthCheckTimeout       int                    `json:"health_check_timeout"`
+	HealthCheckTimeout       *int                   `json:"health_check_timeout"`
 	StagingFailedReason      string                 `json:"staging_failed_reason"`
 	StagingFailedDescription string                 `json:"staging_failed_description"`
 	Diego                    bool                   `json:"diego"`
-	DockerImage              string                 `json:"docker_image"`
+	DockerImage              *string                `json:"docker_image"`
 	EnableSSH                bool                   `json:"enable_ssh"`
 	Ports                    []int                  `json:"ports"`
 	DockerCredentialsJSON    map[string]interface{} `json:"docker_credentials_json"`
@@ -146,19 +142,57 @@ func (resource AppResource) ToFields() App {
 	entity := resource.Entity
 
 	return App{
-		GUID:      resource.Metadata.GUID,
-		Name:      entity.Name,
-		SpaceGUID: entity.SpaceGUID,
-		StackGUID: entity.StackGUID,
+		GUID:               resource.Metadata.GUID,
+		Name:               entity.Name,
+		SpaceGUID:          entity.SpaceGUID,
+		StackGUID:          entity.StackGUID,
+		State:              entity.State,
+		PackageState:       entity.PackageState,
+		Memory:             entity.Memory,
+		Instances:          entity.Instances,
+		DiskQuota:          entity.DiskQuota,
+		Version:            entity.Version,
+		BuildPack:          entity.BuildPack,
+		Command:            entity.Command,
+		Console:            entity.Console,
+		Debug:              entity.Debug,
+		StagingTaskID:      entity.StagingTaskID,
+		HealthCheckType:    entity.HealthCheckType,
+		HealthCheckTimeout: entity.HealthCheckTimeout,
+		Diego:              entity.Diego,
+		DockerImage:        entity.DockerImage,
+		EnableSSH:          entity.EnableSSH,
+		Ports:              entity.Ports,
+		DockerCredentialsJSON: entity.DockerCredentialsJSON,
+		EnvironmentJSON:       entity.EnvironmentJSON,
 	}
 }
 
 //App model
 type App struct {
-	GUID      string
-	Name      string
-	SpaceGUID string
-	StackGUID string
+	Name                  string
+	SpaceGUID             string
+	GUID                  string
+	StackGUID             string
+	State                 string
+	PackageState          string
+	Memory                int
+	Instances             int
+	DiskQuota             int
+	Version               string
+	BuildPack             *string
+	Command               *string
+	Console               bool
+	Debug                 *string
+	StagingTaskID         string
+	HealthCheckType       string
+	HealthCheckTimeout    *int
+	Diego                 bool
+	DockerImage           *string
+	EnableSSH             bool
+	Ports                 []int
+	DockerCredentialsJSON map[string]interface{}
+	EnvironmentJSON       map[string]interface{}
 }
 
 //Apps ...
@@ -296,8 +330,8 @@ func (r *app) Upload(appGUID string, zipPath string) (*UploadBitFields, error) {
 }
 
 func (r *app) Start(appGUID string, maxWaitTime time.Duration) (*AppState, error) {
-	payload := AppsStateUpdateRequest{
-		State: AppStartedState,
+	payload := AppRequest{
+		State: helpers.String(AppStartedState),
 	}
 	rawURL := fmt.Sprintf("/v2/apps/%s", appGUID)
 	appFields := AppFields{}
