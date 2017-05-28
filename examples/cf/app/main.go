@@ -246,6 +246,10 @@ func main() {
 	}
 
 	if clean {
+		err := appAPI.DeleteServiceBindings(updateapp.Metadata.GUID, sb.Metadata.GUID)
+		if err != nil {
+			log.Fatal(err)
+		}
 		err = appAPI.Delete(updateapp.Metadata.GUID)
 		if err != nil {
 			log.Fatal(err)

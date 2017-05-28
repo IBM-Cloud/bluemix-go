@@ -217,8 +217,8 @@ type Apps interface {
 	UnBindRoute(appGUID, routeGUID string) error
 
 	//Service bindings
-	DeleteServiceBinding(appGUID, servicebindingGUID string) error
 	ListServiceBindings(appGUID string) ([]ServiceBinding, error)
+	DeleteServiceBindings(appGUID string, bindingGUIDs ...string) error
 }
 
 type app struct {
@@ -292,10 +292,13 @@ func (r *app) UnBindRoute(appGUID, routeGUID string) error {
 	return err
 }
 
-func (r *app) DeleteServiceBinding(appGUID, sbGUID string) error {
-	rawURL := fmt.Sprintf("/v2/apps/%s/service_bindings/%s", appGUID, sbGUID)
-	_, err := r.client.Delete(rawURL)
-	return err
+func (r *app) DeleteServiceBindings(appGUID string, sbGUIDs ...string) error {
+	for _, g := range sbGUIDs {
+		rawURL := fmt.Sprintf("/v2/apps/%s/service_bindings/%s", appGUID, g)
+		_, err := r.client.Delete(rawURL)
+		return err
+	}
+	return nil
 }
 
 func (r *app) listAppWithPath(path string) ([]App, error) {
