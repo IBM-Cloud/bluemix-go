@@ -210,6 +210,8 @@ type Apps interface {
 	WaitForAppStatus(waitForThisState, appGUID string, timeout time.Duration) (string, error)
 	WaitForInstanceStatus(waitForThisState, appGUID string, timeout time.Duration) (string, error)
 	Instances(appGUID string) (map[string]AppStats, error)
+	Restage(appGUID string, timeout time.Duration) (*AppState, error)
+	GetAppStatusAfterWait(appGUID string, maxWaitTime time.Duration, appFields *AppFields) (*AppState, error)
 
 	//Routes related
 	BindRoute(appGUID, routeGUID string) (*AppFields, error)
@@ -342,22 +344,8 @@ func (r *app) Start(appGUID string, maxWaitTime time.Duration) (*AppState, error
 	if err != nil {
 		return nil, err
 	}
-	appState := &AppState{
-		PackageState:  AppPendingState,
-		InstanceState: AppUnKnownState,
-	}
-	if maxWaitTime == 0 {
-		appState.PackageState = appFields.Entity.PackageState
-		appState.InstanceState = appFields.Entity.State
-		return appState, nil
-	}
-	status, err := r.WaitForAppStatus(AppStagedState, appGUID, maxWaitTime/2)
-	appState.PackageState = status
-	if err != nil || status == AppFailedState {
-		return appState, err
-	}
-	status, err = r.WaitForInstanceStatus(AppRunningState, appGUID, maxWaitTime/2)
-	appState.InstanceState = status
+
+	appState, err := r.GetAppStatusAfterWait(appGUID, maxWaitTime, &appFields)
 	return appState, nil
 }
 
@@ -434,6 +422,17 @@ func (r *app) Delete(appGUID string) error {
 	return err
 }
 
+func (r *app) Restage(appGUID string, maxWaitTime time.Duration) (*AppState, error) {
+	rawURL := fmt.Sprintf("/v2/apps/%s/restage", appGUID)
+	appFields := AppFields{}
+	_, err := r.client.Post(rawURL, nil, &appFields)
+	if err != nil {
+		return nil, err
+	}
+	appState, err := r.GetAppStatusAfterWait(appGUID, maxWaitTime, &appFields)
+	return appState, nil
+}
+
 func (r *app) WaitForAppStatus(waitForThisState, appGUID string, maxWaitTime time.Duration) (string, error) {
 	timeout := time.After(maxWaitTime)
 	tick := time.Tick(DefaultRetryDelayForStatusCheck)
@@ -502,4 +501,24 @@ func (r *app) ListServiceBindings(appGUID string) ([]ServiceBinding, error) {
 		return nil, err
 	}
 	return sb, nil
+}
+
+func (r *app) GetAppStatusAfterWait(appGUID string, maxWaitTime time.Duration, appFields *AppFields) (*AppState, error) {
+	appState := &AppState{
+		PackageState:  AppPendingState,
+		InstanceState: AppUnKnownState,
+	}
+	if maxWaitTime == 0 {
+		appState.PackageState = appFields.Entity.PackageState
+		appState.InstanceState = appFields.Entity.State
+		return appState, nil
+	}
+	status, err := r.WaitForAppStatus(AppStagedState, appGUID, maxWaitTime/2)
+	appState.PackageState = status
+	if err != nil || status == AppFailedState {
+		return appState, err
+	}
+	status, err = r.WaitForInstanceStatus(AppRunningState, appGUID, maxWaitTime/2)
+	appState.InstanceState = status
+	return appState, nil
 }
