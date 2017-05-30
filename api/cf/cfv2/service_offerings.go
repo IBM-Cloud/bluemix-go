@@ -87,9 +87,22 @@ func (resource ServiceOfferingResource) ToFields() ServiceOffering {
 	}
 }
 
+//ServiceOfferingFields ...
+type ServiceOfferingFields struct {
+	Metadata ServiceOfferingMetadata
+	Entity   ServiceOffering
+}
+
+//ServiceOfferingMetadata ...
+type ServiceOfferingMetadata struct {
+	GUID string `json:"guid"`
+	URL  string `json:"url"`
+}
+
 //ServiceOfferings ...
 type ServiceOfferings interface {
 	FindByLabel(serviceName string) (*ServiceOffering, error)
+	Get(svcOfferingGUID string) (*ServiceOfferingFields, error)
 }
 
 type serviceOfferrings struct {
@@ -102,7 +115,17 @@ func newServiceOfferingAPI(c *client.Client) ServiceOfferings {
 	}
 }
 
-func (r *serviceOfferrings) FindByLabel(serviceName string) (*ServiceOffering, error) {
+func (s *serviceOfferrings) Get(svcGUID string) (*ServiceOfferingFields, error) {
+	rawURL := fmt.Sprintf("/v2/services/%s", svcGUID)
+	svcFields := ServiceOfferingFields{}
+	_, err := s.client.Get(rawURL, &svcFields)
+	if err != nil {
+		return nil, err
+	}
+	return &svcFields, err
+}
+
+func (s *serviceOfferrings) FindByLabel(serviceName string) (*ServiceOffering, error) {
 	req := rest.GetRequest("v2/services")
 	if serviceName != "" {
 		req.Query("q", "label:"+serviceName)
@@ -114,7 +137,7 @@ func (r *serviceOfferrings) FindByLabel(serviceName string) (*ServiceOffering, e
 	path := httpReq.URL.String()
 	var services ServiceOffering
 	var found bool
-	err = r.listServicesOfferingWithPath(path, func(serviceOfferingResource ServiceOfferingResource) bool {
+	err = s.listServicesOfferingWithPath(path, func(serviceOfferingResource ServiceOfferingResource) bool {
 		services = serviceOfferingResource.ToFields()
 		found = true
 		return false
@@ -134,8 +157,8 @@ func (r *serviceOfferrings) FindByLabel(serviceName string) (*ServiceOffering, e
 
 }
 
-func (r *serviceOfferrings) listServicesOfferingWithPath(path string, cb func(ServiceOfferingResource) bool) error {
-	_, err := r.client.GetPaginated(path, ServiceOfferingResource{}, func(resource interface{}) bool {
+func (s *serviceOfferrings) listServicesOfferingWithPath(path string, cb func(ServiceOfferingResource) bool) error {
+	_, err := s.client.GetPaginated(path, ServiceOfferingResource{}, func(resource interface{}) bool {
 		if serviceOfferingResource, ok := resource.(ServiceOfferingResource); ok {
 			return cb(serviceOfferingResource)
 		}
