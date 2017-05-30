@@ -564,7 +564,7 @@ var _ = Describe("Apps", func() {
 
 				It("should delete the app", func() {
 
-					err := newApps(server.URL()).Delete("26d673fd-7e64-49b1-9d00-20c0edc9094b")
+					err := newApps(server.URL()).Delete("26d673fd-7e64-49b1-9d00-20c0edc9094b", false, false)
 					Expect(err).NotTo(HaveOccurred())
 
 				})
@@ -582,7 +582,7 @@ var _ = Describe("Apps", func() {
 
 				It("should return error when app deleted", func() {
 
-					err := newApps(server.URL()).Delete("26d673fd-7e64-49b1-9d00-20c0edc9094b")
+					err := newApps(server.URL()).Delete("26d673fd-7e64-49b1-9d00-20c0edc9094b", false, false)
 					Expect(err).To(HaveOccurred())
 
 				})
