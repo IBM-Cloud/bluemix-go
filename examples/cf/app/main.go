@@ -250,7 +250,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		err = appAPI.Delete(updateapp.Metadata.GUID)
+		err = appAPI.Delete(updateapp.Metadata.GUID, true, true)
 		if err != nil {
 			log.Fatal(err)
 		}

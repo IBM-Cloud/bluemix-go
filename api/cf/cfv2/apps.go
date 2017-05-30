@@ -201,7 +201,7 @@ type Apps interface {
 	List() ([]App, error)
 	Get(appGUID string) (*AppFields, error)
 	Update(appGUID string, appPayload *AppRequest) (*AppFields, error)
-	Delete(appGUID string) error
+	Delete(appGUID string, async bool, recursive bool) error
 	FindByName(spaceGUID, name string) (*App, error)
 	Start(appGUID string, timeout time.Duration) (*AppState, error)
 	Upload(path string, name string) (*UploadBitFields, error)
@@ -424,9 +424,20 @@ func (r *app) Update(appGUID string, appPayload *AppRequest) (*AppFields, error)
 	return &appFields, nil
 }
 
-func (r *app) Delete(appGUID string) error {
-	rawURL := fmt.Sprintf("/v2/apps/%s", appGUID)
-	_, err := r.client.Delete(rawURL)
+func (r *app) Delete(appGUID string, async bool, recursive bool) error {
+	req := rest.GetRequest(fmt.Sprintf("/v2/apps/%s", appGUID))
+	if async {
+		req.Query("async", "true")
+	}
+	if recursive {
+		req.Query("recursive", "true")
+	}
+	httpReq, err := req.Build()
+	if err != nil {
+		return err
+	}
+	path := httpReq.URL.String()
+	_, err = r.client.Delete(path)
 	return err
 }
 
