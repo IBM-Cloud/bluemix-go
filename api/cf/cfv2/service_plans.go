@@ -59,9 +59,22 @@ func (resource ServicePlanResource) ToFields() ServicePlan {
 	}
 }
 
+//ServicePlanFields ...
+type ServicePlanFields struct {
+	Metadata ServicePlanMetadata
+	Entity   ServicePlan
+}
+
+//ServicePlanMetadata ...
+type ServicePlanMetadata struct {
+	GUID string `json:"guid"`
+	URL  string `json:"url"`
+}
+
 //ServicePlans ...
 type ServicePlans interface {
-	GetServicePlan(serviceOfferingGUID string, planType string) (*ServicePlan, error)
+	FindPlanInServiceOffering(serviceOfferingGUID string, planType string) (*ServicePlan, error)
+	Get(planGUID string) (*ServicePlanFields, error)
 }
 
 type servicePlan struct {
@@ -74,7 +87,17 @@ func newServicePlanAPI(c *client.Client) ServicePlans {
 	}
 }
 
-func (r *servicePlan) GetServicePlan(serviceOfferingGUID string, planType string) (*ServicePlan, error) {
+func (s *servicePlan) Get(planGUID string) (*ServicePlanFields, error) {
+	rawURL := fmt.Sprintf("/v2/service_plans/%s", planGUID)
+	planFields := ServicePlanFields{}
+	_, err := s.client.Get(rawURL, &planFields)
+	if err != nil {
+		return nil, err
+	}
+	return &planFields, err
+}
+
+func (s *servicePlan) FindPlanInServiceOffering(serviceOfferingGUID string, planType string) (*ServicePlan, error) {
 	req := rest.GetRequest("/v2/service_plans")
 	if serviceOfferingGUID != "" {
 		req.Query("q", "service_guid:"+serviceOfferingGUID)
@@ -84,7 +107,7 @@ func (r *servicePlan) GetServicePlan(serviceOfferingGUID string, planType string
 		return nil, err
 	}
 	path := httpReq.URL.String()
-	plans, err := r.listServicesPlanWithPath(path)
+	plans, err := s.listServicesPlanWithPath(path)
 	if err != nil {
 		return nil, err
 	}
@@ -103,9 +126,9 @@ func (r *servicePlan) GetServicePlan(serviceOfferingGUID string, planType string
 
 }
 
-func (r *servicePlan) listServicesPlanWithPath(path string) ([]ServicePlan, error) {
+func (s *servicePlan) listServicesPlanWithPath(path string) ([]ServicePlan, error) {
 	var servicePlans []ServicePlan
-	_, err := r.client.GetPaginated(path, ServicePlanResource{}, func(resource interface{}) bool {
+	_, err := s.client.GetPaginated(path, ServicePlanResource{}, func(resource interface{}) bool {
 		if servicePlanResource, ok := resource.(ServicePlanResource); ok {
 			servicePlans = append(servicePlans, servicePlanResource.ToFields())
 			return true

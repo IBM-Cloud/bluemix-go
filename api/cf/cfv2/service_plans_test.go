@@ -19,7 +19,7 @@ var _ = Describe("Service Plan by Label", func() {
 	AfterEach(func() {
 		server.Close()
 	})
-	Describe("GetServicePlan()", func() {
+	Describe("FindPlanInServiceOffering()", func() {
 		Context("Server return service plan", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
@@ -78,7 +78,7 @@ var _ = Describe("Service Plan by Label", func() {
 			})
 
 			It("should return service plan", func() {
-				myserviceplan, err := newServicePlan(server.URL()).GetServicePlan("14c83ad2-6fd4-439a-8c3a-d1a20f8a2381", "Lite")
+				myserviceplan, err := newServicePlan(server.URL()).FindPlanInServiceOffering("14c83ad2-6fd4-439a-8c3a-d1a20f8a2381", "Lite")
 				Expect(err).NotTo(HaveOccurred())
 				Expect(myserviceplan).ShouldNot(BeNil())
 				Expect(myserviceplan.GUID).Should(Equal("e72c6030-cfe3-4477-9fb1-ca2b0408cbcb"))
@@ -104,7 +104,7 @@ var _ = Describe("Service Plan by Label", func() {
 			})
 
 			It("should return no service plan", func() {
-				myserviceplan, err := newServicePlan(server.URL()).GetServicePlan("14c83ad2-6fd4-439a-8c3a-d1a20f8a2381", "Lite")
+				myserviceplan, err := newServicePlan(server.URL()).FindPlanInServiceOffering("14c83ad2-6fd4-439a-8c3a-d1a20f8a2381", "Lite")
 				Expect(err).To(HaveOccurred())
 				Expect(myserviceplan).To(BeNil())
 			})
@@ -124,7 +124,7 @@ var _ = Describe("Service Plan by Label", func() {
 			})
 
 			It("should return error service plan", func() {
-				myserviceplan, err := newServicePlan(server.URL()).GetServicePlan("14c83ad2-6fd4-439a-8c3a-d1a20f8a2381", "Lite")
+				myserviceplan, err := newServicePlan(server.URL()).FindPlanInServiceOffering("14c83ad2-6fd4-439a-8c3a-d1a20f8a2381", "Lite")
 				Expect(err).To(HaveOccurred())
 				Expect(myserviceplan).To(BeNil())
 			})

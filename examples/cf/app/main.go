@@ -109,7 +109,7 @@ func main() {
 		log.Fatal(err)
 	}
 	servicePlanAPI := client.ServicePlans()
-	plan, err := servicePlanAPI.GetServicePlan(myserviceOff.GUID, servicePlan)
+	plan, err := servicePlanAPI.FindPlanInServiceOffering(myserviceOff.GUID, servicePlan)
 	if err != nil {
 		log.Fatal(err)
 	}
