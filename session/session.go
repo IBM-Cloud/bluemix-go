@@ -65,19 +65,6 @@ func New(configs ...*bluemix.Config) (*Session, error) {
 		c.EndpointLocator = endpoints.NewEndpointLocator(c.Region)
 	}
 
-	if len(c.IAMAccessToken) == 0 {
-		c.IAMAccessToken = helpers.EnvFallBack([]string{"IBMCLOUD_IAM_TOKEN"}, "")
-	}
-	if len(c.IAMRefreshToken) == 0 {
-		c.IAMRefreshToken = helpers.EnvFallBack([]string{"IBMCLOUD_IAM_REFRESH_TOKEN"}, "")
-	}
-	if len(c.UAAAccessToken) == 0 {
-		c.UAAAccessToken = helpers.EnvFallBack([]string{"IBMCLOUD_UAA_TOKEN"}, "")
-	}
-	if len(c.UAARefreshToken) == 0 {
-		c.UAARefreshToken = helpers.EnvFallBack([]string{"IBMCLOUD_UAA_REFRESH_TOKEN"}, "")
-	}
-
 	if c.Debug {
 		trace.Logger = trace.NewLogger("true")
 	}

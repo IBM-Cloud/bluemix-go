@@ -6,4 +6,7 @@ const (
 
 	//ErrInvalidConfigurationCode ..
 	ErrInvalidConfigurationCode = "InvalidConfiguration"
+
+	//ErrInsufficientCredentials ..
+	ErrInsufficientCredentials = "InsufficientCredentials"
 )

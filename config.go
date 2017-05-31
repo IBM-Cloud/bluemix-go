@@ -74,20 +74,12 @@ func (c *Config) Copy(cfgs ...*Config) *Config {
 
 //ValidateConfigForService ...
 func (c *Config) ValidateConfigForService(svc ServiceName) error {
-	switch svc {
-	case AccountService, CfService:
-		if (c.IBMID == "" || c.IBMIDPassword == "") && c.BluemixAPIKey == "" &&
-			(c.UAAAccessToken == "" || c.UAARefreshToken == "") {
-			return bmxerror.New(ErrInvalidConfigurationCode, "Either { IBMID and IBMID_PASSWORD  } or BM_API_KEY/BLUEMIX_API_KEY  or  { IBMCLOUD_UAA_TOKEN and IBMCLOUD_UAA_REFRESH_TOKEN } should be exported in the environment variable or they should be set in the Config")
-		}
-	case ClusterService:
-		if (c.IBMID == "" || c.IBMIDPassword == "") && c.BluemixAPIKey == "" &&
-			(c.IAMAccessToken == "" || c.IAMRefreshToken == "" || c.UAAAccessToken == "" || c.UAARefreshToken == "") {
-			return bmxerror.New(ErrInvalidConfigurationCode, "Either { IBMID and IBMID_PASSWORD  } or BM_API_KEY/BLUEMIX_API_KEY) } or  { IBMCLOUD_IAM_TOKEN, IBMCLOUD_IAM_REFRESH_TOKEN, IBMCLOUD_UAA_TOKEN and IBMCLOUD_UAA_REFRESH_TOKEN } should be exported in the environment variable or they should be set in the Config")
-		}
+	if (c.IBMID == "" || c.IBMIDPassword == "") && c.BluemixAPIKey == "" {
+		return bmxerror.New(ErrInsufficientCredentials, "Please check the documentation on how to configure the Bluemix credentials")
 	}
+
 	if c.Region == "" && (c.Endpoint == nil || *c.Endpoint == "") {
-		return bmxerror.New(ErrInvalidConfigurationCode, "Unbale to find the service endpoint from the given configuration. Please provide region or endpoint")
+		return bmxerror.New(ErrInvalidConfigurationCode, "Please provide region or endpoint")
 	}
 	return nil
 }
