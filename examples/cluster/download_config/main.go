@@ -32,6 +32,9 @@ func main() {
 	var space string
 	flag.StringVar(&space, "space", "", "Bluemix Space")
 
+	var admin bool
+	flag.BoolVar(&admin, "admin", false, "If true download the admin config")
+
 	flag.Parse()
 
 	if org == "" || space == "" || clusterName == "" || path == "" {
@@ -86,7 +89,7 @@ func main() {
 	}
 	clustersAPI := clusterClient.Clusters()
 
-	configPath, err := clustersAPI.GetClusterConfig(clusterName, path, target)
+	configPath, err := clustersAPI.GetClusterConfig(clusterName, path, admin, target)
 
 	if err != nil {
 		log.Fatal(err)

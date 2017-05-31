@@ -1,13 +1,13 @@
 package k8sclusterv1
 
 import (
+	"crypto/sha1"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/IBM-Bluemix/bluemix-go/client"
 	"github.com/IBM-Bluemix/bluemix-go/helpers"
@@ -112,7 +112,7 @@ type Clusters interface {
 	List(target *ClusterTargetHeader) ([]ClusterInfo, error)
 	Delete(name string, target *ClusterTargetHeader) error
 	Find(name string, target *ClusterTargetHeader) (ClusterInfo, error)
-	GetClusterConfig(name, homeDir string, target *ClusterTargetHeader) (string, error)
+	GetClusterConfig(name, homeDir string, admin bool, target *ClusterTargetHeader) (string, error)
 	UnsetCredentials(target *ClusterTargetHeader) error
 	SetCredentials(slUsername, slAPIKey string, target *ClusterTargetHeader) error
 	BindService(params *ServiceBindRequest, target *ClusterTargetHeader) (ServiceBindResponse, error)
@@ -167,20 +167,24 @@ func (r *clusters) Find(name string, target *ClusterTargetHeader) (ClusterInfo, 
 }
 
 //GetClusterConfig ...
-func (r *clusters) GetClusterConfig(name, dir string, target *ClusterTargetHeader) (string, error) {
-	rawURL := fmt.Sprintf("/v1/clusters/%s/config", name)
+func (r *clusters) GetClusterConfig(name, dir string, admin bool, target *ClusterTargetHeader) (string, error) {
 	if !helpers.FileExists(dir) {
 		return "", fmt.Errorf("Path: %q, to download the config doesn't exist", dir)
 	}
-
-	now := time.Now()
-	zipName := fmt.Sprintf("%s_kubeconfig-%d", name, now.UnixNano())
-	downloadPath := fmt.Sprintf("%s/%s.zip", dir, zipName)
-
+	rawURL := fmt.Sprintf("/v1/clusters/%s/config", name)
+	if admin {
+		rawURL += "/admin"
+	}
+	resultDir := ComputeClusterConfigDir(dir, name, admin)
+	const kubeConfigName = "config.yml"
+	err := os.MkdirAll(resultDir, 0755)
+	if err != nil {
+		return "", fmt.Errorf("Error creating directory to download the cluster config")
+	}
+	downloadPath := filepath.Join(resultDir, "config.zip")
 	trace.Logger.Println("Will download the kubeconfig at", downloadPath)
 
 	var out *os.File
-	var err error
 	if out, err = os.Create(downloadPath); err != nil {
 		return "", err
 	}
@@ -190,43 +194,36 @@ func (r *clusters) GetClusterConfig(name, dir string, target *ClusterTargetHeade
 	if err != nil {
 		return "", err
 	}
-
 	trace.Logger.Println("Downloaded the kubeconfig at", downloadPath)
-
-	if err = helpers.Unzip(downloadPath, dir); err != nil {
+	if err = helpers.Unzip(downloadPath, resultDir); err != nil {
 		return "", err
 	}
-
-	var unzippedFolderPath string
-	homeDirFiles, _ := ioutil.ReadDir(dir)
-	for _, homeDirFile := range homeDirFiles {
-		if homeDirFile.IsDir() && strings.HasPrefix(homeDirFile.Name(), "kubeConfig") {
-			unzippedFolderPath = fmt.Sprintf("%s/%s", dir, homeDirFile.Name())
+	defer helpers.RemoveFilesWithPattern(resultDir, "kube")
+	var kubedir, kubeyml string
+	files, _ := ioutil.ReadDir(resultDir)
+	for _, f := range files {
+		if f.IsDir() && strings.HasPrefix(f.Name(), "kube") {
+			kubedir = filepath.Join(resultDir, f.Name())
+			files, _ := ioutil.ReadDir(kubedir)
+			for _, f := range files {
+				old := filepath.Join(kubedir, f.Name())
+				new := filepath.Join(kubedir, "../", f.Name())
+				if strings.HasSuffix(f.Name(), ".yml") {
+					new = filepath.Join(kubedir, "../", kubeConfigName)
+					kubeyml = new
+				}
+				err := os.Rename(old, new)
+				if err != nil {
+					return "", fmt.Errorf("Couldn't rename: %q", err)
+				}
+			}
 			break
 		}
 	}
-
-	if unzippedFolderPath == "" {
-		return "", errors.New("There is no directory with prefix kubeConfig in the unzipped file")
+	if kubedir == "" {
+		return "", errors.New("Unable to locate kube config in zip archive")
 	}
-
-	//Rename the config folder to prefix with the cluster name for better identification in the directory
-	targetDirPath := filepath.Join(filepath.Dir(unzippedFolderPath), zipName)
-	if err = os.Rename(unzippedFolderPath, targetDirPath); err != nil {
-		return "", err
-	}
-
-	homeDirFiles, err = ioutil.ReadDir(targetDirPath)
-	if err != nil {
-		return "", fmt.Errorf("Couldn't read %q. Error occured: %v", targetDirPath, err)
-	}
-	for _, homeDirFile := range homeDirFiles {
-		if strings.HasSuffix(homeDirFile.Name(), ".yml") {
-			return filepath.Join(targetDirPath, homeDirFile.Name()), nil
-		}
-	}
-	return "", errors.New("Unable to locate kube config in zip archive")
-
+	return filepath.Abs(kubeyml)
 }
 
 //UnsetCredentials ...
@@ -268,4 +265,21 @@ func (r *clusters) UnBindService(clusterNameOrID, namespaceID, serviceInstanceGU
 	rawURL := fmt.Sprintf("/v1/clusters/%s/services/%s/%s", clusterNameOrID, namespaceID, serviceInstanceGUID)
 	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
+}
+
+//ComputeClusterConfigDir ...
+func ComputeClusterConfigDir(dir, name string, admin bool) string {
+	resultDirPrefix := name
+	resultDirSuffix := "_k8sconfig"
+	if len(name) < 30 {
+		//Make it longer for uniqueness
+		h := sha1.New()
+		h.Write([]byte(name))
+		resultDirPrefix = fmt.Sprintf("%x_%s", h.Sum(nil), name)
+	}
+	if admin {
+		resultDirPrefix = fmt.Sprintf("%s_admin", resultDirPrefix)
+	}
+	resultDir := filepath.Join(dir, fmt.Sprintf("%s%s", resultDirPrefix, resultDirSuffix))
+	return resultDir
 }

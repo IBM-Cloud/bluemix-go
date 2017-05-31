@@ -2,6 +2,7 @@ package cfv2
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"github.com/IBM-Bluemix/bluemix-go/client"
@@ -75,6 +76,7 @@ type ServiceKeys interface {
 	FindByName(serviceInstanceGUID string, keyName string) (*ServiceKey, error)
 	Get(serviceKeyGUID string) (*ServiceKeyFields, error)
 	Delete(serviceKeyGUID string) error
+	List(filters ...string) ([]ServiceKey, error)
 }
 
 type serviceKey struct {
@@ -138,6 +140,24 @@ func (r *serviceKey) FindByName(serviceInstanceGUID string, keyName string) (*Se
 			fmt.Sprintf("Given service key %q doesn't exist for the given service instance  %q", keyName, serviceInstanceGUID))
 	}
 	return &serviceKeys[0], nil
+}
+
+func (r *serviceKey) List(filters ...string) ([]ServiceKey, error) {
+	rawURL := "/v2/service_keys"
+	req := rest.GetRequest(rawURL)
+	if len(filters) > 0 {
+		req.Query("q", strings.Join(filters, ""))
+	}
+	httpReq, err := req.Build()
+	if err != nil {
+		return nil, err
+	}
+	path := httpReq.URL.String()
+	keys, err := r.listServiceKeysWithPath(path)
+	if err != nil {
+		return nil, err
+	}
+	return keys, nil
 }
 
 func (r *serviceKey) listServiceKeysWithPath(path string) ([]ServiceKey, error) {

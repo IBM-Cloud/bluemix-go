@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 )
 
 func FileExists(path string) bool {
@@ -92,4 +93,25 @@ func CopyDir(src string, dest string) (err error) {
 	}
 
 	return
+}
+
+//RemoveFilesWithPattern ...
+func RemoveFilesWithPattern(targetDir, pattern string) error {
+	r, err := regexp.Compile(pattern)
+	if err != nil {
+		return err
+	}
+	files, err := ioutil.ReadDir(targetDir)
+	if err != nil {
+		return err
+	}
+	for _, f := range files {
+		if r.MatchString(f.Name()) {
+			err := os.RemoveAll(filepath.Join(targetDir, f.Name()))
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }

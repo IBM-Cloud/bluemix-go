@@ -119,6 +119,7 @@ type ServiceInstances interface {
 	Delete(instanceGUID string) error
 	FindByName(instanceName string) (*ServiceInstance, error)
 	Get(instanceGUID string) (*ServiceInstanceFields, error)
+	ListServiceBindings(instanceGUID string) ([]ServiceBinding, error)
 }
 
 type serviceInstance struct {
@@ -163,7 +164,7 @@ func (s *serviceInstance) FindByName(instanceName string) (*ServiceInstance, err
 		return nil, err
 	}
 	path := httpReq.URL.String()
-	services, err := s.listServicesWithPath(path)
+	services, err := listServicesWithPath(s.client, path)
 	if err != nil {
 		return nil, err
 	}
@@ -189,9 +190,24 @@ func (s *serviceInstance) Update(instanceGUID string, req ServiceInstanceUpdateR
 	return &serviceFields, nil
 }
 
-func (s *serviceInstance) listServicesWithPath(path string) ([]ServiceInstance, error) {
+func (s *serviceInstance) ListServiceBindings(instanceGUID string) ([]ServiceBinding, error) {
+	rawURL := fmt.Sprintf("/v2/service_instances/%s/service_bindings", instanceGUID)
+	req := rest.GetRequest(rawURL)
+	httpReq, err := req.Build()
+	if err != nil {
+		return nil, err
+	}
+	path := httpReq.URL.String()
+	sb, err := listServiceBindingWithPath(s.client, path)
+	if err != nil {
+		return nil, err
+	}
+	return sb, nil
+}
+
+func listServicesWithPath(client *client.Client, path string) ([]ServiceInstance, error) {
 	var services []ServiceInstance
-	_, err := s.client.GetPaginated(path, ServiceInstanceResource{}, func(resource interface{}) bool {
+	_, err := client.GetPaginated(path, ServiceInstanceResource{}, func(resource interface{}) bool {
 		if serviceInstanceResource, ok := resource.(ServiceInstanceResource); ok {
 			services = append(services, serviceInstanceResource.ToModel())
 			return true
