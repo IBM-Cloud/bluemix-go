@@ -449,7 +449,116 @@ var _ = Describe("Clusters", func() {
 			})
 		})
 	})
-	//Get config
+	//List bound services
+	Describe("ListClusterServices", func() {
+		Context("When read of cluster services is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test/services/default"),
+						ghttp.RespondWith(http.StatusOK, `[{							 	
+              "ServiceName": "testService",
+              "ServiceID": "f91adfe2-76c9-4649-939e-b01c37a3704",
+              "ServiceKeyName": "kube-testService",
+              "Namespace": "default"
+              }]`),
+					),
+				)
+			})
+
+			It("should return cluster service list", func() {
+				target := &ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				boundServices, err := newCluster(server.URL()).ListClusterServices("test", "default", target)
+				Expect(boundServices).ShouldNot(BeNil())
+				for _, service := range boundServices {
+					Expect(err).NotTo(HaveOccurred())
+					Expect(service.ServiceName).Should(Equal("testService"))
+					Expect(service.ServiceID).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704"))
+				}
+			})
+		})
+		Context("When read of cluster services is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test/services/default"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to retrieve clusters`),
+					),
+				)
+			})
+
+			It("should return error when cluster services are retrieved", func() {
+				target := &ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				service, err := newCluster(server.URL()).ListClusterServices("test", "default", target)
+				Expect(err).To(HaveOccurred())
+				Expect(service).Should(BeNil())
+			})
+		})
+	})
+	//Find Cluster service
+	Describe("FindClusterServices", func() {
+		Context("When read a service bound to cluster is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test/services/default"),
+						ghttp.RespondWith(http.StatusOK, `[{							 	
+              "ServiceName": "testService",
+              "ServiceID": "f91adfe2-76c9-4649-939e-b01c37a3704",
+              "ServiceKeyName": "kube-testService",
+              "Namespace": "default"
+              }]`),
+					),
+				)
+			})
+
+			It("should return cluster service list", func() {
+				target := &ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				boundService, err := newCluster(server.URL()).FindClusterService("test", "f91adfe2-76c9-4649-939e-b01c37a3704", "default", target)
+				Expect(boundService).ShouldNot(BeNil())
+				Expect(err).NotTo(HaveOccurred())
+				Expect(boundService.ServiceName).Should(Equal("testService"))
+				Expect(boundService.ServiceID).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704"))
+			})
+		})
+		Context("When read of cluster services is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test/services/default"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to retrieve clusters`),
+					),
+				)
+			})
+
+			It("should return error when cluster services are retrieved", func() {
+				target := &ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				_, err := newCluster(server.URL()).FindClusterService("test", "f91adfe2-76c9-4649-939e-b01c37a3704", "default", target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+	//
 })
 
 func newCluster(url string) Clusters {
