@@ -106,6 +106,16 @@ type ServiceBindResponse struct {
 	Binding             string `json:"binding"`
 }
 
+//BoundService ...
+type BoundService struct {
+	ServiceName    string `json:"servicename"`
+	ServiceID      string `json:"serviceid"`
+	ServiceKeyName string `json:"servicekeyname"`
+	Namespace      string `json:"namespace"`
+}
+
+type BoundServices []BoundService
+
 //Clusters interface
 type Clusters interface {
 	Create(params *ClusterCreateRequest, target *ClusterTargetHeader) (ClusterCreateResponse, error)
@@ -117,6 +127,8 @@ type Clusters interface {
 	SetCredentials(slUsername, slAPIKey string, target *ClusterTargetHeader) error
 	BindService(params *ServiceBindRequest, target *ClusterTargetHeader) (ServiceBindResponse, error)
 	UnBindService(clusterNameOrID, namespaceID, serviceInstanceGUID string, target *ClusterTargetHeader) error
+	ListClusterServices(clusterNameOrID, namespace string, target *ClusterTargetHeader) (BoundServices, error)
+	FindClusterService(clusterNameOrID, serviceName, namespace string, target *ClusterTargetHeader) (BoundService, error)
 }
 
 type clusters struct {
@@ -164,6 +176,41 @@ func (r *clusters) Find(name string, target *ClusterTargetHeader) (ClusterInfo, 
 	}
 
 	return cluster, err
+}
+
+//ListClusterServices ...
+func (r *clusters) ListClusterServices(clusterNameOrID, namespace string, target *ClusterTargetHeader) (BoundServices, error) {
+	var boundServices BoundServices
+	var path string
+
+	if namespace == "" {
+		path = fmt.Sprintf("/v1/clusters/%s/services", clusterNameOrID)
+
+	} else {
+		path = fmt.Sprintf("/v1/clusters/%s/services/%s", clusterNameOrID, namespace)
+	}
+	_, err := r.client.Get(path, &boundServices, target.ToMap())
+	if err != nil {
+		return boundServices, err
+	}
+
+	return boundServices, err
+}
+
+//FindClusterService...
+func (r *clusters) FindClusterService(clusterNameOrID, serviceNameOrId, namespace string, target *ClusterTargetHeader) (BoundService, error) {
+	var boundService BoundService
+	boundServices, err := r.ListClusterServices(clusterNameOrID, namespace, target)
+	if err != nil {
+		return boundService, err
+	}
+	for _, boundService := range boundServices {
+		if strings.Compare(boundService.ServiceName, serviceNameOrId) == 0 || strings.Compare(boundService.ServiceID, serviceNameOrId) == 0 {
+			return boundService, nil
+		}
+	}
+
+	return boundService, err
 }
 
 //GetClusterConfig ...
