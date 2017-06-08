@@ -197,10 +197,10 @@ type App struct {
 
 //Apps ...
 type Apps interface {
-	Create(appPayload *AppRequest) (*AppFields, error)
+	Create(appPayload AppRequest) (*AppFields, error)
 	List() ([]App, error)
 	Get(appGUID string) (*AppFields, error)
-	Update(appGUID string, appPayload *AppRequest) (*AppFields, error)
+	Update(appGUID string, appPayload AppRequest) (*AppFields, error)
 	Delete(appGUID string, async bool, recursive bool) error
 	FindByName(spaceGUID, name string) (*App, error)
 	Start(appGUID string, timeout time.Duration) (*AppState, error)
@@ -253,7 +253,7 @@ func (r *app) FindByName(spaceGUID string, name string) (*App, error) {
 	return &apps[0], nil
 }
 
-func (r *app) Create(appPayload *AppRequest) (*AppFields, error) {
+func (r *app) Create(appPayload AppRequest) (*AppFields, error) {
 	rawURL := "/v2/apps?async=true"
 	appFields := AppFields{}
 	_, err := r.client.Post(rawURL, appPayload, &appFields)
@@ -414,7 +414,7 @@ func (r *app) List() ([]App, error) {
 
 }
 
-func (r *app) Update(appGUID string, appPayload *AppRequest) (*AppFields, error) {
+func (r *app) Update(appGUID string, appPayload AppRequest) (*AppFields, error) {
 	rawURL := fmt.Sprintf("/v2/apps/%s", appGUID)
 	appFields := AppFields{}
 	_, err := r.client.Put(rawURL, appPayload, &appFields)

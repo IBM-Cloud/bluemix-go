@@ -81,7 +81,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	target := &v1.ClusterTargetHeader{
+	target := v1.ClusterTargetHeader{
 		OrgID:     myorg.GUID,
 		SpaceID:   myspace.GUID,
 		AccountID: myAccount.GUID,
@@ -93,7 +93,7 @@ func main() {
 	}
 	clustersAPI := clusterClient.Clusters()
 
-	bindService, err := clustersAPI.BindService(&v1.ServiceBindRequest{ClusterNameOrID: clusterName, SpaceGUID: myspace.GUID, ServiceInstanceNameOrID: serviceInstanceName, NamespaceID: namespace}, target)
+	bindService, err := clustersAPI.BindService(v1.ServiceBindRequest{ClusterNameOrID: clusterName, SpaceGUID: myspace.GUID, ServiceInstanceNameOrID: serviceInstanceName, NamespaceID: namespace}, target)
 	if err != nil {
 		log.Fatal(err)
 	}

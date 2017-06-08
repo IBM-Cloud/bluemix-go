@@ -315,7 +315,7 @@ var _ = Describe("Apps", func() {
 			})
 
 			It("should create the apps", func() {
-				var appPayload = &AppRequest{
+				var appPayload = AppRequest{
 					Name:      helpers.String("testapp"),
 					SpaceGUID: helpers.String("211b690c-1241-496e-b6ae-e487b7ebe4e8"),
 					BuildPack: helpers.String("nodejs_buildpack"),
@@ -344,7 +344,7 @@ var _ = Describe("Apps", func() {
 				)
 			})
 			It("should return error while creating app", func() {
-				var appPayload = &AppRequest{
+				var appPayload = AppRequest{
 					Name:      helpers.String("testapp"),
 					SpaceGUID: helpers.String("211b690c-1241-496e-b6ae-e487b7ebe4e8"),
 					BuildPack: helpers.String("nodejs_buildpack"),
@@ -514,7 +514,7 @@ var _ = Describe("Apps", func() {
 				})
 
 				It("should return app update", func() {
-					var appUpdatePayload = &AppRequest{
+					var appUpdatePayload = AppRequest{
 						Name:      helpers.String("testappupdate"),
 						SpaceGUID: helpers.String("211b690c-1241-496e-b6ae-e487b7ebe4e8"),
 					}
@@ -539,7 +539,7 @@ var _ = Describe("Apps", func() {
 				})
 
 				It("should return error when app updated", func() {
-					var appUpdatePayload = &AppRequest{
+					var appUpdatePayload = AppRequest{
 						Name:      helpers.String("testappupdate"),
 						SpaceGUID: helpers.String("211b690c-1241-496e-b6ae-e487b7ebe4e8"),
 					}

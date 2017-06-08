@@ -15,8 +15,8 @@ type WebHook struct {
 
 //Webhooks interface
 type Webhooks interface {
-	List(clusterName string, target *ClusterTargetHeader) ([]WebHook, error)
-	Add(clusterName string, params WebHook, target *ClusterTargetHeader) error
+	List(clusterName string, target ClusterTargetHeader) ([]WebHook, error)
+	Add(clusterName string, params WebHook, target ClusterTargetHeader) error
 }
 
 type webhook struct {
@@ -30,7 +30,7 @@ func newWebhookAPI(c *client.Client) Webhooks {
 }
 
 //List ...
-func (r *webhook) List(name string, target *ClusterTargetHeader) ([]WebHook, error) {
+func (r *webhook) List(name string, target ClusterTargetHeader) ([]WebHook, error) {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/webhooks", name)
 	webhooks := []WebHook{}
 	_, err := r.client.Get(rawURL, &webhooks, target.ToMap())
@@ -42,7 +42,7 @@ func (r *webhook) List(name string, target *ClusterTargetHeader) ([]WebHook, err
 }
 
 //Add ...
-func (r *webhook) Add(name string, params WebHook, target *ClusterTargetHeader) error {
+func (r *webhook) Add(name string, params WebHook, target ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/webhooks", name)
 	_, err := r.client.Post(rawURL, params, nil, target.ToMap())
 	return err
