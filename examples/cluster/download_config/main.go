@@ -77,7 +77,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	target := &v1.ClusterTargetHeader{
+	target := v1.ClusterTargetHeader{
 		OrgID:     myorg.GUID,
 		SpaceID:   myspace.GUID,
 		AccountID: myAccount.GUID,

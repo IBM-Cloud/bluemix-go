@@ -29,7 +29,7 @@ var _ = Describe("Subnets", func() {
 			})
 
 			It("should return subnet added to cluster", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -50,7 +50,7 @@ var _ = Describe("Subnets", func() {
 			})
 
 			It("should return error during add subnet to cluster", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -87,7 +87,7 @@ var _ = Describe("Subnets", func() {
 			})
 
 			It("should return available subnets ", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -114,7 +114,7 @@ var _ = Describe("Subnets", func() {
 			})
 
 			It("should return error during retrieveing subnets", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",

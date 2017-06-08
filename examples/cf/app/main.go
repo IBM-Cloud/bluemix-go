@@ -52,7 +52,7 @@ func main() {
 	flag.StringVar(&serviceOffering, "so", "cleardb", "Bluemix Service Offering")
 
 	var servicePlan string
-	flag.StringVar(&servicePlan, "plan", "spark", "Bluemix Service Plan")
+	flag.StringVar(&servicePlan, "plan", "cb5", "Bluemix Service Plan")
 
 	var instance int
 	flag.IntVar(&instance, "instance", 2, "Bluemix App Instance")
@@ -131,7 +131,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var appPayload = &cfv2.AppRequest{
+	var appPayload = cfv2.AppRequest{
 		Name:               helpers.String(name),
 		SpaceGUID:          helpers.String(myspace.GUID),
 		BuildPack:          helpers.String(buildpack),

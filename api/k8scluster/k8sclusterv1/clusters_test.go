@@ -37,10 +37,10 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return cluster created", func() {
-				params := &ClusterCreateRequest{
+				params := ClusterCreateRequest{
 					Name: "testservice", Datacenter: "dal10", MachineType: "free", PublicVlan: "vlan", PrivateVlan: "vlan",
 				}
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -65,10 +65,10 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return error during cluster creation", func() {
-				params := &ClusterCreateRequest{
+				params := ClusterCreateRequest{
 					Name: "testservice", Datacenter: "dal10", MachineType: "free", PublicVlan: "vlan", PrivateVlan: "vlan",
 				}
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -109,7 +109,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return cluster list", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -135,7 +135,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return error when cluster are retrieved", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -161,7 +161,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should delete cluster", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -182,7 +182,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return error service key delete", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -221,7 +221,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return cluster", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -245,7 +245,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return error when cluster is retrieved", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -270,7 +270,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should set credentials", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -292,7 +292,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should throw error when setting credentials", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -317,7 +317,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should set credentials", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -339,7 +339,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should set credentials", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -364,12 +364,12 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should bind service to a cluster", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
 				}
-				params := &ServiceBindRequest{
+				params := ServiceBindRequest{
 					ClusterNameOrID: "test", SpaceGUID: "ffed-ret-534-ghrk", ServiceInstanceNameOrID: "cloudantDB", NamespaceID: "default"}
 				serviceResp, err := newCluster(server.URL()).BindService(params, target)
 				Expect(err).NotTo(HaveOccurred())
@@ -388,12 +388,12 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should throw error when binding service to a cluster", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
 				}
-				params := &ServiceBindRequest{
+				params := ServiceBindRequest{
 					ClusterNameOrID: "test", SpaceGUID: "ffed-ret-534-ghrk", ServiceInstanceNameOrID: "cloudantDB", NamespaceID: "default"}
 				serviceResp, err := newCluster(server.URL()).BindService(params, target)
 				Expect(err).To(HaveOccurred())
@@ -416,7 +416,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should bind service to a cluster", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -438,7 +438,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should set credentials", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -468,7 +468,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return cluster service list", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -494,7 +494,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return error when cluster services are retrieved", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -524,7 +524,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return cluster service list", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -548,7 +548,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return error when cluster services are retrieved", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",

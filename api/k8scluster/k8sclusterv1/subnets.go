@@ -27,8 +27,8 @@ type SubnetProperties struct {
 
 //Subnets interface
 type Subnets interface {
-	AddSubnet(clusterName string, subnetID string, target *ClusterTargetHeader) error
-	List(target *ClusterTargetHeader) ([]Subnet, error)
+	AddSubnet(clusterName string, subnetID string, target ClusterTargetHeader) error
+	List(target ClusterTargetHeader) ([]Subnet, error)
 }
 
 type subnet struct {
@@ -42,7 +42,7 @@ func newSubnetAPI(c *client.Client) Subnets {
 }
 
 //GetSubnets ...
-func (r *subnet) List(target *ClusterTargetHeader) ([]Subnet, error) {
+func (r *subnet) List(target ClusterTargetHeader) ([]Subnet, error) {
 	subnets := []Subnet{}
 	_, err := r.client.Get("/v1/subnets", &subnets, target.ToMap())
 	if err != nil {
@@ -53,7 +53,7 @@ func (r *subnet) List(target *ClusterTargetHeader) ([]Subnet, error) {
 }
 
 //AddSubnetToCluster ...
-func (r *subnet) AddSubnet(name string, subnetID string, target *ClusterTargetHeader) error {
+func (r *subnet) AddSubnet(name string, subnetID string, target ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/subnets/%s", name, subnetID)
 	_, err := r.client.Put(rawURL, nil, nil, target.ToMap())
 	return err

@@ -29,7 +29,7 @@ var _ = Describe("Workers", func() {
 			})
 
 			It("should return worker added to cluster", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -53,7 +53,7 @@ var _ = Describe("Workers", func() {
 			})
 
 			It("should return error during add webhook to cluster", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -80,7 +80,7 @@ var _ = Describe("Workers", func() {
 			})
 
 			It("should return available workers ", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -103,7 +103,7 @@ var _ = Describe("Workers", func() {
 			})
 
 			It("should return error during retrieveing workers", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -129,7 +129,7 @@ var _ = Describe("Workers", func() {
 			})
 
 			It("should return available workers ", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -155,7 +155,7 @@ var _ = Describe("Workers", func() {
 			})
 
 			It("should return error during retrieveing workers", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -182,7 +182,7 @@ var _ = Describe("Workers", func() {
 			})
 
 			It("should delete cluster", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -203,7 +203,7 @@ var _ = Describe("Workers", func() {
 			})
 
 			It("should return error service key delete", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -227,7 +227,7 @@ var _ = Describe("Workers", func() {
 			})
 
 			It("should return worker updated", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -251,7 +251,7 @@ var _ = Describe("Workers", func() {
 			})
 
 			It("should return error during updating worker", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",

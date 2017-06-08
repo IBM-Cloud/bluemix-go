@@ -29,7 +29,7 @@ var _ = Describe("Webhooks", func() {
 			})
 
 			It("should return webhook added to cluster", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -53,7 +53,7 @@ var _ = Describe("Webhooks", func() {
 			})
 
 			It("should return error during add webhook to cluster", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -82,7 +82,7 @@ var _ = Describe("Webhooks", func() {
 			})
 
 			It("should return available webhooks ", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -108,7 +108,7 @@ var _ = Describe("Webhooks", func() {
 			})
 
 			It("should return error during retrieveing webhooks", func() {
-				target := &ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",

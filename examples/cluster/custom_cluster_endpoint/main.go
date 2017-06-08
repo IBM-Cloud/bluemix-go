@@ -15,7 +15,7 @@ import (
 	v1 "github.com/IBM-Bluemix/bluemix-go/api/k8scluster/k8sclusterv1"
 )
 
-var clusterInfo = &v1.ClusterCreateRequest{
+var clusterInfo = v1.ClusterCreateRequest{
 	Name:        "my_cluster",
 	Billing:     "hourly",
 	Datacenter:  "dal10",
@@ -87,7 +87,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	target := &v1.ClusterTargetHeader{
+	target := v1.ClusterTargetHeader{
 		OrgID:     myorg.GUID,
 		SpaceID:   myspace.GUID,
 		AccountID: myAccount.GUID,
