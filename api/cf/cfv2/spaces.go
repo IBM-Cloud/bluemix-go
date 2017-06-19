@@ -3,6 +3,7 @@ package cfv2
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"github.com/IBM-Bluemix/bluemix-go/client"
@@ -30,6 +31,13 @@ type Space struct {
 	AllowSSH       bool
 }
 
+//SpaceRole ...
+type SpaceRole struct {
+	UserGUID string
+	Admin    bool
+	UserName string
+}
+
 //SpaceFields ...
 type SpaceFields struct {
 	Metadata SpaceMetadata
@@ -49,6 +57,19 @@ const ErrCodeSpaceDoesnotExist = "SpaceDoesnotExist"
 type SpaceResource struct {
 	Resource
 	Entity SpaceEntity
+}
+
+//SpaceRoleResource ...
+type SpaceRoleResource struct {
+	Resource
+	Entity SpaceRoleEntity
+}
+
+//SpaceRoleEntity ...
+type SpaceRoleEntity struct {
+	UserGUID string `json:"guid"`
+	Admin    bool   `json:"bool"`
+	UserName string `json:"username"`
 }
 
 //SpaceEntity ...
@@ -72,6 +93,18 @@ func (resource *SpaceResource) ToFields() Space {
 	}
 }
 
+//ToFields ...
+func (resource *SpaceRoleResource) ToFields() SpaceRole {
+	entity := resource.Entity
+
+	return SpaceRole{
+		UserGUID: resource.Metadata.GUID,
+		Admin:    entity.Admin,
+		UserName: entity.UserName,
+	}
+}
+
+//RouteFilter ...
 type RouteFilter struct {
 	DomainGUID string
 	Host       *string
@@ -88,6 +121,17 @@ type Spaces interface {
 	Delete(spaceGUID string) error
 	Get(spaceGUID string) (*SpaceFields, error)
 	ListRoutes(spaceGUID string, req RouteFilter) ([]Route, error)
+	AssociateAuditor(spaceGUID, userMail string) (*SpaceFields, error)
+	AssociateDeveloper(spaceGUID, userMail string) (*SpaceFields, error)
+	AssociateManager(spaceGUID, userMail string) (*SpaceFields, error)
+
+	DisassociateAuditor(spaceGUID, userMail string) error
+	DisassociateDeveloper(spaceGUID, userMail string) error
+	DisassociateManager(spaceGUID, userMail string) error
+
+	ListAuditors(spaceGUID string, filters ...string) ([]SpaceRole, error)
+	ListDevelopers(spaceGUID string, filters ...string) ([]SpaceRole, error)
+	ListManagers(spaceGUID string, filters ...string) ([]SpaceRole, error)
 }
 
 type spaces struct {
@@ -147,6 +191,19 @@ func (r *spaces) listSpacesWithPath(path string) ([]Space, error) {
 	})
 	return spaces, err
 }
+
+func (r *spaces) listSpaceRolesWithPath(path string) ([]SpaceRole, error) {
+	var spaceRoles []SpaceRole
+	_, err := r.client.GetPaginated(path, SpaceRoleResource{}, func(resource interface{}) bool {
+		if spaceRoleResource, ok := resource.(SpaceRoleResource); ok {
+			spaceRoles = append(spaceRoles, spaceRoleResource.ToFields())
+			return true
+		}
+		return false
+	})
+	return spaceRoles, err
+}
+
 func (r *spaces) Create(req SpaceCreateRequest) (*SpaceFields, error) {
 	rawURL := "/v2/spaces?accepts_incomplete=true&async=true"
 	spaceFields := SpaceFields{}
@@ -182,6 +239,75 @@ func (r *spaces) Delete(spaceGUID string) error {
 	rawURL := fmt.Sprintf("/v2/spaces/%s", spaceGUID)
 	_, err := r.client.Delete(rawURL)
 	return err
+}
+
+func (r *spaces) associateRole(url, userMail string) (*SpaceFields, error) {
+	spaceFields := SpaceFields{}
+	_, err := r.client.Put(url, map[string]string{"username": userMail}, &spaceFields)
+	if err != nil {
+		return nil, err
+	}
+	return &spaceFields, nil
+}
+
+func (r *spaces) removeRole(url, userMail string) error {
+	spaceFields := SpaceFields{}
+	_, err := r.client.DeleteWithBody(url, map[string]string{"username": userMail}, &spaceFields)
+	return err
+}
+
+func (r *spaces) AssociateManager(spaceGUID string, userMail string) (*SpaceFields, error) {
+	rawURL := fmt.Sprintf("/v2/spaces/%s/managers", spaceGUID)
+	return r.associateRole(rawURL, userMail)
+}
+func (r *spaces) AssociateDeveloper(spaceGUID string, userMail string) (*SpaceFields, error) {
+	rawURL := fmt.Sprintf("/v2/spaces/%s/developers", spaceGUID)
+	return r.associateRole(rawURL, userMail)
+}
+func (r *spaces) AssociateAuditor(spaceGUID string, userMail string) (*SpaceFields, error) {
+	rawURL := fmt.Sprintf("/v2/spaces/%s/auditors", spaceGUID)
+	return r.associateRole(rawURL, userMail)
+}
+
+func (r *spaces) DisassociateManager(spaceGUID string, userMail string) error {
+	rawURL := fmt.Sprintf("/v2/spaces/%s/managers", spaceGUID)
+	return r.removeRole(rawURL, userMail)
+}
+
+func (r *spaces) DisassociateDeveloper(spaceGUID string, userMail string) error {
+	rawURL := fmt.Sprintf("/v2/spaces/%s/developers", spaceGUID)
+	return r.removeRole(rawURL, userMail)
+}
+func (r *spaces) DisassociateAuditor(spaceGUID string, userMail string) error {
+	rawURL := fmt.Sprintf("/v2/spaces/%s/auditors", spaceGUID)
+	return r.removeRole(rawURL, userMail)
+}
+
+func (r *spaces) listSpaceRoles(rawURL string, filters ...string) ([]SpaceRole, error) {
+	req := rest.GetRequest(rawURL)
+	if len(filters) > 0 {
+		req.Query("q", strings.Join(filters, ""))
+	}
+	httpReq, err := req.Build()
+	if err != nil {
+		return nil, err
+	}
+	path := httpReq.URL.String()
+	return r.listSpaceRolesWithPath(path)
+}
+
+func (r *spaces) ListAuditors(spaceGUID string, filters ...string) ([]SpaceRole, error) {
+	rawURL := fmt.Sprintf("/v2/spaces/%s/auditors", spaceGUID)
+	return r.listSpaceRoles(rawURL, filters...)
+}
+
+func (r *spaces) ListManagers(spaceGUID string, filters ...string) ([]SpaceRole, error) {
+	rawURL := fmt.Sprintf("/v2/spaces/%s/managers", spaceGUID)
+	return r.listSpaceRoles(rawURL, filters...)
+}
+func (r *spaces) ListDevelopers(spaceGUID string, filters ...string) ([]SpaceRole, error) {
+	rawURL := fmt.Sprintf("/v2/spaces/%s/developers", spaceGUID)
+	return r.listSpaceRoles(rawURL, filters...)
 }
 
 func (r *spaces) ListRoutes(spaceGUID string, routeFilter RouteFilter) ([]Route, error) {

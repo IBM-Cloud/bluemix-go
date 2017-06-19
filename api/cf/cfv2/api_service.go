@@ -60,7 +60,7 @@ func New(sess *session.Session) (CfServiceAPI, error) {
 		config.HTTPClient = http.NewHTTPClient(config)
 	}
 	if config.Endpoint == nil {
-		ep, err := config.EndpointLocator.CFAPIEndpoint()
+		ep, err := config.EndpointLocator.MCCPAPIEndpoint()
 		if err != nil {
 			return nil, err
 		}

@@ -139,6 +139,15 @@ func (c *Client) Delete(path string, extraHeader ...interface{}) (*gohttp.Respon
 	return c.SendRequest(r, nil)
 }
 
+//DeleteWithBody ...
+func (c *Client) DeleteWithBody(path string, data interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
+	r := rest.DeleteRequest(c.URL(path)).Body(data)
+	for _, t := range extraHeader {
+		addToRequestHeader(t, r)
+	}
+	return c.SendRequest(r, nil)
+}
+
 func addToRequestHeader(h interface{}, r *rest.Request) {
 	switch v := h.(type) {
 	case map[string]string:

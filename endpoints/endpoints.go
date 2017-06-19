@@ -11,6 +11,7 @@ import (
 type EndpointLocator interface {
 	AccountManagementEndpoint() (string, error)
 	CFAPIEndpoint() (string, error)
+	MCCPAPIEndpoint() (string, error)
 	ClusterEndpoint() (string, error)
 	IAMEndpoint() (string, error)
 	UAAEndpoint() (string, error)
@@ -27,6 +28,12 @@ var regionToEndpoint = map[string]map[string]string{
 		"eu-gb":    "https://api.eu-gb.bluemix.net",
 		"au-syd":   "https://api.au-syd.bluemix.net",
 		"eu-de":    "https://api.eu-de.bluemix.net",
+	},
+	"mccp": {
+		"us-south": "https://mccp.ng.bluemix.net",
+		"eu-gb":    "https://mccp.eu-gb.bluemix.net",
+		"au-syd":   "https://mccp.au-syd.bluemix.net",
+		"eu-de":    "https://mccp.eu-de.bluemix.net",
 	},
 	"iam": {
 		"us-south": "https://iam.ng.bluemix.net",
@@ -74,6 +81,15 @@ func (e *endpointLocator) CFAPIEndpoint() (string, error) {
 
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Cloud Foundry endpoint doesn't exist for region: %q", e.region))
+}
+
+func (e *endpointLocator) MCCPAPIEndpoint() (string, error) {
+	if ep, ok := regionToEndpoint["mccp"][e.region]; ok {
+		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+		return helpers.EnvFallBack([]string{"IBMCLOUD_MCCP_API_ENDPOINT"}, ep), nil
+
+	}
+	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("MCCP API endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) UAAEndpoint() (string, error) {
