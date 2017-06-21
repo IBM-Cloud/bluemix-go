@@ -88,15 +88,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	region := sess.Config.Region
 	orgAPI := client.Organizations()
-	myorg, err := orgAPI.FindByName(org)
+	myorg, err := orgAPI.FindByName(org, region)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	spaceAPI := client.Spaces()
-	myspace, err := spaceAPI.FindByNameInOrg(myorg.GUID, space)
+	myspace, err := spaceAPI.FindByNameInOrg(myorg.GUID, space, region)
 
 	if err != nil {
 		log.Fatal(err)

@@ -38,7 +38,7 @@ func main() {
 	}
 
 	orgAPI := client.Organizations()
-	myorg, err := orgAPI.FindByName(org)
+	myorg, err := orgAPI.FindByName(org, "us-south")
 
 	if err != nil {
 		log.Fatal(err)

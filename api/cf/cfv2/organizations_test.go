@@ -87,7 +87,7 @@ var _ = Describe("Organizations", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v2/organizations", "q=name:foo"),
+						ghttp.VerifyRequest(http.MethodGet, "/v2/organizations", "q=name:foo&region=region"),
 						ghttp.RespondWith(http.StatusOK, `{
 							  "total_results": 1,
 							  "total_pages": 1,
@@ -125,7 +125,7 @@ var _ = Describe("Organizations", func() {
 			})
 
 			It("Should return the match", func() {
-				org, err := newOrganizations(server.URL()).FindByName("foo")
+				org, err := newOrganizations(server.URL()).FindByName("foo", "region")
 				Expect(err).NotTo(HaveOccurred())
 				Expect(org).NotTo(BeNil())
 				Expect(org.GUID).To(Equal("a695a906-e225-428a-9238-b1d01b96017f"))
@@ -139,14 +139,14 @@ var _ = Describe("Organizations", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v2/organizations", "q=name:foo"),
+						ghttp.VerifyRequest(http.MethodGet, "/v2/organizations", "region=region&q=name:foo"),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to find by name`),
 					),
 				)
 			})
 
 			It("Should return error when Organization is found by name", func() {
-				org, err := newOrganizations(server.URL()).FindByName("foo")
+				org, err := newOrganizations(server.URL()).FindByName("foo", "region")
 				Expect(err).To(HaveOccurred())
 				Expect(org).Should(BeNil())
 			})

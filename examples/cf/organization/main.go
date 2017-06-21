@@ -44,7 +44,8 @@ func main() {
 	//		log.Fatal(err)
 	//	}
 
-	myorg, err := orgAPI.FindByName(org)
+	region := sess.Config.Region
+	myorg, err := orgAPI.FindByName(org, region)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -56,7 +57,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	updatedOrg, err := orgAPI.FindByName(neworg)
+	updatedOrg, err := orgAPI.FindByName(neworg, region)
 	if err != nil {
 		log.Fatal(err)
 	}

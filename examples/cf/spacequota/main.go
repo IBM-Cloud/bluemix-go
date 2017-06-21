@@ -39,8 +39,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	region := sess.Config.Region
 	orgAPI := client.Organizations()
-	myorg, err := orgAPI.FindByName(org)
+	myorg, err := orgAPI.FindByName(org, region)
 
 	if err != nil {
 		log.Fatal(err)

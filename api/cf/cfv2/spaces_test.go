@@ -280,7 +280,7 @@ var _ = Describe("Space Repository", func() {
 			})
 
 			It("should return one space", func() {
-				myspaces, err := newSpaces(server.URL()).ListSpacesInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546")
+				myspaces, err := newSpaces(server.URL()).ListSpacesInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", "region")
 				Expect(err).To(Succeed())
 				Expect(len(myspaces)).To(Equal(1))
 
@@ -341,7 +341,7 @@ var _ = Describe("Space Repository", func() {
 			})
 
 			It("should return multiple spaces", func() {
-				myspaces, err := newSpaces(server.URL()).ListSpacesInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546")
+				myspaces, err := newSpaces(server.URL()).ListSpacesInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", "region")
 				Expect(err).To(Succeed())
 				Expect(len(myspaces)).To(Equal(2))
 
@@ -373,7 +373,7 @@ var _ = Describe("Space Repository", func() {
 			})
 
 			It("should return no spaces", func() {
-				myspaces, err := newSpaces(server.URL()).ListSpacesInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546")
+				myspaces, err := newSpaces(server.URL()).ListSpacesInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", "region")
 				Expect(err).To(Succeed())
 				Expect(len(myspaces)).To(Equal(0))
 			})
@@ -393,7 +393,7 @@ var _ = Describe("Space Repository", func() {
 			})
 
 			It("should return error", func() {
-				myspaces, err := newSpaces(server.URL()).ListSpacesInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546")
+				myspaces, err := newSpaces(server.URL()).ListSpacesInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", "region")
 				Expect(err).To(HaveOccurred())
 				Expect(myspaces).To(BeNil())
 			})
@@ -444,7 +444,7 @@ var _ = Describe("Space by Name Repository", func() {
 			})
 
 			It("should return one space", func() {
-				myspaces, err := newSpaces(server.URL()).FindByNameInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", "prod")
+				myspaces, err := newSpaces(server.URL()).FindByNameInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", "prod", "region")
 				Expect(err).To(Succeed())
 				Expect(myspaces.GUID).To(Equal("9fd6aed4-b36b-438e-832f-9f29a68ad61c"))
 				Expect(myspaces.Name).To(Equal("prod"))
@@ -470,7 +470,7 @@ var _ = Describe("Space by Name Repository", func() {
 			})
 
 			It("should return no spaces", func() {
-				myspaces, err := newSpaces(server.URL()).FindByNameInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", "xyz")
+				myspaces, err := newSpaces(server.URL()).FindByNameInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", "xyz", "region")
 				Expect(err).To(HaveOccurred())
 				Expect(myspaces).To(BeNil())
 			})
@@ -490,7 +490,7 @@ var _ = Describe("Space by Name Repository", func() {
 			})
 
 			It("should return error", func() {
-				myspaces, err := newSpaces(server.URL()).FindByNameInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", "prod")
+				myspaces, err := newSpaces(server.URL()).FindByNameInOrg("3c1b6f9d-ffe5-43b5-ab91-7be2331dc546", "prod", "region")
 				Expect(err).To(HaveOccurred())
 				Expect(myspaces).To(BeNil())
 			})

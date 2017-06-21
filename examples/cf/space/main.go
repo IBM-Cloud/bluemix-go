@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/api/cf/cfv2"
 	"github.com/IBM-Bluemix/bluemix-go/helpers"
 	"github.com/IBM-Bluemix/bluemix-go/session"
@@ -18,6 +19,9 @@ func main() {
 	var space string
 	flag.StringVar(&space, "space", "", "Bluemix Space")
 
+	var region string
+	flag.StringVar(&region, "region", "us-south", "Bluemix region")
+
 	flag.Parse()
 
 	if org == "" || space == "" {
@@ -26,7 +30,7 @@ func main() {
 	}
 
 	trace.Logger = trace.NewLogger("true")
-	sess, err := session.New()
+	sess, err := session.New(&bluemix.Config{Region: region})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,14 +42,14 @@ func main() {
 	}
 
 	orgAPI := client.Organizations()
-	myorg, err := orgAPI.FindByName(org)
+	myorg, err := orgAPI.FindByName(org, region)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	spaceAPI := client.Spaces()
-	myspace, err := spaceAPI.FindByNameInOrg(myorg.GUID, space)
+	myspace, err := spaceAPI.FindByNameInOrg(myorg.GUID, space, region)
 
 	if err != nil {
 		log.Fatal(err)
@@ -55,7 +59,7 @@ func main() {
 	quotaAPI := client.SpaceQuotas()
 
 	createRequest := cfv2.SpaceQuotaCreateRequest{
-		Name:                    "test1",
+		Name:                    "test2",
 		OrgGUID:                 myorg.GUID,
 		MemoryLimitInMB:         1024,
 		InstanceMemoryLimitInMB: 1024,

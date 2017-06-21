@@ -60,7 +60,7 @@ type Organization struct {
 type Organizations interface {
 	Create(name string) error
 	List() ([]Organization, error)
-	FindByName(orgName string) (*Organization, error)
+	FindByName(orgName, region string) (*Organization, error)
 	Delete(guid string, recursive bool) error
 	Update(guid string, newName string) error
 }
@@ -125,8 +125,8 @@ func (o *organization) List() ([]Organization, error) {
 }
 
 //FindByName ...
-func (o *organization) FindByName(name string) (*Organization, error) {
-	path, err := o.urlOfOrgWithName(name, false)
+func (o *organization) FindByName(name string, region string) (*Organization, error) {
+	path, err := o.urlOfOrgWithName(name, region, false)
 	if err != nil {
 		return nil, err
 	}
@@ -163,9 +163,11 @@ func (o *organization) listOrgResourcesWithPath(path string, cb func(OrgResource
 	return err
 }
 
-func (o *organization) urlOfOrgWithName(name string, inline bool) (string, error) {
+func (o *organization) urlOfOrgWithName(name string, region string, inline bool) (string, error) {
 	req := rest.GetRequest("/v2/organizations").Query("q", fmt.Sprintf("name:%s", name))
-
+	if region != "" {
+		req.Query("region", region)
+	}
 	if inline {
 		req.Query("inline-relations-depth", "1")
 	}

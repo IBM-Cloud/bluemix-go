@@ -114,8 +114,8 @@ type RouteFilter struct {
 
 //Spaces ...
 type Spaces interface {
-	ListSpacesInOrg(orgGUID string) ([]Space, error)
-	FindByNameInOrg(orgGUID string, name string) (*Space, error)
+	ListSpacesInOrg(orgGUID, region string) ([]Space, error)
+	FindByNameInOrg(orgGUID, name, region string) (*Space, error)
 	Create(req SpaceCreateRequest) (*SpaceFields, error)
 	Update(spaceGUID string, req SpaceUpdateRequest) (*SpaceFields, error)
 	Delete(spaceGUID string) error
@@ -144,10 +144,12 @@ func newSpacesAPI(c *client.Client) Spaces {
 	}
 }
 
-func (r *spaces) FindByNameInOrg(orgGUID string, name string) (*Space, error) {
+func (r *spaces) FindByNameInOrg(orgGUID string, name string, region string) (*Space, error) {
 	rawURL := fmt.Sprintf("/v2/organizations/%s/spaces", orgGUID)
 	req := rest.GetRequest(rawURL).Query("q", "name:"+name)
-
+	if region != "" {
+		req.Query("region", region)
+	}
 	httpReq, err := req.Build()
 	if err != nil {
 		return nil, err
@@ -167,10 +169,12 @@ func (r *spaces) FindByNameInOrg(orgGUID string, name string) (*Space, error) {
 	return &spaces[0], nil
 }
 
-func (r *spaces) ListSpacesInOrg(orgGUID string) ([]Space, error) {
+func (r *spaces) ListSpacesInOrg(orgGUID string, region string) ([]Space, error) {
 	rawURL := fmt.Sprintf("v2/organizations/%s/spaces", orgGUID)
 	req := rest.GetRequest(rawURL)
-
+	if region != "" {
+		req.Query("region", region)
+	}
 	httpReq, err := req.Build()
 	if err != nil {
 		return nil, err
