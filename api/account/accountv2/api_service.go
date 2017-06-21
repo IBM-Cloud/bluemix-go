@@ -19,7 +19,7 @@ type AccountServiceAPI interface {
 //ErrCodeNoAccountExists ...
 const ErrCodeNoAccountExists = "NoAccountExists"
 
-//CfService holds the client
+//MccpService holds the client
 type accountService struct {
 	*client.Client
 }

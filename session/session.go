@@ -73,8 +73,8 @@ func New(configs ...*bluemix.Config) (*Session, error) {
 }
 
 //Copy allows sessions to create a copy of it and optionally override any defaults via the config
-func (s *Session) Copy(cfgs ...*bluemix.Config) *Session {
+func (s *Session) Copy(mccpgs ...*bluemix.Config) *Session {
 	return &Session{
-		Config: s.Config.Copy(cfgs...),
+		Config: s.Config.Copy(mccpgs...),
 	}
 }

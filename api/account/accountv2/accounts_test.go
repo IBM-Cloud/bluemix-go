@@ -64,7 +64,7 @@ var _ = Describe("Accounts", func() {
                   						"region":"us-south"
                						},
                						{  
-                  						"guid":"900d4fda-0ed2-4679-a0ad-1ffcf2b3ddd3",
+                  						"guid":"900d4fda-0ed2-4679-a0ad-1ffmccp2b3ddd3",
                   						"region":"eu-gb"
                						}
             						],
@@ -289,7 +289,7 @@ var _ = Describe("List Accounts", func() {
                   					 "region":"us-south"
                					},
               				    {
-                  					"guid":"900d4fda-0ed2-4679-a0ad-1ffcf2b3ddd3",
+                  					"guid":"900d4fda-0ed2-4679-a0ad-1ffmccp2b3ddd3",
                   					"region":"eu-gb"
                					}
             					],
@@ -437,7 +437,7 @@ var _ = Describe("List Accounts by owner id", func() {
                   					 "region":"us-south"
                					},
               				    {
-                  					"guid":"900d4fda-0ed2-4679-a0ad-1ffcf2b3ddd3",
+                  					"guid":"900d4fda-0ed2-4679-a0ad-1ffmccp2b3ddd3",
                   					"region":"eu-gb"
                					}
             					],

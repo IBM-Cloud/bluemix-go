@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/IBM-Bluemix/bluemix-go/api/account/accountv2"
-	"github.com/IBM-Bluemix/bluemix-go/api/cf/cfv2"
+	"github.com/IBM-Bluemix/bluemix-go/api/mccp/mccpv2"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 	"github.com/IBM-Bluemix/bluemix-go/trace"
 )
@@ -31,7 +31,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	client, err := cfv2.New(sess)
+	client, err := mccpv2.New(sess)
 
 	if err != nil {
 		log.Fatal(err)

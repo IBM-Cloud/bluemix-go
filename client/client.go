@@ -188,11 +188,11 @@ const (
 func getDefaultAuthHeaders(serviceName bluemix.ServiceName, c *bluemix.Config) gohttp.Header {
 	h := gohttp.Header{}
 	switch serviceName {
-	case bluemix.CfService, bluemix.AccountService:
+	case bluemix.MccpService, bluemix.AccountService:
 		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.UAAAccessToken)
 
-	case bluemix.ClusterService:
+	case bluemix.ContainerService:
 		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
 		h.Set(iamRefreshTokenHeader, c.IAMRefreshToken)

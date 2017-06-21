@@ -14,10 +14,10 @@ type ServiceName string
 const (
 	//AccountService ...
 	AccountService ServiceName = ServiceName("account")
-	//CfService ...
-	CfService ServiceName = ServiceName("cf")
-	//ClusterService ...
-	ClusterService ServiceName = ServiceName("cluster")
+	//MccpService ...
+	MccpService ServiceName = ServiceName("mccp")
+	//ContainerService ...
+	ContainerService ServiceName = ServiceName("container")
 	//UAAService ...
 	UAAService ServiceName = ServiceName("uaa")
 	//IAMService ...
@@ -58,13 +58,13 @@ type Config struct {
 
 //Copy allows the configuration to be overriden or added
 //Typically the endpoints etc
-func (c *Config) Copy(cfgs ...*Config) *Config {
+func (c *Config) Copy(mccpgs ...*Config) *Config {
 	out := new(Config)
 	*out = *c
-	if len(cfgs) == 0 {
+	if len(mccpgs) == 0 {
 		return out
 	}
-	for _, mergeInput := range cfgs {
+	for _, mergeInput := range mccpgs {
 		if mergeInput.Endpoint != nil {
 			out.Endpoint = mergeInput.Endpoint
 		}

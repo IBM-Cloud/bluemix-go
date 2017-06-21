@@ -12,7 +12,7 @@ type EndpointLocator interface {
 	AccountManagementEndpoint() (string, error)
 	CFAPIEndpoint() (string, error)
 	MCCPAPIEndpoint() (string, error)
-	ClusterEndpoint() (string, error)
+	ContainerEndpoint() (string, error)
 	IAMEndpoint() (string, error)
 	UAAEndpoint() (string, error)
 }
@@ -119,7 +119,7 @@ func (e *endpointLocator) IAMEndpoint() (string, error) {
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("IAM  endpoint doesn't exist for region: %q", e.region))
 }
 
-func (e *endpointLocator) ClusterEndpoint() (string, error) {
+func (e *endpointLocator) ContainerEndpoint() (string, error) {
 	if ep, ok := regionToEndpoint["cs"][e.region]; ok {
 		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
 		return helpers.EnvFallBack([]string{"IBMCLOUD_CS_API_ENDPOINT"}, ep), nil
