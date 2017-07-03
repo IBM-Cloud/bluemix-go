@@ -54,6 +54,12 @@ func main() {
 	}
 	log.Println(myAccount.Name, myAccount.CountryCode, myAccount.OwnerUserID, myAccount.GUID)
 
+	myAccount, err = accountAPI.FindByAccountId(myAccount.GUID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(myAccount.Name, myAccount.CountryCode, myAccount.OwnerUserID, myAccount.GUID)
+
 	myAccount, err = accountAPI.FindByOwner(ownerUserID)
 	if err != nil {
 		log.Fatal(err)
