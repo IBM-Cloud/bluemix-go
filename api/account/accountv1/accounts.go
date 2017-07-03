@@ -39,11 +39,12 @@ type AccountUserResource struct {
 }
 
 type Metadata struct {
-	Guid      string   `json:"guid"`
-	Url       string   `json:"url"`
-	CreatedAt string   `json:"created_at"`
-	UpdatedAt string   `json:"updated_at"`
-	Identity  Identity `json":"identity"`
+	Guid       string   `json:"guid"`
+	Url        string   `json:"url"`
+	CreatedAt  string   `json:"created_at"`
+	UpdatedAt  string   `json:"updated_at"`
+	VerifiedAt string   `json:"verified_at"`
+	Identity   Identity `json:"identity"`
 }
 
 type AccountUserEntity struct {
