@@ -1,7 +1,6 @@
 package accountv2
 
 import (
-
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/client"
 	bluemixHttp "github.com/IBM-Bluemix/bluemix-go/http"
@@ -522,6 +521,117 @@ var _ = Describe("List Accounts by owner id", func() {
 
 			It("should return error", func() {
 				myaccounts, err := newAccounts(server.URL()).FindByOwner("sakshiag@in.ibm.com")
+				Expect(err).To(HaveOccurred())
+				Expect(myaccounts).To(BeNil())
+			})
+
+		})
+
+	})
+})
+
+//get account by account id
+
+var _ = Describe("Get Account by account id", func() {
+	var server *ghttp.Server
+	AfterEach(func() {
+		server.Close()
+	})
+
+	Describe("Get Account by account id", func() {
+		Context("Server return account", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/coe/v2/accounts/e9021a4d06e9b108b4a221a3cec47e3d"),
+						ghttp.RespondWith(http.StatusOK, `{
+							  "metadata": {
+							    "guid": "e9021a4d06e9b108b4a221a3cec47e3d",
+							    "url": "/coe/v2/accounts/e9021a4d06e9b108b4a221a3cec47e3d",
+							    "created_at": "2015-09-02T10:35:17.288Z",
+							    "updated_at": "2017-04-28T23:44:27.510Z"
+							  },
+							  "entity": {
+							    "name": "Praveen G's Account",
+							    "type": "TRIAL",
+							    "state": "ACTIVE",
+							    "owner": "a5d45507-836d-4609-8d6f-2972a05c9420",
+							    "owner_userid": "praveek9@in.ibm.com",
+							    "owner_unique_id": "2700067HF8",
+							    "customer_id": "501280599",
+							    "country_code": "IND",
+							    "currency_code": "INR",
+							    "billing_country_code": "IND",
+							    "terms_and_conditions": {},
+							    "tags": [],
+							    "team_directory_enabled": true,
+							    "organizations_region": [
+							      {
+							        "guid": "278f5173-c6b7-41b8-a2da-517daf27162c",
+							        "region": "eu-gb"
+							      },
+							      {
+							        "guid": "fc14269d-8ecd-403a-b3a8-0556372b4537",
+							        "region": "us-south"
+							      }
+							    ],
+							    "linkages": [
+							      {
+							        "origin": "IMS",
+							        "state": "LINKABLE"
+							      }
+							    ],
+							    "bluemix_subscriptions": [
+							      {
+							        "type": "TRIAL",
+							        "state": "ACTIVE",
+							        "payment_method": {
+							          "type": "TRIAL_CREDIT",
+							          "started": "09/02/2015 10:35:12",
+							          "ended": "07/15/2018"
+							        },
+							        "subscription_id": "500711198",
+							        "part_number": "COE-Trial",
+							        "subscriptionTags": [],
+							        "history": []
+							      }
+							    ],
+							    "subscription_id": "500711198",
+							    "configuration_id": "",
+							    "onboarded": -1
+							  }
+							}
+
+						    `),
+					),
+				)
+			})
+
+			It("should return account by account id", func() {
+				myaccounts, err := newAccounts(server.URL()).Get("e9021a4d06e9b108b4a221a3cec47e3d")
+				Expect(err).To(Succeed())
+				Expect(myaccounts).ShouldNot(BeNil())
+				Expect(myaccounts.Name).Should(Equal("Praveen G's Account"))
+
+			})
+
+		})
+		Context("Server return error", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/coe/v2/accounts/e9021a4d06e9b108b4a221a3cec47e3d"),
+						ghttp.RespondWith(http.StatusInternalServerError, `{
+															
+						}`),
+					),
+				)
+			})
+
+			It("should return error", func() {
+				myaccounts, err := newAccounts(server.URL()).Get("e9021a4d06e9b108b4a221a3cec47e3d")
 				Expect(err).To(HaveOccurred())
 				Expect(myaccounts).To(BeNil())
 			})
