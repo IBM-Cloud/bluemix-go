@@ -41,7 +41,7 @@ type IAMPolicy interface {
 	Create(scope, userId string, params AccessPolicyRequest) (AccessPolicyResponse, string, error)
 	List(scope, userId string) (AccessPolicyListResponse, error)
 	Delete(scope, userId, policyId string) error
-	Find(scope, userId, policyId string) (AccessPolicyResponse, error)
+	Get(scope, userId, policyId string) (AccessPolicyResponse, error)
 	Update(scope, userId, policyId, etag string, params AccessPolicyRequest) (AccessPolicyResponse, string, error)
 }
 
@@ -75,7 +75,7 @@ func (r *iampolicy) List(scope, userId string) (AccessPolicyListResponse, error)
 }
 
 //Find ...
-func (r *iampolicy) Find(scope, userId, policyId string) (AccessPolicyResponse, error) {
+func (r *iampolicy) Get(scope, userId, policyId string) (AccessPolicyResponse, error) {
 	var accessPolicyResponse AccessPolicyResponse
 	rawURL := fmt.Sprintf("/acms/v1/scopes/%s/users/%s/policies/%s", IAM_ACCOUNT_ESCAPE+scope, userId, policyId)
 	_, err := r.client.Get(rawURL, &accessPolicyResponse)

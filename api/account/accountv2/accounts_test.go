@@ -609,34 +609,11 @@ var _ = Describe("Get Account by account id", func() {
 			})
 
 			It("should return account by account id", func() {
-				myaccounts, err := newAccounts(server.URL()).FindByAccountId("e9021a4d06e9b108b4a221a3cec47e3d")
+				myaccounts, err := newAccounts(server.URL()).Get("e9021a4d06e9b108b4a221a3cec47e3d")
 				Expect(err).To(Succeed())
 				Expect(myaccounts).ShouldNot(BeNil())
 				Expect(myaccounts.Name).Should(Equal("Praveen G's Account"))
 
-			})
-
-		})
-		Context("Server return no accounts", func() {
-			BeforeEach(func() {
-				server = ghttp.NewServer()
-				server.AppendHandlers(
-					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/coe/v2/accounts"),
-						ghttp.RespondWith(http.StatusNotFound, `{
-							"total_results": 0,
-							"resources": [
-							]
-															
-						}`),
-					),
-				)
-			})
-
-			It("should return no accounts", func() {
-				myaccounts, err := newAccounts(server.URL()).FindByOwner("sakshiag@in.ibm.com")
-				Expect(err).To(HaveOccurred())
-				Expect(myaccounts).To(BeNil())
 			})
 
 		})
@@ -645,7 +622,7 @@ var _ = Describe("Get Account by account id", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/coe/v2/accounts"),
+						ghttp.VerifyRequest(http.MethodGet, "/coe/v2/accounts/e9021a4d06e9b108b4a221a3cec47e3d"),
 						ghttp.RespondWith(http.StatusInternalServerError, `{
 															
 						}`),
@@ -654,7 +631,7 @@ var _ = Describe("Get Account by account id", func() {
 			})
 
 			It("should return error", func() {
-				myaccounts, err := newAccounts(server.URL()).FindByOwner("sakshiag@in.ibm.com")
+				myaccounts, err := newAccounts(server.URL()).Get("e9021a4d06e9b108b4a221a3cec47e3d")
 				Expect(err).To(HaveOccurred())
 				Expect(myaccounts).To(BeNil())
 			})

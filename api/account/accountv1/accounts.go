@@ -3,6 +3,7 @@ package accountv1
 import (
 	"fmt"
 
+	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"github.com/IBM-Bluemix/bluemix-go/client"
 )
 
@@ -112,7 +113,8 @@ func (a *account) GetAccountUsers(accountGuid string) ([]AccountUser, error) {
 		})
 
 	if resp.StatusCode == 404 {
-		return []AccountUser{}, nil
+		return []AccountUser{}, bmxerror.New(ErrCodeNoAccountExists,
+			fmt.Sprintf("No Account exists with account id:%q", accountGuid))
 	}
 
 	return users, err

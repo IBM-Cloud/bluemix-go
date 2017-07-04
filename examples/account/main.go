@@ -54,7 +54,7 @@ func main() {
 	}
 	log.Println(myAccount.Name, myAccount.CountryCode, myAccount.OwnerUserID, myAccount.GUID)
 
-	myAccount, err = accountAPI.FindByAccountId(myAccount.GUID)
+	myAccount, err = accountAPI.Get(myAccount.GUID)
 	if err != nil {
 		log.Fatal(err)
 	}

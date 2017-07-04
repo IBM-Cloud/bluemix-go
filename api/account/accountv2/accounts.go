@@ -122,7 +122,7 @@ type Accounts interface {
 	List() ([]Account, error)
 	FindByOrg(orgGUID string, region string) (*Account, error)
 	FindByOwner(userID string) (*Account, error)
-	FindByAccountId(accountId string) (*Account, error)
+	Get(accountId string) (*Account, error)
 }
 
 type account struct {
@@ -208,8 +208,8 @@ func (a *account) FindByOwner(userID string) (*Account, error) {
 		fmt.Sprintf("No account exists for the user %q", userID))
 }
 
-//FindByOwner ...
-func (a *account) FindByAccountId(accountId string) (*Account, error) {
+//Get ...
+func (a *account) Get(accountId string) (*Account, error) {
 	queryResp := AccountNameQueryResponse{}
 	response, err := a.client.Get(fmt.Sprintf("/coe/v2/accounts/%s", accountId), &queryResp)
 	if err != nil {

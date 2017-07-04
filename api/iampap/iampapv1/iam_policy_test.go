@@ -146,7 +146,7 @@ var _ = Describe("Policy", func() {
 			})
 
 			It("should return Policy get", func() {
-				myPolicy, err := newPolicy(server.URL()).Find("f4755e41794cfa89cb078e865975f8e5", "IBMid-270000W34J", "81796686-5766-42ec-bd16-84894cc7f6ce")
+				myPolicy, err := newPolicy(server.URL()).Get("f4755e41794cfa89cb078e865975f8e5", "IBMid-270000W34J", "81796686-5766-42ec-bd16-84894cc7f6ce")
 				Expect(err).NotTo(HaveOccurred())
 				Expect(myPolicy).ShouldNot(BeNil())
 				Expect(myPolicy.ID).Should(Equal("81796686-5766-42ec-bd16-84894cc7f6ce"))
@@ -168,7 +168,7 @@ var _ = Describe("Policy", func() {
 			})
 
 			It("should return error during policy get", func() {
-				myPolicy, err := newPolicy(server.URL()).Find("f4755e41794cfa89cb078e865975f8e5", "IBMid-270000W34J", "81796686-5766-42ec-bd16-84894cc7f6ce")
+				myPolicy, err := newPolicy(server.URL()).Get("f4755e41794cfa89cb078e865975f8e5", "IBMid-270000W34J", "81796686-5766-42ec-bd16-84894cc7f6ce")
 				Expect(err).To(HaveOccurred())
 				Expect(myPolicy).ShouldNot(BeNil())
 			})
@@ -338,14 +338,14 @@ var _ = Describe("Policy", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/acms/v1/scopes/a/f4755e41794cfa89cb078e865975f8e5/users/IBMid-270000W34J/policies/81796686-5766-42ec-bd16-84894cc7f6ce"),
+						ghttp.VerifyRequest(http.MethodGet, "/acms/v1/scopes/a/f4755e41794cfa89cb078e865975f8e5/users/IBMid-270000W34J/policies"),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to List`),
 					),
 				)
 			})
 
 			It("should return error during policy list", func() {
-				myPolicy, err := newPolicy(server.URL()).Find("f4755e41794cfa89cb078e865975f8e5", "IBMid-270000W34J", "81796686-5766-42ec-bd16-84894cc7f6ce")
+				myPolicy, err := newPolicy(server.URL()).List("f4755e41794cfa89cb078e865975f8e5", "IBMid-270000W34J")
 				Expect(err).To(HaveOccurred())
 				Expect(myPolicy).ShouldNot(BeNil())
 			})
