@@ -613,6 +613,7 @@ var _ = Describe("Get Account by account id", func() {
 				Expect(err).To(Succeed())
 				Expect(myaccounts).ShouldNot(BeNil())
 				Expect(myaccounts.Name).Should(Equal("Praveen G's Account"))
+				Expect(myaccounts.GUID).Should(Equal("e9021a4d06e9b108b4a221a3cec47e3d"))
 
 			})
 
