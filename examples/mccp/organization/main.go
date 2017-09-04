@@ -63,6 +63,15 @@ func main() {
 
 	log.Println(updatedOrg.GUID, updatedOrg.Name)
 
+	getOrgByGUID, err := orgAPI.Get(updatedOrg.GUID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if updatedOrg.Name != getOrgByGUID.Entity.Name {
+		log.Fatalf("Org obtained from FindByName and Get doesn't  match %s != %s", updatedOrg.GUID, getOrgByGUID.Metadata.GUID)
+	}
+
 	err = orgAPI.Delete(updatedOrg.GUID, true)
 	if err != nil {
 		log.Fatal(err)

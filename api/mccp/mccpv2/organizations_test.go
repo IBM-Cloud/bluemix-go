@@ -153,6 +153,52 @@ var _ = Describe("Organizations", func() {
 		})
 	})
 
+	Describe("Get", func() {
+		Context("When fetched by GUID", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/organizations/007c547f-9d6e-4d75-bb03-d9584e7bc62c"),
+						ghttp.RespondWith(http.StatusOK, `{
+							"metadata": {
+							  "guid": "007c547f-9d6e-4d75-bb03-d9584e7bc62c",
+							  "url": "/v2/organizations/007c547f-9d6e-4d75-bb03-d9584e7bc62c",
+							  "created_at": "2016-04-16T01:23:42Z",
+							  "updated_at": "2016-04-16T01:23:42Z"
+							},
+							"entity": {
+							  "name": "org-name",
+							  "billing_enabled": false,
+							  "quota_definition_guid": "838224b1-c841-4b96-90f2-f181bb5fffa5",
+							  "status": "active",
+							  "quota_definition_url": "/v2/quota_definitions/838224b1-c841-4b96-90f2-f181bb5fffa5",
+							  "spaces_url": "/v2/organizations/007c547f-9d6e-4d75-bb03-d9584e7bc62c/spaces",
+							  "domains_url": "/v2/organizations/007c547f-9d6e-4d75-bb03-d9584e7bc62c/domains",
+							  "private_domains_url": "/v2/organizations/007c547f-9d6e-4d75-bb03-d9584e7bc62c/private_domains",
+							  "users_url": "/v2/organizations/007c547f-9d6e-4d75-bb03-d9584e7bc62c/users",
+							  "managers_url": "/v2/organizations/007c547f-9d6e-4d75-bb03-d9584e7bc62c/managers",
+							  "billing_managers_url": "/v2/organizations/007c547f-9d6e-4d75-bb03-d9584e7bc62c/billing_managers",
+							  "auditors_url": "/v2/organizations/007c547f-9d6e-4d75-bb03-d9584e7bc62c/auditors",
+							  "app_events_url": "/v2/organizations/007c547f-9d6e-4d75-bb03-d9584e7bc62c/app_events",
+							  "space_quota_definitions_url": "/v2/organizations/007c547f-9d6e-4d75-bb03-d9584e7bc62c/space_quota_definitions"
+							}						
+						  }`),
+					),
+				)
+			})
+
+			It("Should return the match", func() {
+				org, err := newOrganizations(server.URL()).Get("007c547f-9d6e-4d75-bb03-d9584e7bc62c")
+				Expect(err).NotTo(HaveOccurred())
+				Expect(org).NotTo(BeNil())
+				Expect(org.Metadata.GUID).To(Equal("007c547f-9d6e-4d75-bb03-d9584e7bc62c"))
+				Expect(org.Entity.Name).To(Equal("org-name"))
+				Expect(org.Entity.BillingEnabled).To(BeFalse())
+			})
+		})
+	})
+
 	Describe("List", func() {
 		Context("When there is one Organization", func() {
 			BeforeEach(func() {
