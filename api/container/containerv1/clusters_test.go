@@ -215,7 +215,18 @@ var _ = Describe("Clusters", func() {
               "ServerURL": "",
               "State": "normal",
               "IsPaid": false,
-              "WorkerCount": 1}`),
+              "WorkerCount": 1,
+              "Vlans": [{
+			  "ID": "177453",
+				"Subnets": [
+				{
+				"Cidr": "159.8.226.208/29",
+				"ID": "1541737",
+				"Ips": ["159.8.226.210"],
+				"IsByOIP": false,
+				"IsPublic": false
+				}]
+				}]}`),
 					),
 				)
 			})
@@ -230,7 +241,9 @@ var _ = Describe("Clusters", func() {
 				Expect(err).NotTo(HaveOccurred())
 				Expect(myCluster).ShouldNot(BeNil())
 				Expect(myCluster.GUID).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704c"))
-
+				Expect(myCluster.Vlans[0].ID).Should(Equal("177453"))
+				Expect(myCluster.Vlans[0].Subnets[0].ID).Should(Equal("1541737"))
+				Expect(myCluster.Vlans[0].Subnets[0].Cidr).Should(Equal("159.8.226.208/29"))
 			})
 		})
 		Context("When cluster retrieve is failed", func() {
