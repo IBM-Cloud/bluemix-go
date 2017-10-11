@@ -223,8 +223,8 @@ var _ = Describe("Clusters", func() {
 				"Cidr": "159.8.226.208/29",
 				"ID": "1541737",
 				"Ips": ["159.8.226.210"],
-				"IsByOIP": false,
-				"IsPublic": false
+				"Is_ByOIP": false,
+				"Is_Public": true
 				}]
 				}]}`),
 					),
@@ -244,6 +244,7 @@ var _ = Describe("Clusters", func() {
 				Expect(myCluster.Vlans[0].ID).Should(Equal("177453"))
 				Expect(myCluster.Vlans[0].Subnets[0].ID).Should(Equal("1541737"))
 				Expect(myCluster.Vlans[0].Subnets[0].Cidr).Should(Equal("159.8.226.208/29"))
+				Expect(myCluster.Vlans[0].Subnets[0].IsPublic).Should(Equal(true))
 			})
 		})
 		Context("When cluster retrieve is failed", func() {

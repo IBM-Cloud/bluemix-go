@@ -40,8 +40,8 @@ type Vlan struct {
 		Cidr     string
 		ID       string
 		Ips      []string
-		IsByOIP  bool
-		IsPublic bool
+		IsByOIP  bool `json:"is_byoip"`
+		IsPublic bool `json:"is_public"`
 	}
 }
 
