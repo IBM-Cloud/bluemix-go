@@ -222,7 +222,7 @@ func (r *clusters) GetClusterConfig(name, dir string, admin bool, target Cluster
 	if err = helpers.Unzip(downloadPath, resultDir); err != nil {
 		return "", err
 	}
-	defer helpers.RemoveFilesWithPattern(resultDir, "kube")
+	defer helpers.RemoveFilesWithPattern(resultDir, "[^(.yml)|(.pem)]$")
 	var kubedir, kubeyml string
 	files, _ := ioutil.ReadDir(resultDir)
 	for _, f := range files {
