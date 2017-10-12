@@ -121,7 +121,7 @@ func (resource ServiceInstanceResource) ToModel() ServiceInstance {
 type ServiceInstances interface {
 	Create(req ServiceInstanceCreateRequest) (*ServiceInstanceFields, error)
 	Update(instanceGUID string, req ServiceInstanceUpdateRequest) (*ServiceInstanceFields, error)
-	Delete(instanceGUID string) error
+	Delete(instanceGUID string, asyncs ...bool) error
 	FindByName(instanceName string) (*ServiceInstance, error)
 	FindByNameInSpace(spaceGUID string, instanceName string) (*ServiceInstance, error)
 	Get(instanceGUID string, depth ...int) (*ServiceInstanceFields, error)
@@ -210,8 +210,12 @@ func (s *serviceInstance) FindByNameInSpace(spaceGUID string, instanceName strin
 	return &services[0], nil
 }
 
-func (s *serviceInstance) Delete(instanceGUID string) error {
-	rawURL := fmt.Sprintf("/v2/service_instances/%s?accepts_incomplete=true&async=true", instanceGUID)
+func (s *serviceInstance) Delete(instanceGUID string, asyncs ...bool) error {
+	async := true
+	if len(asyncs) > 0 {
+		async = asyncs[0]
+	}
+	rawURL := fmt.Sprintf("/v2/service_instances/%s?accepts_incomplete=true&async=%t", instanceGUID, async)
 	_, err := s.client.Delete(rawURL)
 	return err
 }
