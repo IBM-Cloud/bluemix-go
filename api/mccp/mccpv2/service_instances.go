@@ -119,9 +119,9 @@ func (resource ServiceInstanceResource) ToModel() ServiceInstance {
 
 //ServiceInstances ...
 type ServiceInstances interface {
-	Create(req ServiceInstanceCreateRequest) (*ServiceInstanceFields, error)
-	Update(instanceGUID string, req ServiceInstanceUpdateRequest) (*ServiceInstanceFields, error)
-	Delete(instanceGUID string) error
+	Create(req ServiceInstanceCreateRequest, acceptsIncomplete bool, async bool) (*ServiceInstanceFields, error)
+	Update(instanceGUID string, req ServiceInstanceUpdateRequest, acceptsIncomplete bool, async bool) (*ServiceInstanceFields, error)
+	Delete(instanceGUID string, acceptsIncomplete bool, async bool) error
 	FindByName(instanceName string) (*ServiceInstance, error)
 	FindByNameInSpace(spaceGUID string, instanceName string) (*ServiceInstance, error)
 	Get(instanceGUID string, depth ...int) (*ServiceInstanceFields, error)
@@ -138,10 +138,23 @@ func newServiceInstanceAPI(c *client.Client) ServiceInstances {
 	}
 }
 
-func (s *serviceInstance) Create(req ServiceInstanceCreateRequest) (*ServiceInstanceFields, error) {
-	rawURL := "/v2/service_instances?accepts_incomplete=true&async=true"
+func (s *serviceInstance) Create(req ServiceInstanceCreateRequest, acceptsIncomplete bool, async bool) (*ServiceInstanceFields, error) {
+	rawURL := "/v2/service_instances"
+	r := rest.GetRequest(rawURL)
+	if acceptsIncomplete {
+		r.Query("accepts_incomplete", "true")
+	}
+	if async {
+		r.Query("async", "true")
+	}
+	httpReq, err := r.Build()
+	if err != nil {
+		return nil, err
+	}
+	path := httpReq.URL.String()
+
 	serviceFields := ServiceInstanceFields{}
-	_, err := s.client.Post(rawURL, req, &serviceFields)
+	_, err = s.client.Post(path, req, &serviceFields)
 	if err != nil {
 		return nil, err
 	}
@@ -210,16 +223,41 @@ func (s *serviceInstance) FindByNameInSpace(spaceGUID string, instanceName strin
 	return &services[0], nil
 }
 
-func (s *serviceInstance) Delete(instanceGUID string) error {
-	rawURL := fmt.Sprintf("/v2/service_instances/%s?accepts_incomplete=true&async=true", instanceGUID)
-	_, err := s.client.Delete(rawURL)
+func (s *serviceInstance) Delete(instanceGUID string, acceptsIncomplete bool, async bool) error {
+	rawURL := fmt.Sprintf("/v2/service_instances/%s", instanceGUID)
+	req := rest.GetRequest(rawURL)
+	if acceptsIncomplete {
+		req.Query("accepts_incomplete", "true")
+	}
+	if async {
+		req.Query("async", "true")
+	}
+	httpReq, err := req.Build()
+	if err != nil {
+		return err
+	}
+	path := httpReq.URL.String()
+	_, err = s.client.Delete(path)
 	return err
 }
 
-func (s *serviceInstance) Update(instanceGUID string, req ServiceInstanceUpdateRequest) (*ServiceInstanceFields, error) {
-	rawURL := fmt.Sprintf("/v2/service_instances/%s?accepts_incomplete=true&async=true", instanceGUID)
+func (s *serviceInstance) Update(instanceGUID string, req ServiceInstanceUpdateRequest, acceptsIncomplete bool, async bool) (*ServiceInstanceFields, error) {
+	rawURL := fmt.Sprintf("/v2/service_instances/%s?", instanceGUID)
+	r := rest.GetRequest(rawURL)
+	if acceptsIncomplete {
+		r.Query("accepts_incomplete", "true")
+	}
+	if async {
+		r.Query("async", "true")
+	}
+	httpReq, err := r.Build()
+	if err != nil {
+		return nil, err
+	}
+	path := httpReq.URL.String()
+
 	serviceFields := ServiceInstanceFields{}
-	_, err := s.client.Put(rawURL, req, &serviceFields)
+	_, err = s.client.Put(path, req, &serviceFields)
 	if err != nil {
 		return nil, err
 	}
