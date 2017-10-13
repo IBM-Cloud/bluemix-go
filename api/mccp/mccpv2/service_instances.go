@@ -121,7 +121,7 @@ func (resource ServiceInstanceResource) ToModel() ServiceInstance {
 type ServiceInstances interface {
 	Create(req ServiceInstanceCreateRequest) (*ServiceInstanceFields, error)
 	Update(instanceGUID string, req ServiceInstanceUpdateRequest) (*ServiceInstanceFields, error)
-	Delete(instanceGUID string, asyncs ...bool) error
+	Delete(instanceGUID string, opts ...bool) error
 	FindByName(instanceName string) (*ServiceInstance, error)
 	FindByNameInSpace(spaceGUID string, instanceName string) (*ServiceInstance, error)
 	Get(instanceGUID string, depth ...int) (*ServiceInstanceFields, error)
@@ -139,7 +139,7 @@ func newServiceInstanceAPI(c *client.Client) ServiceInstances {
 }
 
 func (s *serviceInstance) Create(req ServiceInstanceCreateRequest) (*ServiceInstanceFields, error) {
-	rawURL := "/v2/service_instances?accepts_incomplete=true&async=true"
+	rawURL := "/v2/service_instances?accepts_incomplete=true"
 	serviceFields := ServiceInstanceFields{}
 	_, err := s.client.Post(rawURL, req, &serviceFields)
 	if err != nil {
@@ -210,18 +210,26 @@ func (s *serviceInstance) FindByNameInSpace(spaceGUID string, instanceName strin
 	return &services[0], nil
 }
 
-func (s *serviceInstance) Delete(instanceGUID string, asyncs ...bool) error {
+// opts is list of boolean parametes
+// opts[0] - async - Will run the delete request in a background job. Recommended: 'true'. Default to 'true'.
+// opts[1] - recursive - Will delete service bindings, service keys, and routes associated with the service instance. Default to 'false'.
+
+func (s *serviceInstance) Delete(instanceGUID string, opts ...bool) error {
 	async := true
-	if len(asyncs) > 0 {
-		async = asyncs[0]
+	recursive := false
+	if len(opts) > 0 {
+		async = opts[0]
 	}
-	rawURL := fmt.Sprintf("/v2/service_instances/%s?accepts_incomplete=true&async=%t", instanceGUID, async)
+	if len(opts) > 1 {
+		recursive = opts[1]
+	}
+	rawURL := fmt.Sprintf("/v2/service_instances/%s?accepts_incomplete=true&async=%t&recursive=%t", instanceGUID, async, recursive)
 	_, err := s.client.Delete(rawURL)
 	return err
 }
 
 func (s *serviceInstance) Update(instanceGUID string, req ServiceInstanceUpdateRequest) (*ServiceInstanceFields, error) {
-	rawURL := fmt.Sprintf("/v2/service_instances/%s?accepts_incomplete=true&async=true", instanceGUID)
+	rawURL := fmt.Sprintf("/v2/service_instances/%s?accepts_incomplete=true", instanceGUID)
 	serviceFields := ServiceInstanceFields{}
 	_, err := s.client.Put(rawURL, req, &serviceFields)
 	if err != nil {
