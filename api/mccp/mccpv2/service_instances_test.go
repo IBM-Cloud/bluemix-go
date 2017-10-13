@@ -27,7 +27,7 @@ var _ = Describe("ServiceInstances", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPost, "/v2/service_instances", "accepts_incomplete=true&async=true"),
+						ghttp.VerifyRequest(http.MethodPost, "/v2/service_instances", "accepts_incomplete=true"),
 						ghttp.VerifyBody([]byte(`{"name":"my-service-instance","space_guid":"ba013e75-1da1-4eaa-b30d-0f258211e4c1","service_plan_guid":"817b7e86-551c-416a-bfbc-c96feb4e4a64","parameters":{"the_service_broker":"wants this object"},"tags":["accounting","mongodb"]}`)),
 						ghttp.RespondWith(http.StatusAccepted, `{
 							 "metadata": {
@@ -347,7 +347,7 @@ var _ = Describe("ServiceInstances", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPut, "/v2/service_instances/e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", "accepts_incomplete=true&async=true"),
+						ghttp.VerifyRequest(http.MethodPut, "/v2/service_instances/e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", "accepts_incomplete=true"),
 						ghttp.VerifyBody([]byte(`{"name":"new-name","parameters":{"the_service_broker":"new service broker"}}`)),
 						ghttp.RespondWith(http.StatusAccepted, `{
 						  "metadata": {
@@ -408,7 +408,7 @@ var _ = Describe("ServiceInstances", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPut, "/v2/service_instances/e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", "accepts_incomplete=true&async=true"),
+						ghttp.VerifyRequest(http.MethodPut, "/v2/service_instances/e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", "accepts_incomplete=true"),
 						ghttp.VerifyBody([]byte(`{"name":"new-name"}`)),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to update`),
 					),
