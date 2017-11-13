@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/softlayer/softlayer-go/sl"
+
 	"github.com/IBM-Bluemix/bluemix-go/api/mccp/mccpv2"
 	"github.com/IBM-Bluemix/bluemix-go/session"
 	"github.com/IBM-Bluemix/bluemix-go/trace"
@@ -39,10 +41,16 @@ func main() {
 
 	orgAPI := client.Organizations()
 
-	err = orgAPI.Create(org)
+	payload := mccpv2.OrgCreateRequest{
+
+		Name: org,
+	}
+
+	orgDetails, err := orgAPI.Create(payload)
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println("Created Org Details:", orgDetails)
 
 	myorg, err := orgAPI.FindByName(org, region)
 	if err != nil {
@@ -51,10 +59,16 @@ func main() {
 
 	log.Println(myorg.GUID, myorg.Name)
 
-	err = orgAPI.Update(myorg.GUID, neworg)
+	updatedPayload := mccpv2.OrgUpdateRequest{
+		Name: sl.String(neworg),
+	}
+
+	updatedOrgDetails, err := orgAPI.Update(myorg.GUID, updatedPayload)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	log.Println("Org Details after update:", updatedOrgDetails)
 
 	updatedOrg, err := orgAPI.FindByName(neworg, region)
 	if err != nil {

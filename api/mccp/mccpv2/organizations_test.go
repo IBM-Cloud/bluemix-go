@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/softlayer/softlayer-go/sl"
+
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
 	"github.com/IBM-Bluemix/bluemix-go/client"
 	bluemixHttp "github.com/IBM-Bluemix/bluemix-go/http"
@@ -57,7 +59,10 @@ var _ = Describe("Organizations", func() {
 			})
 
 			It("Should create Organization", func() {
-				err := newOrganizations(server.URL()).Create("test-org")
+				payload := OrgCreateRequest{
+					Name: "test-org",
+				}
+				_, err := newOrganizations(server.URL()).Create(payload)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -75,7 +80,10 @@ var _ = Describe("Organizations", func() {
 			})
 
 			It("Should return error when created", func() {
-				err := newOrganizations(server.URL()).Create("test-org")
+				payload := OrgCreateRequest{
+					Name: "test-org",
+				}
+				_, err := newOrganizations(server.URL()).Create(payload)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -346,7 +354,10 @@ var _ = Describe("Organizations", func() {
 			})
 
 			It("Should update Organization", func() {
-				err := newOrganizations(server.URL()).Update("007c547f-9d6e-4d75-bb03-d9584e7bc62c", "new-org-name")
+				payload := OrgUpdateRequest{
+					Name: sl.String("new-org-name"),
+				}
+				_, err := newOrganizations(server.URL()).Update("007c547f-9d6e-4d75-bb03-d9584e7bc62c", payload)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
 		})
@@ -364,7 +375,10 @@ var _ = Describe("Organizations", func() {
 			})
 
 			It("Should return error when updated", func() {
-				err := newOrganizations(server.URL()).Update("007c547f-9d6e-4d75-bb03-d9584e7bc62c", "new-org-name")
+				payload := OrgUpdateRequest{
+					Name: sl.String("new-org-name"),
+				}
+				_, err := newOrganizations(server.URL()).Update("007c547f-9d6e-4d75-bb03-d9584e7bc62c", payload)
 				Expect(err).To(HaveOccurred())
 			})
 		})
