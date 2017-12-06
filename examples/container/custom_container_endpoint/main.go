@@ -11,13 +11,12 @@ import (
 	"github.com/IBM-Bluemix/bluemix-go/session"
 
 	"github.com/IBM-Bluemix/bluemix-go/api/account/accountv2"
-	"github.com/IBM-Bluemix/bluemix-go/api/mccp/mccpv2"
 	v1 "github.com/IBM-Bluemix/bluemix-go/api/container/containerv1"
+	"github.com/IBM-Bluemix/bluemix-go/api/mccp/mccpv2"
 )
 
 var clusterInfo = v1.ClusterCreateRequest{
 	Name:        "my_cluster",
-	Billing:     "hourly",
 	Datacenter:  "dal10",
 	MachineType: "free",
 	WorkerNum:   1,
