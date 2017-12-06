@@ -35,7 +35,7 @@ var _ = Describe("Workers", func() {
 					AccountID: "ghi",
 				}
 				params := WorkerParam{
-					Action: "add", Count: 1,
+					Isolation: "public", MachineType: "u2c.2x4", Prefix: "test", PrivateVlan: "1764491", PublicVlan: "1764435", WorkerNum: 2,
 				}
 				err := newWorker(server.URL()).Add("test", params, target)
 				Expect(err).NotTo(HaveOccurred())
@@ -59,7 +59,7 @@ var _ = Describe("Workers", func() {
 					AccountID: "ghi",
 				}
 				params := WorkerParam{
-					Action: "add", Count: 1,
+					Isolation: "public", MachineType: "u2c.2x4", Prefix: "test", PrivateVlan: "1764491", PublicVlan: "1764435", WorkerNum: 2,
 				}
 				err := newWorker(server.URL()).Add("test", params, target)
 				Expect(err).To(HaveOccurred())
@@ -74,7 +74,7 @@ var _ = Describe("Workers", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/workers/abc-123-def-ghi"),
-						ghttp.RespondWith(http.StatusOK, `{"Billing":"","ErrorMessage":"","Isolation":"","MachineType":"free","KubeVersion":"","PrivateIP":"","PublicIP":"","PrivateVlan":"vlan","PublicVlan":"vlan","state":"normal","status":"ready"}`),
+						ghttp.RespondWith(http.StatusOK, `{"ErrorMessage":"","Isolation":"","MachineType":"free","KubeVersion":"","PrivateIP":"","PublicIP":"","PrivateVlan":"vlan","PublicVlan":"vlan","state":"normal","status":"ready"}`),
 					),
 				)
 			})
@@ -123,7 +123,7 @@ var _ = Describe("Workers", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workers"),
-						ghttp.RespondWith(http.StatusOK, `[{"Billing":"","ErrorMessage":"","Isolation":"","MachineType":"free","KubeVersion":"","PrivateIP":"","PublicIP":"","PrivateVlan":"vlan","PublicVlan":"vlan","state":"normal","status":"ready"}]`),
+						ghttp.RespondWith(http.StatusOK, `[{"ErrorMessage":"","Isolation":"","MachineType":"free","KubeVersion":"","PrivateIP":"","PublicIP":"","PrivateVlan":"vlan","PublicVlan":"vlan","state":"normal","status":"ready"}]`),
 					),
 				)
 			})
@@ -232,8 +232,8 @@ var _ = Describe("Workers", func() {
 					SpaceID:   "def",
 					AccountID: "ghi",
 				}
-				params := WorkerParam{
-					Action: "add", Count: 1,
+				params := WorkerUpdateParam{
+					Action: "reload",
 				}
 				err := newWorker(server.URL()).Update("test", "abc-123-def-ghi", params, target)
 				Expect(err).NotTo(HaveOccurred())
@@ -256,8 +256,8 @@ var _ = Describe("Workers", func() {
 					SpaceID:   "def",
 					AccountID: "ghi",
 				}
-				params := WorkerParam{
-					Action: "add", Count: 1,
+				params := WorkerUpdateParam{
+					Action: "reload",
 				}
 				err := newWorker(server.URL()).Update("test", "abc-123-def-ghi", params, target)
 				Expect(err).To(HaveOccurred())

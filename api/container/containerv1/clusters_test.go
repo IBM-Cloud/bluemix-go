@@ -27,7 +27,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters"),
-						ghttp.VerifyJSON(`{"Billing":"","Datacenter":"dal10","Isolation":"","MachineType":"free","Name":"testservice","PrivateVlan":"vlan","PublicVlan":"vlan","WorkerNum":0,"NoSubnet":false}
+						ghttp.VerifyJSON(`{"dataCenter":"dal10","isolation":"","machineType":"free","name":"testservice","privateVlan":"vlan","publicVlan":"vlan","workerNum":1,"noSubnet":false,"masterVersion":"1.8.1","prefix":"worker"}
 `),
 						ghttp.RespondWith(http.StatusCreated, `{							 	
 							 "id": "f91adfe2-76c9-4649-939e-b01c37a3704c"
@@ -38,7 +38,7 @@ var _ = Describe("Clusters", func() {
 
 			It("should return cluster created", func() {
 				params := ClusterCreateRequest{
-					Name: "testservice", Datacenter: "dal10", MachineType: "free", PublicVlan: "vlan", PrivateVlan: "vlan",
+					Name: "testservice", Datacenter: "dal10", MachineType: "free", PublicVlan: "vlan", PrivateVlan: "vlan", MasterVersion: "1.8.1", Prefix: "worker", WorkerNum: 1,
 				}
 				target := ClusterTargetHeader{
 					OrgID:     "abc",
@@ -57,7 +57,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters"),
-						ghttp.VerifyJSON(`{"Billing":"","Datacenter":"dal10","Isolation":"","MachineType":"free","Name":"testservice","PrivateVlan":"vlan","PublicVlan":"vlan","WorkerNum":0,"NoSubnet":false}
+						ghttp.VerifyJSON(`{"dataCenter":"dal10","isolation":"","machineType":"free","name":"testservice","privateVlan":"vlan","publicVlan":"vlan","workerNum":1,"noSubnet":false,"masterVersion":"1.8.1","prefix":"worker"}
 `),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create cluster`),
 					),
@@ -66,7 +66,7 @@ var _ = Describe("Clusters", func() {
 
 			It("should return error during cluster creation", func() {
 				params := ClusterCreateRequest{
-					Name: "testservice", Datacenter: "dal10", MachineType: "free", PublicVlan: "vlan", PrivateVlan: "vlan",
+					Name: "testservice", Datacenter: "dal10", MachineType: "free", PublicVlan: "vlan", PrivateVlan: "vlan", MasterVersion: "1.8.1", Prefix: "worker", WorkerNum: 1,
 				}
 				target := ClusterTargetHeader{
 					OrgID:     "abc",
@@ -88,14 +88,14 @@ var _ = Describe("Clusters", func() {
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters"),
 						ghttp.RespondWith(http.StatusOK, `[{							 	
-							 "GUID": "f91adfe2-76c9-4649-939e-b01c37a3704c",
               "CreatedDate": "",
               "DataCenter": "dal10",
               "ID": "f91adfe2-76c9-4649-939e-b01c37a3704",
               "IngressHostname": "",
               "IngressSecretName": "",
               "Location": "",
-              "MasterKubeVersion": "",
+              "MasterKubeVersion": "1.8.1",
+              "Prefix": "worker",
               "ModifiedDate": "",
               "Name": "test",
               "Region": "abc",
@@ -120,6 +120,7 @@ var _ = Describe("Clusters", func() {
 					Expect(err).NotTo(HaveOccurred())
 					Expect(cluster.ID).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704"))
 					Expect(cluster.WorkerCount).Should(Equal(1))
+					Expect(cluster.MasterKubeVersion).Should(Equal("1.8.1"))
 				}
 			})
 		})
@@ -201,7 +202,6 @@ var _ = Describe("Clusters", func() {
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test"),
 						ghttp.RespondWith(http.StatusOK, `{							 	
-							 "GUID": "f91adfe2-76c9-4649-939e-b01c37a3704c",
               "CreatedDate": "",
               "DataCenter": "dal10",
               "ID": "f91adfe2-76c9-4649-939e-b01c37a3704",
@@ -240,7 +240,6 @@ var _ = Describe("Clusters", func() {
 				myCluster, err := newCluster(server.URL()).Find("test", target)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(myCluster).ShouldNot(BeNil())
-				Expect(myCluster.GUID).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704c"))
 				Expect(myCluster.Vlans[0].ID).Should(Equal("177453"))
 				Expect(myCluster.Vlans[0].Subnets[0].ID).Should(Equal("1541737"))
 				Expect(myCluster.Vlans[0].Subnets[0].Cidr).Should(Equal("159.8.226.208/29"))
