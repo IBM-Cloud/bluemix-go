@@ -571,6 +571,61 @@ var _ = Describe("Clusters", func() {
 			})
 		})
 	})
+	//Update
+	Describe("Update", func() {
+		Context("When updating cluster version is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test"),
+						ghttp.RespondWith(http.StatusNoContent, `{}`),
+					),
+				)
+			})
+
+			It("should return cluster version updated", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				params := ClusterUpdateParam{
+					Action:  "update",
+					Force:   true,
+					Version: "1.8.6",
+				}
+				err := newCluster(server.URL()).Update("test", params, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When updating cluster version is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to update cluster version`),
+					),
+				)
+			})
+
+			It("should return error during updating cluster version", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				params := ClusterUpdateParam{
+					Action:  "update",
+					Force:   true,
+					Version: "1.8.6",
+				}
+				err := newCluster(server.URL()).Update("test", params, target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
 	//
 })
 

@@ -38,6 +38,12 @@ type ClusterInfo struct {
 	Addons            []Addon `json:"addons"`
 }
 
+type ClusterUpdateParam struct {
+	Action  string `json:"action"`
+	Force   bool   `json:"force"`
+	Version string `json:"version"`
+}
+
 type Vlan struct {
 	ID      string `json:"id"`
 	Subnets []struct {
@@ -145,6 +151,7 @@ type BoundServices []BoundService
 type Clusters interface {
 	Create(params ClusterCreateRequest, target ClusterTargetHeader) (ClusterCreateResponse, error)
 	List(target ClusterTargetHeader) ([]ClusterInfo, error)
+	Update(name string, params ClusterUpdateParam, target ClusterTargetHeader) error
 	Delete(name string, target ClusterTargetHeader) error
 	Find(name string, target ClusterTargetHeader) (ClusterInfo, error)
 	GetClusterConfig(name, homeDir string, admin bool, target ClusterTargetHeader) (string, error)
@@ -171,6 +178,13 @@ func (r *clusters) Create(params ClusterCreateRequest, target ClusterTargetHeade
 	var cluster ClusterCreateResponse
 	_, err := r.client.Post("/v1/clusters", params, &cluster, target.ToMap())
 	return cluster, err
+}
+
+//Update ...
+func (r *clusters) Update(name string, params ClusterUpdateParam, target ClusterTargetHeader) error {
+	rawURL := fmt.Sprintf("/v1/clusters/%s", name)
+	_, err := r.client.Put(rawURL, params, nil, target.ToMap())
+	return err
 }
 
 //Delete ...
