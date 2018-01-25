@@ -52,6 +52,17 @@ var _ = Describe("EndPoints", func() {
 		})
 	})
 
+	Context("When region is us-east", func() {
+		locator := newEndpointLocator("us-east")
+
+		It("should return endpoints with region us-east", func() {
+			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.us-east.bluemix.net"))
+			Expect(locator.UAAEndpoint()).To(Equal("https://login.us-east.bluemix.net/UAALoginServerWAR"))
+			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.us-east.bluemix.net"))
+			Expect(locator.IAMEndpoint()).To(Equal("https://iam.us-east.bluemix.net"))
+		})
+	})
+
 	Context("When region is not supported", func() {
 		locator := newEndpointLocator("in")
 
