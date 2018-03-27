@@ -255,7 +255,7 @@ func (o *organization) FindByName(name string, region string) (*Organization, er
 }
 
 func (o *organization) listOrgResourcesWithPath(path string, cb func(OrgResource) bool) error {
-	_, err := o.client.GetPaginated(path, OrgResource{}, func(resource interface{}) bool {
+	_, err := o.client.GetPaginated(path, NewCCPaginatedResources(OrgResource{}), func(resource interface{}) bool {
 		if orgResource, ok := resource.(OrgResource); ok {
 			return cb(orgResource)
 		}
@@ -337,7 +337,7 @@ func (o *organization) DisassociateUser(orgGUID string, userMail string) error {
 
 func (o *organization) listOrgRolesWithPath(path string) ([]OrgRole, error) {
 	var orgRoles []OrgRole
-	_, err := o.client.GetPaginated(path, OrgRoleResource{}, func(resource interface{}) bool {
+	_, err := o.client.GetPaginated(path, NewCCPaginatedResources(OrgRoleResource{}), func(resource interface{}) bool {
 		if orgRoleResource, ok := resource.(OrgRoleResource); ok {
 			orgRoles = append(orgRoles, orgRoleResource.ToFields())
 			return true

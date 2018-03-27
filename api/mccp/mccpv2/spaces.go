@@ -186,7 +186,7 @@ func (r *spaces) ListSpacesInOrg(orgGUID string, region string) ([]Space, error)
 
 func (r *spaces) listSpacesWithPath(path string) ([]Space, error) {
 	var spaces []Space
-	_, err := r.client.GetPaginated(path, SpaceResource{}, func(resource interface{}) bool {
+	_, err := r.client.GetPaginated(path, NewCCPaginatedResources(SpaceResource{}), func(resource interface{}) bool {
 		if spaceResource, ok := resource.(SpaceResource); ok {
 			spaces = append(spaces, spaceResource.ToFields())
 			return true
@@ -198,7 +198,7 @@ func (r *spaces) listSpacesWithPath(path string) ([]Space, error) {
 
 func (r *spaces) listSpaceRolesWithPath(path string) ([]SpaceRole, error) {
 	var spaceRoles []SpaceRole
-	_, err := r.client.GetPaginated(path, SpaceRoleResource{}, func(resource interface{}) bool {
+	_, err := r.client.GetPaginated(path, NewCCPaginatedResources(SpaceRoleResource{}), func(resource interface{}) bool {
 		if spaceRoleResource, ok := resource.(SpaceRoleResource); ok {
 			spaceRoles = append(spaceRoles, spaceRoleResource.ToFields())
 			return true

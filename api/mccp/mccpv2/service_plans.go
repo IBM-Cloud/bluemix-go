@@ -128,7 +128,7 @@ func (s *servicePlan) FindPlanInServiceOffering(serviceOfferingGUID string, plan
 
 func (s *servicePlan) listServicesPlanWithPath(path string) ([]ServicePlan, error) {
 	var servicePlans []ServicePlan
-	_, err := s.client.GetPaginated(path, ServicePlanResource{}, func(resource interface{}) bool {
+	_, err := s.client.GetPaginated(path, NewCCPaginatedResources(ServicePlanResource{}), func(resource interface{}) bool {
 		if servicePlanResource, ok := resource.(ServicePlanResource); ok {
 			servicePlans = append(servicePlans, servicePlanResource.ToFields())
 			return true

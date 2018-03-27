@@ -158,7 +158,7 @@ func (s *serviceOfferrings) FindByLabel(serviceName string) (*ServiceOffering, e
 }
 
 func (s *serviceOfferrings) listServicesOfferingWithPath(path string, cb func(ServiceOfferingResource) bool) error {
-	_, err := s.client.GetPaginated(path, ServiceOfferingResource{}, func(resource interface{}) bool {
+	_, err := s.client.GetPaginated(path, NewCCPaginatedResources(ServiceOfferingResource{}), func(resource interface{}) bool {
 		if serviceOfferingResource, ok := resource.(ServiceOfferingResource); ok {
 			return cb(serviceOfferingResource)
 		}

@@ -4,7 +4,6 @@ import (
 	gohttp "net/http"
 
 	bluemix "github.com/IBM-Bluemix/bluemix-go"
-	"github.com/IBM-Bluemix/bluemix-go/api/account/accountv2"
 	"github.com/IBM-Bluemix/bluemix-go/authentication"
 	"github.com/IBM-Bluemix/bluemix-go/client"
 	"github.com/IBM-Bluemix/bluemix-go/http"
@@ -58,7 +57,7 @@ func New(sess *session.Session) (AccountServiceAPI, error) {
 		config.Endpoint = &ep
 	}
 	return &accountService{
-		Client: client.New(config, bluemix.AccountServicev1, tokenRefreher, accountv2.Paginate),
+		Client: client.New(config, bluemix.AccountServicev1, tokenRefreher),
 	}, nil
 }
 

@@ -149,6 +149,9 @@ func (c *Client) makeRequest(r *Request) (*http.Request, error) {
 	if req.Header.Get("Content-Type") == "" {
 		req.Header.Set("Content-Type", "application/json")
 	}
+	if req.Header.Get("Accept-Language") == "" {
+		req.Header.Set("Accept-Language", "en")
+	}
 
 	return req, nil
 }
