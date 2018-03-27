@@ -3,8 +3,10 @@ package accountv1
 import (
 	"fmt"
 
+	"github.com/IBM-Bluemix/bluemix-go/api/account/accountv2"
 	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Bluemix/bluemix-go/rest"
 )
 
 type AccountUser struct {
@@ -30,6 +32,7 @@ type Accounts interface {
 	GetAccountUsers(accountGuid string) ([]AccountUser, error)
 	InviteAccountUser(accountGuid string, userEmail string) (AccountInviteResponse, error)
 	DeleteAccountUser(accountGuid string, userGuid string) error
+	FindAccountUserByUserId(accountGuid string, userId string) (*AccountUser, error)
 }
 
 type account struct {
@@ -101,6 +104,11 @@ func (resource AccountUserResource) ToModel() AccountUser {
 	}
 }
 
+type AccountUserQueryResponse struct {
+	Metadata     Metadata
+	AccountUsers []AccountUserResource `json:"resources"`
+}
+
 func newAccountAPI(c *client.Client) Accounts {
 	return &account{
 		client: c,
@@ -112,7 +120,7 @@ func (a *account) GetAccountUsers(accountGuid string) ([]AccountUser, error) {
 	var users []AccountUser
 
 	resp, err := a.client.GetPaginated(fmt.Sprintf("/v1/accounts/%s/users", accountGuid),
-		AccountUserResource{},
+		accountv2.NewAccountPaginatedResources(AccountUserResource{}),
 		func(resource interface{}) bool {
 			if accountUser, ok := resource.(AccountUserResource); ok {
 				users = append(users, accountUser.ToModel())
@@ -156,4 +164,28 @@ func (a *account) DeleteAccountUser(accountGuid string, userGuid string) error {
 	_, err := a.client.Delete(fmt.Sprintf("/v1/accounts/%s/users/%s", accountGuid, userGuid))
 
 	return err
+}
+
+func (a *account) FindAccountUserByUserId(accountGuid string, userId string) (*AccountUser, error) {
+	queryResp := AccountUserQueryResponse{}
+
+	req := rest.GetRequest(*a.client.Config.Endpoint+fmt.Sprintf("/v1/accounts/%s/users", accountGuid)).
+		Query("user_id", userId)
+
+	response, err := a.client.SendRequest(req,
+		&queryResp)
+
+	if err != nil {
+		switch response.StatusCode {
+		case 404:
+			return nil, nil
+		default:
+			return nil, err
+		}
+	} else if len(queryResp.AccountUsers) == 0 {
+		return nil, nil
+	} else {
+		accountUser := queryResp.AccountUsers[0].ToModel()
+		return &accountUser, nil
+	}
 }

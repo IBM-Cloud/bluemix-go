@@ -179,7 +179,7 @@ func (a *account) FindByOrg(orgGUID, region string) (*Account, error) {
 
 func (a *account) List() ([]Account, error) {
 	var accounts []Account
-	resp, err := a.client.GetPaginated("/coe/v2/accounts", AccountResource{}, func(resource interface{}) bool {
+	resp, err := a.client.GetPaginated("/coe/v2/accounts", NewAccountPaginatedResources(AccountResource{}), func(resource interface{}) bool {
 		if accountResource, ok := resource.(AccountResource); ok {
 			accounts = append(accounts, accountResource.ToModel())
 			return true

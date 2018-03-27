@@ -162,7 +162,7 @@ func (r *serviceKey) List(filters ...string) ([]ServiceKey, error) {
 
 func (r *serviceKey) listServiceKeysWithPath(path string) ([]ServiceKey, error) {
 	var serviceKeys []ServiceKey
-	_, err := r.client.GetPaginated(path, ServiceKeyResource{}, func(resource interface{}) bool {
+	_, err := r.client.GetPaginated(path, NewCCPaginatedResources(ServiceKeyResource{}), func(resource interface{}) bool {
 		if serviceKeyResource, ok := resource.(ServiceKeyResource); ok {
 			serviceKeys = append(serviceKeys, serviceKeyResource.ToModel())
 			return true

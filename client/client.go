@@ -2,6 +2,7 @@
 package client
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"path"
@@ -24,16 +25,21 @@ type TokenProvider interface {
 	AuthenticateAPIKey(string) error
 }
 
+/*type PaginatedResourcesHandler interface {
+	Resources(rawResponse []byte, curPath string) (resources []interface{}, nextPath string, err error)
+}
+
 //HandlePagination ...
-type HandlePagination func(c *Client, path string, resource interface{}, cb func(interface{}) bool) (resp *gohttp.Response, err error)
+type HandlePagination func(c *Client, path string, paginated PaginatedResourcesHandler, cb func(interface{}) bool) (resp *gohttp.Response, err error)
+*/
 
 //Client is the base client for all service api client
 type Client struct {
-	Config           *bluemix.Config
-	DefaultHeader    gohttp.Header
-	ServiceName      bluemix.ServiceName
-	TokenRefresher   TokenProvider
-	HandlePagination HandlePagination
+	Config         *bluemix.Config
+	DefaultHeader  gohttp.Header
+	ServiceName    bluemix.ServiceName
+	TokenRefresher TokenProvider
+	//HandlePagination HandlePagination
 
 	headerLock sync.Mutex
 }
@@ -45,13 +51,13 @@ type Config struct {
 }
 
 //New ...
-func New(c *bluemix.Config, serviceName bluemix.ServiceName, refresher TokenProvider, pagination HandlePagination) *Client {
+func New(c *bluemix.Config, serviceName bluemix.ServiceName, refresher TokenProvider) *Client {
 	return &Client{
-		Config:           c,
-		ServiceName:      serviceName,
-		TokenRefresher:   refresher,
-		HandlePagination: pagination,
-		DefaultHeader:    getDefaultAuthHeaders(serviceName, c),
+		Config:         c,
+		ServiceName:    serviceName,
+		TokenRefresher: refresher,
+		//HandlePagination: pagination,
+		DefaultHeader: getDefaultAuthHeaders(serviceName, c),
 	}
 }
 
@@ -167,9 +173,40 @@ func addToRequestHeader(h interface{}, r *rest.Request) {
 	}
 }
 
-//GetPaginated ...
-func (c *Client) GetPaginated(path string, resource interface{}, cb func(interface{}) bool) (resp *gohttp.Response, err error) {
-	return c.HandlePagination(c, path, resource, cb)
+/*//GetPaginated ...
+func (c *Client) GetPaginated(path string, paginated PaginatedResourcesHandler, cb func(interface{}) bool) (resp *gohttp.Response, err error) {
+	return c.HandlePagination(c, path, paginated, cb)
+}*/
+
+type PaginatedResourcesHandler interface {
+	Resources(rawResponse []byte, curPath string) (resources []interface{}, nextPath string, err error)
+}
+
+func (c *Client) GetPaginated(path string, paginated PaginatedResourcesHandler, cb func(interface{}) bool) (resp *gohttp.Response, err error) {
+	for path != "" {
+		var raw json.RawMessage
+		resp, err = c.Get(path, &raw)
+		if err != nil {
+			return
+		}
+
+		var resources []interface{}
+		var nextPath string
+		resources, nextPath, err = paginated.Resources([]byte(raw), path)
+		if err != nil {
+			err = fmt.Errorf("%s: Error parsing JSON", err.Error())
+			return
+		}
+
+		for _, resource := range resources {
+			if !cb(resource) {
+				return
+			}
+		}
+
+		path = nextPath
+	}
+	return
 }
 
 //URL ...
@@ -207,7 +244,7 @@ func getDefaultAuthHeaders(serviceName bluemix.ServiceName, c *bluemix.Config) g
 		h.Set(authorizationHeader, c.IAMAccessToken)
 		h.Set(iamRefreshTokenHeader, c.IAMRefreshToken)
 		h.Set(uaaAccessTokenHeader, c.UAAAccessToken)
-	case bluemix.IAMPAPService, bluemix.AccountServicev1:
+	case bluemix.IAMPAPService, bluemix.AccountServicev1, bluemix.ResourceCatalogrService, bluemix.ResourceControllerService, bluemix.ResourceManagementService, bluemix.IAMService:
 		h.Set(authorizationHeader, c.IAMAccessToken)
 	default:
 		log.Println("Unknown service")

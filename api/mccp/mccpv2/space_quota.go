@@ -147,7 +147,7 @@ func (r *spaceQuota) FindByName(name, orgGUID string) (*SpaceQuota, error) {
 
 func (r *spaceQuota) listSpaceQuotaWithPath(path string) ([]SpaceQuota, error) {
 	var spaceQuota []SpaceQuota
-	_, err := r.client.GetPaginated(path, SpaceQuotaResource{}, func(resource interface{}) bool {
+	_, err := r.client.GetPaginated(path, NewCCPaginatedResources(SpaceQuotaResource{}), func(resource interface{}) bool {
 		if spaceQuotaResource, ok := resource.(SpaceQuotaResource); ok {
 			spaceQuota = append(spaceQuota, spaceQuotaResource.ToFields())
 			return true
