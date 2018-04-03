@@ -1,7 +1,7 @@
 package containerv1
 
 import (
-	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 //KubeVersion ...

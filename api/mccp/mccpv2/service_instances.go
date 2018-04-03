@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/IBM-Bluemix/bluemix-go/client"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 //ServiceInstanceCreateRequest ...

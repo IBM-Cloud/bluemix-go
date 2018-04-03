@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
-	"github.com/IBM-Bluemix/bluemix-go/endpoints"
-	"github.com/IBM-Bluemix/bluemix-go/helpers"
-	"github.com/IBM-Bluemix/bluemix-go/trace"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/endpoints"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 //Session ...

@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/IBM-Bluemix/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go"
 )
 
 //NewHTTPClient ...

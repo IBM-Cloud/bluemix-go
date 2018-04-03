@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 //PaginatedResources ...

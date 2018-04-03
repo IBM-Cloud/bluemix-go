@@ -3,8 +3,8 @@ package accountv1
 import (
 	"fmt"
 
-	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 type AccountUser struct {

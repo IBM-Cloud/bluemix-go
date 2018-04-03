@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-go/client"
-	"github.com/IBM-Bluemix/bluemix-go/helpers"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
-	"github.com/IBM-Bluemix/bluemix-go/trace"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 //AppState ...
