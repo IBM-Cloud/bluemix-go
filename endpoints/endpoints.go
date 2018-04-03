@@ -3,8 +3,8 @@ package endpoints
 import (
 	"fmt"
 
-	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-go/helpers"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
 )
 
 //EndpointLocator ...

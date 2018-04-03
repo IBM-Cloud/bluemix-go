@@ -2,7 +2,7 @@ package iampapv1
 
 import (
 	"fmt"
-	"github.com/IBM-Bluemix/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 type AccessPolicyRequest struct {

@@ -1,6 +1,6 @@
 # Bluemix SDK for Go
 
-[![Build Status](https://travis-ci.org/IBM-Bluemix/bluemix-go.svg?branch=master)](https://travis-ci.org/IBM-Bluemix/bluemix-go) [![GoDoc](https://godoc.org/github.com/IBM-Bluemix/bluemix-go?status.svg)](https://godoc.org/github.com/IBM-Bluemix/bluemix-go)
+[![Build Status](https://travis-ci.org/IBM-Cloud/bluemix-go.svg?branch=master)](https://travis-ci.org/IBM-Cloud/bluemix-go) [![GoDoc](https://godoc.org/github.com/IBM-Cloud/bluemix-go?status.svg)](https://godoc.org/github.com/IBM-Cloud/bluemix-go)
 
 bluemix-go provides the Go implementation for operating the IBM Bluemix platform, which is based on the [Cloud Foundry API][cloudfoundry_api].
 
@@ -9,13 +9,13 @@ bluemix-go provides the Go implementation for operating the IBM Bluemix platform
 1. Install the SDK using the following command
 
 ```bash
-go get github.com/IBM-Bluemix/bluemix-go
+go get github.com/IBM-Cloud/bluemix-go
 ```
 
 2. Update the SDK to the latest version using the following command
 
 ```bash
-go get -u github.com/IBM-Bluemix/bluemix-go
+go get -u github.com/IBM-Cloud/bluemix-go
 ```
 
 
@@ -27,7 +27,7 @@ The SDK has ```examples``` folder which cites few examples on how to use the SDK
 First you need to create a session.
 
 ```go
-import "github.com/IBM-Bluemix/bluemix-go/session"
+import "github.com/IBM-Cloud/bluemix-go/session"
 
 func main(){
 
@@ -53,5 +53,5 @@ The default region is _us_south_. You can override it in the [Config struct][blu
 
 [bluemix_signup]: https://console.ng.bluemix.net/registration/?target=%2Fdashboard%2Fapps
 [bluemix_login]: https://console.ng.bluemix.net
-[bluemix_go_config]: https://godoc.org/github.com/IBM-Bluemix/bluemix-go#Config
+[bluemix_go_config]: https://godoc.org/github.com/IBM-Cloud/bluemix-go#Config
 [cloudfoundry_api]: https://apidocs.cloudfoundry.org/264/

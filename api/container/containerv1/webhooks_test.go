@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
-	"github.com/IBM-Bluemix/bluemix-go/client"
-	bluemixHttp "github.com/IBM-Bluemix/bluemix-go/http"
-	"github.com/IBM-Bluemix/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	bluemixHttp "github.com/IBM-Cloud/bluemix-go/http"
+	"github.com/IBM-Cloud/bluemix-go/session"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

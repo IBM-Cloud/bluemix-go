@@ -3,8 +3,8 @@ package mccpv2
 import (
 	"fmt"
 
-	"github.com/IBM-Bluemix/bluemix-go/client"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 //ErrCodeRouteDoesnotExist ...

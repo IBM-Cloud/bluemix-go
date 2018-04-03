@@ -3,12 +3,12 @@ package accountv2
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
-	"github.com/IBM-Bluemix/bluemix-go/authentication"
-	"github.com/IBM-Bluemix/bluemix-go/client"
-	"github.com/IBM-Bluemix/bluemix-go/http"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
-	"github.com/IBM-Bluemix/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/authentication"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/http"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
 //AccountServiceAPI is the accountv2 client ...

@@ -50,7 +50,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
 )
 
 const (

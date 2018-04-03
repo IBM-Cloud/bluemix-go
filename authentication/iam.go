@@ -4,9 +4,9 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
-	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-go/rest"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 //IAMError ...

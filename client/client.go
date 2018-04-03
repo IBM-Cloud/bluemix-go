@@ -10,11 +10,11 @@ import (
 
 	gohttp "net/http"
 
-	bluemix "github.com/IBM-Bluemix/bluemix-go"
-	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
-	"github.com/IBM-Bluemix/bluemix-go/http"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/http"
 
-	"github.com/IBM-Bluemix/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 //TokenProvider ...

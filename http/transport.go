@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/IBM-Bluemix/bluemix-go/trace"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 // TraceLoggingTransport is a thin wrapper around Transport. It dumps HTTP

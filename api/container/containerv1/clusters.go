@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/IBM-Bluemix/bluemix-go/client"
-	"github.com/IBM-Bluemix/bluemix-go/helpers"
-	"github.com/IBM-Bluemix/bluemix-go/trace"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 //ClusterInfo ...

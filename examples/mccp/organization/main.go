@@ -7,9 +7,9 @@ import (
 
 	"github.com/softlayer/softlayer-go/sl"
 
-	"github.com/IBM-Bluemix/bluemix-go/api/mccp/mccpv2"
-	"github.com/IBM-Bluemix/bluemix-go/session"
-	"github.com/IBM-Bluemix/bluemix-go/trace"
+	"github.com/IBM-Cloud/bluemix-go/api/mccp/mccpv2"
+	"github.com/IBM-Cloud/bluemix-go/session"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 func main() {
