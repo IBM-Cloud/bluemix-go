@@ -312,7 +312,7 @@ func (r *app) DeleteServiceBindings(appGUID string, sbGUIDs ...string) error {
 
 func (r *app) listAppWithPath(path string) ([]App, error) {
 	var apps []App
-	_, err := r.client.GetPaginated(path, AppResource{}, func(resource interface{}) bool {
+	_, err := r.client.GetPaginated(path, NewCCPaginatedResources(AppResource{}), func(resource interface{}) bool {
 		if appResource, ok := resource.(AppResource); ok {
 			apps = append(apps, appResource.ToFields())
 			return true

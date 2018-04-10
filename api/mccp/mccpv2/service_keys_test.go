@@ -298,9 +298,8 @@ func newServiceKeys(url string) ServiceKeys {
 	conf.Endpoint = &url
 
 	client := client.Client{
-		Config:           conf,
-		ServiceName:      bluemix.MccpService,
-		HandlePagination: Paginate,
+		Config:      conf,
+		ServiceName: bluemix.MccpService,
 	}
 	return newServiceKeyAPI(&client)
 }

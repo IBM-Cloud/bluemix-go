@@ -147,7 +147,7 @@ func (r *orgQuota) List() ([]OrgQuota, error) {
 
 func (r *orgQuota) listOrgQuotaWithPath(path string) ([]OrgQuota, error) {
 	var orgQuota []OrgQuota
-	_, err := r.client.GetPaginated(path, OrgQuotaResource{}, func(resource interface{}) bool {
+	_, err := r.client.GetPaginated(path, NewCCPaginatedResources(OrgQuotaResource{}), func(resource interface{}) bool {
 		if orgQuotaResource, ok := resource.(OrgQuotaResource); ok {
 			orgQuota = append(orgQuota, orgQuotaResource.ToFields())
 			return true

@@ -255,7 +255,7 @@ func (s *serviceInstance) ListServiceBindings(instanceGUID string) ([]ServiceBin
 
 func listServicesWithPath(client *client.Client, path string) ([]ServiceInstance, error) {
 	var services []ServiceInstance
-	_, err := client.GetPaginated(path, ServiceInstanceResource{}, func(resource interface{}) bool {
+	_, err := client.GetPaginated(path, NewCCPaginatedResources(ServiceInstanceResource{}), func(resource interface{}) bool {
 		if serviceInstanceResource, ok := resource.(ServiceInstanceResource); ok {
 			services = append(services, serviceInstanceResource.ToModel())
 			return true

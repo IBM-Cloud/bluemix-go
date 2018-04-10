@@ -2,64 +2,38 @@ package accountv2
 
 import (
 	"encoding/json"
-	"fmt"
-	"net/http"
 	"reflect"
-
-	"github.com/IBM-Cloud/bluemix-go/client"
+	"strings"
 )
 
-//PaginatedResources ...
-type PaginatedResources struct {
-	NextURL        string          `json:"next_url"`
-	ResourcesBytes json.RawMessage `json:"resources"`
-	resourceType   reflect.Type
+type GenericPaginatedResourcesHandler struct {
+	resourceType reflect.Type
 }
 
-//NewPaginatedResources ...
-func NewPaginatedResources(resource interface{}) PaginatedResources {
-	return PaginatedResources{
+func NewAccountPaginatedResources(resource interface{}) GenericPaginatedResourcesHandler {
+	return GenericPaginatedResourcesHandler{
 		resourceType: reflect.TypeOf(resource),
 	}
 }
 
-//Resources ...
-func (pr PaginatedResources) Resources() ([]interface{}, error) {
+func (pr GenericPaginatedResourcesHandler) Resources(bytes []byte, curURL string) ([]interface{}, string, error) {
+	var paginatedResources = struct {
+		NextUrl        string          `json:"next_url"`
+		ResourcesBytes json.RawMessage `json:"resources"`
+	}{}
+
+	err := json.Unmarshal(bytes, &paginatedResources)
+
 	slicePtr := reflect.New(reflect.SliceOf(pr.resourceType))
-	err := json.Unmarshal([]byte(pr.ResourcesBytes), slicePtr.Interface())
+	dc := json.NewDecoder(strings.NewReader(string(paginatedResources.ResourcesBytes)))
+	dc.UseNumber()
+	err = dc.Decode(slicePtr.Interface())
 	slice := reflect.Indirect(slicePtr)
 
 	contents := make([]interface{}, 0, slice.Len())
 	for i := 0; i < slice.Len(); i++ {
 		contents = append(contents, slice.Index(i).Interface())
 	}
-	return contents, err
-}
 
-//Paginate ...
-func Paginate(c *client.Client, path string, resource interface{}, cb func(interface{}) bool) (resp *http.Response, err error) {
-	for path != "" {
-		paginatedResources := NewPaginatedResources(resource)
-
-		resp, err = c.Get(path, &paginatedResources)
-		if err != nil {
-			return
-		}
-
-		var resources []interface{}
-		resources, err = paginatedResources.Resources()
-		if err != nil {
-			err = fmt.Errorf("%s: Error parsing JSON", err.Error())
-			return
-		}
-
-		for _, resource := range resources {
-			if !cb(resource) {
-				return
-			}
-		}
-
-		path = paginatedResources.NextURL
-	}
-	return
+	return contents, paginatedResources.NextUrl, err
 }
