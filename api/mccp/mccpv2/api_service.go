@@ -29,6 +29,7 @@ type MccpServiceAPI interface {
 	SharedDomains() SharedDomains
 	PrivateDomains() PrivateDomains
 	ServiceBindings() ServiceBindings
+	Regions() RegionRepository
 }
 
 //MccpService holds the client
@@ -70,7 +71,7 @@ func New(sess *session.Session) (MccpServiceAPI, error) {
 	}
 
 	return &mccpService{
-		Client: client.New(config, bluemix.MccpService, tokenRefreher, Paginate),
+		Client: client.New(config, bluemix.MccpService, tokenRefreher),
 	}, nil
 }
 
@@ -141,4 +142,10 @@ func (c *mccpService) SharedDomains() SharedDomains {
 
 func (c *mccpService) PrivateDomains() PrivateDomains {
 	return newPrivateDomainAPI(c.Client)
+}
+
+//Regions implements Regions APIs
+
+func (c *mccpService) Regions() RegionRepository {
+	return newRegionRepositoryAPI(c.Client)
 }

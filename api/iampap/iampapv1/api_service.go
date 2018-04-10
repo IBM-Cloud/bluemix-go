@@ -15,6 +15,7 @@ import (
 type IAMPAPAPI interface {
 	IAMPolicy() IAMPolicy
 	IAMService() IAMService
+	AuthorizationPolicies() AuthorizationPolicyRepository
 }
 
 //ErrCodeAPICreation ...
@@ -58,7 +59,7 @@ func New(sess *session.Session) (IAMPAPAPI, error) {
 		config.Endpoint = &ep
 	}
 	return &iampapService{
-		Client: client.New(config, bluemix.IAMPAPService, tokenRefreher, nil),
+		Client: client.New(config, bluemix.IAMPAPService, tokenRefreher),
 	}, nil
 }
 
@@ -70,4 +71,9 @@ func (a *iampapService) IAMPolicy() IAMPolicy {
 //IAMService API
 func (a *iampapService) IAMService() IAMService {
 	return newIAMServiceAPI(a.Client)
+}
+
+//AuthorizationPolicies API
+func (a *iampapService) AuthorizationPolicies() AuthorizationPolicyRepository {
+	return NewAuthorizationPolicyRepository(a.Client)
 }

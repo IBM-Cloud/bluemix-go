@@ -57,7 +57,7 @@ func New(sess *session.Session) (AccountServiceAPI, error) {
 		config.Endpoint = &ep
 	}
 	return &accountService{
-		Client: client.New(config, bluemix.AccountService, tokenRefreher, Paginate),
+		Client: client.New(config, bluemix.AccountService, tokenRefreher),
 	}, nil
 }
 

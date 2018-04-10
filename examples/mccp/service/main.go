@@ -19,7 +19,7 @@ func main() {
 	flag.StringVar(&space, "space", "", "Bluemix Space")
 
 	var skipDeletion bool
-	flag.BoolVar(&skipDeletion, "no-delete", false, "If provided will delete the resources created")
+	flag.BoolVar(&skipDeletion, "no-delete", true, "If provided will delete the resources created")
 
 	flag.Parse()
 
@@ -57,7 +57,7 @@ func main() {
 	}
 
 	serviceOfferingAPI := client.ServiceOfferings()
-	myserviceOff, err := serviceOfferingAPI.FindByLabel("cloudantNoSQLDB")
+	myserviceOff, err := serviceOfferingAPI.FindByLabel("cloud-object-storage")
 	if err != nil {
 		log.Fatal(err)
 	}

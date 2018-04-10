@@ -100,7 +100,7 @@ func (d *sharedDomain) FindByName(domainName string) (*SharedDomain, error) {
 
 func listSharedDomainWithPath(c *client.Client, path string) ([]SharedDomain, error) {
 	var sharedDomain []SharedDomain
-	_, err := c.GetPaginated(path, SharedDomainResource{}, func(resource interface{}) bool {
+	_, err := c.GetPaginated(path, NewCCPaginatedResources(SharedDomainResource{}), func(resource interface{}) bool {
 		if sharedDomainResource, ok := resource.(SharedDomainResource); ok {
 			sharedDomain = append(sharedDomain, sharedDomainResource.ToFields())
 			return true

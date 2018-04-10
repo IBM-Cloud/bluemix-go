@@ -190,7 +190,7 @@ func (r *route) Delete(routeGUID string, opts ...bool) error {
 
 func listRouteWithPath(c *client.Client, path string) ([]Route, error) {
 	var route []Route
-	_, err := c.GetPaginated(path, RouteResource{}, func(resource interface{}) bool {
+	_, err := c.GetPaginated(path, NewCCPaginatedResources(RouteResource{}), func(resource interface{}) bool {
 		if routeResource, ok := resource.(RouteResource); ok {
 			route = append(route, routeResource.ToFields())
 			return true

@@ -1,12 +1,13 @@
 package accountv2
 
 import (
+	"log"
+	"net/http"
+
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/client"
 	bluemixHttp "github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/session"
-	"log"
-	"net/http"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -653,9 +654,8 @@ func newAccounts(url string) Accounts {
 	conf.Endpoint = &url
 
 	client := client.Client{
-		Config:           conf,
-		ServiceName:      bluemix.AccountService,
-		HandlePagination: Paginate,
+		Config:      conf,
+		ServiceName: bluemix.AccountService,
 	}
 
 	return newAccountAPI(&client)

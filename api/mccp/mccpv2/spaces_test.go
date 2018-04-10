@@ -509,9 +509,8 @@ func newSpaces(url string) Spaces {
 	conf := sess.Config.Copy()
 	conf.Endpoint = &url
 	client := client.Client{
-		Config:           conf,
-		ServiceName:      bluemix.MccpService,
-		HandlePagination: Paginate,
+		Config:      conf,
+		ServiceName: bluemix.MccpService,
 	}
 	return newSpacesAPI(&client)
 }

@@ -14,7 +14,7 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.ng.bluemix.net"))
 			Expect(locator.UAAEndpoint()).To(Equal("https://login.ng.bluemix.net/UAALoginServerWAR"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.ng.bluemix.net"))
-			Expect(locator.IAMEndpoint()).To(Equal("https://iam.ng.bluemix.net"))
+			Expect(locator.IAMEndpoint()).To(Equal("https://iam.bluemix.net"))
 			Expect(locator.ContainerEndpoint()).To(Equal("https://us-south.containers.bluemix.net"))
 		})
 	})
@@ -26,7 +26,7 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.eu-gb.bluemix.net"))
 			Expect(locator.UAAEndpoint()).To(Equal("https://login.eu-gb.bluemix.net/UAALoginServerWAR"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.eu-gb.bluemix.net"))
-			Expect(locator.IAMEndpoint()).To(Equal("https://iam.eu-gb.bluemix.net"))
+			Expect(locator.IAMEndpoint()).To(Equal("https://iam.bluemix.net"))
 		})
 	})
 
@@ -37,7 +37,7 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.au-syd.bluemix.net"))
 			Expect(locator.UAAEndpoint()).To(Equal("https://login.au-syd.bluemix.net/UAALoginServerWAR"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.au-syd.bluemix.net"))
-			Expect(locator.IAMEndpoint()).To(Equal("https://iam.au-syd.bluemix.net"))
+			Expect(locator.IAMEndpoint()).To(Equal("https://iam.bluemix.net"))
 		})
 	})
 
@@ -48,7 +48,7 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.eu-de.bluemix.net"))
 			Expect(locator.UAAEndpoint()).To(Equal("https://login.eu-de.bluemix.net/UAALoginServerWAR"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.eu-de.bluemix.net"))
-			Expect(locator.IAMEndpoint()).To(Equal("https://iam.eu-de.bluemix.net"))
+			Expect(locator.IAMEndpoint()).To(Equal("https://iam.bluemix.net"))
 		})
 	})
 
@@ -59,7 +59,7 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.us-east.bluemix.net"))
 			Expect(locator.UAAEndpoint()).To(Equal("https://login.us-east.bluemix.net/UAALoginServerWAR"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.us-east.bluemix.net"))
-			Expect(locator.IAMEndpoint()).To(Equal("https://iam.us-east.bluemix.net"))
+			Expect(locator.IAMEndpoint()).To(Equal("https://iam.bluemix.net"))
 		})
 	})
 

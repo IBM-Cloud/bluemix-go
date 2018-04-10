@@ -15,6 +15,9 @@ type EndpointLocator interface {
 	ContainerEndpoint() (string, error)
 	IAMEndpoint() (string, error)
 	IAMPAPEndpoint() (string, error)
+	ResourceManagementEndpoint() (string, error)
+	ResourceControllerEndpoint() (string, error)
+	ResourceCatalogEndpoint() (string, error)
 	UAAEndpoint() (string, error)
 }
 
@@ -39,11 +42,11 @@ var regionToEndpoint = map[string]map[string]string{
 		"eu-de":    "https://mccp.eu-de.bluemix.net",
 	},
 	"iam": {
-		"us-south": "https://iam.ng.bluemix.net",
-		"us-east":  "https://iam.us-east.bluemix.net",
-		"eu-gb":    "https://iam.eu-gb.bluemix.net",
-		"au-syd":   "https://iam.au-syd.bluemix.net",
-		"eu-de":    "https://iam.eu-de.bluemix.net",
+		"us-south": "https://iam.bluemix.net",
+		"us-east":  "https://iam.bluemix.net",
+		"eu-gb":    "https://iam.bluemix.net",
+		"au-syd":   "https://iam.bluemix.net",
+		"eu-de":    "https://iam.bluemix.net",
 	},
 	"iampap": {
 		"us-south": "https://iam.bluemix.net",
@@ -72,6 +75,27 @@ var regionToEndpoint = map[string]map[string]string{
 		"eu-de":    "https://eu-central.containers.bluemix.net",
 		"au-syd":   "https://ap-south.containers.bluemix.net",
 		"eu-gb":    "https://uk-south.containers.bluemix.net",
+	},
+	"resource-manager": {
+		"us-south": "https://resource-manager.bluemix.net",
+		"us-east":  "https://resource-manager.bluemix.net",
+		"eu-de":    "https://resource-manager.bluemix.net",
+		"au-syd":   "https://resource-manager.bluemix.net",
+		"eu-gb":    "https://resource-manager.bluemix.net",
+	},
+	"resource-catalog": {
+		"us-south": "https://resource-catalog.bluemix.net",
+		"us-east":  "https://resource-catalog.bluemix.net",
+		"eu-de":    "https://resource-catalog.bluemix.net",
+		"au-syd":   "https://resource-catalog.bluemix.net",
+		"eu-gb":    "https://resource-catalog.bluemix.net",
+	},
+	"resource-controller": {
+		"us-south": "https://resource-controller.bluemix.net",
+		"us-east":  "https://resource-controller.bluemix.net",
+		"eu-de":    "https://resource-controller.bluemix.net",
+		"au-syd":   "https://resource-controller.bluemix.net",
+		"eu-gb":    "https://resource-controller.bluemix.net",
 	},
 }
 
@@ -149,4 +173,31 @@ func (e *endpointLocator) ContainerEndpoint() (string, error) {
 		return helpers.EnvFallBack([]string{"IBMCLOUD_CS_API_ENDPOINT"}, ep), nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Container Service endpoint doesn't exist for region: %q", e.region))
+}
+
+func (e *endpointLocator) ResourceManagementEndpoint() (string, error) {
+	if ep, ok := regionToEndpoint["resource-manager"][e.region]; ok {
+		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+		return helpers.EnvFallBack([]string{"IBMCLOUD_RESOURCE_MANAGEMENT_API_ENDPOINT"}, ep), nil
+
+	}
+	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Resource Management endpoint doesn't exist"))
+}
+
+func (e *endpointLocator) ResourceControllerEndpoint() (string, error) {
+	if ep, ok := regionToEndpoint["resource-controller"][e.region]; ok {
+		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+		return helpers.EnvFallBack([]string{"IBMCLOUD_RESOURCE_CONTROLLER_API_ENDPOINT"}, ep), nil
+
+	}
+	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Resource Controller endpoint doesn't exist"))
+}
+
+func (e *endpointLocator) ResourceCatalogEndpoint() (string, error) {
+	if ep, ok := regionToEndpoint["resource-catalog"][e.region]; ok {
+		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+		return helpers.EnvFallBack([]string{"IBMCLOUD_RESOURCE_CATALOG_API_ENDPOINT"}, ep), nil
+
+	}
+	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Resource Catalog endpoint doesn't exist"))
 }
