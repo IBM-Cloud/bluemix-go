@@ -317,6 +317,43 @@ var _ = Describe("Organizations", func() {
 		})
 	})
 
+	Describe("DeleteByRegion", func() {
+		Context("When Organization deletion by region is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodDelete, "/v2/organizations/827ec655-c2ed-4577-b226-82271fe471d7"),
+						ghttp.RespondWith(http.StatusNoContent, `
+						{}`),
+					),
+				)
+			})
+
+			It("Should delete Organization", func() {
+				err := newOrganizations(server.URL()).DeleteByRegion("827ec655-c2ed-4577-b226-82271fe471d7", "us-south", true)
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+		})
+
+		Context("When Organization Delete is failed", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodDelete, "/v2/organizations/827ec655-c2ed-4577-b226-82271fe471d7"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to delete`),
+					),
+				)
+			})
+
+			It("Should return error when Organization is deleted", func() {
+				err := newOrganizations(server.URL()).DeleteByRegion("827ec655-c2ed-4577-b226-82271fe471d7", "us-south", true)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+
 	Describe("Update", func() {
 		Context("When update is succeesful", func() {
 			BeforeEach(func() {
