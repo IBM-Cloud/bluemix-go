@@ -27,7 +27,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters"),
-						ghttp.VerifyJSON(`{"dataCenter":"dal10","isolation":"","machineType":"free","name":"testservice","privateVlan":"vlan","publicVlan":"vlan","workerNum":1,"noSubnet":false,"masterVersion":"1.8.1","prefix":"worker"}
+						ghttp.VerifyJSON(`{"dataCenter":"dal10","isolation":"","machineType":"b2c.4x16","name":"testservice","privateVlan":"vlan","publicVlan":"vlan","workerNum":1,"noSubnet":false,"masterVersion":"1.8.1","prefix":"worker","diskEncryption": true}
 `),
 						ghttp.RespondWith(http.StatusCreated, `{							 	
 							 "id": "f91adfe2-76c9-4649-939e-b01c37a3704c"
@@ -38,7 +38,7 @@ var _ = Describe("Clusters", func() {
 
 			It("should return cluster created", func() {
 				params := ClusterCreateRequest{
-					Name: "testservice", Datacenter: "dal10", MachineType: "free", PublicVlan: "vlan", PrivateVlan: "vlan", MasterVersion: "1.8.1", Prefix: "worker", WorkerNum: 1,
+					Name: "testservice", Datacenter: "dal10", MachineType: "b2c.4x16", PublicVlan: "vlan", PrivateVlan: "vlan", MasterVersion: "1.8.1", Prefix: "worker", WorkerNum: 1, DiskEncryption: true,
 				}
 				target := ClusterTargetHeader{
 					OrgID:     "abc",
@@ -57,7 +57,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters"),
-						ghttp.VerifyJSON(`{"dataCenter":"dal10","isolation":"","machineType":"free","name":"testservice","privateVlan":"vlan","publicVlan":"vlan","workerNum":1,"noSubnet":false,"masterVersion":"1.8.1","prefix":"worker"}
+						ghttp.VerifyJSON(`{"dataCenter":"dal10","isolation":"","machineType":"free","name":"testservice","privateVlan":"vlan","publicVlan":"vlan","workerNum":1,"noSubnet":false,"masterVersion":"1.8.1","prefix":"worker","diskEncryption": false}
 `),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create cluster`),
 					),
