@@ -108,17 +108,18 @@ func (c ClusterSoftlayerHeader) ToMap() map[string]string {
 
 //ClusterCreateRequest ...
 type ClusterCreateRequest struct {
-	Billing       string `json:"billing,omitempty"`
-	Datacenter    string `json:"dataCenter" description:"The worker's data center"`
-	Isolation     string `json:"isolation" description:"Can be 'public' or 'private'"`
-	MachineType   string `json:"machineType" description:"The worker's machine type"`
-	Name          string `json:"name" binding:"required" description:"The cluster's name"`
-	PrivateVlan   string `json:"privateVlan" description:"The worker's private vlan"`
-	PublicVlan    string `json:"publicVlan" description:"The worker's public vlan"`
-	WorkerNum     int    `json:"workerNum,omitempty" binding:"required" description:"The number of workers"`
-	NoSubnet      bool   `json:"noSubnet" description:"Indicate whether portable subnet should be ordered for user"`
-	MasterVersion string `json:"masterVersion,omitempty" description:"Desired version of the requested master"`
-	Prefix        string `json:"prefix,omitempty" description:"hostname prefix for new workers"`
+	Billing        string `json:"billing,omitempty"`
+	Datacenter     string `json:"dataCenter" description:"The worker's data center"`
+	Isolation      string `json:"isolation" description:"Can be 'public' or 'private'"`
+	MachineType    string `json:"machineType" description:"The worker's machine type"`
+	Name           string `json:"name" binding:"required" description:"The cluster's name"`
+	PrivateVlan    string `json:"privateVlan" description:"The worker's private vlan"`
+	PublicVlan     string `json:"publicVlan" description:"The worker's public vlan"`
+	WorkerNum      int    `json:"workerNum,omitempty" binding:"required" description:"The number of workers"`
+	NoSubnet       bool   `json:"noSubnet" description:"Indicate whether portable subnet should be ordered for user"`
+	MasterVersion  string `json:"masterVersion,omitempty" description:"Desired version of the requested master"`
+	Prefix         string `json:"prefix,omitempty" description:"hostname prefix for new workers"`
+	DiskEncryption bool   `json:"diskEncryption" description:"disable encryption on a worker"`
 }
 
 // ServiceBindRequest ...
