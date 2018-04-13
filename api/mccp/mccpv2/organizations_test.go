@@ -397,9 +397,8 @@ func newOrganizations(url string) Organizations {
 	conf.Endpoint = &url
 
 	mccpClient := client.Client{
-		Config:           conf,
-		ServiceName:      bluemix.MccpService,
-		HandlePagination: Paginate,
+		Config:      conf,
+		ServiceName: bluemix.MccpService,
 	}
 
 	return newOrganizationAPI(&mccpClient)

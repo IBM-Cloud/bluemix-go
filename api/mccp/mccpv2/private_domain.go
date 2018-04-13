@@ -122,7 +122,7 @@ func (d *privateDomain) FindByName(domainName string) (*PrivateDomain, error) {
 
 func listPrivateDomainWithPath(c *client.Client, path string) ([]PrivateDomain, error) {
 	var privateDomain []PrivateDomain
-	_, err := c.GetPaginated(path, PrivateDomainResource{}, func(resource interface{}) bool {
+	_, err := c.GetPaginated(path, NewCCPaginatedResources(PrivateDomainResource{}), func(resource interface{}) bool {
 		if privateDomainResource, ok := resource.(PrivateDomainResource); ok {
 			privateDomain = append(privateDomain, privateDomainResource.ToFields())
 			return true

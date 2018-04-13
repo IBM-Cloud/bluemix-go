@@ -62,7 +62,7 @@ func New(sess *session.Session) (ContainerServiceAPI, error) {
 	}
 
 	return &csService{
-		Client: client.New(config, bluemix.ContainerService, tokenRefreher, nil),
+		Client: client.New(config, bluemix.ContainerService, tokenRefreher),
 	}, nil
 }
 

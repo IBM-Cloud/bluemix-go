@@ -140,9 +140,8 @@ func newServiceOffering(url string) ServiceOfferings {
 	conf.Endpoint = &url
 
 	client := client.Client{
-		Config:           conf,
-		ServiceName:      bluemix.MccpService,
-		HandlePagination: Paginate,
+		Config:      conf,
+		ServiceName: bluemix.MccpService,
 	}
 	return newServiceOfferingAPI(&client)
 }

@@ -601,9 +601,8 @@ func newApps(url string) Apps {
 	conf := sess.Config.Copy()
 	conf.Endpoint = &url
 	client := client.Client{
-		Config:           conf,
-		ServiceName:      bluemix.MccpService,
-		HandlePagination: Paginate,
+		Config:      conf,
+		ServiceName: bluemix.MccpService,
 	}
 	return newAppAPI(&client)
 }
