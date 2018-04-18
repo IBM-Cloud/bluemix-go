@@ -4,8 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/IBM-Cloud/bluemix-go/crn"
-
 	"github.com/IBM-Cloud/bluemix-go"
 
 	"github.com/IBM-Cloud/bluemix-go/client"
@@ -17,8 +15,7 @@ import (
 )
 
 var _ = Describe("ServiceInstances", func() {
-	targetCRN, _ := crn.Parse("crn:v1:d_att288:dedicated::us-south::::d_att288-us-south")
-
+	targetCRN := "crn:v1:d_att288:dedicated::us-south::::d_att288-us-south"
 	var server *ghttp.Server
 	AfterEach(func() {
 		server.Close()
