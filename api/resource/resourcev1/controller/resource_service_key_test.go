@@ -90,6 +90,7 @@ var _ = Describe("ServiceKeys", func() {
 	})
 
 	Describe("CreateKey()", func() {
+
 		var (
 			roleCRN   crn.CRN
 			sourceCRN crn.CRN
@@ -105,6 +106,8 @@ var _ = Describe("ServiceKeys", func() {
 
 			sourceCRN, err = crn.Parse("crn:v1:staging:public:rc-demo-services-cfmysqlv3:us-south:a/560df2058b1e7c402303cc598b3e5540:6d5bd9c5-0412-4f5b-a39a-f322be3d7812::")
 			Expect(err).NotTo(HaveOccurred())
+
+			serverStatus = http.StatusOK
 		})
 
 		JustBeforeEach(func() {
@@ -119,7 +122,7 @@ var _ = Describe("ServiceKeys", func() {
 								"role_crn": "%s"
 							}
 						}`, sourceCRN.String(), roleCRN.String())),
-					ghttp.RespondWith(http.StatusOK, serverResponse),
+					ghttp.RespondWith(serverStatus, serverResponse),
 				),
 			)
 		})
