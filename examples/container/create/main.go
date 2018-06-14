@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/session"
 
 	"github.com/IBM-Cloud/bluemix-go/api/account/accountv2"
@@ -15,6 +16,8 @@ import (
 )
 
 func main() {
+
+	c := new(bluemix.Config)
 
 	var org string
 	flag.StringVar(&org, "org", "", "Bluemix Organization")
@@ -26,16 +29,22 @@ func main() {
 	flag.StringVar(&zone, "zone", "", "Zone")
 
 	var privateVlan string
-	flag.StringVar(&privateVlan, "privateVlan", "", "Private Vlan")
+	flag.StringVar(&privateVlan, "privateVlan", "", "Zone Private Vlan")
 
 	var publicVlan string
-	flag.StringVar(&publicVlan, "publicVlan", "", "Public vlan")
+	flag.StringVar(&publicVlan, "publicVlan", "", "Zone Public vlan")
 
 	var updatePrivateVlan string
-	flag.StringVar(&updatePrivateVlan, "updatePrivateVlan", "", "Private vlan")
+	flag.StringVar(&updatePrivateVlan, "updatePrivateVlan", "", "Zone Private vlan to be updated")
 
 	var updatePublicVlan string
-	flag.StringVar(&updatePublicVlan, "updatePublicVlan", "", "Public vlan")
+	flag.StringVar(&updatePublicVlan, "updatePublicVlan", "", "Zone Public vlan to be updated")
+
+	var location string
+	flag.StringVar(&location, "location", "", "location")
+
+	var region string
+	flag.StringVar(&c.Region, "region", "us-south", "The Bluemix region. You can source it from env BM_REGION or BLUEMIX_REGION")
 
 	var skipDeletion bool
 	flag.BoolVar(&skipDeletion, "no-delete", false, "If provided will delete the resources created")
@@ -43,14 +52,14 @@ func main() {
 	flag.Parse()
 
 	trace.Logger = trace.NewLogger("true")
-	if org == "" || space == "" || privateVlan == "" || publicVlan == "" || updatePrivateVlan == "" || updatePublicVlan == "" || zone == "" {
+	if org == "" || space == "" || privateVlan == "" || publicVlan == "" || updatePrivateVlan == "" || updatePublicVlan == "" || zone == "" || location == "" {
 		flag.Usage()
 		os.Exit(1)
 	}
 
 	var clusterInfo = v1.ClusterCreateRequest{
 		Name:        "my_cluster",
-		Datacenter:  "dal10",
+		Datacenter:  location,
 		MachineType: "u2c.2x4",
 		WorkerNum:   1,
 		PrivateVlan: privateVlan,
@@ -58,7 +67,7 @@ func main() {
 		Isolation:   "public",
 	}
 
-	sess, err := session.New()
+	sess, err := session.New(c)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -69,7 +78,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	region := sess.Config.Region
+	region = sess.Config.Region
 	orgAPI := client.Organizations()
 	myorg, err := orgAPI.FindByName(org, region)
 
@@ -141,25 +150,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = workerPoolAPI.ResizeWorkerPool(out.ID, resp.ID, 3)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	pool, err := workerPoolAPI.GetWorkerPool(out.ID, resp.ID)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("Pool id is ", pool.ID)
-
-	err = workerPoolAPI.RemoveZone(out.ID, zone, resp.ID)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = workerPoolAPI.DeleteWorkerPool(out.ID, resp.ID)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 }
