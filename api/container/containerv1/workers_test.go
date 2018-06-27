@@ -167,6 +167,48 @@ var _ = Describe("Workers", func() {
 			})
 		})
 	})
+	//ListByWorkerPool
+	Describe("ListByWorkerPool", func() {
+		Context("When retrieving available workers belong to a worker pool of a cluster is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workers"),
+						ghttp.RespondWith(http.StatusOK, `[{"ErrorMessage":"","Isolation":"","MachineType":"free","KubeVersion":"","PrivateIP":"","PublicIP":"","PrivateVlan":"vlan","PublicVlan":"vlan","state":"normal","status":"ready"}]`),
+					),
+				)
+			})
+
+			It("should return available workers ", func() {
+				worker, err := newWorker(server.URL()).ListByWorkerPool("myCluster", "test", false)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(worker).ShouldNot(BeNil())
+				for _, wObj := range worker {
+					Expect(wObj).ShouldNot(BeNil())
+					Expect(wObj.State).Should(Equal("normal"))
+				}
+			})
+		})
+		Context("When retrieving available workers is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workers"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to retrieve workers`),
+					),
+				)
+			})
+
+			It("should return error during retrieveing workers", func() {
+				worker, err := newWorker(server.URL()).ListByWorkerPool("myCluster", "test", false)
+				Expect(err).To(HaveOccurred())
+				Expect(worker).Should(BeNil())
+				Expect(len(worker)).Should(Equal(0))
+			})
+		})
+	})
 	//Delete
 	Describe("Delete", func() {
 		Context("When delete of worker is successful", func() {
