@@ -10,7 +10,7 @@ import (
 type DCVlan struct {
 	ID         string           `json:"id"`
 	Properties DCVlanProperties `json:"properties"`
-	VlanType   string           `json:"type"`
+	Type       string           `json:"type"`
 }
 
 //VlanProperties ...
@@ -27,7 +27,7 @@ type DCVlanProperties struct {
 
 //Subnets interface
 type Vlans interface {
-	List(string, ClusterTargetHeader) ([]DCVlan, error)
+	List(string) ([]DCVlan, error)
 }
 
 type vlan struct {
@@ -41,10 +41,10 @@ func newVlanAPI(c *client.Client) Vlans {
 }
 
 //GetVlans ...
-func (r *vlan) List(datacenter string, target ClusterTargetHeader) ([]DCVlan, error) {
+func (r *vlan) List(datacenter string) ([]DCVlan, error) {
 	vlans := []DCVlan{}
 	rawURL := fmt.Sprintf("/v1/datacenters/%s/vlans", datacenter)
-	_, err := r.client.Get(rawURL, &vlans, target.ToMap())
+	_, err := r.client.Get(rawURL, &vlans)
 	if err != nil {
 		return nil, err
 	}

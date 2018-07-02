@@ -49,12 +49,7 @@ var _ = Describe("Vlans", func() {
 			})
 
 			It("should return cluster list", func() {
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-				}
-				vlans, err := newVlan(server.URL()).List("dal10", target)
+				vlans, err := newVlan(server.URL()).List("dal10")
 				Expect(vlans).ShouldNot(BeNil())
 				for _, vlan := range vlans {
 					Expect(err).NotTo(HaveOccurred())
@@ -74,12 +69,7 @@ var _ = Describe("Vlans", func() {
 			})
 
 			It("should return error when cluster are retrieved", func() {
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-				}
-				vlans, err := newVlan(server.URL()).List("fakedc", target)
+				vlans, err := newVlan(server.URL()).List("fakedc")
 				Expect(err).To(HaveOccurred())
 				Expect(vlans).Should(BeNil())
 			})
