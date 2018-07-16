@@ -23,7 +23,7 @@ var _ = Describe("WorkerPool", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters/test/workerpools"),
-						ghttp.RespondWith(http.StatusCreated, `{"Name":"testpool","Size":5,"MachineType": "u2c.2x4","Isolation": "public","ID":"rtr4tg5", "Region":"us-south", "State":"normal", "WorkerVersion":"1.9.0","MasterEOS":"1.9.0","ReasonForDelete":"","IsBalanced":true}`),
+						ghttp.RespondWith(http.StatusCreated, `{"Name":"testpool","Size":5,"MachineType": "u2c.2x4","Isolation": "public","ID":"rtr4tg5", "Region":"us-south", "State":"normal", "ReasonForDelete":"","IsBalanced":true}`),
 					),
 				)
 			})
@@ -77,7 +77,7 @@ var _ = Describe("WorkerPool", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workerpools"),
-						ghttp.RespondWith(http.StatusOK, `[{"Name":"testpool","Size":5,"MachineType": "u2c.2x4","Isolation": "public","ID":"rtr4tg5", "Region":"us-south", "State":"normal", "WorkerVersion":"1.9.0","MasterEOS":"1.9.0","ReasonForDelete":"","IsBalanced":true}]`),
+						ghttp.RespondWith(http.StatusOK, `[{"Name":"testpool","Size":5,"MachineType": "u2c.2x4","Isolation": "public","ID":"rtr4tg5", "Region":"us-south", "State":"normal","ReasonForDelete":"","IsBalanced":true}]`),
 					),
 				)
 			})
@@ -117,7 +117,7 @@ var _ = Describe("WorkerPool", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workerpools/abc-123-def"),
-						ghttp.RespondWith(http.StatusOK, `{"Name":"testpool","Size":5,"MachineType": "u2c.2x4","Isolation": "public","ID":"rtr4tg5", "Region":"us-south", "State":"normal", "WorkerVersion":"1.9.0","MasterEOS":"1.9.0","ReasonForDelete":"","IsBalanced":true}`),
+						ghttp.RespondWith(http.StatusOK, `{"Name":"testpool","Size":5,"MachineType": "u2c.2x4","Isolation": "public","ID":"rtr4tg5", "Region":"us-south", "State":"normal", "ReasonForDelete":"","IsBalanced":true}`),
 					),
 				)
 			})
