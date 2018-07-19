@@ -38,7 +38,14 @@ var _ = Describe("WorkerPool", func() {
 					},
 					DiskEncryption: true,
 				}
-				_, err := newWorkerPool(server.URL()).CreateWorkerPool("test", workerPoolProperties)
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				_, err := newWorkerPool(server.URL()).CreateWorkerPool("test", workerPoolProperties, target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -64,7 +71,13 @@ var _ = Describe("WorkerPool", func() {
 					},
 					DiskEncryption: true,
 				}
-				_, err := newWorkerPool(server.URL()).CreateWorkerPool("test", workerPoolProperties)
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				_, err := newWorkerPool(server.URL()).CreateWorkerPool("test", workerPoolProperties, target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -83,7 +96,14 @@ var _ = Describe("WorkerPool", func() {
 			})
 
 			It("should return available worker pools ", func() {
-				worker, err := newWorkerPool(server.URL()).ListWorkerPools("myCluster")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				worker, err := newWorkerPool(server.URL()).ListWorkerPools("myCluster", target)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(worker).ShouldNot(BeNil())
 				for _, wObj := range worker {
@@ -104,7 +124,14 @@ var _ = Describe("WorkerPool", func() {
 			})
 
 			It("should return error during retrieveing worker pools", func() {
-				_, err := newWorkerPool(server.URL()).ListWorkerPools("myCluster")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				_, err := newWorkerPool(server.URL()).ListWorkerPools("myCluster", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -123,7 +150,14 @@ var _ = Describe("WorkerPool", func() {
 			})
 
 			It("should return worker pool", func() {
-				_, err := newWorkerPool(server.URL()).GetWorkerPool("myCluster", "abc-123-def")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				_, err := newWorkerPool(server.URL()).GetWorkerPool("myCluster", "abc-123-def", target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -139,7 +173,14 @@ var _ = Describe("WorkerPool", func() {
 			})
 
 			It("should return error during retrieveing worker pool", func() {
-				_, err := newWorkerPool(server.URL()).GetWorkerPool("myCluster", "abc-123-def")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				_, err := newWorkerPool(server.URL()).GetWorkerPool("myCluster", "abc-123-def", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -159,7 +200,14 @@ var _ = Describe("WorkerPool", func() {
 			})
 
 			It("should delete worker pool", func() {
-				err := newWorkerPool(server.URL()).DeleteWorkerPool("test", "abc-123-def-ghi")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				err := newWorkerPool(server.URL()).DeleteWorkerPool("test", "abc-123-def-ghi", target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -175,8 +223,14 @@ var _ = Describe("WorkerPool", func() {
 			})
 
 			It("should return error deleting worker pool", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
 
-				err := newWorkerPool(server.URL()).DeleteWorkerPool("test", "abc-123-def-ghi")
+				err := newWorkerPool(server.URL()).DeleteWorkerPool("test", "abc-123-def-ghi", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -196,7 +250,14 @@ var _ = Describe("WorkerPool", func() {
 			})
 
 			It("should increase the size of worker pool", func() {
-				err := newWorkerPool(server.URL()).ResizeWorkerPool("test", "abc-123-def-ghi", 6)
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				err := newWorkerPool(server.URL()).ResizeWorkerPool("test", "abc-123-def-ghi", 6, target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -212,8 +273,14 @@ var _ = Describe("WorkerPool", func() {
 			})
 
 			It("should return error resizing worker pool", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
 
-				err := newWorkerPool(server.URL()).ResizeWorkerPool("test", "abc-123-def-ghi", 6)
+				err := newWorkerPool(server.URL()).ResizeWorkerPool("test", "abc-123-def-ghi", 6, target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -240,7 +307,14 @@ var _ = Describe("WorkerPool", func() {
 						PublicVLAN:  "43215",
 					},
 				}
-				err := newWorkerPool(server.URL()).AddZone("test", "abc-123-def-ghi", workerPoolZone)
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				err := newWorkerPool(server.URL()).AddZone("test", "abc-123-def-ghi", workerPoolZone, target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -264,7 +338,14 @@ var _ = Describe("WorkerPool", func() {
 						PublicVLAN:  "43215",
 					},
 				}
-				err := newWorkerPool(server.URL()).AddZone("test", "abc-123-def-ghi", workerPoolZone)
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				err := newWorkerPool(server.URL()).AddZone("test", "abc-123-def-ghi", workerPoolZone, target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -284,7 +365,14 @@ var _ = Describe("WorkerPool", func() {
 			})
 
 			It("should delete worker pool in that zone", func() {
-				err := newWorkerPool(server.URL()).RemoveZone("test", "dal10", "abc-123-def-ghi")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				err := newWorkerPool(server.URL()).RemoveZone("test", "dal10", "abc-123-def-ghi", target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -300,8 +388,14 @@ var _ = Describe("WorkerPool", func() {
 			})
 
 			It("should return error deleting worker pool in the specific zone", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
 
-				err := newWorkerPool(server.URL()).RemoveZone("test", "dal10", "abc-123-def-ghi")
+				err := newWorkerPool(server.URL()).RemoveZone("test", "dal10", "abc-123-def-ghi", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -321,7 +415,14 @@ var _ = Describe("WorkerPool", func() {
 			})
 
 			It("should update worker pool zone", func() {
-				err := newWorkerPool(server.URL()).UpdateZoneNetwork("test", "dal10", "abc-123-def-ghi", "12345", "43215")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				err := newWorkerPool(server.URL()).UpdateZoneNetwork("test", "dal10", "abc-123-def-ghi", "12345", "43215", target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -337,8 +438,14 @@ var _ = Describe("WorkerPool", func() {
 			})
 
 			It("should return updating worker pool zone", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
 
-				err := newWorkerPool(server.URL()).UpdateZoneNetwork("test", "dal10", "abc-123-def-ghi", "12345", "43215")
+				err := newWorkerPool(server.URL()).UpdateZoneNetwork("test", "dal10", "abc-123-def-ghi", "12345", "43215", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})

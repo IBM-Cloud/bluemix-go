@@ -181,7 +181,14 @@ var _ = Describe("Workers", func() {
 			})
 
 			It("should return available workers ", func() {
-				worker, err := newWorker(server.URL()).ListByWorkerPool("myCluster", "test", false)
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				worker, err := newWorker(server.URL()).ListByWorkerPool("myCluster", "test", false, target)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(worker).ShouldNot(BeNil())
 				for _, wObj := range worker {
@@ -202,7 +209,14 @@ var _ = Describe("Workers", func() {
 			})
 
 			It("should return error during retrieveing workers", func() {
-				worker, err := newWorker(server.URL()).ListByWorkerPool("myCluster", "test", false)
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				worker, err := newWorker(server.URL()).ListByWorkerPool("myCluster", "test", false, target)
 				Expect(err).To(HaveOccurred())
 				Expect(worker).Should(BeNil())
 				Expect(len(worker)).Should(Equal(0))
