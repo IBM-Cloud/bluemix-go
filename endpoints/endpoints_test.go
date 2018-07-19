@@ -15,7 +15,7 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.UAAEndpoint()).To(Equal("https://login.ng.bluemix.net/UAALoginServerWAR"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.ng.bluemix.net"))
 			Expect(locator.IAMEndpoint()).To(Equal("https://iam.bluemix.net"))
-			Expect(locator.ContainerEndpoint()).To(Equal("https://us-south.containers.bluemix.net"))
+			Expect(locator.ContainerEndpoint()).To(Equal("https://containers.bluemix.net"))
 		})
 	})
 
