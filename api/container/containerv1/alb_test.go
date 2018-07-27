@@ -35,10 +35,16 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should configure alb to a cluster", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
 				params := ALBConfig{
 					ALBID: "123", ClusterID: "345", Name: "test", ALBType: "public", Enable: true, State: "active", CreatedDate: "", NumOfInstances: "1", Resize: false, ALBIP: "169.0.0.1", Zone: "ams03", DisableDeployment: false,
 				}
-				err := newAlbs(server.URL()).ConfigureALB("123", params)
+				err := newAlbs(server.URL()).ConfigureALB("123", params, target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -59,7 +65,13 @@ var _ = Describe("Albs", func() {
 				params := ALBConfig{
 					ALBID: "123", ClusterID: "345", Name: "test", ALBType: "public", Enable: true, State: "active", CreatedDate: "", NumOfInstances: "1", Resize: false, ALBIP: "169.0.0.1", Zone: "ams03", DisableDeployment: false,
 				}
-				err := newAlbs(server.URL()).ConfigureALB("123", params)
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).ConfigureALB("123", params, target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -104,7 +116,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return cluster albs list", func() {
-				albs, err := newAlbs(server.URL()).ListClusterALBs("test")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				albs, err := newAlbs(server.URL()).ListClusterALBs("test", target)
 				Expect(albs).ShouldNot(BeNil())
 				Expect(err).NotTo(HaveOccurred())
 			})
@@ -121,7 +139,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return error when cluster albs are retrieved", func() {
-				albs, err := newAlbs(server.URL()).ListClusterALBs("test")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				albs, err := newAlbs(server.URL()).ListClusterALBs("test", target)
 				Expect(err).To(HaveOccurred())
 				Expect(albs).Should(BeNil())
 			})
@@ -141,7 +165,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return albs", func() {
-				alb, err := newAlbs(server.URL()).GetALB("testAlb")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				alb, err := newAlbs(server.URL()).GetALB("testAlb", target)
 				Expect(alb).ShouldNot(BeNil())
 				Expect(err).NotTo(HaveOccurred())
 			})
@@ -158,7 +188,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return error when alb are retrieved", func() {
-				_, err := newAlbs(server.URL()).GetALB("testAlb")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				_, err := newAlbs(server.URL()).GetALB("testAlb", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -182,7 +218,13 @@ var _ = Describe("Albs", func() {
 				params := ALBSecretConfig{
 					SecretName: "test", ClusterID: "345", DomainName: "testDomain", CloudCertInstanceID: "456", ClusterCrn: "crn::cluster", CertCrn: "crn::cert", IssuerName: "testissue", ExpiresOn: "", State: "active",
 				}
-				err := newAlbs(server.URL()).DeployALBCert(params)
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).DeployALBCert(params, target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -203,7 +245,13 @@ var _ = Describe("Albs", func() {
 				params := ALBSecretConfig{
 					SecretName: "test", ClusterID: "345", DomainName: "testDomain", CloudCertInstanceID: "456", ClusterCrn: "crn::cluster", CertCrn: "crn::cert", IssuerName: "testissue", ExpiresOn: "", State: "active",
 				}
-				err := newAlbs(server.URL()).DeployALBCert(params)
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).DeployALBCert(params, target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -227,7 +275,13 @@ var _ = Describe("Albs", func() {
 				params := ALBSecretConfig{
 					SecretName: "test", ClusterID: "345", DomainName: "testDomain", CloudCertInstanceID: "456", ClusterCrn: "crn::cluster", CertCrn: "crn::cert", IssuerName: "testissue", ExpiresOn: "", State: "active",
 				}
-				err := newAlbs(server.URL()).UpdateALBCert(params)
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).UpdateALBCert(params, target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -248,7 +302,13 @@ var _ = Describe("Albs", func() {
 				params := ALBSecretConfig{
 					SecretName: "test", ClusterID: "345", DomainName: "testDomain", CloudCertInstanceID: "456", ClusterCrn: "crn::cluster", CertCrn: "crn::cert", IssuerName: "testissue", ExpiresOn: "", State: "active",
 				}
-				err := newAlbs(server.URL()).UpdateALBCert(params)
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).UpdateALBCert(params, target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -267,7 +327,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return cluster alb certs list", func() {
-				albCerts, err := newAlbs(server.URL()).ListALBCerts("test")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				albCerts, err := newAlbs(server.URL()).ListALBCerts("test", target)
 				Expect(albCerts).ShouldNot(BeNil())
 				Expect(err).NotTo(HaveOccurred())
 			})
@@ -284,7 +350,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return error when cluster alb certss are retrieved", func() {
-				albs, err := newAlbs(server.URL()).ListALBCerts("test")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				albs, err := newAlbs(server.URL()).ListALBCerts("test", target)
 				Expect(err).To(HaveOccurred())
 				Expect(albs).Should(BeNil())
 			})
@@ -304,7 +376,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return albs", func() {
-				alb, err := newAlbs(server.URL()).GetClusterALBCertBySecretName("test", "testSecret")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				alb, err := newAlbs(server.URL()).GetClusterALBCertBySecretName("test", "testSecret", target)
 				Expect(alb).ShouldNot(BeNil())
 				Expect(err).NotTo(HaveOccurred())
 			})
@@ -321,7 +399,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return error when alb cert are retrieved", func() {
-				_, err := newAlbs(server.URL()).GetClusterALBCertBySecretName("test", "testSecret")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				_, err := newAlbs(server.URL()).GetClusterALBCertBySecretName("test", "testSecret", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -340,7 +424,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return albs", func() {
-				alb, err := newAlbs(server.URL()).GetClusterALBCertByCertCRN("test", "testCert")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				alb, err := newAlbs(server.URL()).GetClusterALBCertByCertCRN("test", "testCert", target)
 				Expect(alb).ShouldNot(BeNil())
 				Expect(err).NotTo(HaveOccurred())
 			})
@@ -357,7 +447,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return error when alb cert are retrieved", func() {
-				_, err := newAlbs(server.URL()).GetClusterALBCertByCertCRN("test", "testCert")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				_, err := newAlbs(server.URL()).GetClusterALBCertByCertCRN("test", "testCert", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -377,8 +473,14 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should delete alb", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
 
-				err := newAlbs(server.URL()).RemoveALB("test")
+				err := newAlbs(server.URL()).RemoveALB("test", target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -394,7 +496,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return error alb delete", func() {
-				err := newAlbs(server.URL()).RemoveALB("test")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).RemoveALB("test", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -414,8 +522,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should delete alb cert", func() {
-
-				err := newAlbs(server.URL()).RemoveALBCertBySecretName("mycluster", "test")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).RemoveALBCertBySecretName("mycluster", "test", target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -431,7 +544,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return error alb cert delete", func() {
-				err := newAlbs(server.URL()).RemoveALBCertBySecretName("mycluster", "test")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).RemoveALBCertBySecretName("mycluster", "test", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -451,8 +570,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should delete alb cert", func() {
-
-				err := newAlbs(server.URL()).RemoveALBCertByCertCRN("mycluster", "test")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).RemoveALBCertByCertCRN("mycluster", "test", target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -468,7 +592,13 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should return error alb cert delete", func() {
-				err := newAlbs(server.URL()).RemoveALBCertByCertCRN("mycluster", "test")
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).RemoveALBCertByCertCRN("mycluster", "test", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
