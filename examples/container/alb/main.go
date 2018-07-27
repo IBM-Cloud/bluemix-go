@@ -24,6 +24,9 @@ func main() {
 	var clusterID string
 	flag.StringVar(&clusterID, "clusterNameOrID", "", "cluster name or ID")
 
+	var region string
+	flag.StringVar(&region, "region", "us-south", "region of cluster")
+
 	flag.Parse()
 
 	trace.Logger = trace.NewLogger("true")
@@ -42,8 +45,11 @@ func main() {
 		log.Fatal(err)
 	}
 	albAPI := albClient.Albs()
+	target := v1.ClusterTargetHeader{
+		Region: region,
+	}
 	//List All Albs
-	albs, err := albAPI.ListClusterALBs(clusterID)
+	albs, err := albAPI.ListClusterALBs(clusterID, target)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -60,14 +66,14 @@ func main() {
 		Enable:    enable,
 		ClusterID: clusterID,
 	}
-	err = albAPI.ConfigureALB(albID, albConfig)
+	err = albAPI.ConfigureALB(albID, albConfig, target)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	time.Sleep(10 * time.Second)
 
-	alb, err := albAPI.GetALB(albID)
+	alb, err := albAPI.GetALB(albID, target)
 	if err != nil {
 		log.Fatal(err)
 	}
