@@ -217,7 +217,11 @@ var _ = Describe("Clusters", func() {
               "State": "normal",
               "IsPaid": false,
               "IsTrusted": true,
+              "ResourceGroup": "abcd",
               "WorkerCount": 1,
+              "workerZones": [
+				    "zone"
+			  ],
               "Vlans": [{
 			  "ID": "177453",
 				"Subnets": [
@@ -246,6 +250,7 @@ var _ = Describe("Clusters", func() {
 				Expect(myCluster.Vlans[0].Subnets[0].ID).Should(Equal("1541737"))
 				Expect(myCluster.Vlans[0].Subnets[0].Cidr).Should(Equal("159.8.226.208/29"))
 				Expect(myCluster.Vlans[0].Subnets[0].IsPublic).Should(Equal(true))
+				Expect(myCluster.ResourceGroupID).Should(Equal("abcd"))
 			})
 		})
 		Context("When cluster retrieve is failed", func() {
