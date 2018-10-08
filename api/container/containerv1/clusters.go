@@ -80,10 +80,11 @@ type ClusterCreateResponse struct {
 
 //ClusterTargetHeader ...
 type ClusterTargetHeader struct {
-	OrgID     string
-	SpaceID   string
-	AccountID string
-	Region    string
+	OrgID         string
+	SpaceID       string
+	AccountID     string
+	Region        string
+	ResourceGroup string
 }
 
 const (
@@ -103,6 +104,7 @@ func (c ClusterTargetHeader) ToMap() map[string]string {
 	m[spaceIDHeader] = c.SpaceID
 	m[accountIDHeader] = c.AccountID
 	m[regionHeader] = c.Region
+	m[resourceGroupHeader] = c.ResourceGroup
 	return m
 }
 
