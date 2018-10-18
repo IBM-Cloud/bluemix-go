@@ -1,8 +1,11 @@
 package registryv1
 
 import (
-	"github.com/jenkins-x/jx/pkg/builds"
+	"io"
+	"strconv"
 	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
 )
 
 const (
@@ -34,7 +37,7 @@ type ImageBuildRequest struct {
 	/*F
 	  Specify the location of the Dockerfile relative to the build context. If not specified, the default is 'PATH/Dockerfile', where PATH is the root of the build context.
 	*/
-	F string
+	Dockerfile string
 	/*Buildargs
 	  A JSON key-value structure that contains build arguments. The value of the build arguments are available as environment variables when you specify an `ARG` line which matches the key in your Dockerfile.
 	*/
@@ -58,11 +61,10 @@ type ImageBuildRequest struct {
 
 }
 
-func DefaultImageBuildRequest() (*ImageBuildRequest)
-{
+func DefaultImageBuildRequest() (*ImageBuildRequest){
 	return &ImageBuildRequest{
 		T: "",
-		F: "",
+		Dockerfile: "",
 		Buildargs: "",
 		Nocache: false,
 		Pull: false,
@@ -80,7 +82,7 @@ type ImageBuildResponse struct {
 
 //Subnets interface
 type Builds interface {
-	ImageBuild(params ImageBuildRequest, target BuildTargetHeader) (ImageBuildResponse, error)
+	ImageBuild(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader) (ImageBuildResponse, error)
 }
 
 type builds struct {
@@ -92,7 +94,6 @@ func newBuildAPI(c *client.Client) Builds {
 		client: c,
 	}
 }
-rawURL := fmt.Sprintf("/v1/clusters/%s?showResources=true", name)
 
 func addToRequestHeader(h interface{}, r *rest.Request) {
 	switch v := h.(type) {
@@ -104,24 +105,23 @@ func addToRequestHeader(h interface{}, r *rest.Request) {
 }
 
 //Create ...
-func (r *builds) Create(params ImageBuildRequest, target BuildTargetHeader) (ImageBuildResponse, error) {
+func (r *builds) ImageBuild(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader) (ImageBuildResponse, error) {
+
 	var imageBuild ImageBuildResponse
-	req := rest.PostRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/api/v1/builds"))
-		.Query("t", params.T)
-		.Query("f", params.F)
-		.Query("buildarg", params.Buildargs)
-		.Query("nocache", params.Nocache)
-		.Query("pull", params.Pull)
-		.Query("quiet", params.Quiet)
-		.Query("squash", params.Squash)
+	req := rest.PostRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/api/v1/builds")).
+		Query("t", params.T).
+		Query("dockerfile", params.Dockerfile).
+		Query("buildarg", params.Buildargs).
+		Query("nocache", strconv.FormatBool(params.Nocache)).
+		Query("pull", strconv.FormatBool(params.Pull)).
+		Query("quiet", strconv.FormatBool(params.Quiet)).
+		Query("squash", strconv.FormatBool(params.Squash)).
+		Body(buildContext)
 
 	for key, value := range target.ToMap() {
 		req.Set(key, value)
 	}
 
 	_, err := r.client.SendRequest(req, &imageBuild)
-	if err != nil {
-		return nil, err
-	}
 	return imageBuild, err
 }

@@ -3,7 +3,7 @@ package registryv1
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/IBM-Cloud/bluemix-go"
+	ibmcloud "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/authentication"
 	"github.com/IBM-Cloud/bluemix-go/client"
 	"github.com/IBM-Cloud/bluemix-go/http"
@@ -16,14 +16,15 @@ const ErrCodeAPICreation = "APICreationError"
 
 //RegistryServiceAPI is the IBM Cloud Registry client ...
 type RegistryServiceAPI interface {
-	Auth() Auth
 	Builds() Builds
+	/*Auth() Auth
+
 	Images() Images
 	Messages() Messages
 	Namespaces() Namespaces
 	Plans() Plans
 	Quotas() Quotas
-	Tokens() Tokens
+	Tokens() Tokens*/
 }
 
 //RegistryService holds the client
@@ -34,7 +35,7 @@ type rsService struct {
 //New ...
 func New(sess *session.Session) (RegistryServiceAPI, error) {
 	config := sess.Config.Copy()
-	err := config.ValidateConfigForService(bluemix.RegistryService)
+	err := config.ValidateConfigForService(ibmcloud.ContainerRegistryService)
 	if err != nil {
 		return nil, err
 	}
@@ -57,26 +58,28 @@ func New(sess *session.Session) (RegistryServiceAPI, error) {
 		}
 	}
 	if config.Endpoint == nil {
-		ep, err := config.EndpointLocator.RegistryEndpoint()
+		ep, err := config.EndpointLocator.ContainerRegistryEndpoint()
 		if err != nil {
 			return nil, err
 		}
 		config.Endpoint = &ep
 	}
 
-	return &csService{
-		Client: client.New(config, bluemix.RegistryService, tokenRefreher),
+	return &rsService{
+		Client: client.New(config, ibmcloud.ContainerRegistryService, tokenRefreher),
 	}, nil
 }
 
+
+
+//Builds implements builds API
+func (c *rsService) Builds() Builds {
+	return newBuildAPI(c.Client)
+}
+/*
 //Auth implement auth API
 func (c *csService) Auth() Auth {
 	return newAuthAPI(c.Client)
-}
-
-//Builds implements builds API
-func (c *csService) Builds() Builds {
-	return newBuildAPI(c.Client)
 }
 
 //Images implements Images API
@@ -108,3 +111,4 @@ func (c *csService) Quotas() Quotas {
 func (c *csService) Tokens() Tokens {
 	return newTokenAPI(c.Client)
 }
+*/
