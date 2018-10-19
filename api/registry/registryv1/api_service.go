@@ -14,22 +14,35 @@ import (
 //ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
+const (
+	accountIDHeader = "Account"
+)
+
 //RegistryServiceAPI is the IBM Cloud Registry client ...
 type RegistryServiceAPI interface {
 	Builds() Builds
-	/*Auth() Auth
-
-	Images() Images
-	Messages() Messages
 	Namespaces() Namespaces
+	Tokens() Tokens
+	Images() Images
+	/*Auth() Auth
+	Messages() Messages
 	Plans() Plans
 	Quotas() Quotas
-	Tokens() Tokens*/
+	*/
 }
 
 //RegistryService holds the client
 type rsService struct {
 	*client.Client
+}
+
+func addToRequestHeader(h interface{}, r *rest.Request) {
+	switch v := h.(type) {
+	case map[string]string:
+		for key, value := range v {
+			r.Set(key, value)
+		}
+	}
 }
 
 //New ...
@@ -70,32 +83,39 @@ func New(sess *session.Session) (RegistryServiceAPI, error) {
 	}, nil
 }
 
-
-
 //Builds implements builds API
 func (c *rsService) Builds() Builds {
 	return newBuildAPI(c.Client)
 }
+
+//Namespaces implements Namespaces API
+func (c *rsService) Namespaces() Namespaces {
+	return newNamespaceAPI(c.Client)
+}
+
+//Tokens implements Tokens API
+func (c *rsService) Tokens() Tokens {
+	return newTokenAPI(c.Client)
+}
+
+//Images implements Images API
+func (c *rsService) Images() Images {
+	return newImageAPI(c.Client)
+}
+
 /*
 //Auth implement auth API
 func (c *csService) Auth() Auth {
 	return newAuthAPI(c.Client)
 }
 
-//Images implements Images API
-func (c *csService) Images() Images {
-	return newImageAPI(c.Client)
-}
 
 //Messages implements Messages API
 func (c *csService) Messages() Messages {
 	return newMessageAPI(c.Client)
 }
 
-//Namespaces implements Namespaces API
-func (c *csService) Namespaces() Namespaces {
-	return newNamespaceAPI(c.Client)
-}
+
 
 //Plans implements Plans API
 func (c *csService) Plans() Plans {
@@ -107,8 +127,5 @@ func (c *csService) Quotas() Quotas {
 	return newQuotaAPI(c.Client)
 }
 
-//Tokens implements Tokens API
-func (c *csService) Tokens() Tokens {
-	return newTokenAPI(c.Client)
-}
+
 */

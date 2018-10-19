@@ -9,10 +9,6 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
-const (
-	accountIDHeader = "Account"
-)
-
 type BuildTargetHeader struct {
 	AccountID string
 }
@@ -103,15 +99,6 @@ type builds struct {
 func newBuildAPI(c *client.Client) Builds {
 	return &builds{
 		client: c,
-	}
-}
-
-func addToRequestHeader(h interface{}, r *rest.Request) {
-	switch v := h.(type) {
-	case map[string]string:
-		for key, value := range v {
-			r.Set(key, value)
-		}
 	}
 }
 

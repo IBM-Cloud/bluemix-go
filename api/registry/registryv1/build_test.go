@@ -45,7 +45,7 @@ func createTestTar() *bytes.Buffer {
 	}
 	return &buf
 }
-func TestCreateCluster(t *testing.T) {
+func TestBuild(t *testing.T) {
 	t.Parallel()
 	c := new(ibmcloud.Config)
 	c.Region = "us-east"
@@ -75,4 +75,102 @@ func TestCreateCluster(t *testing.T) {
 		fmt.Println(respV)
 		return true
 	})
+}
+func TestNamespaces(t *testing.T) {
+	t.Parallel()
+	c := new(ibmcloud.Config)
+	c.Region = "us-east"
+	c.BluemixAPIKey = ""
+
+	session, _ := session.New(c)
+	_, err := accountv1.New(session)
+	if err != nil {
+		fmt.Println(err)
+	}
+	iamAPI, err := iamv1.New(session)
+	identityAPI := iamAPI.Identity()
+	userInfo, err := identityAPI.UserInfo()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	headerStruct := &NamespaceTargetHeader{
+		AccountID: userInfo.Account.Bss,
+	}
+
+	registryClient, _ := New(session)
+	retval, err := registryClient.Namespaces().GetNamespaces(*headerStruct)
+	fmt.Printf("%v", retval)
+	namespaces := "devtest"
+	nameback, err := registryClient.Namespaces().AddNamespace(*headerStruct, namespaces)
+	fmt.Printf("%v", nameback)
+	err = registryClient.Namespaces().DeleteNamespace(*headerStruct, namespaces)
+	fmt.Printf("%v", err)
+
+}
+
+func TestTokens(t *testing.T) {
+	t.Parallel()
+	c := new(ibmcloud.Config)
+	c.Region = "us-east"
+	c.BluemixAPIKey = ""
+
+	session, _ := session.New(c)
+	_, err := accountv1.New(session)
+	if err != nil {
+		fmt.Println(err)
+	}
+	iamAPI, err := iamv1.New(session)
+	identityAPI := iamAPI.Identity()
+	userInfo, err := identityAPI.UserInfo()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	headerStruct := &TokenTargetHeader{
+		AccountID: userInfo.Account.Bss,
+	}
+
+	registryClient, _ := New(session)
+	params := DefaultIssueTokenRequest()
+	params.Description = "TTTEEEEESSSSSSSSSSSSSSSSSSSSST"
+	retval, err := registryClient.Tokens().IssueToken(*params, *headerStruct)
+	fmt.Printf("%v", retval)
+
+	retval2, err := registryClient.Tokens().GetTokens(*headerStruct)
+	fmt.Printf("%v", retval2)
+	fmt.Printf("--------------------------------------------")
+	retval1, err := registryClient.Tokens().GetToken(*headerStruct, retval.ID)
+	fmt.Printf("%v", retval1)
+	err = registryClient.Tokens().DeleteToken(*headerStruct, retval.ID)
+
+}
+
+func TestImages(t *testing.T) {
+	t.Parallel()
+	c := new(ibmcloud.Config)
+	c.Region = "us-east"
+	c.BluemixAPIKey = ""
+
+	session, _ := session.New(c)
+	_, err := accountv1.New(session)
+	if err != nil {
+		fmt.Println(err)
+	}
+	iamAPI, err := iamv1.New(session)
+	identityAPI := iamAPI.Identity()
+	userInfo, err := identityAPI.UserInfo()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	headerStruct := &ImageTargetHeader{
+		AccountID: userInfo.Account.Bss,
+	}
+
+	registryClient, _ := New(session)
+	params := DefaultGetImageRequest()
+	retval, err := registryClient.Images().GetImages(*params, *headerStruct)
+	fmt.Printf("%v", retval)
+
 }
