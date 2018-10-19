@@ -3,9 +3,10 @@ package registryv1
 import (
 	"io"
 	"strconv"
+
 	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/rest"
 	"github.com/IBM-Cloud/bluemix-go/helpers"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 const (
@@ -21,12 +22,6 @@ func (c BuildTargetHeader) ToMap() map[string]string {
 	m := make(map[string]string, 1)
 	m[accountIDHeader] = c.AccountID
 	return m
-}
-
-// Progressdetail
-type Progressdetail struct {
-	Current string `json:"current,omitempty"`
-	Total   string `json:"total,omitempty"`
 }
 
 type ImageBuildRequest struct {
@@ -58,31 +53,47 @@ type ImageBuildRequest struct {
 	  If set to true, the filesystem of the built image is reduced to one layer before it is pushed to the registry. Use this option if the number of layers in your image is close to the maximum for your storage driver.
 	*/
 	Squash bool
-
 }
 
-func DefaultImageBuildRequest() (*ImageBuildRequest){
+func DefaultImageBuildRequest() *ImageBuildRequest {
 	return &ImageBuildRequest{
-		T: "",
+		T:          "",
 		Dockerfile: "",
-		Buildargs: "",
-		Nocache: false,
-		Pull: false,
-		Quiet: false,
-		Squash: false,
+		Buildargs:  "",
+		Nocache:    false,
+		Pull:       false,
+		Quiet:      false,
+		Squash:     false,
 	}
 }
+
+// Errordetail
+type Errordetail struct {
+	Message string `json:"message,omitempty"`
+}
+
+// Progressdetail
+type Progressdetail struct {
+	Current int `json:"current,omitempty"`
+	Total   int `json:"total,omitempty"`
+}
+
 //ImageBuildResponse
 type ImageBuildResponse struct {
-	ID             string          `json:"id,omitempty"`
-	ProgressDetail *Progressdetail `json:"progressDetail,omitempty"`
-	Status         string          `json:"status,omitempty"`
-	Stream         string          `json:"stream,omitempty"`
+	ID             string         `json:"id,omitempty"`
+	Stream         string         `json:"stream,omitempty"`
+	Status         string         `json:"status,omitempty"`
+	ProgressDetail Progressdetail `json:"progressDetail,omitempty"`
+	Error          string         `json:"error,omitempty"`
+	ErrorDetail    Errordetail    `json:"errorDetail,omitempty"`
 }
+
+// Callback function for build response stream
+type ImageBuildResponseCallback func(respV ImageBuildResponse) bool
 
 //Subnets interface
 type Builds interface {
-	ImageBuild(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader) (ImageBuildResponse, error)
+	ImageBuild(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader, callback ImageBuildResponseCallback) error
 }
 
 type builds struct {
@@ -105,9 +116,7 @@ func addToRequestHeader(h interface{}, r *rest.Request) {
 }
 
 //Create ...
-func (r *builds) ImageBuild(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader) (ImageBuildResponse, error) {
-
-	var imageBuild ImageBuildResponse
+func (r *builds) ImageBuild(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader, callback ImageBuildResponseCallback) error {
 	req := rest.PostRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/api/v1/builds")).
 		Query("t", params.T).
 		Query("dockerfile", params.Dockerfile).
@@ -122,6 +131,6 @@ func (r *builds) ImageBuild(params ImageBuildRequest, buildContext io.Reader, ta
 		req.Set(key, value)
 	}
 
-	_, err := r.client.SendRequest(req, &imageBuild)
-	return imageBuild, err
+	_, err := r.client.SendRequest(req, callback)
+	return err
 }
