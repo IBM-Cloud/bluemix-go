@@ -25,10 +25,10 @@ func (c TokenTargetHeader) ToMap() map[string]string {
 
 //Subnets interface
 type Tokens interface {
-	GetToken(target TokenTargetHeader, tokenUUID string) (TokenResponse, error)
+	GetToken(tokenUUID string, target TokenTargetHeader) (TokenResponse, error)
 	GetTokens(target TokenTargetHeader) (GetTokensResponse, error)
-	DeleteToken(target TokenTargetHeader, tokenUUID string) error
-	DeleteTokenByDescription(target TokenTargetHeader, tokenDescription string) error
+	DeleteToken(tokenUUID string, target TokenTargetHeader) error
+	DeleteTokenByDescription(tokenDescription string, target TokenTargetHeader) error
 	IssueToken(params IssueTokenRequest, target TokenTargetHeader) (TokenResponse, error)
 }
 
@@ -119,7 +119,7 @@ func getTokID(token string) (string, error) {
 }
 
 //GetToken ...
-func (r *tokens) GetToken(target TokenTargetHeader, tokenUUID string) (TokenResponse, error) {
+func (r *tokens) GetToken(tokenUUID string, target TokenTargetHeader) (TokenResponse, error) {
 
 	var retVal TokenResponse
 	req := rest.GetRequest(helpers.GetFullURL(*r.client.Config.Endpoint, fmt.Sprintf("/api/v1/tokens/%s", tokenUUID)))
@@ -156,7 +156,7 @@ func (r *tokens) IssueToken(params IssueTokenRequest, target TokenTargetHeader) 
 }
 
 //Delete...
-func (r *tokens) DeleteToken(target TokenTargetHeader, tokenUUID string) error {
+func (r *tokens) DeleteToken(tokenUUID string, target TokenTargetHeader) error {
 	req := rest.DeleteRequest(helpers.GetFullURL(*r.client.Config.Endpoint, fmt.Sprintf("/api/v1/tokens/%s", tokenUUID)))
 
 	for key, value := range target.ToMap() {
@@ -168,7 +168,7 @@ func (r *tokens) DeleteToken(target TokenTargetHeader, tokenUUID string) error {
 }
 
 //Delete By Description
-func (r *tokens) DeleteTokenByDescription(target TokenTargetHeader, tokenDescription string) error {
+func (r *tokens) DeleteTokenByDescription(tokenDescription string, target TokenTargetHeader) error {
 	req := rest.DeleteRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/api/v1/tokens")).
 		Query("secondaryOwner", tokenDescription)
 

@@ -102,9 +102,9 @@ func TestNamespaces(t *testing.T) {
 	retval, err := registryClient.Namespaces().GetNamespaces(*headerStruct)
 	fmt.Printf("%v", retval)
 	namespaces := "devtest"
-	nameback, err := registryClient.Namespaces().AddNamespace(*headerStruct, namespaces)
+	nameback, err := registryClient.Namespaces().AddNamespace(namespaces, *headerStruct)
 	fmt.Printf("%v", nameback)
-	err = registryClient.Namespaces().DeleteNamespace(*headerStruct, namespaces)
+	err = registryClient.Namespaces().DeleteNamespace(namespaces, *headerStruct)
 	fmt.Printf("%v", err)
 
 }
@@ -140,9 +140,9 @@ func TestTokens(t *testing.T) {
 	retval2, err := registryClient.Tokens().GetTokens(*headerStruct)
 	fmt.Printf("%v", retval2)
 	fmt.Printf("--------------------------------------------")
-	retval1, err := registryClient.Tokens().GetToken(*headerStruct, retval.ID)
+	retval1, err := registryClient.Tokens().GetToken(retval.ID, *headerStruct)
 	fmt.Printf("%v", retval1)
-	err = registryClient.Tokens().DeleteToken(*headerStruct, retval.ID)
+	err = registryClient.Tokens().DeleteToken(retval.ID, *headerStruct)
 
 }
 
@@ -172,5 +172,9 @@ func TestImages(t *testing.T) {
 	params := DefaultGetImageRequest()
 	retval, err := registryClient.Images().GetImages(*params, *headerStruct)
 	fmt.Printf("%v", retval)
-
+	retval1, err := registryClient.Images().InspectImage("registry.ng.bluemix.net/gpfs/sklm:latest", *headerStruct)
+	fmt.Printf("%v", retval1)
+	retval3, err := registryClient.Images().ImageVulnerabilities("registry.ng.bluemix.net/gpfs/sklm:latest", *DefaultImageVulnerabilitiesRequest(), *headerStruct)
+	//retval3, err := registryClient.Images().DeleteImage("registry.ng.bluemix.net/bkuschel/testimage:latest", *headerStruct)
+	fmt.Printf("%v", retval3)
 }

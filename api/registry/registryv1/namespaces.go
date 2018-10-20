@@ -22,8 +22,8 @@ func (c NamespaceTargetHeader) ToMap() map[string]string {
 //Subnets interface
 type Namespaces interface {
 	GetNamespaces(target NamespaceTargetHeader) ([]string, error)
-	AddNamespace(target NamespaceTargetHeader, namespace string) (PutNamespaceResponse, error)
-	DeleteNamespace(target NamespaceTargetHeader, namespace string) error
+	AddNamespace(namespace string, target NamespaceTargetHeader) (PutNamespaceResponse, error)
+	DeleteNamespace(namespace string, target NamespaceTargetHeader) error
 }
 
 type namespaces struct {
@@ -55,7 +55,7 @@ func (r *namespaces) GetNamespaces(target NamespaceTargetHeader) ([]string, erro
 }
 
 //Add ...
-func (r *namespaces) AddNamespace(target NamespaceTargetHeader, namespace string) (PutNamespaceResponse, error) {
+func (r *namespaces) AddNamespace(namespace string, target NamespaceTargetHeader) (PutNamespaceResponse, error) {
 
 	var retVal PutNamespaceResponse
 	req := rest.PutRequest(helpers.GetFullURL(*r.client.Config.Endpoint, fmt.Sprintf("/api/v1/namespaces/%s", namespace)))
@@ -69,7 +69,7 @@ func (r *namespaces) AddNamespace(target NamespaceTargetHeader, namespace string
 }
 
 //Delete...
-func (r *namespaces) DeleteNamespace(target NamespaceTargetHeader, namespace string) error {
+func (r *namespaces) DeleteNamespace(namespace string, target NamespaceTargetHeader) error {
 
 	req := rest.DeleteRequest(helpers.GetFullURL(*r.client.Config.Endpoint, fmt.Sprintf("/api/v1/namespaces/%s", namespace)))
 
