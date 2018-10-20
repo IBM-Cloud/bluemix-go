@@ -6,7 +6,7 @@ import (
 
 type AccountInfo struct {
 	Bss string `json:"bss"`
-	Ims string `json:"ims`
+	Ims string `json:"ims"`
 }
 
 type UserInfo struct {
