@@ -23,10 +23,10 @@ func (c ImageTargetHeader) ToMap() map[string]string {
 
 //Subnets interface
 type Images interface {
-	GetImages(params GetImageRequest, target ImageTargetHeader) (GetImagesResponse, error)
-	InspectImage(imageName string, target ImageTargetHeader) (ImageInspectResponse, error)
-	DeleteImage(imageName string, target ImageTargetHeader) (DeleteImageResponse, error)
-	ImageVulnerabilities(imageName string, param ImageVulnerabilitiesRequest, target ImageTargetHeader) (ImageVulnerabilitiesResponse, error)
+	GetImages(params GetImageRequest, target ImageTargetHeader) (*GetImagesResponse, error)
+	InspectImage(imageName string, target ImageTargetHeader) (*ImageInspectResponse, error)
+	DeleteImage(imageName string, target ImageTargetHeader) (*DeleteImageResponse, error)
+	ImageVulnerabilities(imageName string, param ImageVulnerabilitiesRequest, target ImageTargetHeader) (*ImageVulnerabilitiesResponse, error)
 }
 
 type images struct {
@@ -51,6 +51,7 @@ type GetImagesResponse []struct {
 	ID                      string              `json:"Id"`
 	ParentID                string              `json:"ParentId"`
 	DigestTags              map[string][]string `json:"DigestTags"`
+	RepoTags                []string            `json:"RepoTags"`
 	RepoDigests             []string            `json:"RepoDigests"`
 	Created                 int                 `json:"Created"`
 	Size                    int64               `json:"Size"`
@@ -85,8 +86,8 @@ type ImageInspectResponse struct {
 		Image        string                 `json:"Image"`
 		Volumes      map[string]interface{} `json:"Volumes"`
 		WorkingDir   string                 `json:"WorkingDir"`
-		Entrypoint   interface{}            `json:"Entrypoint"`
-		OnBuild      interface{}            `json:"OnBuild"`
+		Entrypoint   []string               `json:"Entrypoint"`
+		OnBuild      []string               `json:"OnBuild"`
 		Labels       map[string]string      `json:"Labels"`
 	} `json:"ContainerConfig"`
 	DockerVersion string `json:"DockerVersion"`
@@ -108,8 +109,8 @@ type ImageInspectResponse struct {
 		Image        string                 `json:"Image"`
 		Volumes      map[string]interface{} `json:"Volumes"`
 		WorkingDir   string                 `json:"WorkingDir"`
-		Entrypoint   interface{}            `json:"Entrypoint"`
-		OnBuild      interface{}            `json:"OnBuild"`
+		Entrypoint   []string               `json:"Entrypoint"`
+		OnBuild      []string               `json:"OnBuild"`
 		Labels       map[string]string      `json:"Labels"`
 	} `json:"Config"`
 	Architecture string `json:"Architecture"`
@@ -230,7 +231,7 @@ func DefaultImageVulnerabilitiesRequest() *ImageVulnerabilitiesRequest {
 	}
 }
 
-func (r *images) GetImages(params GetImageRequest, target ImageTargetHeader) (GetImagesResponse, error) {
+func (r *images) GetImages(params GetImageRequest, target ImageTargetHeader) (*GetImagesResponse, error) {
 
 	var retVal GetImagesResponse
 	req := rest.GetRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/api/v1/images")).
@@ -248,10 +249,13 @@ func (r *images) GetImages(params GetImageRequest, target ImageTargetHeader) (Ge
 	}
 
 	_, err := r.client.SendRequest(req, &retVal)
-	return retVal, err
+	if err != nil {
+		return nil, err
+	}
+	return &retVal, err
 }
 
-func (r *images) InspectImage(imageName string, target ImageTargetHeader) (ImageInspectResponse, error) {
+func (r *images) InspectImage(imageName string, target ImageTargetHeader) (*ImageInspectResponse, error) {
 
 	var retVal ImageInspectResponse
 	req := rest.GetRequest(helpers.GetFullURL(*r.client.Config.Endpoint, fmt.Sprintf("/api/v1/images/%s/json", imageName)))
@@ -261,10 +265,13 @@ func (r *images) InspectImage(imageName string, target ImageTargetHeader) (Image
 	}
 
 	_, err := r.client.SendRequest(req, &retVal)
-	return retVal, err
+	if err != nil {
+		return nil, err
+	}
+	return &retVal, err
 }
 
-func (r *images) DeleteImage(imageName string, target ImageTargetHeader) (DeleteImageResponse, error) {
+func (r *images) DeleteImage(imageName string, target ImageTargetHeader) (*DeleteImageResponse, error) {
 
 	var retVal DeleteImageResponse
 	req := rest.DeleteRequest(helpers.GetFullURL(*r.client.Config.Endpoint, fmt.Sprintf("/api/v1/images/%s", imageName)))
@@ -274,10 +281,13 @@ func (r *images) DeleteImage(imageName string, target ImageTargetHeader) (Delete
 	}
 
 	_, err := r.client.SendRequest(req, &retVal)
-	return retVal, err
+	if err != nil {
+		return nil, err
+	}
+	return &retVal, err
 }
 
-func (r *images) ImageVulnerabilities(imageName string, params ImageVulnerabilitiesRequest, target ImageTargetHeader) (ImageVulnerabilitiesResponse, error) {
+func (r *images) ImageVulnerabilities(imageName string, params ImageVulnerabilitiesRequest, target ImageTargetHeader) (*ImageVulnerabilitiesResponse, error) {
 
 	var retVal ImageVulnerabilitiesResponse
 	req := rest.GetRequest(helpers.GetFullURL(*r.client.Config.Endpoint, fmt.Sprintf("/api/v1/images/%s/vulnerabilities", imageName))).
@@ -289,5 +299,8 @@ func (r *images) ImageVulnerabilities(imageName string, params ImageVulnerabilit
 	}
 
 	_, err := r.client.SendRequest(req, &retVal)
-	return retVal, err
+	if err != nil {
+		return nil, err
+	}
+	return &retVal, err
 }

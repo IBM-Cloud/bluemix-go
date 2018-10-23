@@ -25,11 +25,11 @@ func (c TokenTargetHeader) ToMap() map[string]string {
 
 //Subnets interface
 type Tokens interface {
-	GetToken(tokenUUID string, target TokenTargetHeader) (TokenResponse, error)
-	GetTokens(target TokenTargetHeader) (GetTokensResponse, error)
+	GetToken(tokenUUID string, target TokenTargetHeader) (*TokenResponse, error)
+	GetTokens(target TokenTargetHeader) (*GetTokensResponse, error)
 	DeleteToken(tokenUUID string, target TokenTargetHeader) error
 	DeleteTokenByDescription(tokenDescription string, target TokenTargetHeader) error
-	IssueToken(params IssueTokenRequest, target TokenTargetHeader) (TokenResponse, error)
+	IssueToken(params IssueTokenRequest, target TokenTargetHeader) (*TokenResponse, error)
 }
 
 type tokens struct {
@@ -86,7 +86,7 @@ func DefaultIssueTokenRequest() *IssueTokenRequest {
 }
 
 //GetTokens ...
-func (r *tokens) GetTokens(target TokenTargetHeader) (GetTokensResponse, error) {
+func (r *tokens) GetTokens(target TokenTargetHeader) (*GetTokensResponse, error) {
 
 	var retVal GetTokensResponse
 	req := rest.GetRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/api/v1/tokens"))
@@ -96,7 +96,10 @@ func (r *tokens) GetTokens(target TokenTargetHeader) (GetTokensResponse, error) 
 	}
 
 	_, err := r.client.SendRequest(req, &retVal)
-	return retVal, err
+	if err != nil {
+		return nil, err
+	}
+	return &retVal, err
 }
 
 func getTokID(token string) (string, error) {
@@ -119,7 +122,7 @@ func getTokID(token string) (string, error) {
 }
 
 //GetToken ...
-func (r *tokens) GetToken(tokenUUID string, target TokenTargetHeader) (TokenResponse, error) {
+func (r *tokens) GetToken(tokenUUID string, target TokenTargetHeader) (*TokenResponse, error) {
 
 	var retVal TokenResponse
 	req := rest.GetRequest(helpers.GetFullURL(*r.client.Config.Endpoint, fmt.Sprintf("/api/v1/tokens/%s", tokenUUID)))
@@ -131,12 +134,14 @@ func (r *tokens) GetToken(tokenUUID string, target TokenTargetHeader) (TokenResp
 	_, err := r.client.SendRequest(req, &retVal)
 	if err == nil {
 		retVal.ID = tokenUUID
+	} else {
+		return nil, err
 	}
-	return retVal, err
+	return &retVal, err
 }
 
 //Add ...
-func (r *tokens) IssueToken(params IssueTokenRequest, target TokenTargetHeader) (TokenResponse, error) {
+func (r *tokens) IssueToken(params IssueTokenRequest, target TokenTargetHeader) (*TokenResponse, error) {
 
 	var retVal TokenResponse
 	req := rest.PostRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/api/v1/tokens")).
@@ -151,8 +156,10 @@ func (r *tokens) IssueToken(params IssueTokenRequest, target TokenTargetHeader) 
 	_, err := r.client.SendRequest(req, &retVal)
 	if err == nil {
 		retVal.ID, err = getTokID(retVal.Token)
+	} else {
+		return nil, err
 	}
-	return retVal, err
+	return &retVal, err
 }
 
 //Delete...

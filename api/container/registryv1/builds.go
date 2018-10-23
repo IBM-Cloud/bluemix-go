@@ -76,12 +76,13 @@ type Progressdetail struct {
 
 //ImageBuildResponse
 type ImageBuildResponse struct {
-	ID             string         `json:"id,omitempty"`
-	Stream         string         `json:"stream,omitempty"`
-	Status         string         `json:"status,omitempty"`
-	ProgressDetail Progressdetail `json:"progressDetail,omitempty"`
-	Error          string         `json:"error,omitempty"`
-	ErrorDetail    Errordetail    `json:"errorDetail,omitempty"`
+	ID             string                 `json:"id,omitempty"`
+	Stream         string                 `json:"stream,omitempty"`
+	Status         string                 `json:"status,omitempty"`
+	ProgressDetail Progressdetail         `json:"progressDetail,omitempty"`
+	Error          string                 `json:"error,omitempty"`
+	ErrorDetail    Errordetail            `json:"errorDetail,omitempty"`
+	Aux            map[string]interface{} `json:"aux"`
 }
 
 // Callback function for build response stream
