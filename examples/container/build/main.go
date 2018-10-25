@@ -84,8 +84,6 @@ func tarGzContext(context string) (string, error) {
 func main() {
 
 	c := new(bluemix.Config)
-	c.Region = "us-east"
-	c.BluemixAPIKey = "bsqizP4tCL-K0KtbDpxFR5IsHwig2L_dsPTkEG05BCEk"
 
 	var imageTag string
 	// should same form of registry.ng.bluemix.net/<namespace>/<imagename>
@@ -93,8 +91,13 @@ func main() {
 
 	var dockerFile string
 	flag.StringVar(&dockerFile, "f", "Dockerfile", "Dockerfile")
+
+        var region string
+        flag.StringVar(&region, "region", "us-south", "region")
+
 	flag.Parse()
 
+	c.Region = region 
 	directory := flag.Args()
 
 	fmt.Println(directory)
