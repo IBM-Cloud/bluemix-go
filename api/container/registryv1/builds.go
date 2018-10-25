@@ -90,7 +90,8 @@ type ImageBuildResponseCallback func(respV ImageBuildResponse) bool
 
 //Subnets interface
 type Builds interface {
-	ImageBuild(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader, callback ImageBuildResponseCallback) error
+	ImageBuild(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader, out io.Writer) error
+	ImageBuildCallback(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader, callback ImageBuildResponseCallback) error
 }
 
 type builds struct {
@@ -104,7 +105,7 @@ func newBuildAPI(c *client.Client) Builds {
 }
 
 //Create ...
-func (r *builds) ImageBuild(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader, callback ImageBuildResponseCallback) error {
+func (r *builds) ImageBuildCallback(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader, callback ImageBuildResponseCallback) error {
 	req := rest.PostRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/api/v1/builds")).
 		Query("t", params.T).
 		Query("dockerfile", params.Dockerfile).
@@ -120,5 +121,25 @@ func (r *builds) ImageBuild(params ImageBuildRequest, buildContext io.Reader, ta
 	}
 
 	_, err := r.client.SendRequest(req, callback)
+	return err
+}
+
+//Create ...
+func (r *builds) ImageBuild(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader, out io.Writer) error {
+	req := rest.PostRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/api/v1/builds")).
+		Query("t", params.T).
+		Query("dockerfile", params.Dockerfile).
+		Query("buildarg", params.Buildargs).
+		Query("nocache", strconv.FormatBool(params.Nocache)).
+		Query("pull", strconv.FormatBool(params.Pull)).
+		Query("quiet", strconv.FormatBool(params.Quiet)).
+		Query("squash", strconv.FormatBool(params.Squash)).
+		Body(buildContext)
+
+	for key, value := range target.ToMap() {
+		req.Set(key, value)
+	}
+
+	_, err := r.client.SendRequest(req, out)
 	return err
 }

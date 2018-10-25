@@ -2,6 +2,7 @@ package registryv1
 
 import (
 	"archive/tar"
+	"bufio"
 	"bytes"
 	"compress/gzip"
 	"encoding/json"
@@ -249,6 +250,138 @@ var _ = Describe("Builds", func() {
 	AfterEach(func() {
 		server.Close()
 	})
+	Describe("ImageBuildCallback", func() {
+		Context("When build with callback is completed", func() {
+			tarBuffer := createTestTar()
+			var requestBuffer bytes.Buffer
+			buffer := io.TeeReader(tarBuffer, &requestBuffer)
+			bodyBytes, _ := ioutil.ReadAll(buffer)
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/api/v1/builds"),
+						ghttp.VerifyBody(bodyBytes),
+						ghttp.RespondWith(http.StatusOK, buildResult),
+					),
+				)
+			})
+
+			It("should return build with callback results", func() {
+				params := ImageBuildRequest{
+					T:          "registry.ng.bluemix.net/bkuschel/testimage",
+					Dockerfile: "",
+					Buildargs:  "",
+					Nocache:    false,
+					Pull:       false,
+					Quiet:      false,
+					Squash:     false,
+				}
+				target := BuildTargetHeader{
+					AccountID: "abc",
+				}
+				i := 0
+				respArr := make([]ImageBuildResponse, i, 203)
+				err := newBuild(server.URL()).ImageBuildCallback(params, &requestBuffer, target, func(respV ImageBuildResponse) bool {
+					respArr = append(respArr, respV)
+					i++
+					return true
+				})
+				Expect(err).NotTo(HaveOccurred())
+				Expect(respArr).To(HaveLen(203))
+				for i, v := range strings.Split(buildResult, "\n") {
+					var resp ImageBuildResponse
+					json.Unmarshal([]byte(v), &resp)
+					Expect(err).To(BeNil())
+					Expect(respArr[i]).Should(Equal(resp))
+				}
+			})
+		})
+		Context("When build with callback auth is unsuccessful", func() {
+			tarBuffer := createTestTar()
+			var requestBuffer bytes.Buffer
+			buffer := io.TeeReader(tarBuffer, &requestBuffer)
+			bodyBytes, _ := ioutil.ReadAll(buffer)
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/api/v1/builds"),
+						ghttp.VerifyBody(bodyBytes),
+						ghttp.RespondWith(http.StatusUnauthorized, autoErrorResult),
+					),
+				)
+			})
+
+			It("should return error during build with callback ", func() {
+				params := ImageBuildRequest{
+					T:          "registry.ng.bluemix.net/bkuschel/testimage",
+					Dockerfile: "",
+					Buildargs:  "",
+					Nocache:    false,
+					Pull:       false,
+					Quiet:      false,
+					Squash:     false,
+				}
+				target := BuildTargetHeader{
+					AccountID: "abc",
+				}
+				i := 0
+				respArr := make([]ImageBuildResponse, i, 203)
+				err := newBuild(server.URL()).ImageBuildCallback(params, &requestBuffer, target, func(respV ImageBuildResponse) bool {
+					respArr = append(respArr, respV)
+					i++
+					return true
+				})
+				Expect(err).To(HaveOccurred())
+				Expect(respArr).To(HaveLen(i))
+			})
+		})
+		Context("When build with callback is unsuccessful", func() {
+			tarBuffer := createTestTar()
+			var requestBuffer bytes.Buffer
+			buffer := io.TeeReader(tarBuffer, &requestBuffer)
+			bodyBytes, _ := ioutil.ReadAll(buffer)
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/api/v1/builds"),
+						ghttp.VerifyBody(bodyBytes),
+						ghttp.RespondWith(http.StatusOK, buildErrorResult),
+					),
+				)
+			})
+
+			It("should return error during build with callback", func() {
+				params := ImageBuildRequest{
+					T:          "registry.ng.bluemix.net/bkuschel/testimage",
+					Dockerfile: "Dockerfiles",
+					Buildargs:  "",
+					Nocache:    false,
+					Pull:       false,
+					Quiet:      false,
+					Squash:     false,
+				}
+				target := BuildTargetHeader{
+					AccountID: "abc",
+				}
+				i := 0
+				respArr := make([]ImageBuildResponse, i, 203)
+				err := newBuild(server.URL()).ImageBuildCallback(params, &requestBuffer, target, func(respV ImageBuildResponse) bool {
+					respArr = append(respArr, respV)
+					i++
+					return true
+				})
+				Expect(err).NotTo(HaveOccurred())
+				Expect(respArr).To(HaveLen(1))
+				var resp ImageBuildResponse
+				json.Unmarshal([]byte(buildErrorResult), &resp)
+				Expect(err).To(BeNil())
+				Expect(respArr[0]).Should(Equal(resp))
+			})
+		})
+	})
 	Describe("ImageBuild", func() {
 		Context("When Build is completed", func() {
 			tarBuffer := createTestTar()
@@ -279,24 +412,15 @@ var _ = Describe("Builds", func() {
 				target := BuildTargetHeader{
 					AccountID: "abc",
 				}
-				i := 0
-				respArr := make([]ImageBuildResponse, i, 203)
-				err := newBuild(server.URL()).ImageBuild(params, &requestBuffer, target, func(respV ImageBuildResponse) bool {
-					respArr = append(respArr, respV)
-					i++
-					return true
-				})
+				var b bytes.Buffer
+				out := bufio.NewWriter(&b)
+				err := newBuild(server.URL()).ImageBuild(params, &requestBuffer, target, out)
 				Expect(err).NotTo(HaveOccurred())
-				Expect(respArr).To(HaveLen(203))
-				for i, v := range strings.Split(buildResult, "\n") {
-					var resp ImageBuildResponse
-					json.Unmarshal([]byte(v), &resp)
-					Expect(err).To(BeNil())
-					Expect(respArr[i]).Should(Equal(resp))
-				}
+				Expect(out).NotTo(BeNil())
+				Expect(b.Bytes()).Should(Equal([]byte(buildResult)))
 			})
 		})
-		Context("When auth is unsuccessful", func() {
+		Context("When build auth is unsuccessful", func() {
 			tarBuffer := createTestTar()
 			var requestBuffer bytes.Buffer
 			buffer := io.TeeReader(tarBuffer, &requestBuffer)
@@ -312,7 +436,7 @@ var _ = Describe("Builds", func() {
 				)
 			})
 
-			It("should return error during cluster creation", func() {
+			It("should return error during build", func() {
 				params := ImageBuildRequest{
 					T:          "registry.ng.bluemix.net/bkuschel/testimage",
 					Dockerfile: "",
@@ -325,15 +449,11 @@ var _ = Describe("Builds", func() {
 				target := BuildTargetHeader{
 					AccountID: "abc",
 				}
-				i := 0
-				respArr := make([]ImageBuildResponse, i, 203)
-				err := newBuild(server.URL()).ImageBuild(params, &requestBuffer, target, func(respV ImageBuildResponse) bool {
-					respArr = append(respArr, respV)
-					i++
-					return true
-				})
+				var b bytes.Buffer
+				out := bufio.NewWriter(&b)
+				err := newBuild(server.URL()).ImageBuild(params, &requestBuffer, target, out)
 				Expect(err).To(HaveOccurred())
-				Expect(respArr).To(HaveLen(i))
+				Expect(out).NotTo(BeNil())
 			})
 		})
 		Context("When build is unsuccessful", func() {
@@ -352,7 +472,7 @@ var _ = Describe("Builds", func() {
 				)
 			})
 
-			It("should return error during cluster creation", func() {
+			It("should return error during build", func() {
 				params := ImageBuildRequest{
 					T:          "registry.ng.bluemix.net/bkuschel/testimage",
 					Dockerfile: "Dockerfiles",
@@ -365,19 +485,12 @@ var _ = Describe("Builds", func() {
 				target := BuildTargetHeader{
 					AccountID: "abc",
 				}
-				i := 0
-				respArr := make([]ImageBuildResponse, i, 203)
-				err := newBuild(server.URL()).ImageBuild(params, &requestBuffer, target, func(respV ImageBuildResponse) bool {
-					respArr = append(respArr, respV)
-					i++
-					return true
-				})
+				var b bytes.Buffer
+				out := bufio.NewWriter(&b)
+				err := newBuild(server.URL()).ImageBuild(params, &requestBuffer, target, out)
 				Expect(err).NotTo(HaveOccurred())
-				Expect(respArr).To(HaveLen(1))
-				var resp ImageBuildResponse
-				json.Unmarshal([]byte(buildErrorResult), &resp)
-				Expect(err).To(BeNil())
-				Expect(respArr[0]).Should(Equal(resp))
+				Expect(out).NotTo(BeNil())
+				Expect(b.Bytes()).Should(Equal([]byte(buildErrorResult)))
 			})
 		})
 	})
