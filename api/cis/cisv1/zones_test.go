@@ -62,11 +62,14 @@ var _ = Describe("Zones", func() {
             })
 
             It("should return zone created", func() {
-                params := v1.ZoneBody{Name: "wcpcloudnl.com"}
-                myZone, err := Zones(server.URL()).CreateZone(target, params)
+                params := ZoneBody{Name: "wcpcloudnl.com"}
+                target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
+                myZonePtr, err := newZone(server.URL()).CreateZone(target, params)
+                myZone := *myZonePtr
                 Expect(err).NotTo(HaveOccurred())
-                Expect(*myZone).ShouldNot(BeNil())
-                Expect(*myZone.Id).Should(Equal("3fefc35e7decadb111dcf85d723a4f20"))
+                Expect(myZone).ShouldNot(BeNil())
+                Expect(myZone.Id).Should(Equal("3fefc35e7decadb111dcf85d723a4f20"))
+                Expect(myZone.Name).Should(Equal("example.com"))
             })
         })
         Context("When creation is unsuccessful", func() {
@@ -74,17 +77,19 @@ var _ = Describe("Zones", func() {
                 server = ghttp.NewServer()
                 server.AppendHandlers(
                     ghttp.CombineHandlers(
-                        ghttp.VerifyRequest(http.MethodPost, "v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones"),
+                        ghttp.VerifyRequest(http.MethodPost, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones"),
                         ghttp.RespondWith(http.StatusInternalServerError, `Failed to create Zone`),
                     ),
                 )
             })
 
             It("should return error during Zone creation", func() {
-                params := v1.ZoneBody{Name: "wcpcloudnl.com"}
-                myZone, err := newZone(server.URL()).CreateZone(target, params)
+                params := ZoneBody{Name: "wcpcloudnl.com"}
+                target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
+                myZonePtr, err := newZone(server.URL()).CreateZone(target, params)
+                myZone := myZonePtr
                 Expect(err).To(HaveOccurred())
-                Expect(*myZone).Should(BeNil())
+                Expect(myZone).Should(BeNil())
             })
         })
     })
@@ -140,13 +145,14 @@ var _ = Describe("Zones", func() {
             })
 
             It("should return Zone list", func() {
-                target := "rn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
-                myZones, err := Zones(server.URL()).ListZones(target)
-                Expect(*myZones
-                    ).ShouldNot(BeNil())
-                for _, Zone := range *myZones {
+                target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
+                myZonesPtr, err := newZone(server.URL()).ListZones(target)
+                myZones := *myZonesPtr
+                Expect(myZones).ShouldNot(BeNil())
+                for _, Zone := range myZones {
                     Expect(err).NotTo(HaveOccurred())
-                    Expect(Zone.Id).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704"))
+                    Expect(Zone.Id).Should(Equal("3fefc35e7decadb111dcf85d723a4f20"))
+                    Expect(Zone.Name).Should(Equal("example.com"))
                 }
             })
         })
@@ -162,10 +168,11 @@ var _ = Describe("Zones", func() {
             })
 
             It("should return error when Zone are retrieved", func() {
-                target := "rn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a" 
-                myZone, err := newZone(server.URL()).ListZones(target)
+                target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a" 
+                myZonePtr, err := newZone(server.URL()).ListZones(target)
+                myZone := myZonePtr
                 Expect(err).To(HaveOccurred())
-                Expect(*myZone).Should(BeNil())
+                Expect(myZone).Should(BeNil())
             })
         })
     })
@@ -176,7 +183,7 @@ var _ = Describe("Zones", func() {
                 server = ghttp.NewServer()
                 server.AppendHandlers(
                     ghttp.CombineHandlers(
-                        ghttp.VerifyRequest(http.MethodDelete, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/f91adfe2-76c9-4649-939e-b01c37a3704"),
+                        ghttp.VerifyRequest(http.MethodDelete, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/3fefc35e7decadb111dcf85d723a4f20"),
                         ghttp.RespondWith(http.StatusOK, `{                         
                         }`),
                     ),
@@ -185,8 +192,8 @@ var _ = Describe("Zones", func() {
 
             It("should delete Zone", func() {
                 target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
-                params := "f91adfe2-76c9-4649-939e-b01c37a3704"
-                err := Zones(server.URL()).DeleteZone(target, params)
+                params := "3fefc35e7decadb111dcf85d723a4f20"
+                err := newZone(server.URL()).DeleteZone(target, params)
                 Expect(err).NotTo(HaveOccurred())
             })
         })
@@ -195,7 +202,7 @@ var _ = Describe("Zones", func() {
                 server = ghttp.NewServer()
                 server.AppendHandlers(
                     ghttp.CombineHandlers(
-                        ghttp.VerifyRequest(http.MethodDelete, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/f91adfe2-76c9-4649-939e-b01c37a3704"),
+                        ghttp.VerifyRequest(http.MethodDelete, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/3fefc35e7decadb111dcf85d723a4f20"),
                         ghttp.RespondWith(http.StatusInternalServerError, `Failed to delete service key`),
                     ),
                 )
@@ -203,8 +210,8 @@ var _ = Describe("Zones", func() {
 
             It("should return error zone delete", func() {
                 target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
-                params := "f91adfe2-76c9-4649-939e-b01c37a3704"
-                err := Zones(server.URL()).DeleteZone(target, params)
+                params := "3fefc35e7decadb111dcf85d723a4f20"
+                err := newZone(server.URL()).DeleteZone(target, params)
                 Expect(err).To(HaveOccurred())
             })
         })
@@ -216,7 +223,7 @@ var _ = Describe("Zones", func() {
                 server = ghttp.NewServer()
                 server.AppendHandlers(
                     ghttp.CombineHandlers(
-                        ghttp.VerifyRequest(http.MethodGet, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/f91adfe2-76c9-4649-939e-b01c37a3704"),
+                        ghttp.VerifyRequest(http.MethodGet, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/3fefc35e7decadb111dcf85d723a4f20"),
                         ghttp.RespondWith(http.StatusOK, `
                             {
                           "result": {
@@ -253,11 +260,13 @@ var _ = Describe("Zones", func() {
 
             It("should return Zone", func() {
                target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
-                params := "f91adfe2-76c9-4649-939e-b01c37a3704"
-                myZone, err := Zones(server.URL()).GetZone(target, params)
+                params := "3fefc35e7decadb111dcf85d723a4f20"
+                myZonePtr, err := newZone(server.URL()).GetZone(target, params)
+                myZone := *myZonePtr
                 Expect(err).NotTo(HaveOccurred())
-                Expect(*myZone).ShouldNot(BeNil())
-                Expect(*myZone.Id).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704"))
+                Expect(myZone).ShouldNot(BeNil())
+                Expect(myZone.Id).Should(Equal("3fefc35e7decadb111dcf85d723a4f20"))
+                Expect(myZone.Name).Should(Equal("example.com"))
             })
         })
         Context("When Zone get has failed", func() {
@@ -265,7 +274,7 @@ var _ = Describe("Zones", func() {
                 server = ghttp.NewServer()
                 server.AppendHandlers(
                     ghttp.CombineHandlers(
-                        ghttp.VerifyRequest(http.MethodGet, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/f91adfe2-76c9-4649-939e-b01c37a3704"),
+                        ghttp.VerifyRequest(http.MethodGet, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/3fefc35e7decadb111dcf85d723a4f20"),
                         ghttp.RespondWith(http.StatusInternalServerError, `Failed to retrieve Zone`),
                     ),
                 )
@@ -273,17 +282,18 @@ var _ = Describe("Zones", func() {
 
             It("should return error when Zone is retrieved", func() {
                 target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
-                params := "f91adfe2-76c9-4649-939e-b01c37a3704"
-                myZone, err := Zones(server.URL()).GetZone(target, params)
+                params := "3fefc35e7decadb111dcf85d723a4f20"
+                myZonePtr, err := newZone(server.URL()).GetZone(target, params)
+                myZone := myZonePtr
                 Expect(err).To(HaveOccurred())
-                Expect(*myZone).Should(BeNil())
+                Expect(myZone).Should(BeNil())
             })
         })
     })
  
 })
 
-func newServer(url string) Zones {
+func newZone(url string) Zones {
 
     sess, err := session.New()
     if err != nil {
