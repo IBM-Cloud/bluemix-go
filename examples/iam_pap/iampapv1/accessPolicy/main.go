@@ -46,6 +46,9 @@ func main() {
 	var resourceGroupID string
 	flag.StringVar(&resourceGroupID, "resourceGroupID", "", "Bluemix resource group ")
 
+	var serviceType string
+	flag.StringVar(&serviceType, "serviceType", "", "service type")
+
 	trace.Logger = trace.NewLogger("true")
 	c := new(bluemix.Config)
 	flag.BoolVar(&c.Debug, "debug", false, "Show full trace if on")
@@ -92,7 +95,7 @@ func main() {
 
 	serviceRolesAPI := iamClient.ServiceRoles()
 
-	var policy iampapv1.AuthorizationPolicy
+	var policy iampapv1.Policy
 
 	var definedRoles []models.PolicyRole
 
@@ -112,35 +115,46 @@ func main() {
 		log.Fatal(err)
 	}
 
-	policyResource := models.PolicyResource{}
+	policyResource := iampapv1.Resource{}
 
 	if service != "" {
-		policyResource.ServiceName = service
+		policyResource.SetServiceName(service)
 	}
 
 	if serviceInstance != "" {
-		policyResource.ServiceInstance = serviceInstance
+		policyResource.SetServiceInstance(serviceInstance)
 	}
 
 	if region != "" {
-		policyResource.Region = region
+		policyResource.SetRegion(region)
 	}
 
 	if resourceType != "" {
-		policyResource.ResourceType = resourceType
+		policyResource.SetResourceType(resourceType)
 	}
 
 	if resource != "" {
-		policyResource.Resource = resource
+		policyResource.SetResource(resource)
 	}
 
 	if resourceGroupID != "" {
-		policyResource.ResourceGroupID = resourceGroupID
+		policyResource.SetResourceGroupID(resourceGroupID)
 	}
 
-	policy = iampapv1.AuthorizationPolicy{Roles: filterRoles, Resources: []models.PolicyResource{policyResource}}
+	switch serviceType {
+	case "service":
+		fallthrough
+	case "platform_service":
+		policyResource.SetServiceType(serviceType)
+	}
 
-	policy.Resources[0].AccountID = myAccount.GUID
+	if len(policyResource.Attributes) == 0 {
+		policyResource.SetServiceType("service")
+	}
+
+	policy = iampapv1.Policy{Roles: iampapv1.ConvertRoleModels(filterRoles), Resources: []iampapv1.Resource{policyResource}}
+
+	policy.Resources[0].SetAccountID(myAccount.GUID)
 
 	iamuumClient, err := iamuumv1.New(sess)
 	if err != nil {
@@ -162,26 +176,36 @@ func main() {
 		log.Fatal(err)
 	}
 
-	policy.Subjects = []models.PolicyResource{{AccessGroupID: agID.ID}}
+	policy.Subjects = []iampapv1.Subject{
+		{
+			Attributes: []iampapv1.Attribute{
+				{
+					Name:  "access_group_id",
+					Value: agID.ID,
+				},
+			},
+		},
+	}
+
 	policy.Type = iampapv1.AccessPolicyType
 
-	accessPolicy := iampapClient.AuthorizationPolicies()
+	accessPolicy := iampapClient.V1Policy()
 
-	createdPolicy, err := accessPolicy.Create(myAccount.GUID, policy)
+	createdPolicy, err := accessPolicy.Create(policy)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	log.Println(createdPolicy)
 
-	getPolicy, err := accessPolicy.Get(myAccount.GUID, createdPolicy.ID)
+	getPolicy, err := accessPolicy.Get(createdPolicy.ID)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	log.Println(getPolicy)
 
-	err = accessPolicy.Delete(myAccount.GUID, createdPolicy.ID)
+	err = accessPolicy.Delete(createdPolicy.ID)
 	if err != nil {
 		log.Fatal(err)
 	}
