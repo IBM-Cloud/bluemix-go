@@ -16,6 +16,8 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.ng.bluemix.net"))
 			Expect(locator.IAMEndpoint()).To(Equal("https://iam.bluemix.net"))
 			Expect(locator.ContainerEndpoint()).To(Equal("https://containers.bluemix.net"))
+			Expect(locator.CisEndpoint()).To(Equal("https://api.cis.cloud.ibm.com"))
+			Expect(locator.ICDEndpoint()).To(Equal("https://api.us-south.databases.cloud.ibm.com"))
 		})
 	})
 
@@ -27,6 +29,7 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.UAAEndpoint()).To(Equal("https://login.eu-gb.bluemix.net/UAALoginServerWAR"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.eu-gb.bluemix.net"))
 			Expect(locator.IAMEndpoint()).To(Equal("https://iam.bluemix.net"))
+			Expect(locator.CisEndpoint()).To(Equal("https://api.cis.cloud.ibm.com"))
 		})
 	})
 
@@ -38,6 +41,8 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.UAAEndpoint()).To(Equal("https://login.au-syd.bluemix.net/UAALoginServerWAR"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.au-syd.bluemix.net"))
 			Expect(locator.IAMEndpoint()).To(Equal("https://iam.bluemix.net"))
+			Expect(locator.CisEndpoint()).To(Equal("https://api.cis.cloud.ibm.com"))
+			Expect(locator.ICDEndpoint()).To(Equal("https://api.au-syd.databases.cloud.ibm.com"))
 		})
 	})
 
@@ -49,6 +54,8 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.UAAEndpoint()).To(Equal("https://login.eu-de.bluemix.net/UAALoginServerWAR"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.eu-de.bluemix.net"))
 			Expect(locator.IAMEndpoint()).To(Equal("https://iam.bluemix.net"))
+			Expect(locator.CisEndpoint()).To(Equal("https://api.cis.cloud.ibm.com"))
+			Expect(locator.ICDEndpoint()).To(Equal("https://api.eu-de.databases.cloud.ibm.com"))
 		})
 	})
 
@@ -60,6 +67,7 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.UAAEndpoint()).To(Equal("https://login.us-east.bluemix.net/UAALoginServerWAR"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.us-east.bluemix.net"))
 			Expect(locator.IAMEndpoint()).To(Equal("https://iam.bluemix.net"))
+			Expect(locator.CisEndpoint()).To(Equal("https://api.cis.cloud.ibm.com"))
 		})
 	})
 
