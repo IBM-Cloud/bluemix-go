@@ -92,7 +92,9 @@ var regionToEndpoint = map[string]map[string]string{
 	},
 	"icd": {
 		"us-south": "https://api.us-south.databases.cloud.ibm.com",
+		"us-east": "https://api.us-east.databases.cloud.ibm.com",
 		"eu-de":    "https://api.eu-de.databases.cloud.ibm.com",
+		"eu-gb":    "https://api.eu-gb.databases.cloud.ibm.com",
 		"au-syd":   "https://api.au-syd.databases.cloud.ibm.com",
 		"jp-tok":   "https://api.jp-tok.databases.cloud.ibm.com",
 		"oslo01": 	"https://api.osl01.databases.cloud.ibm.com",
