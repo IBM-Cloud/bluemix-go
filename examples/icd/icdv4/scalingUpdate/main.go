@@ -64,7 +64,13 @@ func main() {
             log.Fatal(err)
         }
         count = count + 1
-        log.Printf("Task : %v     %v\n" ,count, innerTask)
+        log.Printf("Task : %v     %v\n" ,count, innerTask.Status)
+
+        if innerTask.Status == "" {
+            log.Printf(">>>>>  Err result missing")
+            break
+        }
+
         if innerTask.Status != "running" {
             break
         }
