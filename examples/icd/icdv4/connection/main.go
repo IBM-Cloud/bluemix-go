@@ -41,7 +41,9 @@ func main() {
     }
     //log.Println("Connection :",connection)
     if connection.Postgres.Type != ""  {
-        log.Println("Composed: ",connection.Postgres.Composed[0])
+        for _, l := range connection.Postgres.Composed {
+            log.Println("Composed: ", l)
+        }
         log.Println("Type ",connection.Postgres.Type)
         log.Println("Scheme: ",connection.Postgres.Scheme)
         log.Println("Path: ",connection.Postgres.Path)
@@ -53,7 +55,7 @@ func main() {
          log.Println("UserName: ", connection.Postgres.Authentication.UserName)
          log.Println("Password: ", connection.Postgres.Authentication.Password)
          log.Println("Name: ", connection.Postgres.Certificate.Name)
-         //log.Println("CertificateBase64: ", connection.Postgres.Certificate.CertificateBase64)
+         log.Println("CertificateBase64: ", connection.Postgres.Certificate.CertificateBase64)
          log.Println("Database: ", connection.Postgres.Database)
          log.Println("Composed: ", connection.Cli.Composed[0])
          log.Println("Type: ", connection.Cli.Type)
@@ -63,7 +65,9 @@ func main() {
     }
 
     if connection.Grpc.Type != "" {
-        log.Println("Composed: ",connection.Grpc.Composed[0])
+       for _, l := range connection.Postgres.Composed {
+            log.Println("Composed: ", l)
+        }
         log.Println("Type ",connection.Grpc.Type)
         log.Println("Scheme: ",connection.Grpc.Scheme)
         log.Println("Path: ",connection.Grpc.Path)
@@ -85,7 +89,9 @@ func main() {
     }
 
     if connection.Rediss.Type != ""  {
-        log.Println("Composed: ",connection.Rediss.Composed[0])
+        for _, l := range connection.Postgres.Composed {
+            log.Println("Composed: ", l)
+        }
         log.Println("Type: ",connection.Rediss.Type)
         log.Println("Scheme: ",connection.Rediss.Scheme)
         log.Println("Path: ",connection.Rediss.Path)
@@ -106,7 +112,9 @@ func main() {
          //log.Println("CertificateBase64: ",connection.Cli.Certificate.CertificateBase64)
     }
     if connection.Https.Type != ""  {
-        log.Println("Composed: ",connection.Https.Composed[0])
+        for _, l := range connection.Postgres.Composed {
+            log.Println("Composed: ", l)
+        }
         log.Println("Type: ",connection.Https.Type)
         log.Println("Scheme: ",connection.Https.Scheme)
         log.Println("Path: ",connection.Https.Path)
@@ -127,7 +135,9 @@ func main() {
          //log.Println("CertificateBase64: ",connection.Cli.Certificate.CertificateBase64)
     }
     if connection.Amqps.Type != ""  {
-        log.Println("Composed: ",connection.Amqps.Composed[0])
+       for _, l := range connection.Postgres.Composed {
+            log.Println("Composed: ", l)
+        }
         log.Println("Type: ",connection.Amqps.Type)
         log.Println("Scheme: ",connection.Amqps.Scheme)
         log.Println("Path: ",connection.Amqps.Path)
@@ -141,6 +151,31 @@ func main() {
          log.Println("Name: ", connection.Amqps.Certificate.Name)
          //log.Println("CertificateBase64: ", connection.Amqps.Certificate.CertificateBase64)
          log.Println("Database: ", connection.Amqps.Database)
+         log.Println("Composed: ", connection.Cli.Composed[0])
+         log.Println("Type: ", connection.Cli.Type)
+         log.Println("Bin: ", connection.Cli.Bin)
+         log.Println("Arguments: ", connection.Cli.Arguments[0][0])
+         //log.Println("CertificateBase64: ",connection.Cli.Certificate.CertificateBase64)
+    }
+    if connection.Mongo.Type != ""  {
+        for _, l := range connection.Mongo.Composed {
+            log.Println("Composed: ", l)
+        }
+        log.Println("Type ",connection.Mongo.Type)
+        log.Println("Scheme: ",connection.Mongo.Scheme)
+        log.Println("Path: ",connection.Mongo.Path)
+        for _, l := range connection.Mongo.Hosts {
+            log.Println("Hosts.Name: ", l.HostName)
+            log.Println("Hosts.Ports: ",l.Port)
+        }
+        log.Println("Query Options: ",connection.Mongo.QueryOptions)
+
+         log.Println("Method: ", connection.Mongo.Authentication.Method)
+         log.Println("UserName: ", connection.Mongo.Authentication.UserName)
+         log.Println("Password: ", connection.Mongo.Authentication.Password)
+         log.Println("Name: ", connection.Mongo.Certificate.Name)
+         log.Println("CertificateBase64: ", connection.Mongo.Certificate.CertificateBase64)
+         log.Println("Database: ", connection.Mongo.Database)
          log.Println("Composed: ", connection.Cli.Composed[0])
          log.Println("Type: ", connection.Cli.Type)
          log.Println("Bin: ", connection.Cli.Bin)

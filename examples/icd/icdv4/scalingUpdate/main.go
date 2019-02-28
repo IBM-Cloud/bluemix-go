@@ -66,11 +66,7 @@ func main() {
         count = count + 1
         log.Printf("Task : %v     %v\n" ,count, innerTask.Status)
 
-        if innerTask.Status == "" {
-            log.Printf(">>>>>  Err result missing")
-            break
-        }
-
+        // Querying status after completion returns ''. So 'completed' or '' as completed 
         if innerTask.Status != "running" {
             break
         }
