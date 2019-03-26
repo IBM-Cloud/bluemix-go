@@ -44,7 +44,7 @@ var _ = Describe("Albs", func() {
 				params := ALBConfig{
 					ALBID: "123", ClusterID: "345", Name: "test", ALBType: "public", Enable: true, State: "active", CreatedDate: "", NumOfInstances: "1", Resize: false, ALBIP: "169.0.0.1", Zone: "ams03", DisableDeployment: false,
 				}
-				err := newAlbs(server.URL()).ConfigureALB("123", params, target)
+				err := newAlbs(server.URL()).ConfigureALB("123", params, false, target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -71,7 +71,7 @@ var _ = Describe("Albs", func() {
 					AccountID: "ghi",
 					Region:    "eu-de",
 				}
-				err := newAlbs(server.URL()).ConfigureALB("123", params, target)
+				err := newAlbs(server.URL()).ConfigureALB("123", params, false, target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
