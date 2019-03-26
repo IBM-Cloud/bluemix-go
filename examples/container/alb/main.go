@@ -66,7 +66,7 @@ func main() {
 		Enable:    enable,
 		ClusterID: clusterID,
 	}
-	err = albAPI.ConfigureALB(albID, albConfig, target)
+	err = albAPI.ConfigureALB(albID, albConfig, false, target)
 	if err != nil {
 		log.Fatal(err)
 	}
