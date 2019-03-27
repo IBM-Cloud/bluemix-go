@@ -15,17 +15,17 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.UAAEndpoint()).To(Equal("https://login.ng.bluemix.net/UAALoginServerWAR"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accountmanagement.ng.bluemix.net"))
 			Expect(locator.IAMEndpoint()).To(Equal("https://iam.bluemix.net"))
-			Expect(locator.ContainerEndpoint()).To(Equal("https://containers.bluemix.net"))
+			Expect(locator.ContainerEndpoint()).To(Equal("https://containers.cloud.ibm.com"))
 			Expect(locator.CisEndpoint()).To(Equal("https://api.cis.cloud.ibm.com"))
 			Expect(locator.ICDEndpoint()).To(Equal("https://api.us-south.databases.cloud.ibm.com"))
 			Expect(locator.GlobalSearchEndpoint()).To(Equal("https://api.global-search-tagging.cloud.ibm.com"))
 			Expect(locator.GlobalTaggingEndpoint()).To(Equal("https://tags.global-search-tagging.cloud.ibm.com"))
-			Expect(locator.MCCPAPIEndpoint()).To(Equal("https://mccp.ng.bluemix.net")) 
-			Expect(locator.IAMPAPEndpoint()).To(Equal("https://iam.bluemix.net")) 
-			Expect(locator.ResourceManagementEndpoint()).To(Equal("https://resource-manager.bluemix.net")) 
-			Expect(locator.ResourceControllerEndpoint()).To(Equal("https://resource-controller.bluemix.net")) 
-			Expect(locator.ResourceCatalogEndpoint()).To(Equal("https://resource-catalog.bluemix.net")) 
-			Expect(locator.ContainerRegistryEndpoint()).To(Equal("https://registry.ng.bluemix.net")) 
+			Expect(locator.MCCPAPIEndpoint()).To(Equal("https://mccp.ng.bluemix.net"))
+			Expect(locator.IAMPAPEndpoint()).To(Equal("https://iam.bluemix.net"))
+			Expect(locator.ResourceManagementEndpoint()).To(Equal("https://resource-manager.bluemix.net"))
+			Expect(locator.ResourceControllerEndpoint()).To(Equal("https://resource-controller.bluemix.net"))
+			Expect(locator.ResourceCatalogEndpoint()).To(Equal("https://resource-catalog.bluemix.net"))
+			Expect(locator.ContainerRegistryEndpoint()).To(Equal("https://registry.ng.bluemix.net"))
 		})
 	})
 
@@ -100,9 +100,6 @@ var _ = Describe("EndPoints", func() {
 		})
 	})
 
-
-
-
 	Context("When region is not supported", func() {
 		locator := newEndpointLocator("in")
 
@@ -135,7 +132,7 @@ var _ = Describe("EndPoints", func() {
 			Expect(err).To(HaveOccurred())
 			_, err = locator.ResourceCatalogEndpoint()
 			Expect(err).To(HaveOccurred())
-			_, err = locator.ContainerRegistryEndpoint() 
+			_, err = locator.ContainerRegistryEndpoint()
 		})
 	})
 
