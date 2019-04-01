@@ -60,7 +60,7 @@ var _ = Describe("V1Policies", func() {
 									"value": "247bd6f43b5f7af30b43a13724020b52"
 								}]
 							}],
-							"href": "https://iam.bluemix.net/v1/policies/285a9542-c08c-43c6-8f0a-632dc5801b64",
+							"href": "https://iam.cloud.ibm.com/v1/policies/285a9542-c08c-43c6-8f0a-632dc5801b64",
 							"created_at": "2018-04-17T06:53:46.342Z",
 							"created_by_id": "IBMid-270004WA4U",
 							"last_modified_at": "2018-04-17T06:53:46.342Z",
@@ -88,7 +88,7 @@ var _ = Describe("V1Policies", func() {
 									"value": "b8b618cc651496dd7a0634264d071843"
 								}]
 							}],
-							"href": "https://iam.bluemix.net/v1/policies/1a369e5f-3339-4fbb-b52f-97ff364c9e7a",
+							"href": "https://iam.cloud.ibm.com/v1/policies/1a369e5f-3339-4fbb-b52f-97ff364c9e7a",
 							"created_at": null,
 							"created_by_id": null,
 							"last_modified_at": null,
@@ -122,7 +122,7 @@ var _ = Describe("V1Policies", func() {
 									"value": "7f3f9f3ee8e64bf880ecec527c6f7c39"
 								}]
 							}],
-							"href": "https://iam.bluemix.net/v1/policies/cecc91ff-b680-4705-ba1c-c7f1fefcf02d",
+							"href": "https://iam.cloud.ibm.com/v1/policies/cecc91ff-b680-4705-ba1c-c7f1fefcf02d",
 							"created_at": "2018-03-26T09:07:03.853Z",
 							"created_by_id": "IBMid-270004WA4U",
 							"last_modified_at": "2018-03-26T09:07:03.853Z",
@@ -240,7 +240,7 @@ var _ = Describe("V1Policies", func() {
 								"value": "5e0f4f2166a04667aea9440ad4850232"
 							}]
 						}],
-						"href": "https://iam.bluemix.net/v1/policies/0b3cea25-fc07-49b1-986b-90846085cfeb",
+						"href": "https://iam.cloud.ibm.com/v1/policies/0b3cea25-fc07-49b1-986b-90846085cfeb",
 						"created_at": "2017-11-10T04:37:44.943Z",
 						"created_by_id": "IBMid-310000JVN5",
 						"last_modified_at": "2017-11-10T04:37:44.943Z",
@@ -256,7 +256,7 @@ var _ = Describe("V1Policies", func() {
 				Expect(p.Subjects[0].IAMID()).To(Equal("IBMid-270006V8HD"))
 				Expect(p.Roles[0].RoleID).To(Equal("crn:v1:bluemix:public:iam::::role:Viewer"))
 				Expect(p.Resources[0].Resource()).To(Equal("5e0f4f2166a04667aea9440ad4850232"))
-				Expect(p.Href).To(Equal("https://iam.bluemix.net/v1/policies/0b3cea25-fc07-49b1-986b-90846085cfeb"))
+				Expect(p.Href).To(Equal("https://iam.cloud.ibm.com/v1/policies/0b3cea25-fc07-49b1-986b-90846085cfeb"))
 				Expect(p.CreatedAt).To(Equal("2017-11-10T04:37:44.943Z"))
 				Expect(p.CreatedByID).To(Equal("IBMid-310000JVN5"))
 				Expect(p.LastModifiedAt).To(Equal("2017-11-10T04:37:44.943Z"))
@@ -400,7 +400,7 @@ var _ = Describe("V1Policies", func() {
 								"value": "5e0f4f2166a04667aea9440ad4850232"
 							}]
 						}],
-						"href": "https://iam.bluemix.net/v1/policies/0b3cea25-fc07-49b1-986b-90846085cfeb",
+						"href": "https://iam.cloud.ibm.com/v1/policies/0b3cea25-fc07-49b1-986b-90846085cfeb",
 						"created_at": "2017-11-10T04:37:44.943Z",
 						"created_by_id": "IBMid-310000JVN5",
 						"last_modified_at": "2017-11-10T04:37:44.943Z",
@@ -580,7 +580,7 @@ var _ = Describe("V1Policies", func() {
 								"value": "5e0f4f2166a04667aea9440ad4850232"
 							}]
 						}],
-						"href": "https://iam.bluemix.net/v1/policies/0b3cea25-fc07-49b1-986b-90846085cfeb",
+						"href": "https://iam.cloud.ibm.com/v1/policies/0b3cea25-fc07-49b1-986b-90846085cfeb",
 						"created_at": "2017-11-10T04:37:44.943Z",
 						"created_by_id": "IBMid-310000JVN5",
 						"last_modified_at": "2017-11-10T04:37:44.943Z",
