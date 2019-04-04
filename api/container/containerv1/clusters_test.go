@@ -148,6 +148,52 @@ var _ = Describe("Clusters", func() {
 			})
 		})
 	})
+	//RefreshAPIServers
+	Describe("RefreshAPIServers", func() {
+		Context("When refresh of api servers of cluster is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test/masters"),
+						ghttp.RespondWith(http.StatusOK, `{							
+						}`),
+					),
+				)
+			})
+
+			It("should refresh api servers", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				err := newCluster(server.URL()).RefreshAPIServers("test", target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When refresh of api servers of cluster is failed", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test/masters"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to refresh api servers`),
+					),
+				)
+			})
+
+			It("should return error failed to refresh api servers", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				err := newCluster(server.URL()).RefreshAPIServers("test", target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
 	//Delete
 	Describe("Delete", func() {
 		Context("When delete of cluster is successful", func() {
@@ -574,6 +620,57 @@ var _ = Describe("Clusters", func() {
 					AccountID: "ghi",
 				}
 				_, err := newCluster(server.URL()).FindServiceBoundToCluster("test", "f91adfe2-76c9-4649-939e-b01c37a3704", "default", target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+	//UpdateClusterWorker
+	Describe("UpdateClusterWorker", func() {
+		Context("When updating cluster workers is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test/workers/w1"),
+						ghttp.RespondWith(http.StatusNoContent, `{}`),
+					),
+				)
+			})
+
+			It("should return cluster version updated", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				params := UpdateWorkerCommand{
+					Action: "reload",
+				}
+				err := newCluster(server.URL()).UpdateClusterWorker("test", "w1", params, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When updating cluster workers is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test/workers/w1"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to update cluster workers`),
+					),
+				)
+			})
+
+			It("should return error during updating cluster version", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				params := UpdateWorkerCommand{
+					Action: "reload",
+				}
+				err := newCluster(server.URL()).UpdateClusterWorker("test", "w1", params, target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
