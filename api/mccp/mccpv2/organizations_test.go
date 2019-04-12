@@ -70,6 +70,7 @@ var _ = Describe("Organizations", func() {
 		Context("When creation is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/organizations"),
@@ -145,6 +146,7 @@ var _ = Describe("Organizations", func() {
 		Context("When Organizations FindByName is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/organizations", "region=region&q=name:foo"),
@@ -264,6 +266,7 @@ var _ = Describe("Organizations", func() {
 		Context("When Organizations List is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/organizations"),
@@ -302,6 +305,7 @@ var _ = Describe("Organizations", func() {
 		Context("When Organization Delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v2/organizations/827ec655-c2ed-4577-b226-82271fe471d7"),
@@ -339,6 +343,7 @@ var _ = Describe("Organizations", func() {
 		Context("When Organization Delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v2/organizations/827ec655-c2ed-4577-b226-82271fe471d7"),
@@ -402,6 +407,7 @@ var _ = Describe("Organizations", func() {
 		Context("When Organization Update is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v2/organizations/007c547f-9d6e-4d75-bb03-d9584e7bc62c"),

@@ -236,6 +236,7 @@ var _ = Describe("Apps", func() {
 		Context("Server return error", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/apps"),
@@ -339,6 +340,7 @@ var _ = Describe("Apps", func() {
 		Context("When app creation failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/apps"),
@@ -439,6 +441,7 @@ var _ = Describe("Apps", func() {
 			Context("When app retrievel failed", func() {
 				BeforeEach(func() {
 					server = ghttp.NewServer()
+					server.SetAllowUnhandledRequests(true)
 					server.AppendHandlers(
 						ghttp.CombineHandlers(
 							ghttp.VerifyRequest(http.MethodGet, "/v2/apps/26d673fd-7e64-49b1-9d00-20c0edc9094b"),
@@ -535,6 +538,7 @@ var _ = Describe("Apps", func() {
 			Context("When app update is failed", func() {
 				BeforeEach(func() {
 					server = ghttp.NewServer()
+					server.SetAllowUnhandledRequests(true)
 					server.AppendHandlers(
 						ghttp.CombineHandlers(
 							ghttp.VerifyRequest(http.MethodPut, "/v2/apps/26d673fd-7e64-49b1-9d00-20c0edc9094b"),
@@ -578,6 +582,7 @@ var _ = Describe("Apps", func() {
 			Context("When app delete is failed", func() {
 				BeforeEach(func() {
 					server = ghttp.NewServer()
+					server.SetAllowUnhandledRequests(true)
 					server.AppendHandlers(
 						ghttp.CombineHandlers(
 							ghttp.VerifyRequest(http.MethodDelete, "/v2/apps/26d673fd-7e64-49b1-9d00-20c0edc9094b"),

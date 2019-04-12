@@ -54,6 +54,7 @@ var _ = Describe("Clusters", func() {
 		Context("When creation is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters"),
@@ -128,6 +129,7 @@ var _ = Describe("Clusters", func() {
 		Context("When read of clusters is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters"),
@@ -175,6 +177,7 @@ var _ = Describe("Clusters", func() {
 		Context("When refresh of api servers of cluster is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test/masters"),
@@ -221,6 +224,7 @@ var _ = Describe("Clusters", func() {
 		Context("When cluster delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v1/clusters/test"),
@@ -302,6 +306,7 @@ var _ = Describe("Clusters", func() {
 		Context("When cluster retrieve is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test"),
@@ -349,6 +354,7 @@ var _ = Describe("Clusters", func() {
 		Context("When credential set is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/credentials"),
@@ -396,6 +402,7 @@ var _ = Describe("Clusters", func() {
 		Context("When unset credential is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v1/credentials"),
@@ -445,6 +452,7 @@ var _ = Describe("Clusters", func() {
 		Context("When bind service is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters/test/services"),
@@ -495,6 +503,7 @@ var _ = Describe("Clusters", func() {
 		Context("When unbind service is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v1/clusters/test/services/default/cloudantDB"),
@@ -551,6 +560,7 @@ var _ = Describe("Clusters", func() {
 		Context("When read of cluster services is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test/services/default"),
@@ -605,6 +615,7 @@ var _ = Describe("Clusters", func() {
 		Context("When read of cluster services is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test/services/default"),
@@ -653,6 +664,7 @@ var _ = Describe("Clusters", func() {
 		Context("When updating cluster workers is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test/workers/w1"),
@@ -706,6 +718,7 @@ var _ = Describe("Clusters", func() {
 		Context("When updating cluster version is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test"),

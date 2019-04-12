@@ -81,6 +81,7 @@ var _ = Describe("Policy", func() {
 		Context("When creation is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/acms/v1/scopes/a/f4755e41794cfa89cb078e865975f8e5/users/IBMid-270000W34J/policies"),
@@ -159,6 +160,7 @@ var _ = Describe("Policy", func() {
 		Context("When get is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/acms/v1/scopes/a/f4755e41794cfa89cb078e865975f8e5/users/IBMid-270000W34J/policies/81796686-5766-42ec-bd16-84894cc7f6ce"),
@@ -236,6 +238,7 @@ var _ = Describe("Policy", func() {
 		Context("When update is Failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/acms/v1/scopes/a/f4755e41794cfa89cb078e865975f8e5/users/IBMid-270000W34J/policies/81796686-5766-42ec-bd16-84894cc7f6ce"),
@@ -336,6 +339,7 @@ var _ = Describe("Policy", func() {
 		Context("When list is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/acms/v1/scopes/a/f4755e41794cfa89cb078e865975f8e5/users/IBMid-270000W34J/policies"),
@@ -373,6 +377,7 @@ var _ = Describe("Policy", func() {
 		Context("When delete is Failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/acms/v1/scopes/a/f4755e41794cfa89cb078e865975f8e5/users/IBMid-270000W34J/policies/81796686-5766-42ec-bd16-84894cc7f6ce"),

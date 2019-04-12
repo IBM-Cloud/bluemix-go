@@ -41,6 +41,7 @@ var _ = Describe("Subnets", func() {
 		Context("When adding subnet is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test/subnets/1109876"),
@@ -105,6 +106,7 @@ var _ = Describe("Subnets", func() {
 		Context("When retrieving available subnets is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/subnets"),
@@ -156,6 +158,7 @@ var _ = Describe("Subnets", func() {
 		Context("When adding user subnet is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters/test/usersubnets"),
@@ -220,6 +223,7 @@ var _ = Describe("Subnets", func() {
 		Context("When retrieving available user subnets is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test/usersubnets"),
@@ -268,6 +272,7 @@ var _ = Describe("Subnets", func() {
 		Context("When cluster user subnet delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v1/clusters/test/usersubnets/110976/vlans/174991"),

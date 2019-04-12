@@ -51,6 +51,7 @@ var _ = Describe("Albs", func() {
 		Context("When configuring alb is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/alb/albs"),
@@ -130,6 +131,7 @@ var _ = Describe("Albs", func() {
 		Context("When read of cluster albs is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/alb/clusters/test"),
@@ -179,6 +181,7 @@ var _ = Describe("Albs", func() {
 		Context("When read of cluster alb is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/alb/albs/testAlb"),
@@ -231,6 +234,7 @@ var _ = Describe("Albs", func() {
 		Context("When deploying alb cert is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/alb/albsecrets"),
@@ -288,6 +292,7 @@ var _ = Describe("Albs", func() {
 		Context("When deploying alb cert is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v1/alb/albsecrets"),
@@ -341,6 +346,7 @@ var _ = Describe("Albs", func() {
 		Context("When read of cluster alb certs is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/alb/clusters/test/albsecrets"),
@@ -390,6 +396,7 @@ var _ = Describe("Albs", func() {
 		Context("When read of cluster alb cert is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/alb/clusters/test/albsecrets"),
@@ -438,6 +445,7 @@ var _ = Describe("Albs", func() {
 		Context("When read of cluster alb cert is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/alb/clusters/test/albsecrets"),
@@ -487,6 +495,7 @@ var _ = Describe("Albs", func() {
 		Context("When alb delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v1/alb/albs/test"),
@@ -535,6 +544,7 @@ var _ = Describe("Albs", func() {
 		Context("When alb cert delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v1/alb/clusters/mycluster/albsecrets"),
@@ -583,6 +593,7 @@ var _ = Describe("Albs", func() {
 		Context("When alb cert delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v1/alb/clusters/mycluster/albsecrets"),

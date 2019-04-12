@@ -67,6 +67,7 @@ var _ = Describe("Vlans", func() {
 		Context("When read of vlans is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/datacenters/fakedc/vlans"),

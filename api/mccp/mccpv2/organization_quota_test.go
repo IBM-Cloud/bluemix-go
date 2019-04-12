@@ -65,6 +65,7 @@ var _ = Describe("OrgQuotas", func() {
 		Context("When org quota retrieve is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/quota_definitions/be829072-3137-418c-9607-c84e7d77e22a"),
@@ -163,6 +164,7 @@ var _ = Describe("Org Quota by Name", func() {
 		Context("Server return error", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/quota_definitions", "q=name:testorgquotaupdate"),

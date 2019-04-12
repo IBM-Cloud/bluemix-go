@@ -53,6 +53,7 @@ var _ = Describe("WorkerPool", func() {
 			BeforeEach(func() {
 
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters/test/workerpools"),
@@ -115,6 +116,7 @@ var _ = Describe("WorkerPool", func() {
 		Context("When retrieving available worker pools is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workerpools"),
@@ -164,6 +166,7 @@ var _ = Describe("WorkerPool", func() {
 		Context("When retrieving worker pool is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workerpools/abc-123-def"),
@@ -214,6 +217,7 @@ var _ = Describe("WorkerPool", func() {
 		Context("When worker pool delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v1/clusters/test/workerpools/abc-123-def-ghi"),
@@ -264,6 +268,7 @@ var _ = Describe("WorkerPool", func() {
 		Context("When resize of worker pool is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPatch, "/v1/clusters/test/workerpools/abc-123-def-ghi"),
@@ -321,6 +326,7 @@ var _ = Describe("WorkerPool", func() {
 		Context("When adding zone to worker pool is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters/test/workerpools/abc-123-def-ghi/zones"),
@@ -379,6 +385,7 @@ var _ = Describe("WorkerPool", func() {
 		Context("When delete of zone of a worker pool delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v1/clusters/test/workerpools/abc-123-def-ghi/zones/dal10"),
@@ -429,6 +436,7 @@ var _ = Describe("WorkerPool", func() {
 		Context("When update of worker pool zone is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPatch, "/v1/clusters/test/workerpools/abc-123-def-ghi/zones/dal10"),

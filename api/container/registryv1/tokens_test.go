@@ -74,6 +74,7 @@ var _ = Describe("Tokens", func() {
 		Context("When get token fails", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/api/v1/tokens"),
