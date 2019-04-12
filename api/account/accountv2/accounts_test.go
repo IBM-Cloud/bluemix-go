@@ -139,6 +139,7 @@ var _ = Describe("Accounts", func() {
 		Context("Server return error", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/coe/v2/getaccounts"),
@@ -368,6 +369,7 @@ var _ = Describe("List Accounts", func() {
 		Context("Server return error", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/coe/v2/accounts"),
@@ -510,6 +512,7 @@ var _ = Describe("List Accounts by owner id", func() {
 		Context("Server return error", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/coe/v2/accounts"),
@@ -622,6 +625,7 @@ var _ = Describe("Get Account by account id", func() {
 		Context("Server return error", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/coe/v2/accounts/e9021a4d06e9b108b4a221a3cec47e3d"),

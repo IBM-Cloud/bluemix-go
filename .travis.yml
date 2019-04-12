@@ -1,5 +1,8 @@
 language: go
 
+env:
+- MAX_RETRIES=0
+
 go:
 - 1.x
 

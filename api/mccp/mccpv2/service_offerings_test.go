@@ -108,6 +108,7 @@ var _ = Describe("Service Offering by Label", func() {
 		Context("Server return error", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/services"),

@@ -90,6 +90,7 @@ var _ = Describe("ServiceInstances", func() {
 		Context("When creation is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/service_instances"),
@@ -179,6 +180,7 @@ var _ = Describe("ServiceInstances", func() {
 		Context("When ServiceInstance FindByName is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/service_instances", "return_user_provided_service_instances=true&q=name:foo"),
@@ -255,6 +257,7 @@ var _ = Describe("ServiceInstances", func() {
 		Context("When ServiceInstance Get is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/service_instances/fbfd3591-48a8-482c-af62-f2d85d75229c"),
@@ -326,6 +329,7 @@ var _ = Describe("ServiceInstances", func() {
 		Context("When ServiceInstance Delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v2/service_instances/8dc26f28-8b60-43b3-bed4-b9b5b0190d05"),
@@ -406,6 +410,7 @@ var _ = Describe("ServiceInstances", func() {
 		Context("When ServiceInstance Update is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v2/service_instances/e764af7b-1603-4ba3-b4bf-0b0da98f7ec2", "accepts_incomplete=true"),

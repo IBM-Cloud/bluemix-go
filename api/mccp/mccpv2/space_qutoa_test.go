@@ -77,6 +77,7 @@ var _ = Describe("SpaceQuotas", func() {
 		Context("When creation is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/space_quota_definitions"),
@@ -149,6 +150,7 @@ var _ = Describe("SpaceQuotas", func() {
 		Context("When space quota retrieve is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/space_quota_definitions/be829072-3137-418c-9607-c84e7d77e22a"),
@@ -219,6 +221,7 @@ var _ = Describe("SpaceQuotas", func() {
 		Context("When spacequota update is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v2/space_quota_definitions/be829072-3137-418c-9607-c84e7d77e22a"),
@@ -265,6 +268,7 @@ var _ = Describe("SpaceQuotas", func() {
 		Context("When space quota delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v2/space_quota_definitions/be829072-3137-418c-9607-c84e7d77e22a"),
@@ -392,6 +396,7 @@ var _ = Describe("Space Quota by Name", func() {
 		Context("Server return error", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/organizations/3c1b6f9d-ffe5-43b5-ab91-7be2331dc546/space_quota_definitions"),

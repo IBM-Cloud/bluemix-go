@@ -66,6 +66,7 @@ var _ = Describe("ServiceKeys", func() {
 		Context("When creation is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/service_keys"),
@@ -129,6 +130,7 @@ var _ = Describe("ServiceKeys", func() {
 		Context("When service key retrieve is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/service_keys/c4432b8e-cb14-4225-aa10-1f775b3b1c92"),
@@ -166,6 +168,7 @@ var _ = Describe("ServiceKeys", func() {
 		Context("When service key delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v2/service_keys/c4432b8e-cb14-4225-aa10-1f775b3b1c92"),
@@ -266,6 +269,7 @@ var _ = Describe("Service Key by Name", func() {
 		Context("Server return error", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/service_instances/f91adfe2-76c9-4649-939e-b01c37a3704c/service_keys"),

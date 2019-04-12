@@ -44,6 +44,7 @@ var _ = Describe("Webhooks", func() {
 		Context("When adding webhook is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters/test/webhooks"),
@@ -99,6 +100,7 @@ var _ = Describe("Webhooks", func() {
 		Context("When retrieving available webhooks is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test/webhooks"),

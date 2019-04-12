@@ -271,6 +271,7 @@ var _ = Describe("Images", func() {
 		Context("When get image fails", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/api/v1/images"),
@@ -413,6 +414,7 @@ var _ = Describe("Images", func() {
 		Context("When inspect image fails", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, fmt.Sprintf("/api/v1/images/%s/json", imageName)),
@@ -498,6 +500,7 @@ var _ = Describe("Images", func() {
 		Context("When scan image fails", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, fmt.Sprintf("/api/v1/images/%s/vulnerabilities", imageName)),
@@ -548,6 +551,7 @@ var _ = Describe("Images", func() {
 		Context("When delete image fails", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, fmt.Sprintf("/api/v1/images/%s", imageName)),

@@ -44,6 +44,7 @@ var _ = Describe("Workers", func() {
 		Context("When adding worker is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters/test/workers"),
@@ -94,6 +95,7 @@ var _ = Describe("Workers", func() {
 		Context("When retrieving worker is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/workers/abc-123-def-ghi"),
@@ -146,6 +148,7 @@ var _ = Describe("Workers", func() {
 		Context("When retrieving available workers is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workers"),
@@ -200,6 +203,7 @@ var _ = Describe("Workers", func() {
 		Context("When retrieving available workers is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workers"),
@@ -250,6 +254,7 @@ var _ = Describe("Workers", func() {
 		Context("When cluster delete is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v1/clusters/test/workers/abc-123-def-ghi"),
@@ -298,6 +303,7 @@ var _ = Describe("Workers", func() {
 		Context("When updating worker is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test/workers/abc-123-def-ghi"),

@@ -64,6 +64,7 @@ var _ = Describe("Spaces", func() {
 		Context("When creation is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/spaces"),
@@ -124,6 +125,7 @@ var _ = Describe("Spaces", func() {
 		Context("When space retrieve is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/spaces/64ff2b7d-b6d9-48c6-94a2-7f4ba670d67b"),
@@ -183,6 +185,7 @@ var _ = Describe("Spaces", func() {
 		Context("When space update is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v2/spaces/64ff2b7d-b6d9-48c6-94a2-7f4ba670d67b"),
@@ -222,6 +225,7 @@ var _ = Describe("Spaces", func() {
 		Context("When space update is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v2/spaces/64ff2b7d-b6d9-48c6-94a2-7f4ba670d67b"),
@@ -382,6 +386,7 @@ var _ = Describe("Space Repository", func() {
 		Context("Server return error", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/organizations/3c1b6f9d-ffe5-43b5-ab91-7be2331dc546/spaces"),
@@ -479,6 +484,7 @@ var _ = Describe("Space by Name Repository", func() {
 		Context("Server return error", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/organizations/3c1b6f9d-ffe5-43b5-ab91-7be2331dc546/spaces"),
