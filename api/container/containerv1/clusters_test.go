@@ -436,7 +436,7 @@ var _ = Describe("Clusters", func() {
 					AccountID: "ghi",
 				}
 				params := ServiceBindRequest{
-					ClusterNameOrID: "test", SpaceGUID: "ffed-ret-534-ghrk", ServiceInstanceNameOrID: "cloudantDB", NamespaceID: "default"}
+					ClusterNameOrID: "test", ServiceInstanceNameOrID: "cloudantDB", NamespaceID: "default"}
 				serviceResp, err := newCluster(server.URL()).BindService(params, target)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(serviceResp).ShouldNot(BeNil())
@@ -460,7 +460,7 @@ var _ = Describe("Clusters", func() {
 					AccountID: "ghi",
 				}
 				params := ServiceBindRequest{
-					ClusterNameOrID: "test", SpaceGUID: "ffed-ret-534-ghrk", ServiceInstanceNameOrID: "cloudantDB", NamespaceID: "default"}
+					ClusterNameOrID: "test", ServiceInstanceNameOrID: "cloudantDB", NamespaceID: "default"}
 				serviceResp, err := newCluster(server.URL()).BindService(params, target)
 				Expect(err).To(HaveOccurred())
 				Expect(serviceResp.ServiceInstanceGUID).Should(Equal(""))
