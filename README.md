@@ -43,7 +43,7 @@ You must export the following environment variables.
 
 OR
 
-* BM_API_KEY/BLUEMIX_API_KEY - This is the Bluemix API Key. Login to [Bluemix][bluemix_login] to create one if you don't already have one. Follow Manage -> Account -> Users. Click on _Bluemix API Keys_
+* BM_API_KEY/BLUEMIX_API_KEY - This is the Bluemix API Key. Login to [Bluemix][bluemix_login] to create one if you don't already have one. See instructions below for creating an API Key.
 
 The default region is _us_south_. You can override it in the [Config struct][bluemix_go_config]. You can also provide the value via environment variables; either via _BM_REGION_ or _BLUEMIX_REGION_. Valid regions are -
 * us-south
@@ -54,6 +54,29 @@ The default region is _us_south_. You can override it in the [Config struct][blu
 * jp-tok
 
 The maximum retries is 3. You can override it in the [Config struct][bluemix_go_config]. You can also provide the value via environment variable; via MAX_RETRIES
+
+## Creating an IBM Cloud API Key
+
+First, navigate to the IBM Cloud console and use the Manage toolbar to access IAM.
+
+![Access IAM from the Manage toolbar](.screenshots/screenshot_api_keys_iam.png)
+
+On the left, click "IBM Cloud API Keys"
+
+![Click IBM Cloud API Keys](.screenshots/screenshot_api_keys_iam_left.png)
+
+Press "Create API Key"
+
+![Press Create API Key](.screenshots/screenshot_api_keys_create_button.png)
+
+Pick a name and description for your key
+
+![Set name and description](.screenshots/screenshot_api_keys_create.png)
+
+You have created a key! Press the eyeball to show the key. Copy or save it because keys can't be displayed or downloaded twice.
+
+![Your key is now created](.screenshots/screenshot_api_keys_create_successful.png)
+
 
 [bluemix_signup]: https://console.ng.bluemix.net/registration/?target=%2Fdashboard%2Fapps
 [bluemix_login]: https://console.ng.bluemix.net
