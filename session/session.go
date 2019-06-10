@@ -38,11 +38,11 @@ func New(configs ...*bluemix.Config) (*Session, error) {
 	}
 
 	if len(c.BluemixAPIKey) == 0 {
-		c.BluemixAPIKey = helpers.EnvFallBack([]string{"BM_API_KEY", "BLUEMIX_API_KEY"}, "")
+		c.BluemixAPIKey = helpers.EnvFallBack([]string{"IC_API_KEY", "IBMCLOUD_API_KEY", "BM_API_KEY", "BLUEMIX_API_KEY"}, "")
 	}
 
 	if len(c.Region) == 0 {
-		c.Region = helpers.EnvFallBack([]string{"BM_REGION", "BLUEMIX_REGION"}, "us-south")
+		c.Region = helpers.EnvFallBack([]string{"IC_REGION", "IBMCLOUD_REGION", "BM_REGION", "BLUEMIX_REGION"}, "us-south")
 	}
 	if c.MaxRetries == nil {
 		c.MaxRetries = helpers.Int(3)
