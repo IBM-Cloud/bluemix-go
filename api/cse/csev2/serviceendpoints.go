@@ -5,7 +5,7 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
-type serviceCSE struct {
+type ServiceCSE struct {
 	Srvid            string   `json:"srvid"`
 	ServiceName      string   `json:"service"`
 	CustomerName     string   `json:"customer"`
@@ -26,7 +26,7 @@ type serviceCSE struct {
 	MultiTenant      int      `json:"multitenant"`
 }
 
-type serviceEndpoint struct {
+type ServiceEndpoint struct {
 	Seid          string `json:"seid"`
 	StaticAddress string `json:"staticAddress"`
 	Netmask       string `json:"netmask"`
@@ -35,13 +35,13 @@ type serviceEndpoint struct {
 	Status        string `json:"status"`
 }
 
-type serviceObject struct {
-	Service   serviceCSE        `json:"service"`
-	Endpoints []serviceEndpoint `json:"endpoints"`
+type ServiceObject struct {
+	Service   ServiceCSE        `json:"service"`
+	Endpoints []ServiceEndpoint `json:"endpoints"`
 }
 
 type ServiceEndpoints interface {
-	GetServiceEndpoint(srvID string) (*serviceObject, error)
+	GetServiceEndpoint(srvID string) (*ServiceObject, error)
 	CreateServiceEndpoint(payload map[string]interface{}) (string, error)
 	UpdateServiceEndpoint(srvID string, payload map[string]interface{}) error
 	DeleteServiceEndpoint(srvID string) error
@@ -57,8 +57,8 @@ func newServiceEndpointsAPI(c *client.Client) ServiceEndpoints {
 	}
 }
 
-func (r *serviceendpoints) GetServiceEndpoint(srvID string) (*serviceObject, error) {
-	srvObj := serviceObject{}
+func (r *serviceendpoints) GetServiceEndpoint(srvID string) (*ServiceObject, error) {
+	srvObj := ServiceObject{}
 	rawURL := fmt.Sprintf("/v2/serviceendpoint/%s", srvID)
 	_, err := r.client.Get(rawURL, &srvObj, nil)
 	if err != nil {
