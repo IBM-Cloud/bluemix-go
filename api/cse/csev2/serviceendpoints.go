@@ -1,12 +1,12 @@
 package csev2
 
 import (
+	"errors"
 	"fmt"
 	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
-type ServiceCSE struct {
-	Srvid            string   `json:"srvid"`
+type SeCreateData struct {
 	ServiceName      string   `json:"service"`
 	CustomerName     string   `json:"customer"`
 	ServiceAddresses []string `json:"serviceAddresses"`
@@ -21,9 +21,27 @@ type ServiceCSE struct {
 	DataCenters      []string `json:"dataCenters"`
 	ACL              []string `json:"acl"`
 	MaxSpeed         string   `json:"maxSpeed"`
-	URL              string   `json:"url"`
 	Dedicated        int      `json:"dedicated"`
 	MultiTenant      int      `json:"multitenant"`
+}
+
+type SeUpdateData struct {
+	ServiceAddresses []string `json:"serviceAddresses"`
+	EstadoProto      string   `json:"estadoProto"`
+	EstadoPort       int      `json:"estadoPort"`
+	EstadoPath       string   `json:"estadoPath"`
+	TCPPorts         []int    `json:"tcpports"`
+	UDPPorts         []int    `json:"udpports"`
+	TCPRange         string   `json:"tcpportrange"`
+	UDPRange         string   `json:"udpportrange"`
+	DataCenters      []string `json:"dataCenters"`
+	ACL              []string `json:"acl"`
+}
+
+type ServiceCSE struct {
+	SeCreateData
+	Srvid string `json:"srvid"`
+	URL   string `json:"url"`
 }
 
 type ServiceEndpoint struct {
@@ -42,8 +60,8 @@ type ServiceObject struct {
 
 type ServiceEndpoints interface {
 	GetServiceEndpoint(srvID string) (*ServiceObject, error)
-	CreateServiceEndpoint(payload map[string]interface{}) (string, error)
-	UpdateServiceEndpoint(srvID string, payload map[string]interface{}) error
+	CreateServiceEndpoint(payload SeCreateData) (string, error)
+	UpdateServiceEndpoint(srvID string, payload SeUpdateData) error
 	DeleteServiceEndpoint(srvID string) error
 }
 
@@ -58,50 +76,35 @@ func newServiceEndpointsAPI(c *client.Client) ServiceEndpoints {
 }
 
 func (r *serviceendpoints) GetServiceEndpoint(srvID string) (*ServiceObject, error) {
+	if len(srvID) == 0 {
+		return nil, errors.New("empty srvID")
+	}
+
 	srvObj := ServiceObject{}
 	rawURL := fmt.Sprintf("/v2/serviceendpoint/%s", srvID)
 	_, err := r.client.Get(rawURL, &srvObj, nil)
 	if err != nil {
 		return nil, err
 	}
+
 	return &srvObj, nil
 }
 
 func (r *serviceendpoints) DeleteServiceEndpoint(srvID string) error {
+	if len(srvID) == 0 {
+		return errors.New("empty srvID")
+	}
+
 	rawURL := fmt.Sprintf("/v2/serviceendpoint/%s", srvID)
 	_, err := r.client.Delete(rawURL)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
-/*
-payload map includes:
-  KEY                 VALUETYPE        DESCRIPTION                  MANDATORY
-  service             string           service name                 yes
-  customer            string           customer name                yes
-  serviceAddresses    []string         service backend addresses    yes
-  estadoProto         string           estado check protocol        no
-                                       tcp, http or https
-
-  estadoPort          int              estado check port            no
-  estadoPath          string           estado check path            no
-  tcpports            []int            tcp access ports             yes
-  udpports            []int            udp access ports             no
-  tcpportrange        string           tcp access portrange         no
-  udpportrange        string           udp access portrange         no
-  region              string           region where mb is put       yes
-  dataCenters         []string         datacenter where mb is put   yes
-  acl                 []string         white networks for access    no
-  maxSpeed            string           1g or 20g                    yes
-  dedicated           int              indicate use dedicated       no
-                                       mb or not
-  multitenant         int              indicate to share mb with    no
-                                       other servicenedpoints or
-                                       not
-*/
-func (r *serviceendpoints) CreateServiceEndpoint(payload map[string]interface{}) (string, error) {
+func (r *serviceendpoints) CreateServiceEndpoint(payload SeCreateData) (string, error) {
 	rawURL := "/v2/serviceendpoint"
 	result := make(map[string]interface{})
 	_, err := r.client.Post(rawURL, &payload, &result)
@@ -112,20 +115,11 @@ func (r *serviceendpoints) CreateServiceEndpoint(payload map[string]interface{})
 	return result["serviceid"].(string), nil
 }
 
-/*
-For update, only below fields are supported:
-   serviceAddresses,
-   dataCenters,
-   tcpports,
-   udpports,
-   tcpportrange,
-   udpportrange,
-   estadoProto,
-   estadoPort,
-   estadoPath,
-   acl
-*/
-func (r *serviceendpoints) UpdateServiceEndpoint(srvID string, payload map[string]interface{}) error {
+func (r *serviceendpoints) UpdateServiceEndpoint(srvID string, payload SeUpdateData) error {
+	if len(srvID) == 0 {
+		return errors.New("empty srvID")
+	}
+
 	rawURL := fmt.Sprintf("/v2/serviceendpointtf/%s", srvID)
 	result := make(map[string]interface{})
 	_, err := r.client.Put(rawURL, &payload, &result)

@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	trace.Logger = trace.NewLogger("true")
+	trace.Logger = trace.NewLogger("false")
 	sess, err := session.New()
 	if err != nil {
 		log.Fatal(err)
@@ -21,34 +21,33 @@ func main() {
 	}
 	seAPI := cseClient.ServiceEndpoints()
 
+	payload := csev2.SeCreateData{
+		ServiceName:      "test-terrafor-11",
+		CustomerName:     "test-customer-11",
+		ServiceAddresses: []string{"10.102.33.131", "10.102.33.133"},
+		Region:           "us-south",
+		DataCenters:      []string{"dal10"},
+		TCPPorts:         []int{8080, 80},
+	}
+
 	// create a serviceendpoint
-	payload := make(map[string]interface{})
-	payload["service"] = "test-terrafor-11"
-	payload["customer"] = "test-customer-11"
-	payload["serviceAddresses"] = []string{"10.102.33.131", "10.102.33.133"}
-	payload["region"] = "us-south"
-	payload["dataCenters"] = []string{"dal10"}
-	payload["tcpports"] = []int{8080, 80}
-
 	log.Println("create a serviceendpoint with ", payload)
-
 	newSrvId, err := seAPI.CreateServiceEndpoint(payload)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	// query the serviceendpoint
 	log.Println("query the serviceendpoint ", newSrvId)
-
 	srvObj, err := seAPI.GetServiceEndpoint(newSrvId)
-
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println(srvObj.Endpoints)
+	log.Println("Srvid=", srvObj.Service.Srvid)
 
+	// delete serviceendpoint
 	log.Println("delete the service endpoint ", newSrvId)
-
 	err = seAPI.DeleteServiceEndpoint(newSrvId)
 	if err != nil {
 		log.Fatal(err)
