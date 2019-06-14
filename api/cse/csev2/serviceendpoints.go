@@ -10,19 +10,19 @@ type SeCreateData struct {
 	ServiceName      string   `json:"service"`
 	CustomerName     string   `json:"customer"`
 	ServiceAddresses []string `json:"serviceAddresses"`
-	EstadoProto      string   `json:"estadoProto"`
-	EstadoPort       int      `json:"estadoPort"`
-	EstadoPath       string   `json:"estadoPath"`
+	EstadoProto      string   `json:"estadoProto,omitempty"`
+	EstadoPort       int      `json:"estadoPort,omitempty"`
+	EstadoPath       string   `json:"estadoPath,omitempty"`
 	TCPPorts         []int    `json:"tcpports"`
-	UDPPorts         []int    `json:"udpports"`
-	TCPRange         string   `json:"tcpportrange"`
-	UDPRange         string   `json:"udpportrange"`
+	UDPPorts         []int    `json:"udpports,omitempty"`
+	TCPRange         string   `json:"tcpportrange,omitempty"`
+	UDPRange         string   `json:"udpportrange,omitempty"`
 	Region           string   `json:"region"`
 	DataCenters      []string `json:"dataCenters"`
-	ACL              []string `json:"acl"`
+	ACL              []string `json:"acl,omitempty"`
 	MaxSpeed         string   `json:"maxSpeed"`
-	Dedicated        int      `json:"dedicated"`
-	MultiTenant      int      `json:"multitenant"`
+	Dedicated        int      `json:"dedicated,omitempty"`
+	MultiTenant      int      `json:"multitenant,omitempty"`
 }
 
 type SeUpdateData struct {
@@ -115,6 +115,7 @@ func (r *serviceendpoints) CreateServiceEndpoint(payload SeCreateData) (string, 
 	return result["serviceid"].(string), nil
 }
 
+// The data of servcieendpoint will be replace with that in SeUpdata
 func (r *serviceendpoints) UpdateServiceEndpoint(srvID string, payload SeUpdateData) error {
 	if len(srvID) == 0 {
 		return errors.New("empty srvID")
