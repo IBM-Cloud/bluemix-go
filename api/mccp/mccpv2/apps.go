@@ -163,12 +163,12 @@ func (resource AppResource) ToFields() App {
 		HealthCheckType:         entity.HealthCheckType,
 		HealthCheckTimeout:      entity.HealthCheckTimeout,
 		HealthCheckHTTPEndpoint: entity.HealthCheckHTTPEndpoint,
-		Diego:       entity.Diego,
-		DockerImage: entity.DockerImage,
-		EnableSSH:   entity.EnableSSH,
-		Ports:       entity.Ports,
-		DockerCredentialsJSON: entity.DockerCredentialsJSON,
-		EnvironmentJSON:       entity.EnvironmentJSON,
+		Diego:                   entity.Diego,
+		DockerImage:             entity.DockerImage,
+		EnableSSH:               entity.EnableSSH,
+		Ports:                   entity.Ports,
+		DockerCredentialsJSON:   entity.DockerCredentialsJSON,
+		EnvironmentJSON:         entity.EnvironmentJSON,
 	}
 }
 
