@@ -68,8 +68,8 @@ func (resource OrgQuotaResource) ToFields() OrgQuota {
 	entity := resource.Entity
 
 	return OrgQuota{
-		GUID: resource.Metadata.GUID,
-		Name: entity.Name,
+		GUID:                    resource.Metadata.GUID,
+		Name:                    entity.Name,
 		NonBasicServicesAllowed: entity.NonBasicServicesAllowed,
 		ServicesLimit:           entity.ServicesLimit,
 		RoutesLimit:             entity.RoutesLimit,
