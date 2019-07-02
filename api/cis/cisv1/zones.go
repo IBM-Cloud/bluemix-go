@@ -55,7 +55,7 @@ type ZoneDelete  struct {
       }
 
 type Zones interface {
-	ListZones(cisId string) (*[]Zone, error)
+	ListZones(cisId string) ([]Zone, error)
 	GetZone(cisId string, zoneId string) (*Zone, error)
 	CreateZone(cisId string, zoneBody ZoneBody) (*Zone, error)
 	DeleteZone(cisId string, zoneId string) (error)
@@ -72,14 +72,14 @@ func newZoneAPI(c *client.Client) Zones {
 	}
 }
 
-func (r *zones)  ListZones(cisId string) (*[]Zone, error) {   
+func (r *zones)  ListZones(cisId string) ([]Zone, error) {   
   zoneResults := ZoneResults{}
   rawURL := fmt.Sprintf("/v1/%s/zones/", cisId)
   _, err := r.client.Get(rawURL, &zoneResults)
   if err != nil {
 		return nil, err
 	}
-    return &zoneResults.ZoneList, err
+    return zoneResults.ZoneList, err
 }
 
 func (r *zones)  GetZone(cisId string, zoneId string) (*Zone, error) {
