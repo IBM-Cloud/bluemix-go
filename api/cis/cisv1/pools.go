@@ -2,6 +2,7 @@ package cisv1
 
 import (
 	"fmt"
+
 	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
@@ -58,7 +59,7 @@ type PoolBody struct {
 
 type PoolDelete struct {
 	Result struct {
-		poolId string
+		PoolId string
 	} `json:"result"`
 	Success  bool     `json:"success"`
 	Errors   []Error  `json:"errors"`
@@ -66,7 +67,7 @@ type PoolDelete struct {
 }
 
 type Pools interface {
-	ListPools(cisId string) (*[]Pool, error)
+	ListPools(cisId string) ([]Pool, error)
 	GetPool(cisId string, poolId string) (*Pool, error)
 	CreatePool(cisId string, poolBody PoolBody) (*Pool, error)
 	DeletePool(cisId string, poolId string) error
@@ -82,14 +83,14 @@ func newPoolAPI(c *client.Client) Pools {
 	}
 }
 
-func (r *pools) ListPools(cisId string) (*[]Pool, error) {
+func (r *pools) ListPools(cisId string) ([]Pool, error) {
 	poolResults := PoolResults{}
 	rawURL := fmt.Sprintf("/v1/%s/load_balancers/pools/", cisId)
 	_, err := r.client.Get(rawURL, &poolResults)
 	if err != nil {
 		return nil, err
 	}
-	return &poolResults.PoolList, err
+	return poolResults.PoolList, err
 }
 
 func (r *pools) GetPool(cisId string, poolId string) (*Pool, error) {

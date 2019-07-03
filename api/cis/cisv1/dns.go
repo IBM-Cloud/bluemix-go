@@ -2,9 +2,10 @@ package cisv1
 
 import (
 	"fmt"
-	"github.com/IBM-Cloud/bluemix-go/client"
 	"log"
 	"time"
+
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 type DnsRecord struct {
@@ -46,7 +47,7 @@ type DnsBody struct {
 }
 
 type Dns interface {
-	ListDns(cisId string, zoneId string) (*[]DnsRecord, error)
+	ListDns(cisId string, zoneId string) ([]DnsRecord, error)
 	GetDns(cisId string, zoneId string, dnsId string) (*DnsRecord, error)
 	CreateDns(cisId string, zoneId string, dnsBody DnsBody) (*DnsRecord, error)
 	DeleteDns(cisId string, zoneId string, dnsId string) error
@@ -62,14 +63,14 @@ func newDnsAPI(c *client.Client) Dns {
 	}
 }
 
-func (r *dns) ListDns(cisId string, zoneId string) (*[]DnsRecord, error) {
+func (r *dns) ListDns(cisId string, zoneId string) ([]DnsRecord, error) {
 	dnsResults := DnsResults{}
 	rawURL := fmt.Sprintf("/v1/%s/zones/%s/dns_records", cisId, zoneId)
 	_, err := r.client.Get(rawURL, &dnsResults)
 	if err != nil {
 		return nil, err
 	}
-	return &dnsResults.DnsList, err
+	return dnsResults.DnsList, err
 }
 
 func (r *dns) GetDns(cisId string, zoneId string, dnsId string) (*DnsRecord, error) {

@@ -73,9 +73,7 @@ var _ = Describe("Dns", func() {
 			It("should return Dns list", func() {
 				target1 := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
 				target2 := "3fefc35e7decadb111dcf85d723a4f20"
-				myDnsPtr, err := newDns(server.URL()).ListDns(target1, target2)
-				myDns := *myDnsPtr
-				Expect(myDns).ShouldNot(BeNil())
+				myDns, err := newDns(server.URL()).ListDns(target1, target2)
 				for _, Dns := range myDns {
 					Expect(err).NotTo(HaveOccurred())
 					Expect(Dns.Id).Should(Equal("0f4740fc36065f8a9343c7ed9445f2a4"))

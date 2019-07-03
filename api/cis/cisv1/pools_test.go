@@ -217,9 +217,7 @@ var _ = Describe("Pools", func() {
 
 			It("should return Pool list", func() {
 				target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
-				myPoolsPtr, err := newPool(server.URL()).ListPools(target)
-				myPools := *myPoolsPtr
-				Expect(myPools).ShouldNot(BeNil())
+				myPools, err := newPool(server.URL()).ListPools(target)
 				for _, Pool := range myPools {
 					Expect(err).NotTo(HaveOccurred())
 					Expect(Pool.Id).Should(Equal("19901040048d70b15014330a6e252ba9"))

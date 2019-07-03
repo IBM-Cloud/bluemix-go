@@ -2,6 +2,7 @@ package cisv1
 
 import (
 	"fmt"
+
 	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
@@ -51,7 +52,7 @@ type MonitorBody struct {
 
 type MonitorDelete struct {
 	Result struct {
-		monitorId string
+		MonitorId string
 	} `json:"result"`
 	Success  bool     `json:"success"`
 	Errors   []Error  `json:"errors"`
@@ -59,7 +60,7 @@ type MonitorDelete struct {
 }
 
 type Monitors interface {
-	ListMonitors(cisId string) (*[]Monitor, error)
+	ListMonitors(cisId string) ([]Monitor, error)
 	GetMonitor(cisId string, monitorId string) (*Monitor, error)
 	CreateMonitor(cisId string, monitorBody MonitorBody) (*Monitor, error)
 	DeleteMonitor(cisId string, monitorId string) error
@@ -75,14 +76,14 @@ func newMonitorAPI(c *client.Client) Monitors {
 	}
 }
 
-func (r *monitors) ListMonitors(cisId string) (*[]Monitor, error) {
+func (r *monitors) ListMonitors(cisId string) ([]Monitor, error) {
 	monitorResults := MonitorResults{}
 	rawURL := fmt.Sprintf("/v1/%s/load_balancers/monitors/", cisId)
 	_, err := r.client.Get(rawURL, &monitorResults)
 	if err != nil {
 		return nil, err
 	}
-	return &monitorResults.MonitorList, err
+	return monitorResults.MonitorList, err
 }
 
 func (r *monitors) GetMonitor(cisId string, monitorId string) (*Monitor, error) {

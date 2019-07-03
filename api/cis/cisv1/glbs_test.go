@@ -75,9 +75,7 @@ var _ = Describe("Glbs", func() {
 			It("should return Glb list", func() {
 				target1 := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
 				target2 := "3fefc35e7decadb111dcf85d723a4f20"
-				myGlbsPtr, err := newGlb(server.URL()).ListGlbs(target1, target2)
-				myGlbs := *myGlbsPtr
-				Expect(myGlbs).ShouldNot(BeNil())
+				myGlbs, err := newGlb(server.URL()).ListGlbs(target1, target2)
 				for _, Glb := range myGlbs {
 					Expect(err).NotTo(HaveOccurred())
 					Expect(Glb.Id).Should(Equal("678106b2b5143fa9560e320961500f81"))

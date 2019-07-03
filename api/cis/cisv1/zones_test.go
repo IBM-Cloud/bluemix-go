@@ -147,9 +147,7 @@ var _ = Describe("Zones", func() {
 
 			It("should return Zone list", func() {
 				target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
-				myZonesPtr, err := newZone(server.URL()).ListZones(target)
-				myZones := *myZonesPtr
-				Expect(myZones).ShouldNot(BeNil())
+				myZones, err := newZone(server.URL()).ListZones(target)
 				for _, Zone := range myZones {
 					Expect(err).NotTo(HaveOccurred())
 					Expect(Zone.Id).Should(Equal("3fefc35e7decadb111dcf85d723a4f20"))

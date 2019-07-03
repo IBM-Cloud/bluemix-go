@@ -68,7 +68,7 @@ type AppRequest struct {
 	DockerImage              *string                 `json:"docker_image,omitempty"`
 	StagingFailedReason      *string                 `json:"staging_failed_reason,omitempty"`
 	StagingFailedDescription *string                 `json:"staging_failed_description,omitempty"`
-	Ports                    *[]int                  `json:"ports,omitempty"`
+	Ports                    []int                   `json:"ports,omitempty"`
 	DockerCredentialsJSON    *map[string]interface{} `json:"docker_credentials_json,omitempty"`
 	EnvironmentJSON          *map[string]interface{} `json:"environment_json,omitempty"`
 }
