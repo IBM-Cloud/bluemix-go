@@ -291,7 +291,7 @@ var _ = Describe("Builds", func() {
 				Expect(respArr).To(HaveLen(203))
 				for i, v := range strings.Split(buildResult, "\n") {
 					var resp ImageBuildResponse
-					json.Unmarshal([]byte(v), &resp)
+					err = json.Unmarshal([]byte(v), &resp)
 					Expect(err).To(BeNil())
 					Expect(respArr[i]).Should(Equal(resp))
 				}
@@ -376,7 +376,7 @@ var _ = Describe("Builds", func() {
 				Expect(err).NotTo(HaveOccurred())
 				Expect(respArr).To(HaveLen(1))
 				var resp ImageBuildResponse
-				json.Unmarshal([]byte(buildErrorResult), &resp)
+				err = json.Unmarshal([]byte(buildErrorResult), &resp)
 				Expect(err).To(BeNil())
 				Expect(respArr[0]).Should(Equal(resp))
 			})
