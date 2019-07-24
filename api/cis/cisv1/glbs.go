@@ -2,8 +2,9 @@ package cisv1
 
 import (
 	"fmt"
-	"github.com/IBM-Cloud/bluemix-go/client"
 	"time"
+
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 type Glb struct {
@@ -47,7 +48,7 @@ type GlbBody struct {
 
 type GlbDelete struct {
 	Result struct {
-		glbId string
+		GlbId string
 	} `json:"result"`
 	Success  bool     `json:"success"`
 	Errors   []Error  `json:"errors"`
@@ -55,7 +56,7 @@ type GlbDelete struct {
 }
 
 type Glbs interface {
-	ListGlbs(cisId string, zoneId string) (*[]Glb, error)
+	ListGlbs(cisId string, zoneId string) ([]Glb, error)
 	GetGlb(cisId string, zoneId string, glbId string) (*Glb, error)
 	CreateGlb(cisId string, zoneId string, glbBody GlbBody) (*Glb, error)
 	DeleteGlb(cisId string, zoneId string, glbId string) error
@@ -71,14 +72,14 @@ func newGlbAPI(c *client.Client) Glbs {
 	}
 }
 
-func (r *glbs) ListGlbs(cisId string, zoneId string) (*[]Glb, error) {
+func (r *glbs) ListGlbs(cisId string, zoneId string) ([]Glb, error) {
 	glbResults := GlbResults{}
 	rawURL := fmt.Sprintf("/v1/%s/zones/%s/load_balancers", cisId, zoneId)
 	_, err := r.client.Get(rawURL, &glbResults)
 	if err != nil {
 		return nil, err
 	}
-	return &glbResults.GlbList, err
+	return glbResults.GlbList, err
 }
 
 func (r *glbs) GetGlb(cisId string, zoneId string, glbId string) (*Glb, error) {

@@ -155,9 +155,7 @@ var _ = Describe("Monitors", func() {
 
 			It("should return Monitor list", func() {
 				target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
-				myMonitorsPtr, err := newMonitor(server.URL()).ListMonitors(target)
-				myMonitors := *myMonitorsPtr
-				Expect(myMonitors).ShouldNot(BeNil())
+				myMonitors, err := newMonitor(server.URL()).ListMonitors(target)
 				for _, Monitor := range myMonitors {
 					Expect(err).NotTo(HaveOccurred())
 					Expect(Monitor.Id).Should(Equal("192c950172152639e21f549bc4a1cd6f"))
