@@ -116,9 +116,6 @@ func (r *orgQuota) FindByName(name string) (*OrgQuota, error) {
 		return nil, err
 	}
 
-	if err != nil {
-		return nil, err
-	}
 	if len(orgQuotas) == 0 {
 		return nil, bmxerror.New(ErrCodeAppDoesnotExist,
 			fmt.Sprintf("Given quota definition: %q doesn't exist", name))
