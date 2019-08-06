@@ -218,6 +218,7 @@ var _ = Describe("Pools", func() {
 			It("should return Pool list", func() {
 				target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
 				myPools, err := newPool(server.URL()).ListPools(target)
+				Expect(myPools).ShouldNot(BeNil())
 				for _, Pool := range myPools {
 					Expect(err).NotTo(HaveOccurred())
 					Expect(Pool.Id).Should(Equal("19901040048d70b15014330a6e252ba9"))
@@ -370,7 +371,172 @@ var _ = Describe("Pools", func() {
 			})
 		})
 	})
+	//Update
+	Describe("Update", func() {
+		Context("When Update is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/load_balancers/pools"),
+						ghttp.RespondWith(http.StatusCreated, `
+                           {
+                              "result": {
+                                "description": "",
+                                "created_on": "2018-11-22T10:09:44.288581Z",
+                                "modified_on": "2018-11-22T10:09:44.288581Z",
+                                "id": "4112ba6c2974ec43886f90736968e838",
+                                "enabled": true,
+                                "minimum_origins": 1,
+                                "monitor": "92859a0f6b4d3e55b953e0e29bb96338",
+                                "name": "eu-pool",
+                                "notification_email": "",
+                                "check_regions": [
+                                  "EEU"
+                                ],
+                                "origins": [
+                                  {
+                                    "name": "eu-origin1",
+                                    "address": "150.0.0.1",
+                                    "enabled": true,
+                                    "weight": 1
+                                  },
+                                  {
+                                    "name": "eu-origin2",
+                                    "address": "150.0.0.2",
+                                    "enabled": true,
+                                    "weight": 1
+                                  }
+                                ]
+                              },
+                              "success": true,
+                              "errors": [],
+                              "messages": []
+                            }
+                        `),
+					),
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/load_balancers/pools/4112ba6c2974ec43886f90736968e838"),
+						ghttp.RespondWith(http.StatusCreated, `
+                           {
+                              "result": {
+                                "description": "",
+                                "created_on": "2018-11-22T10:09:44.288581Z",
+                                "modified_on": "2018-11-22T10:09:44.288581Z",
+                                "id": "4112ba6c2974ec43886f90736968e838",
+                                "enabled": true,
+                                "minimum_origins": 1,
+                                "monitor": "92859a0f6b4d3e55b953e0e29bb96888",
+                                "name": "eu-pool",
+                                "notification_email": "",
+                                "check_regions": [
+                                  "EEU"
+                                ],
+                                "origins": [
+                                  {
+                                    "name": "eu-origin1",
+                                    "address": "150.0.0.1",
+                                    "enabled": true,
+                                    "weight": 1
+                                  },
+                                  {
+                                    "name": "eu-origin2",
+                                    "address": "150.0.0.2",
+                                    "enabled": true,
+                                    "weight": 1
+                                  }
+                                ]
+                              },
+                              "success": true,
+                              "errors": [],
+                              "messages": []
+                            }
+                        `),
+					),
+				)
+			})
 
+			It("should return zone created", func() {
+
+				origins := []Origin{
+					{Name: "eu-origin1", Address: "150.0.0.1", Enabled: true, Weight: 1},
+					{Name: "eu-origin2", Address: "150.0.0.2", Enabled: true, Weight: 1},
+				}
+				checkRegions := []string{"EEU"}
+				params := PoolBody{
+					Name:         "eu-pool",
+					Description:  "",
+					Origins:      origins,
+					CheckRegions: checkRegions,
+					Enabled:      true,
+					MinOrigins:   1,
+					Monitor:      "92859a0f6b4d3e55b953e0e29bb96338",
+					NotEmail:     "",
+				}
+				target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
+				myPoolPtr, err := newPool(server.URL()).CreatePool(target, params)
+				myPool := *myPoolPtr
+				Expect(err).NotTo(HaveOccurred())
+				Expect(myPool).ShouldNot(BeNil())
+				Expect(myPool.Id).Should(Equal("4112ba6c2974ec43886f90736968e838"))
+				Expect(myPool.Name).Should(Equal("eu-pool"))
+				params = PoolBody{
+					Name:         "eu-pool",
+					Description:  "",
+					Origins:      origins,
+					CheckRegions: checkRegions,
+					Enabled:      true,
+					MinOrigins:   1,
+					Monitor:      "92859a0f6b4d3e55b953e0e29bb96888",
+					NotEmail:     "",
+				}
+				target = "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
+				poolId := "4112ba6c2974ec43886f90736968e838"
+				myPoolPtr, err = newPool(server.URL()).UpdatePool(target, poolId, params)
+				myPool = *myPoolPtr
+				Expect(err).NotTo(HaveOccurred())
+				Expect(myPool).ShouldNot(BeNil())
+				Expect(myPool.Id).Should(Equal("4112ba6c2974ec43886f90736968e838"))
+				Expect(myPool.Name).Should(Equal("eu-pool"))
+				Expect(myPool.Monitor).Should(Equal("92859a0f6b4d3e55b953e0e29bb96888"))
+			})
+		})
+		Context("When Update is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/load_balancers/pools/4112ba6c2974ec43886f90736968e838"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create Pool`),
+					),
+				)
+			})
+
+			It("should return error during Pool creation", func() {
+				origins := []Origin{
+					Origin{Name: "eu-origin1", Address: "150.0.0.1", Enabled: true, Weight: 1},
+					Origin{Name: "eu-origin2", Address: "150.0.0.2", Enabled: true, Weight: 1},
+				}
+				checkRegions := []string{"EEU"}
+				params := PoolBody{
+					Name:         "eu-pool",
+					Description:  "",
+					Origins:      origins,
+					CheckRegions: checkRegions,
+					Enabled:      true,
+					MinOrigins:   1,
+					Monitor:      "92859a0f6b4d3e55b953e0e29bb96338",
+					NotEmail:     "",
+				}
+				target := "crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a"
+				poolId := "4112ba6c2974ec43886f90736968e838"
+				myPoolPtr, err := newPool(server.URL()).UpdatePool(target, poolId, params)
+				myPool := myPoolPtr
+				Expect(err).To(HaveOccurred())
+				Expect(myPool).Should(BeNil())
+			})
+		})
+	})
 })
 
 func newPool(url string) Pools {
