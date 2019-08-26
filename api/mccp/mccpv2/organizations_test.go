@@ -427,6 +427,111 @@ var _ = Describe("Organizations", func() {
 		})
 	})
 
+	Describe("Get Region Info", func() {
+		Context("When fetched by GUID", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/organizations/d67452c1-1dc4-4131-8558-220a83fe3e00/regions"),
+						ghttp.RespondWith(http.StatusOK, `[
+							{
+								"id": "ibm:yp:us-south",
+								"domain": "ng.bluemix.net",
+								"name": "us-south",
+								"region": "us-south",
+								"display_name": "Dallas",
+								"customer": {
+									"name": "ibm",
+									"display_name": "IBM"
+								},
+								"deployment": {
+									"name": "yp",
+									"display_name": "Production"
+								},
+								"geo": {
+									"name": "us-south",
+									"display_name": "Dallas"
+								},
+								"public_regions_by_proximity": [
+									"ibm:yp:us-south",
+									"ibm:yp:us-east",
+									"ibm:yp:eu-gb",
+									"ibm:yp:eu-de",
+									"ibm:yp:au-syd"
+								],
+								"console_url": "https://console.bluemix.net",
+								"cf_api": "https://api.ng.bluemix.net",
+								"mccp_api": "https://mccp.us-south.cf.cloud.ibm.com",
+								"type": "public",
+								"home": false,
+								"aliases": [],
+								"settings": {
+									"devops": {
+										"enabled": false
+									}
+								},
+								"org_name": "test-org-name",
+								"org_guid": "8dbcd4bb-f161-45f7-b134-0a880199762d"
+							},
+							{
+								"id": "ibm:yp:us-east",
+								"domain": "us-east.bluemix.net",
+								"name": "us-east",
+								"region": "us-east",
+								"display_name": "Washington DC",
+								"customer": {
+									"name": "ibm",
+									"display_name": "IBM"
+								},
+								"deployment": {
+									"name": "yp",
+									"display_name": "Production"
+								},
+								"geo": {
+									"name": "us-east",
+									"display_name": "Washington DC"
+								},
+								"public_regions_by_proximity": [
+									"ibm:yp:us-east",
+									"ibm:yp:us-south",
+									"ibm:yp:eu-gb",
+									"ibm:yp:eu-de",
+									"ibm:yp:au-syd"
+								],
+								"console_url": "https://console.bluemix.net",
+								"cf_api": "https://api.us-east.bluemix.net",
+								"mccp_api": "https://mccp.us-east.cf.cloud.ibm.com",
+								"type": "public",
+								"home": true,
+								"aliases": [],
+								"settings": {
+									"devops": {
+										"enabled": false
+									}
+								},
+								"org_name": "test-org-name",
+								"org_guid": "d67452c1-1dc4-4131-8558-220a83fe3e00"
+							}
+						]`),
+					),
+				)
+			})
+
+			It("Should return Organization with same name but different regions", func() {
+				regionalOrgs, err := newOrganizations(server.URL()).GetRegionInformation("d67452c1-1dc4-4131-8558-220a83fe3e00")
+				Expect(err).NotTo(HaveOccurred())
+				Expect(regionalOrgs).NotTo(BeEmpty())
+				Expect(regionalOrgs).To(HaveLen(2))
+				Expect(regionalOrgs[0].Name).To(Equal(regionalOrgs[1].Name))
+				Expect(regionalOrgs[0].Region).To(Equal("us-south"))
+				Expect(regionalOrgs[0].Home).To(BeTrue())
+				Expect(regionalOrgs[1].Region).To(Equal("us-east"))
+				Expect(regionalOrgs[1].Home).To(BeFalse())
+			})
+		})
+	})
+
 })
 
 func newOrganizations(url string) Organizations {
