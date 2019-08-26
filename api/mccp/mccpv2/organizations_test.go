@@ -523,7 +523,7 @@ var _ = Describe("Organizations", func() {
 				Expect(err).NotTo(HaveOccurred())
 				Expect(regionalOrgs).NotTo(BeEmpty())
 				Expect(regionalOrgs).To(HaveLen(2))
-				Expect(regionalOrgs[0].Name).To(Equal(regionalOrgs[1].Name))
+				Expect(regionalOrgs[0].OrgName).To(Equal(regionalOrgs[1].OrgName))
 				Expect(regionalOrgs[0].Region).To(Equal("us-south"))
 				Expect(regionalOrgs[0].Home).To(BeTrue())
 				Expect(regionalOrgs[1].Region).To(Equal("us-east"))
