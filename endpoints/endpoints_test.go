@@ -24,7 +24,7 @@ var _ = Describe("EndPoints", func() {
 
 		It("should return endpoints with region eu-gb", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.eu-gb.bluemix.net"))
-			Expect(locator.UAAEndpoint()).To(Equal("https://iam.cloud.ibm.com/cloudfoundry/login/eu-gb"))
+			Expect(locator.UAAEndpoint()).To(Equal("https://iam.cloud.ibm.com/cloudfoundry/login/uk-south"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accounts.cloud.ibm.com"))
 			Expect(locator.ICDEndpoint()).To(Equal("https://api.eu-gb.databases.cloud.ibm.com"))
 		})
@@ -35,7 +35,7 @@ var _ = Describe("EndPoints", func() {
 
 		It("should return endpoints with region au-syd", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.au-syd.bluemix.net"))
-			Expect(locator.UAAEndpoint()).To(Equal("https://iam.cloud.ibm.com/cloudfoundry/login/au-syd"))
+			Expect(locator.UAAEndpoint()).To(Equal("https://iam.cloud.ibm.com/cloudfoundry/login/ap-south"))
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accounts.cloud.ibm.com"))
 			Expect(locator.ICDEndpoint()).To(Equal("https://api.au-syd.databases.cloud.ibm.com"))
 		})
@@ -46,7 +46,7 @@ var _ = Describe("EndPoints", func() {
 
 		It("should return endpoints with region eu-de", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.eu-de.bluemix.net"))
-			Expect(locator.UAAEndpoint()).To(Equal("https://iam.cloud.ibm.com/cloudfoundry/login/eu-de"))
+			Expect(locator.UAAEndpoint()).To(Equal("https://iam.cloud.ibm.com/cloudfoundry/login/eu-central"))
 			Expect(locator.CisEndpoint()).To(Equal("https://api.cis.cloud.ibm.com"))
 			Expect(locator.ICDEndpoint()).To(Equal("https://api.eu-de.databases.cloud.ibm.com"))
 		})
