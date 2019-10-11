@@ -19,9 +19,9 @@ type ClusterCreateRequest struct {
 }
 
 type WorkerPoolConfig struct {
-	DiskEncryption bool   `json:"diskEncryption"`
+	DiskEncryption bool   `json:"diskEncryption,omitempty"`
 	Flavor         string `json:"flavor"`
-	Isolation      string `json:"isolation"`
+	Isolation      string `json:"isolation,omitempty"`
 	Labels         Label  `json:"labels"`
 	Name           string `json:"name" binding:"required" description:"The workerpool's name"`
 	VpcID          string `json:"vpcID"`
