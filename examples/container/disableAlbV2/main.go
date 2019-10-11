@@ -16,32 +16,33 @@ import (
 func main() {
 
 	c := new(bluemix.Config)
-
 	var location string
 	flag.StringVar(&location, "location", "dallas", "location")
 	var region string
 	flag.StringVar(&location, "region", "us-south", "region")
 
-	// var skipDeletion bool
-	// flag.BoolVar(&skipDeletion, "no-delete", false, "If provided will delete the resources created")
-
+	var zone string
+	flag.StringVar(&zone, "zone", "us-south-1", "Zone")
 	flag.Parse()
 
 	trace.Logger = trace.NewLogger("true")
-	// if privateVlan == "" || publicVlan == "" || updatePrivateVlan == "" || updatePublicVlan == "" || zone == "" || location == "" {
-	// 	flag.Usage()
-	// 	os.Exit(1)
-	// }
 
-	var poolinfo = v2.WorkerPoolRequest{
-		Cluster: "bm64u3ed02o93vv36hb0",
-		WorkerPoolConfig: v2.WorkerPoolConfig{
-			Flavor:      "c2.2x4",
-			Name:        "mywork2",
-			VpcID:       "6015365a-9d93-4bb4-8248-79ae0db2dc26",
-			WorkerCount: 1,
-			Zones:       []v2.Zone{},
-		},
+	var albinfo = v2.AlbConfig{
+		AlbBuild:             "579",
+		AlbID:                "private-crbm64u3ed02o93vv36hb0-alb1",
+		AlbType:              "private",
+		AuthBuild:            "341",
+		CreatedDate:          "",
+		DisableDeployment:    true,
+		Enable:               true,
+		LoadBalancerHostname: "",
+		Name:                 "",
+		NumOfInstances:       "",
+		Resize:               true,
+		State:                "disabled",
+		Status:               "",
+		Cluster:              "bm64u3ed02o93vv36hb0",
+		ZoneAlb:              "us-south-1",
 	}
 	sess, err := session.New(c)
 	if err != nil {
@@ -51,7 +52,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	target := v2.ClusterTargetHeader{}
 
 	target.Region = region
@@ -60,9 +60,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	workerpoolAPI := clusterClient.WorkerPools()
 
-	out, err := workerpoolAPI.CreateWorkerPool(poolinfo, target)
+	albAPI := clusterClient.Albs()
 
-	fmt.Println("out=", out)
+	err2 := albAPI.DisableAlb(albinfo, target)
+
+	fmt.Println("err=", err2)
+
 }
