@@ -118,6 +118,7 @@ type Clusters interface {
 	Create(params ClusterCreateRequest, target ClusterTargetHeader) (ClusterCreateResponse, error)
 	List(target ClusterTargetHeader) ([]ClusterInfo, error)
 	Delete(name string, target ClusterTargetHeader) error
+	GetCluster(name string, target ClusterTargetHeader) (*ClusterInfo, error)
 
 	//TODO Add other opertaions
 }
@@ -177,4 +178,15 @@ func (r *clusters) Delete(name string, target ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s", name)
 	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
+}
+
+//GetClusterByIDorName
+func (r *clusters) GetCluster(name string, target ClusterTargetHeader) (*ClusterInfo, error) {
+	ClusterInfo := &ClusterInfo{}
+	rawURL := fmt.Sprintf("/v2/vpc/getCluster?cluster=%s", name)
+	_, err := r.client.Get(rawURL, &ClusterInfo, target.ToMap())
+	if err != nil {
+		return nil, err
+	}
+	return ClusterInfo, err
 }
