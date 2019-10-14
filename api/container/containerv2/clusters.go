@@ -30,7 +30,7 @@ type WorkerPoolConfig struct {
 }
 
 type Label struct {
-	AdditionalProp1 string `json:"additionalProp2"`
+	AdditionalProp1 string `json:"additionalProp1"`
 	AdditionalProp2 string `json:"additionalProp2"`
 	AdditionalProp3 string `json:"additionalProp3"`
 }

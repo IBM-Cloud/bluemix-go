@@ -9,8 +9,6 @@ import (
 	bluemixHttp "github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/session"
 
-	v1 "github.com/IBM-Cloud/bluemix-go/api/container/containerv1"
-
 	"github.com/onsi/gomega/ghttp"
 
 	. "github.com/onsi/ginkgo"
@@ -54,7 +52,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return cluster list", func() {
-				target := v1.ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -82,7 +80,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return error when cluster are retrieved", func() {
-				target := v1.ClusterTargetHeader{
+				target := ClusterTargetHeader{
 					OrgID:     "abc",
 					SpaceID:   "def",
 					AccountID: "ghi",
@@ -102,7 +100,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": true, "name": "abcd", "podSubnet": "10.10.1.0", "provider": "abc", "serviceSubnet": "10.10.20.1", "workerPool": { "diskEncryption": true, "flavor": "b2c.4x16", "isolation": "", "name": "vpc-test", "vpcID": "vpc-test-123", "workerCount": 3, "zones": []}}`)
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "labels": {"additionalProp1": "", "additionalProp2": "", "additionalProp3": ""}, "zones": null}}`),
 						ghttp.RespondWith(http.StatusCreated, `{							 	
 							 "id": "f91adfe2-76c9-4649-939e-b01c37a3704c"
 						}`),
@@ -111,8 +109,11 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return cluster created", func() {
+				WPools := WorkerPoolConfig{
+					Flavor: "", Labels: Label{}, WorkerCount: 0, VpcID: "", Name: "",
+				}
 				params := ClusterCreateRequest{
-					Name: "testservice", PodSubnet: "10.10.1.0", Provider: "abc", ServiceSubnet: "10.10.20.1",
+					DisablePublicServiceEndpoint: false, KubeVersion: "", PodSubnet: "podnet", Provider: "abc", ServiceSubnet: "svcnet", Name: "abcd", WorkerPools: WPools,
 				}
 				target := ClusterTargetHeader{
 					OrgID:     "abc",
@@ -132,14 +133,17 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": true, "name": "abcd", "podSubnet": "10.10.1.0", "provider": "abc", "serviceSubnet": "10.10.20.1", "workerPool": { "diskEncryption": true, "flavor": "b2c.4x16", "isolation": "", "name": "vpc-test", "vpcID": "vpc-test-123", "workerCount": 3, "zones": []}}`),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "labels": {"additionalProp1": "", "additionalProp2": "", "additionalProp3": ""}, "zones": null}}`),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create cluster`),
 					),
 				)
 			})
 			It("should return error during cluster creation", func() {
+				WPools := WorkerPoolConfig{
+					Flavor: "", Labels: Label{}, WorkerCount: 0, VpcID: "", Name: "",
+				}
 				params := ClusterCreateRequest{
-					Name: "testservice", Datacenter: "dal10", MachineType: "free", PublicVlan: "vlan", PrivateVlan: "vlan", MasterVersion: "1.8.1", Prefix: "worker", WorkerNum: 1,
+					DisablePublicServiceEndpoint: false, KubeVersion: "", PodSubnet: "podnet", Provider: "abc", ServiceSubnet: "svcnet", Name: "abcd", WorkerPools: WPools,
 				}
 				target := ClusterTargetHeader{
 					OrgID:     "abc",
