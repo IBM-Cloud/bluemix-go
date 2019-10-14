@@ -170,7 +170,7 @@ func newCluster(url string) Clusters {
 
 	client := client.Client{
 		Config:      conf,
-		ServiceName: bluemix.MccpService,
+		ServiceName: bluemix.VpcContainerService,
 	}
 	return newClusterAPI(&client)
 }
