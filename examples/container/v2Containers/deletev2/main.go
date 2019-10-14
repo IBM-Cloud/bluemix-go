@@ -21,34 +21,15 @@ func main() {
 	var zone string
 	flag.StringVar(&zone, "zone", "us-south-1", "Zone")
 
-	// var privateVlan string
-	// flag.StringVar(&privateVlan, "privateVlan", "", "Zone Private Vlan")
-
-	// var publicVlan string
-	// flag.StringVar(&publicVlan, "publicVlan", "", "Zone Public vlan")
-
-	// var updatePrivateVlan string
-	// flag.StringVar(&updatePrivateVlan, "updatePrivateVlan", "", "Zone Private vlan to be updated")
-
-	// var updatePublicVlan string
-	// flag.StringVar(&updatePublicVlan, "updatePublicVlan", "", "Zone Public vlan to be updated")
-
 	var location string
 	flag.StringVar(&location, "location", "dallas", "location")
 
 	var region string
 	flag.StringVar(&location, "region", "us-south", "region")
 
-	// var skipDeletion bool
-	// flag.BoolVar(&skipDeletion, "no-delete", false, "If provided will delete the resources created")
-
 	flag.Parse()
 
 	trace.Logger = trace.NewLogger("true")
-	// if privateVlan == "" || publicVlan == "" || updatePrivateVlan == "" || updatePublicVlan == "" || zone == "" || location == "" {
-	// 	flag.Usage()
-	// 	os.Exit(1)
-	// }
 
 	sess, err := session.New(c)
 	if err != nil {
@@ -70,7 +51,7 @@ func main() {
 	clustersAPI := clusterClient.Clusters()
 
 	var name string
-	fmt.Print("Enter your text: ")
+	fmt.Print("Enter cluster name: ")
 	fmt.Scanf("%s", &name)
 	fmt.Println("out=", name)
 	err1 := clustersAPI.Delete(name, target)

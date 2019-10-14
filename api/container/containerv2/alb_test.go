@@ -209,7 +209,7 @@ func newAlbs(url string) Alb {
 
 	client := client.Client{
 		Config:      conf,
-		ServiceName: bluemix.MccpService,
+		ServiceName: bluemix.VpcContainerService,
 	}
 	return newAlbAPI(&client)
 }

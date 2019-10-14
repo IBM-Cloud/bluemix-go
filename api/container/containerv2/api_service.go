@@ -23,7 +23,7 @@ type ContainerServiceAPI interface {
 	//TODO Add other services
 }
 
-//ContainerService holds the client
+//VpcContainerService holds the client
 type csService struct {
 	*client.Client
 }
@@ -31,7 +31,7 @@ type csService struct {
 //New ...
 func New(sess *session.Session) (ContainerServiceAPI, error) {
 	config := sess.Config.Copy()
-	err := config.ValidateConfigForService(bluemix.ContainerService)
+	err := config.ValidateConfigForService(bluemix.VpcContainerService)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func New(sess *session.Session) (ContainerServiceAPI, error) {
 	}
 
 	return &csService{
-		Client: client.New(config, bluemix.ContainerService, tokenRefreher),
+		Client: client.New(config, bluemix.VpcContainerService, tokenRefreher),
 	}, nil
 }
 

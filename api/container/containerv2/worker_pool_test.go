@@ -169,6 +169,53 @@ var _ = Describe("workerpools", func() {
 			})
 		})
 	})
+	//Delete
+	Describe("Delete", func() {
+		Context("When delete of worker is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodDelete, "/v1/clusters/test/workerpools/abc-123-def-ghi"),
+						ghttp.RespondWith(http.StatusOK, `{							
+						}`),
+					),
+				)
+			})
+
+			It("should delete workerpool", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				err := newWorkerPool(server.URL()).DeleteWorkerPool("test", "abc-123-def-ghi", target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When cluster delete is failed", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodDelete, "/v1/clusters/test/workerpools/abc-123-def-ghi"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to delete worker`),
+					),
+				)
+			})
+
+			It("should return error service key delete", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				err := newWorkerPool(server.URL()).DeleteWorkerPool("test", "abc-123-def-ghi", target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
 })
 
 func newWorkerPool(url string) WorkerPool {
@@ -183,7 +230,7 @@ func newWorkerPool(url string) WorkerPool {
 
 	client := client.Client{
 		Config:      conf,
-		ServiceName: bluemix.MccpService,
+		ServiceName: bluemix.VpcContainerService,
 	}
 	return newWorkerPoolAPI(&client)
 }
