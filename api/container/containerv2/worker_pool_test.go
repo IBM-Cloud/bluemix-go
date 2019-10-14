@@ -101,7 +101,7 @@ var _ = Describe("workerpools", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkerPool?cluster=aaa&workerpool=bbb"),
+						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkerPool"),
 						ghttp.RespondWith(http.StatusCreated, `{
 							"flavor": "string",
 							"id": "string",
@@ -151,7 +151,7 @@ var _ = Describe("workerpools", func() {
 				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkerPool?cluster=aaa&workerpool=bbb"),
+						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkerPool"),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to get workerpool`),
 					),
 				)
