@@ -100,7 +100,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "labels": {"additionalProp1": "", "additionalProp2": "", "additionalProp3": ""}, "zones": null}}`),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "labels": {}, "zones": null}}`),
 						ghttp.RespondWith(http.StatusCreated, `{							 	
 							 "id": "f91adfe2-76c9-4649-939e-b01c37a3704c"
 						}`),
@@ -133,7 +133,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "labels": {"additionalProp1": "", "additionalProp2": "", "additionalProp3": ""}, "zones": null}}`),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "labels": {}, "zones": null}}`),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create cluster`),
 					),
 				)
@@ -170,7 +170,7 @@ func newCluster(url string) Clusters {
 
 	client := client.Client{
 		Config:      conf,
-		ServiceName: bluemix.MccpService,
+		ServiceName: bluemix.VpcContainerService,
 	}
 	return newClusterAPI(&client)
 }
