@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 
@@ -16,13 +15,6 @@ func main() {
 
 	c := new(bluemix.Config)
 
-	var location string
-	flag.StringVar(&location, "location", "dallas", "location")
-	var region string
-	flag.StringVar(&location, "region", "us-south", "region")
-
-	flag.Parse()
-
 	trace.Logger = trace.NewLogger("true")
 
 	sess, err := session.New(c)
@@ -35,8 +27,6 @@ func main() {
 	}
 
 	target := v2.ClusterTargetHeader{}
-
-	target.Region = region
 
 	var cluster_id = "bm64u3ed02o93vv36hb0"
 	var workerpool_id = "bm64u3ed02o93vv36hb0-0dc20a0"
