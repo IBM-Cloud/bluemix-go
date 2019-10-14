@@ -36,12 +36,7 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should create Alb in a cluster", func() {
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-					Region:    "eu-de",
-				}
+				target := ClusterTargetHeader{}
 				params := AlbCreateReq{
 					Cluster: "345", Type: "public", EnableByDefault: true, ZoneAlb: "us-south-1",
 				}
@@ -67,12 +62,7 @@ var _ = Describe("Albs", func() {
 				params := AlbCreateReq{
 					Cluster: "345", Type: "public", EnableByDefault: true, ZoneAlb: "us-south-1",
 				}
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-					Region:    "eu-de",
-				}
+				target := ClusterTargetHeader{}
 				err := newAlbs(server.URL()).CreateAlb(params, target)
 				Expect(err).To(HaveOccurred())
 			})
@@ -94,12 +84,7 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should enable Alb in a cluster", func() {
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-					Region:    "eu-de",
-				}
+				target := ClusterTargetHeader{}
 				params := AlbConfig{
 					AlbBuild: "579", AlbID: "private-crbm64u3ed02o93vv36hb0-alb1", AuthBuild: "341", Cluster: "345", CreatedDate: "", DisableDeployment: true, LoadBalancerHostname: "", AlbType: "private", Name: "", NumOfInstances: "", Resize: true, State: "disabled", Status: "", Enable: true, ZoneAlb: "us-south-1",
 				}
@@ -125,12 +110,7 @@ var _ = Describe("Albs", func() {
 				params := AlbConfig{
 					AlbBuild: "579", AlbID: "private-crbm64u3ed02o93vv36hb0-alb1", AlbType: "private", AuthBuild: "341", CreatedDate: "", DisableDeployment: true, Enable: true, LoadBalancerHostname: "", Name: "", NumOfInstances: "", Resize: true, State: "disabled", Status: "", Cluster: "345", ZoneAlb: "us-south-1",
 				}
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-					Region:    "eu-de",
-				}
+				target := ClusterTargetHeader{}
 				err := newAlbs(server.URL()).EnableAlb(params, target)
 				Expect(err).To(HaveOccurred())
 			})
@@ -152,12 +132,7 @@ var _ = Describe("Albs", func() {
 			})
 
 			It("should disable Alb in a cluster", func() {
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-					Region:    "eu-de",
-				}
+				target := ClusterTargetHeader{}
 				params := AlbConfig{
 					AlbBuild: "579", AlbID: "private-crbm64u3ed02o93vv36hb0-alb1", AlbType: "private", AuthBuild: "341", CreatedDate: "", DisableDeployment: true, Enable: true, LoadBalancerHostname: "", Name: "", NumOfInstances: "", Resize: true, State: "disabled", Status: "", Cluster: "345", ZoneAlb: "us-south-1",
 				}
@@ -183,12 +158,7 @@ var _ = Describe("Albs", func() {
 				params := AlbConfig{
 					AlbBuild: "579", AlbID: "private-crbm64u3ed02o93vv36hb0-alb1", AlbType: "private", AuthBuild: "341", CreatedDate: "", DisableDeployment: true, Enable: true, LoadBalancerHostname: "", Name: "", NumOfInstances: "", Resize: true, State: "disabled", Status: "", Cluster: "345", ZoneAlb: "us-south-1",
 				}
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-					Region:    "eu-de",
-				}
+				target := ClusterTargetHeader{}
 				err := newAlbs(server.URL()).DisableAlb(params, target)
 				Expect(err).To(HaveOccurred())
 			})

@@ -52,11 +52,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return cluster list", func() {
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-				}
+				target := ClusterTargetHeader{}
 				myCluster, err := newCluster(server.URL()).List(target)
 				Expect(myCluster).ShouldNot(BeNil())
 				for _, cluster := range myCluster {
@@ -80,11 +76,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return error when cluster are retrieved", func() {
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-				}
+				target := ClusterTargetHeader{}
 				myCluster, err := newCluster(server.URL()).List(target)
 				Expect(err).To(HaveOccurred())
 				Expect(myCluster).Should(BeNil())
@@ -115,11 +107,7 @@ var _ = Describe("Clusters", func() {
 				params := ClusterCreateRequest{
 					DisablePublicServiceEndpoint: false, KubeVersion: "", PodSubnet: "podnet", Provider: "abc", ServiceSubnet: "svcnet", Name: "abcd", WorkerPools: WPools,
 				}
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-				}
+				target := ClusterTargetHeader{}
 				myCluster, err := newCluster(server.URL()).Create(params, target)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(myCluster).ShouldNot(BeNil())
@@ -145,11 +133,7 @@ var _ = Describe("Clusters", func() {
 				params := ClusterCreateRequest{
 					DisablePublicServiceEndpoint: false, KubeVersion: "", PodSubnet: "podnet", Provider: "abc", ServiceSubnet: "svcnet", Name: "abcd", WorkerPools: WPools,
 				}
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-				}
+				target := ClusterTargetHeader{}
 				myCluster, err := newCluster(server.URL()).Create(params, target)
 				Expect(err).To(HaveOccurred())
 				Expect(myCluster.ID).Should(Equal(""))

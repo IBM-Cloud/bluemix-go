@@ -83,10 +83,6 @@ type ClusterInfo struct {
 
 //ClusterTargetHeader ...
 type ClusterTargetHeader struct {
-	OrgID         string
-	SpaceID       string
-	AccountID     string
-	Region        string
 	ResourceGroup string
 }
 
@@ -128,22 +124,12 @@ type clusters struct {
 }
 
 const (
-	orgIDHeader         = "X-Auth-Resource-Org"
-	spaceIDHeader       = "X-Auth-Resource-Space"
-	accountIDHeader     = "X-Auth-Resource-Account"
-	slUserNameHeader    = "X-Auth-Softlayer-Username"
-	slAPIKeyHeader      = "X-Auth-Softlayer-APIKey"
-	regionHeader        = "X-Region"
 	resourceGroupHeader = "X-Auth-Resource-Group"
 )
 
 //ToMap ...
 func (c ClusterTargetHeader) ToMap() map[string]string {
 	m := make(map[string]string, 3)
-	m[orgIDHeader] = c.OrgID
-	m[spaceIDHeader] = c.SpaceID
-	m[accountIDHeader] = c.AccountID
-	m[regionHeader] = c.Region
 	m[resourceGroupHeader] = c.ResourceGroup
 	return m
 }

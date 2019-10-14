@@ -37,12 +37,7 @@ var _ = Describe("workerpools", func() {
 			})
 
 			It("should create Workerpool in a cluster", func() {
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-					Region:    "eu-de",
-				}
+				target := ClusterTargetHeader{}
 				params := WorkerPoolRequest{
 					Cluster: "bm64u3ed02o93vv36hb0",
 					WorkerPoolConfig: WorkerPoolConfig{
@@ -82,12 +77,7 @@ var _ = Describe("workerpools", func() {
 						Zones:       []Zone{},
 					},
 				}
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-					Region:    "eu-de",
-				}
+				target := ClusterTargetHeader{}
 				_, err := newWorkerPool(server.URL()).CreateWorkerPool(params, target)
 				Expect(err).To(HaveOccurred())
 			})
@@ -134,12 +124,7 @@ var _ = Describe("workerpools", func() {
 			})
 
 			It("should get Workerpool in a cluster", func() {
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-					Region:    "eu-de",
-				}
+				target := ClusterTargetHeader{}
 
 				_, err := newWorkerPool(server.URL()).GetWorkerPool("aaa", "bbb", target)
 				Expect(err).NotTo(HaveOccurred())
@@ -158,12 +143,7 @@ var _ = Describe("workerpools", func() {
 			})
 
 			It("should return error during get workerpool", func() {
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-					Region:    "eu-de",
-				}
+				target := ClusterTargetHeader{}
 				_, err := newWorkerPool(server.URL()).GetWorkerPool("aaa", "bbb", target)
 				Expect(err).To(HaveOccurred())
 			})
@@ -184,11 +164,7 @@ var _ = Describe("workerpools", func() {
 			})
 
 			It("should delete workerpool", func() {
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-				}
+				target := ClusterTargetHeader{}
 				err := newWorkerPool(server.URL()).DeleteWorkerPool("test", "abc-123-def-ghi", target)
 				Expect(err).NotTo(HaveOccurred())
 			})
@@ -206,11 +182,7 @@ var _ = Describe("workerpools", func() {
 			})
 
 			It("should return error service key delete", func() {
-				target := ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-				}
+				target := ClusterTargetHeader{}
 				err := newWorkerPool(server.URL()).DeleteWorkerPool("test", "abc-123-def-ghi", target)
 				Expect(err).To(HaveOccurred())
 			})
