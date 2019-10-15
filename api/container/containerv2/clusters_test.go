@@ -9,8 +9,6 @@ import (
 	bluemixHttp "github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/session"
 
-	v1 "github.com/IBM-Cloud/bluemix-go/api/container/containerv1"
-
 	"github.com/onsi/gomega/ghttp"
 
 	. "github.com/onsi/ginkgo"
@@ -54,11 +52,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return cluster list", func() {
-				target := v1.ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-				}
+				target := ClusterTargetHeader{}
 				myCluster, err := newCluster(server.URL()).List(target)
 				Expect(myCluster).ShouldNot(BeNil())
 				for _, cluster := range myCluster {
@@ -82,11 +76,7 @@ var _ = Describe("Clusters", func() {
 			})
 
 			It("should return error when cluster are retrieved", func() {
-				target := v1.ClusterTargetHeader{
-					OrgID:     "abc",
-					SpaceID:   "def",
-					AccountID: "ghi",
-				}
+				target := ClusterTargetHeader{}
 				myCluster, err := newCluster(server.URL()).List(target)
 				Expect(err).To(HaveOccurred())
 				Expect(myCluster).Should(BeNil())
@@ -94,7 +84,62 @@ var _ = Describe("Clusters", func() {
 		})
 	})
 
-	//
+	//Create
+	Describe("Create", func() {
+		Context("When creation is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "labels": {}, "zones": null}}`),
+						ghttp.RespondWith(http.StatusCreated, `{							 	
+							 "id": "f91adfe2-76c9-4649-939e-b01c37a3704c"
+						}`),
+					),
+				)
+			})
+
+			It("should return cluster created", func() {
+				WPools := WorkerPoolConfig{
+					Flavor: "", Labels: Label{}, WorkerCount: 0, VpcID: "", Name: "",
+				}
+				params := ClusterCreateRequest{
+					DisablePublicServiceEndpoint: false, KubeVersion: "", PodSubnet: "podnet", Provider: "abc", ServiceSubnet: "svcnet", Name: "abcd", WorkerPools: WPools,
+				}
+				target := ClusterTargetHeader{}
+				myCluster, err := newCluster(server.URL()).Create(params, target)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(myCluster).ShouldNot(BeNil())
+				Expect(myCluster.ID).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704c"))
+			})
+		})
+		Context("When creation is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "labels": {}, "zones": null}}`),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create cluster`),
+					),
+				)
+			})
+			It("should return error during cluster creation", func() {
+				WPools := WorkerPoolConfig{
+					Flavor: "", Labels: Label{}, WorkerCount: 0, VpcID: "", Name: "",
+				}
+				params := ClusterCreateRequest{
+					DisablePublicServiceEndpoint: false, KubeVersion: "", PodSubnet: "podnet", Provider: "abc", ServiceSubnet: "svcnet", Name: "abcd", WorkerPools: WPools,
+				}
+				target := ClusterTargetHeader{}
+				myCluster, err := newCluster(server.URL()).Create(params, target)
+				Expect(err).To(HaveOccurred())
+				Expect(myCluster.ID).Should(Equal(""))
+			})
+		})
+	})
 })
 
 func newCluster(url string) Clusters {
@@ -109,7 +154,7 @@ func newCluster(url string) Clusters {
 
 	client := client.Client{
 		Config:      conf,
-		ServiceName: bluemix.MccpService,
+		ServiceName: bluemix.VpcContainerService,
 	}
 	return newClusterAPI(&client)
 }

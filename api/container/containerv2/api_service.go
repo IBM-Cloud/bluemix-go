@@ -17,10 +17,13 @@ const ErrCodeAPICreation = "APICreationError"
 //ContainerServiceAPI is the Aramda K8s client ...
 type ContainerServiceAPI interface {
 	Clusters() Clusters
+	WorkerPools() WorkerPool
+	Albs() Alb
+
 	//TODO Add other services
 }
 
-//ContainerService holds the client
+//VpcContainerService holds the client
 type csService struct {
 	*client.Client
 }
@@ -28,7 +31,7 @@ type csService struct {
 //New ...
 func New(sess *session.Session) (ContainerServiceAPI, error) {
 	config := sess.Config.Copy()
-	err := config.ValidateConfigForService(bluemix.ContainerService)
+	err := config.ValidateConfigForService(bluemix.VpcContainerService)
 	if err != nil {
 		return nil, err
 	}
@@ -59,11 +62,19 @@ func New(sess *session.Session) (ContainerServiceAPI, error) {
 	}
 
 	return &csService{
-		Client: client.New(config, bluemix.ContainerService, tokenRefreher),
+		Client: client.New(config, bluemix.VpcContainerService, tokenRefreher),
 	}, nil
 }
 
 //Clusters implements Clusters API
 func (c *csService) Clusters() Clusters {
 	return newClusterAPI(c.Client)
+}
+
+//WorkerPools implements Cluster WorkerPools API
+func (c *csService) WorkerPools() WorkerPool {
+	return newWorkerPoolAPI(c.Client)
+}
+func (c *csService) Albs() Alb {
+	return newAlbAPI(c.Client)
 }
