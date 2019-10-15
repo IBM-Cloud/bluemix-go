@@ -60,6 +60,7 @@ type WorkerPool interface {
 	CreateWorkerPool(workerPoolReq WorkerPoolRequest, target ClusterTargetHeader) (WorkerPoolResponse, error)
 	GetWorkerPool(clusterNameOrID, workerPoolNameOrID string, target ClusterTargetHeader) (GetWorkerPoolResponse, error)
 	CreateWorkerPoolZone(workerPoolZone WorkerPoolZone, target ClusterTargetHeader) error
+	DeleteWorkerPool(clusterNameOrID string, workerPoolNameOrID string, target ClusterTargetHeader) error
 }
 
 type workerpool struct {
@@ -84,6 +85,13 @@ func (w *workerpool) CreateWorkerPool(workerPoolReq WorkerPoolRequest, target Cl
 	var successV WorkerPoolResponse
 	_, err := w.client.Post("/v2/vpc/createWorkerPool", workerPoolReq, &successV, target.ToMap())
 	return successV, err
+}
+
+// DeleteWorkerPool calls the API to remove a worker pool
+func (w *workerpool) DeleteWorkerPool(clusterNameOrID string, workerPoolNameOrID string, target ClusterTargetHeader) error {
+	// Make the request, don't care about return value
+	_, err := w.client.Delete(fmt.Sprintf("/v1/clusters/%s/workerpools/%s", clusterNameOrID, workerPoolNameOrID), target.ToMap())
+	return err
 }
 
 // CreateWorkerPoolZone calls the API to add a zone to a cluster and worker pool

@@ -30,9 +30,9 @@ type WorkerPoolConfig struct {
 }
 
 type Label struct {
-	AdditionalProp1 string `json:"additionalProp2"`
-	AdditionalProp2 string `json:"additionalProp2"`
-	AdditionalProp3 string `json:"additionalProp3"`
+	AdditionalProp1 string `json:"additionalProp1,omitempty"`
+	AdditionalProp2 string `json:"additionalProp2,omitempty"`
+	AdditionalProp3 string `json:"additionalProp3,omitempty"`
 }
 
 type Zone struct {
@@ -83,10 +83,6 @@ type ClusterInfo struct {
 
 //ClusterTargetHeader ...
 type ClusterTargetHeader struct {
-	OrgID         string
-	SpaceID       string
-	AccountID     string
-	Region        string
 	ResourceGroup string
 }
 
@@ -118,6 +114,7 @@ type Clusters interface {
 	Create(params ClusterCreateRequest, target ClusterTargetHeader) (ClusterCreateResponse, error)
 	List(target ClusterTargetHeader) ([]ClusterInfo, error)
 	Delete(name string, target ClusterTargetHeader) error
+	GetCluster(name string, target ClusterTargetHeader) (*ClusterInfo, error)
 
 	//TODO Add other opertaions
 }
@@ -127,22 +124,12 @@ type clusters struct {
 }
 
 const (
-	orgIDHeader         = "X-Auth-Resource-Org"
-	spaceIDHeader       = "X-Auth-Resource-Space"
-	accountIDHeader     = "X-Auth-Resource-Account"
-	slUserNameHeader    = "X-Auth-Softlayer-Username"
-	slAPIKeyHeader      = "X-Auth-Softlayer-APIKey"
-	regionHeader        = "X-Region"
 	resourceGroupHeader = "X-Auth-Resource-Group"
 )
 
 //ToMap ...
 func (c ClusterTargetHeader) ToMap() map[string]string {
 	m := make(map[string]string, 3)
-	m[orgIDHeader] = c.OrgID
-	m[spaceIDHeader] = c.SpaceID
-	m[accountIDHeader] = c.AccountID
-	m[regionHeader] = c.Region
 	m[resourceGroupHeader] = c.ResourceGroup
 	return m
 }
@@ -177,4 +164,15 @@ func (r *clusters) Delete(name string, target ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s", name)
 	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
+}
+
+//GetClusterByIDorName
+func (r *clusters) GetCluster(name string, target ClusterTargetHeader) (*ClusterInfo, error) {
+	ClusterInfo := &ClusterInfo{}
+	rawURL := fmt.Sprintf("/v2/vpc/getCluster?cluster=%s", name)
+	_, err := r.client.Get(rawURL, &ClusterInfo, target.ToMap())
+	if err != nil {
+		return nil, err
+	}
+	return ClusterInfo, err
 }
