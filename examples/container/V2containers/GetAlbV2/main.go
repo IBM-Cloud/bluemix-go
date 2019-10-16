@@ -35,7 +35,7 @@ func main() {
 
 	albAPI := clusterClient.Albs()
 
-	albinfo, err2 := albAPI.GetALB(albid, target)
+	albinfo, err2 := albAPI.GetAlb(albid, target)
 
 	if err != nil {
 		log.Fatal(err2)

@@ -39,7 +39,7 @@ type Alb interface {
 	CreateAlb(albCreateReq AlbCreateReq, target ClusterTargetHeader) error
 	DisableAlb(disableAlbReq AlbConfig, target ClusterTargetHeader) error
 	EnableAlb(enableAlbReq AlbConfig, target ClusterTargetHeader) error
-	GetALB(albid string, target ClusterTargetHeader) (AlbConfig, error)
+	GetAlb(albid string, target ClusterTargetHeader) (AlbConfig, error)
 }
 
 func newAlbAPI(c *client.Client) Alb {
@@ -66,7 +66,7 @@ func (r *alb) EnableAlb(enableAlbReq AlbConfig, target ClusterTargetHeader) erro
 	return err
 }
 
-func (r *alb) GetALB(albID string, target ClusterTargetHeader) (AlbConfig, error) {
+func (r *alb) GetAlb(albID string, target ClusterTargetHeader) (AlbConfig, error) {
 	var successV AlbConfig
 	_, err := r.client.Get(fmt.Sprintf("/v2/alb/getAlb?albID=%s", albID), &successV, target.ToMap())
 	return successV, err
