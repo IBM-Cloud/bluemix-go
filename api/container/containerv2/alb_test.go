@@ -181,7 +181,7 @@ var _ = Describe("Albs", func() {
 			It("should get Alb in a cluster", func() {
 				target := ClusterTargetHeader{}
 
-				_, err := newAlbs(server.URL()).GetALB("aaa", target)
+				_, err := newAlbs(server.URL()).GetAlb("aaa", target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -199,7 +199,7 @@ var _ = Describe("Albs", func() {
 
 			It("should return error during get alb", func() {
 				target := ClusterTargetHeader{}
-				_, err := newAlbs(server.URL()).GetALB("aaa", target)
+				_, err := newAlbs(server.URL()).GetAlb("aaa", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
