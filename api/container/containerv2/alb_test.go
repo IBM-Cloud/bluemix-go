@@ -165,6 +165,46 @@ var _ = Describe("Albs", func() {
 		})
 	})
 
+	//GetAlbs
+	Describe("Get", func() {
+		Context("When Get Alb is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/alb/getAlb"),
+						ghttp.RespondWith(http.StatusCreated, `{"albBuild": "string","albID": "string","albType": "string","authBuild": "string","cluster": "string","createdDate": "string","disableDeployment": true,"enable": true,"loadBalancerHostname": "string","name": "string","numOfInstances": "string","resize": true,"state": "string","status": "string","zone": "string"}`),
+					),
+				)
+			})
+
+			It("should get Alb in a cluster", func() {
+				target := ClusterTargetHeader{}
+
+				_, err := newAlbs(server.URL()).GetALB("aaa", target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When get alb is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/alb/getAlb"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to get alb`),
+					),
+				)
+			})
+
+			It("should return error during get alb", func() {
+				target := ClusterTargetHeader{}
+				_, err := newAlbs(server.URL()).GetALB("aaa", target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+
 })
 
 func newAlbs(url string) Alb {
