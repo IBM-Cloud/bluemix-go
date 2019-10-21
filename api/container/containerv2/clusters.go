@@ -108,7 +108,7 @@ type Addon struct {
 
 //ClusterCreateResponse ...
 type ClusterCreateResponse struct {
-	ID string `json:"id"`
+	ID string `json:"clusterID"`
 }
 
 //Clusters interface
