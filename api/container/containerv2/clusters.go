@@ -42,37 +42,37 @@ type Zone struct {
 
 //ClusterInfo ...
 type ClusterInfo struct {
-	CreatedDate       string     `json:"createdDate"`
-	DataCenter        string     `json:"dataCenter"`
-	ID                string     `json:"id"`
-	Location          string     `json:"location"`
-	MasterKubeVersion string     `json:"masterKubeVersion"`
-	Name              string     `json:"name"`
-	Region            string     `json:"region"`
-	ResourceGroupID   string     `json:"resourceGroup"`
-	State             string     `json:"state"`
-	IsPaid            bool       `json:"isPaid"`
-	Addons            []Addon    `json:"addons"`
-	OwnerEmail        string     `json:"ownerEmail"`
-	Type              string     `json:"type"`
-	TargetVersion     string     `json:"targetVersion"`
-	ServiceSubnet     string     `json:"serviceSubnet"`
-	ResourceGroupName string     `json:"resourceGroupName"`
-	Provider          string     `json:"provider"`
-	PodSubnet         string     `json:"podSubnet"`
-	MultiAzCapable    bool       `json:"multiAzCapable"`
-	APIUser           string     `json:"apiUser"`
-	MasterURL         string     `json:"masterURL"`
-	DisableAutoUpdate bool       `json:"disableAutoUpdate"`
-	WorkerZones       []string   `json:"workerZones"`
-	Vpcs              []string   `json:"vpcs"`
-	CRN               string     `json:"crn"`
-	VersionEOS        string     `json:"versionEOS"`
-	ServiceEndpoints  Endpoints  `json:"serviceEndpoints"`
-	Lifecycle         Life       `json:"lifecycle"`
-	WorkerCount       int        `json:"workerCount"`
-	Ingress           IngresInfo `json:"ingress"`
-	Features          Feat       `json:"features"`
+	CreatedDate       string        `json:"createdDate"`
+	DataCenter        string        `json:"dataCenter"`
+	ID                string        `json:"id"`
+	Location          string        `json:"location"`
+	MasterKubeVersion string        `json:"masterKubeVersion"`
+	Name              string        `json:"name"`
+	Region            string        `json:"region"`
+	ResourceGroupID   string        `json:"resourceGroup"`
+	State             string        `json:"state"`
+	IsPaid            bool          `json:"isPaid"`
+	Addons            []Addon       `json:"addons"`
+	OwnerEmail        string        `json:"ownerEmail"`
+	Type              string        `json:"type"`
+	TargetVersion     string        `json:"targetVersion"`
+	ServiceSubnet     string        `json:"serviceSubnet"`
+	ResourceGroupName string        `json:"resourceGroupName"`
+	Provider          string        `json:"provider"`
+	PodSubnet         string        `json:"podSubnet"`
+	MultiAzCapable    bool          `json:"multiAzCapable"`
+	APIUser           string        `json:"apiUser"`
+	MasterURL         string        `json:"masterURL"`
+	DisableAutoUpdate bool          `json:"disableAutoUpdate"`
+	WorkerZones       []string      `json:"workerZones"`
+	Vpcs              []string      `json:"vpcs"`
+	CRN               string        `json:"crn"`
+	VersionEOS        string        `json:"versionEOS"`
+	ServiceEndpoints  Endpoints     `json:"serviceEndpoints"`
+	Lifecycle         LifeCycleInfo `json:"lifecycle"`
+	WorkerCount       int           `json:"workerCount"`
+	Ingress           IngresInfo    `json:"ingress"`
+	Features          Feat          `json:"features"`
 }
 type Feat struct {
 	KeyProtectEnabled bool `json:"keyProtectEnabled"`
@@ -82,7 +82,7 @@ type IngresInfo struct {
 	HostName   string `json:"hostname"`
 	SecretName string `json:"secretName"`
 }
-type Life struct {
+type LifeCycleInfo struct {
 	ModifiedDate             string `json:"modifiedDate"`
 	MasterStatus             string `json:"masterStatus"`
 	MasterStatusModifiedDate string `json:"masterStatusModifiedDate"`
