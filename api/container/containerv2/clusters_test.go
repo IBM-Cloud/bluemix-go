@@ -94,7 +94,7 @@ var _ = Describe("Clusters", func() {
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
 						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "labels": {}, "zones": null}}`),
 						ghttp.RespondWith(http.StatusCreated, `{							 	
-							 "id": "f91adfe2-76c9-4649-939e-b01c37a3704c"
+							 "clusterID": "f91adfe2-76c9-4649-939e-b01c37a3704c"
 						}`),
 					),
 				)
