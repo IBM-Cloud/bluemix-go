@@ -71,15 +71,15 @@ type ClusterInfo struct {
 	ServiceEndpoints  Endpoints  `json:"serviceEndpoints"`
 	Lifecycle         Life       `json:"lifecycle"`
 	WorkerCount       int        `json:"workerCount"`
-	Ingress           Ingresinfo `json:"ingress"`
+	Ingress           IngresInfo `json:"ingress"`
 	Features          Feat       `json:"features"`
 }
 type Feat struct {
 	KeyProtectEnabled bool `json:"keyProtectEnabled"`
 	PullSecretApplied bool `json:"pullSecretApplied"`
 }
-type Ingresinfo struct {
-	Hostname   string `json:"hostname"`
+type IngresInfo struct {
+	HostName   string `json:"hostname"`
 	SecretName string `json:"secretName"`
 }
 type Life struct {

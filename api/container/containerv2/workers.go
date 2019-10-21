@@ -15,7 +15,7 @@ type Worker struct {
 	Location          string       `json:"location"`
 	PoolID            string       `json:"poolid"`
 	PoolName          string       `json:"poolName"`
-	Lifecycle         Lifeinfo     `json:"lifecycle"`
+	LifeCycle         LifeInfo     `json:"lifecycle"`
 	Health            HealthStatus `json:"health"`
 	NetworkInterfaces []Network    `json:"networkInterfaces"`
 }
@@ -31,7 +31,7 @@ type HealthStatus struct {
 	Message string `json:"message"`
 	State   string `json:"state"`
 }
-type Lifeinfo struct {
+type LifeInfo struct {
 	ReasonForDelete    string `json:"reasonForDelete"`
 	ActualState        string `json:"actualState"`
 	DesiredState       string `json:"desiredState"`
@@ -52,6 +52,7 @@ type Network struct {
 //Workers ...
 type Workers interface {
 	ListByWorkerPool(clusterIDOrName, workerPoolIDOrName string, showDeleted bool, target ClusterTargetHeader) ([]Worker, error)
+	ListWorkers(clusterIDOrName string, showDeleted bool, target ClusterTargetHeader) ([]Worker, error)
 }
 
 type worker struct {
@@ -70,6 +71,17 @@ func (r *worker) ListByWorkerPool(clusterIDOrName, workerPoolIDOrName string, sh
 	if len(workerPoolIDOrName) > 0 {
 		rawURL += "&pool=" + workerPoolIDOrName
 	}
+	workers := []Worker{}
+	_, err := r.client.Get(rawURL, &workers, target.ToMap())
+	if err != nil {
+		return nil, err
+	}
+	return workers, err
+}
+
+//ListWorkers ...
+func (r *worker) ListWorkers(clusterIDOrName string, showDeleted bool, target ClusterTargetHeader) ([]Worker, error) {
+	rawURL := fmt.Sprintf("/v2/vpc/getWorkers?cluster=%s&showDeleted=%t", clusterIDOrName, showDeleted)
 	workers := []Worker{}
 	_, err := r.client.Get(rawURL, &workers, target.ToMap())
 	if err != nil {
