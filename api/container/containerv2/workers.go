@@ -12,12 +12,12 @@ type Worker struct {
 	Flavor            string `json:"flavor"`
 	ID                string `json:"id"`
 	KubeVersion       KubeDetails
-	Location          string       `json:"location"`
-	PoolID            string       `json:"poolid"`
-	PoolName          string       `json:"poolName"`
-	LifeCycle         LifeInfo     `json:"lifecycle"`
-	Health            HealthStatus `json:"health"`
-	NetworkInterfaces []Network    `json:"networkInterfaces"`
+	Location          string          `json:"location"`
+	PoolID            string          `json:"poolid"`
+	PoolName          string          `json:"poolName"`
+	LifeCycle         WorkerLifeCycle `json:"lifecycle"`
+	Health            HealthStatus    `json:"health"`
+	NetworkInterfaces []Network       `json:"networkInterfaces"`
 }
 
 type KubeDetails struct {
@@ -31,7 +31,7 @@ type HealthStatus struct {
 	Message string `json:"message"`
 	State   string `json:"state"`
 }
-type LifeInfo struct {
+type WorkerLifeCycle struct {
 	ReasonForDelete    string `json:"reasonForDelete"`
 	ActualState        string `json:"actualState"`
 	DesiredState       string `json:"desiredState"`
