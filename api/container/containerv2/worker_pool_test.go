@@ -28,7 +28,7 @@ var _ = Describe("workerpools", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createWorkerPool"),
-						ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","flavor":"b2.4x16","labels":{},"name":"mywork211","vpcID":"6015365a-9d93-4bb4-8248-79ae0db2dc26","workerCount":1,"zones":[]}`),
+						ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","flavor":"b2.4x16","name":"mywork211","vpcID":"6015365a-9d93-4bb4-8248-79ae0db2dc26","workerCount":1,"zones":[]}`),
 						ghttp.RespondWith(http.StatusCreated, `{
 							"workerPoolID":"string"
 						}`),
@@ -59,7 +59,7 @@ var _ = Describe("workerpools", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createWorkerPool"),
-						ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","flavor":"b2.4x16","labels":{},"name":"mywork211","vpcID":"6015365a-9d93-4bb4-8248-79ae0db2dc26","workerCount":1,"zones":[]}
+						ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","flavor":"b2.4x16","name":"mywork211","vpcID":"6015365a-9d93-4bb4-8248-79ae0db2dc26","workerCount":1,"zones":[]}
 `),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create workerpool`),
 					),
@@ -96,8 +96,6 @@ var _ = Describe("workerpools", func() {
 							"flavor": "string",
 							"id": "string",
 							"isolation": "string",
-							"labels": {
-							},
 							"lifecycle": {
 							  "actualState": "string",
 							  "desiredState": "string"

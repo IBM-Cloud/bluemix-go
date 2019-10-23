@@ -19,21 +19,21 @@ type ClusterCreateRequest struct {
 }
 
 type WorkerPoolConfig struct {
-	DiskEncryption bool   `json:"diskEncryption,omitempty"`
-	Flavor         string `json:"flavor"`
-	Isolation      string `json:"isolation,omitempty"`
-	Labels         Label  `json:"labels"`
-	Name           string `json:"name" binding:"required" description:"The workerpool's name"`
-	VpcID          string `json:"vpcID"`
-	WorkerCount    int    `json:"workerCount"`
-	Zones          []Zone `json:"zones"`
+	DiskEncryption bool              `json:"diskEncryption,omitempty"`
+	Flavor         string            `json:"flavor"`
+	Isolation      string            `json:"isolation,omitempty"`
+	Labels         map[string]string `json:"labels,omitempty"`
+	Name           string            `json:"name" binding:"required" description:"The workerpool's name"`
+	VpcID          string            `json:"vpcID"`
+	WorkerCount    int               `json:"workerCount"`
+	Zones          []Zone            `json:"zones"`
 }
 
-type Label struct {
-	AdditionalProp1 string `json:"additionalProp1,omitempty"`
-	AdditionalProp2 string `json:"additionalProp2,omitempty"`
-	AdditionalProp3 string `json:"additionalProp3,omitempty"`
-}
+// type Label struct {
+// 	AdditionalProp1 string `json:"additionalProp1,omitempty"`
+// 	AdditionalProp2 string `json:"additionalProp2,omitempty"`
+// 	AdditionalProp3 string `json:"additionalProp3,omitempty"`
+// }
 
 type Zone struct {
 	ID       string `json:"id,omitempty" description:"The id"`
@@ -92,6 +92,7 @@ type LifeCycleInfo struct {
 
 //ClusterTargetHeader ...
 type ClusterTargetHeader struct {
+	AccountID     string
 	ResourceGroup string
 }
 type Endpoints struct {
@@ -126,12 +127,14 @@ type clusters struct {
 }
 
 const (
+	accountIDHeader     = "X-Auth-Resource-Account"
 	resourceGroupHeader = "X-Auth-Resource-Group"
 )
 
 //ToMap ...
 func (c ClusterTargetHeader) ToMap() map[string]string {
 	m := make(map[string]string, 3)
+	m[accountIDHeader] = c.AccountID
 	m[resourceGroupHeader] = c.ResourceGroup
 	return m
 }
