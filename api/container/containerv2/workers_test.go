@@ -22,8 +22,8 @@ var _ = Describe("Workers", func() {
 	})
 
 	//ListByWorkerpool
-	Describe("Get", func() {
-		Context("When Get worker is successful", func() {
+	Describe("List", func() {
+		Context("When List worker is successful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
@@ -71,10 +71,85 @@ var _ = Describe("Workers", func() {
 				)
 			})
 
-			It("should get workers in a cluster", func() {
+			It("should list workers in a cluster", func() {
 				target := ClusterTargetHeader{}
 
 				_, err := newWorker(server.URL()).ListByWorkerPool("aaa", "bbb", true, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When list worker is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkers"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to list worker`),
+					),
+				)
+			})
+
+			It("should return error during get worker", func() {
+				target := ClusterTargetHeader{}
+				_, err := newWorker(server.URL()).ListByWorkerPool("aaa", "bbb", true, target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+
+	//Get
+	Describe("Get", func() {
+		Context("When Get worker is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorker"),
+						ghttp.RespondWith(http.StatusCreated, `{
+							  "flavor": "string",
+							  "health": {
+								"message": "string",
+								"state": "string"
+							  },
+							  "id": "string",
+							  "kubeVersion": {
+								"actual": "string",
+								"desired": "string",
+								"eos": "string",
+								"masterEOS": "string",
+								"target": "string"
+							  },
+							  "lifecycle": {
+								"actualState": "string",
+								"desiredState": "string",
+								"message": "string",
+								"messageDate": "string",
+								"messageDetails": "string",
+								"messageDetailsDate": "string",
+								"pendingOperation": "string",
+								"reasonForDelete": "string"
+							  },
+							  "location": "string",
+							  "networkInterfaces": [
+								{
+								  "cidr": "string",
+								  "ipAddress": "string",
+								  "primary": true,
+								  "subnetID": "string"
+								}
+							  ],
+							  "poolID": "string",
+							  "poolName": "string"
+							}`),
+					),
+				)
+			})
+
+			It("should get workers in a cluster", func() {
+				target := ClusterTargetHeader{}
+
+				_, err := newWorker(server.URL()).Get("test", "kube-bmrtar0d0st4h9b09vm0-myclustervp-default-0000013", target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -84,7 +159,7 @@ var _ = Describe("Workers", func() {
 				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkers"),
+						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorker"),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to get worker`),
 					),
 				)
@@ -92,7 +167,7 @@ var _ = Describe("Workers", func() {
 
 			It("should return error during get worker", func() {
 				target := ClusterTargetHeader{}
-				_, err := newWorker(server.URL()).ListByWorkerPool("aaa", "bbb", true, target)
+				_, err := newWorker(server.URL()).Get("test", "kube-bmrtar0d0st4h9b09vm0-myclustervp-default-0000013", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
