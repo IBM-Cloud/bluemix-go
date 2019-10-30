@@ -47,7 +47,7 @@ type Lifecycle struct {
 type ZoneResp struct {
 	ID          string   `json:"id"`
 	WorkerCount int      `json:"workerCount"`
-	Subnets     []Subnet `json:"subnet"`
+	Subnets     []Subnet `json:"subnets"`
 }
 
 type Subnet struct {
