@@ -147,6 +147,72 @@ var _ = Describe("workerpools", func() {
 			})
 		})
 	})
+
+	//List
+	//getworkerpools
+	Describe("List", func() {
+		Context("When list workerpool is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkerPools"),
+						ghttp.RespondWith(http.StatusCreated, `[{
+							"flavor": "string",
+							"id": "string",
+							"isolation": "string",
+							"lifecycle": {
+							  "actualState": "string",
+							  "desiredState": "string"
+							},
+							"poolName": "string",
+							"provider": "string",
+							"vpcID": "string",
+							"workerCount": 0,
+							"zones": [
+							  {
+								"id": "string",
+								"subnets": [
+								  {
+									"id": "string",
+									"primary": true
+								  }
+								],
+								"workerCount": 0
+							  }
+							]
+						  }]`),
+					),
+				)
+			})
+
+			It("should list Workerpools in a cluster", func() {
+				target := ClusterTargetHeader{}
+
+				_, err := newWorkerPool(server.URL()).ListWorkerPools("aaa", target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When list workerpool is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkerPools"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to list workerpool`),
+					),
+				)
+			})
+
+			It("should return error during get workerpools", func() {
+				target := ClusterTargetHeader{}
+				_, err := newWorkerPool(server.URL()).ListWorkerPools("aaa", target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+
 	//Delete
 	Describe("Delete", func() {
 		Context("When delete of worker is successful", func() {
