@@ -92,9 +92,9 @@ type OutputResponse struct {
 }
 
 type OutputValues struct {
-	Sensitive bool   `json:"sensitive"`
-	Value     string `json:"value"`
-	Type      string `json:"type"`
+	Sensitive bool        `json:"sensitive"`
+	Value     interface{} `json:"value"`
+	Type      string      `json:"type"`
 }
 
 // for index, value := range Output {
