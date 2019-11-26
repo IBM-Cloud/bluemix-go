@@ -26,7 +26,7 @@ var _ = Describe("connections", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v4/ibm/deployments/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/users/anyone/connections"),
+						ghttp.VerifyRequest(http.MethodGet, "/v4/ibm/deployments/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/users/anyone/connections/public"),
 						ghttp.RespondWith(http.StatusOK, `
                            {
                               "connection": {
@@ -115,7 +115,7 @@ var _ = Describe("connections", func() {
 				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v4/ibm/deployments/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/users/anyone/connections"),
+						ghttp.VerifyRequest(http.MethodGet, "/v4/ibm/deployments/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/users/anyone/connections/public"),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to get connection`),
 					),
 				)
@@ -137,7 +137,7 @@ var _ = Describe("connections", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v4/ibm/deployments/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/users/anyone/connections"),
+						ghttp.VerifyRequest(http.MethodGet, "/v4/ibm/deployments/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/users/anyone/connections/public"),
 						ghttp.RespondWith(http.StatusOK,
 							//  `
 							//   {"connection":
@@ -209,7 +209,7 @@ var _ = Describe("connections", func() {
 				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v4/ibm/deployments/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/users/anyone/connections"),
+						ghttp.VerifyRequest(http.MethodGet, "/v4/ibm/deployments/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/users/anyone/connections/public"),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to get connection`),
 					),
 				)
