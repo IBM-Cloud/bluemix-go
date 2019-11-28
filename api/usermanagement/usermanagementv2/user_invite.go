@@ -1,4 +1,4 @@
-package iamv2
+package usermanagementv2
 
 import (
 	"fmt"

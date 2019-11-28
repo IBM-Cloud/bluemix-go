@@ -7,7 +7,7 @@ import (
 	"os"
 
 	bluemix "github.com/IBM-Cloud/bluemix-go"
-	v2 "github.com/IBM-Cloud/bluemix-go/api/iam/iamv2"
+	v2 "github.com/IBM-Cloud/bluemix-go/api/usermanagement/usermanagementv2"
 	"github.com/IBM-Cloud/bluemix-go/models"
 	"github.com/IBM-Cloud/bluemix-go/session"
 	"github.com/IBM-Cloud/bluemix-go/trace"
