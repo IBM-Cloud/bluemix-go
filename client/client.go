@@ -21,6 +21,7 @@ import (
 //TokenProvider ...
 type TokenProvider interface {
 	RefreshToken() (string, error)
+	GetPasscode() (string, error)
 	AuthenticatePassword(string, string) error
 	AuthenticateAPIKey(string) error
 }
