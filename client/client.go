@@ -6,17 +6,15 @@ import (
 	"fmt"
 	"log"
 	"net"
+	gohttp "net/http"
 	"path"
 	"strings"
 	"sync"
 	"time"
 
-	gohttp "net/http"
-
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/bmxerror"
 	"github.com/IBM-Cloud/bluemix-go/http"
-
 	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
@@ -311,6 +309,10 @@ func getDefaultAuthHeaders(serviceName bluemix.ServiceName, c *bluemix.Config) g
 	case bluemix.ICDService:
 		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
+	case bluemix.CertificateManager:
+		h.Set(userAgentHeader, http.UserAgent())
+		h.Set(authorizationHeader, c.IAMAccessToken)
+
 	default:
 		log.Println("Unknown service - No auth headers set")
 	}
