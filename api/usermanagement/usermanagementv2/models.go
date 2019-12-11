@@ -1,4 +1,6 @@
-package models
+package usermanagementv2
+
+import "github.com/IBM-Cloud/bluemix-go/api/iampap/iampapv1"
 
 // User ...
 type User struct {
@@ -24,10 +26,10 @@ type UserInfo struct {
 
 // UserInvite ...
 type UserInvite struct {
-	Users             []User   `json:"users"`
-	IAMPolicy         []string `json:"iam_policy,omitempty"`
-	AccessGroup       []string `json:"access_groups,omitempty"`
-	OrganizationRoles []string `json:"organization_roles,omitempty"`
+	Users             []User       `json:"users"`
+	IAMPolicy         []UserPolicy `json:"iam_policy,omitempty"`
+	AccessGroup       []string     `json:"access_groups,omitempty"`
+	OrganizationRoles []string     `json:"organization_roles,omitempty"`
 }
 
 // UsersList to get list of users
@@ -36,4 +38,11 @@ type UsersList struct {
 	Limit      int        `json:"limit"`
 	FistURL    string     `json:"fist_url"`
 	Resources  []UserInfo `json:"resources"`
+}
+
+// UserPolicy ...
+type UserPolicy struct {
+	Type      string              `json:"type"`
+	Roles     []iampapv1.Role     `json:"roles"`
+	Resources []iampapv1.Resource `json:"resources"`
 }
