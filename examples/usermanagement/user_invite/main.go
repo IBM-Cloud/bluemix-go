@@ -52,6 +52,12 @@ func main() {
 	var serviceType string
 	flag.StringVar(&serviceType, "serviceType", "", "service type")
 
+	var infraPermission string
+	flag.StringVar(&infraPermission, "infraPermission", "", "Comma seperated list of infraPermissions")
+
+	var accessGroups string
+	flag.StringVar(&accessGroups, "accessGroups", "", "Comma seperated list of accessGroups")
+
 	trace.Logger = trace.NewLogger("true")
 	c := new(bluemix.Config)
 	flag.Parse()
@@ -139,6 +145,14 @@ func main() {
 	payload := v2.UserInvite{
 		Users:     users,
 		IAMPolicy: Policies,
+	}
+
+	if infraPermission != "" {
+		payload.InfrastructureRoles = v2.InfraPermissions{Permissions: strings.Split(infraPermission, ",")}
+	}
+
+	if accessGroups != "" {
+		payload.AccessGroup = strings.Split(accessGroups, ",")
 	}
 
 	out, err := userInvite.InviteUsers(accountID, payload)
