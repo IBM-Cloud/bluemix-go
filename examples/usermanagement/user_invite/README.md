@@ -40,6 +40,15 @@ go run main.go -userEmail new@in.ibm.com -accountID <account-id> -infraPermissio
 P_ADD,FIREWALL_RULE_MANAGE,LOADBALANCER_MANAGE"
 ```
 
+# Invite user with CloudFoundry roles 
+
+This example invites user to an account with Comma separated list of orgnization and space roles
+
+Example: 
+
+```
+go run main.go -userEmail new@in.ibm.com -accountID <account-id> -org <org-name> -space <space-name> -region <region> -orgRoles "BillingManager,Manager" -spaceRoles "Developer,Manager"
+```
 
 
 
