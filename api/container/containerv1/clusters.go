@@ -138,7 +138,7 @@ func (c ClusterSoftlayerHeader) ToMap() map[string]string {
 
 //ClusterCreateRequest ...
 type ClusterCreateRequest struct {
-	Billing                string `json:"billing,omitempty"`
+	GatewayEnabled         bool   `json:"GatewayEnabled" description:"true for gateway enabled cluster"`
 	Datacenter             string `json:"dataCenter" description:"The worker's data center"`
 	Isolation              string `json:"isolation" description:"Can be 'public' or 'private'"`
 	MachineType            string `json:"machineType" description:"The worker's machine type"`
@@ -150,9 +150,12 @@ type ClusterCreateRequest struct {
 	MasterVersion          string `json:"masterVersion,omitempty" description:"Desired version of the requested master"`
 	Prefix                 string `json:"prefix,omitempty" description:"hostname prefix for new workers"`
 	DiskEncryption         bool   `json:"diskEncryption" description:"disable encryption on a worker"`
-	EnableTrusted          bool   `json:"enableTrusted" description:"Set to true if trusted hardware should be requested"`
 	PrivateEndpointEnabled bool   `json:"privateSeviceEndpoint"`
 	PublicEndpointEnabled  bool   `json:"publicServiceEndpoint"`
+	DisableAutoUpdate      bool   `json:"disableAutoUpdate"`
+	DefaultWorkerPoolName  string `json:"defaultWorkerPoolName" description:"The name of default workerpool"`
+	PodSubnet              string `json:"podSubnet"`
+	ServiceSubnet          string `json:"serviceSubnet"`
 }
 
 // ServiceBindRequest ...
