@@ -167,13 +167,14 @@ func main() {
 	policy := v2.UserPolicy{Roles: iampapv1.ConvertRoleModels(filterRoles), Type: "access", Resources: []iampapv1.Resource{policyResource}}
 	var Policies = []v2.UserPolicy{policy}
 
-	payload := v2.UserInvite{
-		Users:     users,
-		IAMPolicy: Policies,
-	}
+	payload := v2.UserInvite{}
+
+	payload.Users = users
+
+	payload.IAMPolicy = Policies
 
 	if infraPermission != "" {
-		payload.InfrastructureRoles = v2.InfraPermissions{Permissions: strings.Split(infraPermission, ",")}
+		payload.InfrastructureRoles = &v2.InfraPermissions{Permissions: strings.Split(infraPermission, ",")}
 	}
 
 	if accessGroups != "" {
