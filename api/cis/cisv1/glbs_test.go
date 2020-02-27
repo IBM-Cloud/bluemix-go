@@ -8,11 +8,9 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/client"
 	bluemixHttp "github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/session"
-
-	"github.com/onsi/gomega/ghttp"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/ghttp"
 )
 
 var _ = Describe("Glbs", func() {
@@ -353,7 +351,7 @@ var _ = Describe("Glbs", func() {
                         `),
 					),
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPost, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/3fefc35e7decadb111dcf85d723a4f20/load_balancers/07085e0ea3c40225dcab6aff04cf64d9"),
+						ghttp.VerifyRequest(http.MethodPut, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/3fefc35e7decadb111dcf85d723a4f20/load_balancers/07085e0ea3c40225dcab6aff04cf64d9"),
 						ghttp.VerifyJSON(`{"proxied": true, "name": "www.example.com", "session_affinity": "none", "fallback_pool": "4112ba6c2974ec43886f90736968e888", "default_pools": ["6563ebae141638f92ebbdc4a821bef8c", "4112ba6c2974ec43886f90736968e838"]}`),
 						ghttp.RespondWith(http.StatusCreated, `
                            {
@@ -428,7 +426,7 @@ var _ = Describe("Glbs", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPost, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/3fefc35e7decadb111dcf85d723a4f20/load_balancers/07085e0ea3c40225dcab6aff04cf64d9"),
+						ghttp.VerifyRequest(http.MethodPut, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/3fefc35e7decadb111dcf85d723a4f20/load_balancers/07085e0ea3c40225dcab6aff04cf64d9"),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create Glb`),
 					),
 				)

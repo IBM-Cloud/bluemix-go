@@ -8,11 +8,9 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/client"
 	bluemixHttp "github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/session"
-
-	"github.com/onsi/gomega/ghttp"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/ghttp"
 )
 
 var _ = Describe("Dns", func() {
@@ -320,7 +318,7 @@ var _ = Describe("Dns", func() {
                       `),
 					),
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPost, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/3fefc35e7decadb111dcf85d723a4f20/dns_records/0f4740fc36065f8a9343c7ed9445f2a4"),
+						ghttp.VerifyRequest(http.MethodPut, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/3fefc35e7decadb111dcf85d723a4f20/dns_records/0f4740fc36065f8a9343c7ed9445f2a4"),
 						ghttp.RespondWith(http.StatusCreated, `
                        {
                           "result": {
@@ -376,7 +374,7 @@ var _ = Describe("Dns", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPost, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/0f4740fc36065f8a9343c7ed9445f2a4/dns_records/0f4740fc36065f8a9343c7ed9445f2a4"),
+						ghttp.VerifyRequest(http.MethodPut, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/zones/0f4740fc36065f8a9343c7ed9445f2a4/dns_records/0f4740fc36065f8a9343c7ed9445f2a4"),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to update Dns`),
 					),
 				)

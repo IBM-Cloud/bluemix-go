@@ -8,11 +8,9 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/client"
 	bluemixHttp "github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/session"
-
-	"github.com/onsi/gomega/ghttp"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/ghttp"
 )
 
 var _ = Describe("Pools", func() {
@@ -416,7 +414,7 @@ var _ = Describe("Pools", func() {
                         `),
 					),
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPost, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/load_balancers/pools/4112ba6c2974ec43886f90736968e838"),
+						ghttp.VerifyRequest(http.MethodPut, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/load_balancers/pools/4112ba6c2974ec43886f90736968e838"),
 						ghttp.RespondWith(http.StatusCreated, `
                            {
                               "result": {
@@ -506,7 +504,7 @@ var _ = Describe("Pools", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPost, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/load_balancers/pools/4112ba6c2974ec43886f90736968e838"),
+						ghttp.VerifyRequest(http.MethodPut, "/v1/crn:v1:staging:public:iam::::apikey:ApiKey-62fefdd1-4557-4c7d-8a1c-f6da7ee2ff3a/load_balancers/pools/4112ba6c2974ec43886f90736968e838"),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create Pool`),
 					),
 				)
