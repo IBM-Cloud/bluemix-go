@@ -14,7 +14,7 @@ import (
 //IAMUUMServiceAPIv2 is the resource client ...
 type IAMUUMServiceAPIv2 interface {
 	AccessGroup() AccessGroupRepository
-	// AccessGroupMember() AccessGroupMemberRepository
+	AccessGroupMember() AccessGroupMemberRepositoryV2
 }
 
 //ErrCodeAPICreation ...
@@ -68,7 +68,7 @@ func (a *iamuumService) AccessGroup() AccessGroupRepository {
 	return NewAccessGroupRepository(a.Client)
 }
 
-//AccessGroupMember API
-// func (a *iamuumService) AccessGroupMember() AccessGroupMemberRepository {
-// 	return NewAccessGroupMemberRepository(a.Client)
-// }
+// AccessGroupMember API
+func (a *iamuumService) AccessGroupMember() AccessGroupMemberRepositoryV2 {
+	return NewAccessGroupMemberRepository(a.Client)
+}
