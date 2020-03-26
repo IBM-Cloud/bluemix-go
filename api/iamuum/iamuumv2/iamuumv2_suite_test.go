@@ -9,5 +9,5 @@ import (
 
 func TestIamuumv2(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Iamuumv1 Suite")
+	RunSpecs(t, "Iamuumv2 Suite")
 }

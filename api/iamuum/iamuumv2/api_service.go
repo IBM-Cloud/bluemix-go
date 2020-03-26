@@ -14,7 +14,8 @@ import (
 //IAMUUMServiceAPIv2 is the resource client ...
 type IAMUUMServiceAPIv2 interface {
 	AccessGroup() AccessGroupRepository
-	// AccessGroupMember() AccessGroupMemberRepository
+	AccessGroupMember() AccessGroupMemberRepositoryV2
+	DynamicRule() DynamicRuleRepository
 }
 
 //ErrCodeAPICreation ...
@@ -68,7 +69,12 @@ func (a *iamuumService) AccessGroup() AccessGroupRepository {
 	return NewAccessGroupRepository(a.Client)
 }
 
-//AccessGroupMember API
-// func (a *iamuumService) AccessGroupMember() AccessGroupMemberRepository {
-// 	return NewAccessGroupMemberRepository(a.Client)
-// }
+// AccessGroupMember API
+func (a *iamuumService) AccessGroupMember() AccessGroupMemberRepositoryV2 {
+	return NewAccessGroupMemberRepository(a.Client)
+}
+
+// Dynamic Rule API
+func (a *iamuumService) DynamicRule() DynamicRuleRepository {
+	return NewDynamicRuleRepository(a.Client)
+}
