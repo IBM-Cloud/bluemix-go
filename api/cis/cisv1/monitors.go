@@ -10,7 +10,7 @@ type Monitor struct {
 	Id          string `json:"id"`
 	Path        string `json:"path"`
 	Description string `json:"description"`
-	Port        string `json:"port"`
+	Port        int    `json:"port"`
 	ExpBody     string `json:"expected_body"`
 	ExpCodes    string `json:"expected_codes"`
 	// Headers omitted future enhancement
@@ -42,7 +42,7 @@ type MonitorBody struct {
 	ExpCodes    string `json:"expected_codes"`
 	ExpBody     string `json:"expected_body"`
 	Path        string `json:"path"`
-  	Port        string `json:"port"`
+  	Port        int    `json:"port"`
 	// Headers ommited TBC
 	MonType         string `json:"type,omitempty"`
 	Method          string `json:"method,omitempty"`
