@@ -44,6 +44,7 @@ type DnsBody struct {
 	Content  string      `json:"content,omitempty"`
 	Priority int         `json:"priority,omitempty"`
 	Data     interface{} `json:"data,omitempty"`
+	Proxied  bool        `json:"proxied,omitempty"`
 }
 
 type Dns interface {
