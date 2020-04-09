@@ -20,7 +20,7 @@ type FirewallRecord struct {
 	Mode           string          `json:"mode,omitempty"`
 	Notes          string          `json:"notes,omitempty"`
 	Configuration  *Configuration  `json:"configuration,omitempty"`
-	Priority       int16           `json:"priority,omitempty"`
+	Priority       int             `json:"priority,omitempty"`
 }
 
 //Configuration ...
@@ -54,7 +54,7 @@ type FirewallBody struct {
 	Mode           string          `json:"mode,omitempty"`
 	Notes          string          `json:"notes,omitempty"`
 	Configuration  *Configuration  `json:"configuration,omitempty"`
-	Priority       int16           `json:"priority,omitempty"`
+	Priority       int             `json:"priority,omitempty"`
 }
 
 //Firewall ...
