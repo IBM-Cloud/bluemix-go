@@ -12,12 +12,12 @@ import (
 
 func main() {
 
-	var cis_id = "crn:v1:bluemix:public:internet-svcs:global:a/4448261269a14562b839e0a3019ed980:7e8666d0-67ce-4fc1-a17f-f80f5459c5c2::"
-	//flag.StringVar(&cis_id, "cis_id", "", "CRN of the CIS service instance")
-	var zone_id = "5e7dd209f43b1d247ea3863c7e465db0"
-	//flag.StringVar(&zone_id, "zone_id", "", "zone_id for zone")
-	var firewallType = "lockdowns"
-	//flag.StringVar(&firewallType, "firewallType", "", "firewallType for zone")
+	var cis_id string
+	flag.StringVar(&cis_id, "cis_id", "", "CRN of the CIS service instance")
+	var zone_id string
+	flag.StringVar(&zone_id, "zone_id", "", "zone_id for zone")
+	var firewallType string
+	flag.StringVar(&firewallType, "firewallType", "", "firewallType for zone")
 
 	flag.Parse()
 
@@ -38,7 +38,7 @@ func main() {
 	}
 	firewallAPI := cisClient.Firewall()
 
-	log.Println(">>>>>>>>>  Dns create")
+	log.Println(">>>>>>>>>  Firewall create")
 
 	params := cisv1.FirewallBody{
 		Paused:         false,
@@ -54,9 +54,6 @@ func main() {
 
 	log.Println(params)
 
-	// params.Configurations[0].Target = "ip"
-	// params.Configurations[0].Value = "127.0.0.2"
-
 	myFirewallPtr, err := firewallAPI.CreateFirewall(cis_id, zone_id, firewallType, params)
 
 	if err != nil {
@@ -65,9 +62,9 @@ func main() {
 
 	myFirewall := *myFirewallPtr
 	FirewallID := myFirewall.ID
-	log.Println("Dns create :", myFirewall)
+	log.Println("Firewall create :", myFirewall)
 
-	log.Println(">>>>>>>>>  Dns read")
+	log.Println(">>>>>>>>>  Firewall read")
 	myFirewallPtr, err = firewallAPI.GetFirewall(cis_id, zone_id, firewallType, FirewallID)
 
 	if err != nil {
@@ -76,9 +73,9 @@ func main() {
 
 	myFirewall = *myFirewallPtr
 
-	log.Println("Dns Details by ID:", myFirewall)
+	log.Println("Firewall Details by ID:", myFirewall)
 
-	log.Println(">>>>>>>>>  Dns delete")
+	log.Println(">>>>>>>>>  Firewall delete")
 	err = firewallAPI.DeleteFirewall(cis_id, zone_id, firewallType, FirewallID)
 	if err != nil {
 		log.Fatal(err)
