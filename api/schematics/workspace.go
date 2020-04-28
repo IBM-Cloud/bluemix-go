@@ -25,6 +25,7 @@ type WorkspaceConfig struct {
 	SharedData         SharedDataInfo     `json:"shared_data"`
 	UpdatedAt          string             `json:"updated_at"`
 	LastHealthCheckAt  string             `json:"last_health_check_at"`
+	CatalogRef         CatalogInfo        `json:"catalog_ref"`
 }
 
 type StatusMsgInfo struct {
@@ -41,16 +42,16 @@ type StatusInfo struct {
 }
 
 type TemplateDataInfo struct {
-	Env                 []EnvValues         `json:"env_values"`
-	Folder              string              `json:"folder"`
-	TemplateID          string              `json:"id"`
-	Type                string              `json:"type"`
-	Locked              bool                `json:"locked"`
-	UninstallScriptName string              `json:"uninstall_script_name"`
-	Values              string              `json:"values"`
-	ValuesMetadata      []map[string]string `json:"values_metadata"`
-	ValuesURL           string              `json:"values_url"`
-	Variablestore       []Variablestore     `json:"variablestore"`
+	Env                 []EnvValues     `json:"env_values"`
+	Folder              string          `json:"folder"`
+	TemplateID          string          `json:"id"`
+	Type                string          `json:"type"`
+	Locked              bool            `json:"locked"`
+	UninstallScriptName string          `json:"uninstall_script_name"`
+	Values              string          `json:"values"`
+	ValuesMetadata      interface{}     `json:"values_metadata"`
+	ValuesURL           string          `json:"values_url"`
+	Variablestore       []Variablestore `json:"variablestore"`
 }
 
 type RuntimeDataInfo struct {
@@ -136,6 +137,14 @@ type TemplateData struct {
 	Variablestore []Variablestore `json:"variablestore"`
 }
 
+type CatalogInfo struct {
+	ItemID          string `json:"item_id"`
+	ItemName        string `json:"item_name"`
+	ItemURL         string `json:"item_url"`
+	ItemReadmeURL   string `json:"item_readme_url"`
+	ItemIconURL     string `json:"item_icon_url"`
+	OfferingVersion string `json:"offering_version"`
+}
 type workspace struct {
 	client *client.Client
 }
