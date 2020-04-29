@@ -26,6 +26,7 @@ type WorkspaceConfig struct {
 	UpdatedAt          string             `json:"updated_at"`
 	LastHealthCheckAt  string             `json:"last_health_check_at"`
 	CatalogRef         CatalogInfo        `json:"catalog_ref"`
+	CRN                string             `json:"crn"`
 }
 
 type StatusMsgInfo struct {
