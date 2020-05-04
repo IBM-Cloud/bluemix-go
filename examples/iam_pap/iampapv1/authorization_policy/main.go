@@ -175,7 +175,7 @@ func main() {
 	createdAuthPolicy, err := authPolicy.Create(policy)
 
 	if err != nil {
-		log.Fatal("Error creating authorization policy: %s", err)
+		log.Fatal(err)
 	}
 	
 	log.Println(createdAuthPolicy)
