@@ -54,7 +54,7 @@ func main() {
 	flag.BoolVar(&c.Debug, "debug", false, "Show full trace if on")
 	flag.Parse()
 
-	if org == "" || sourceResourceGroupId == "" {
+	if org == "" || sourceServiceName == "" || targetServiceName == "" {
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -170,13 +170,26 @@ func main() {
 		log.Fatal(err)
 	}
 	
-	authPolicy, err := iampapClient.V1Policy().Create(policy)
+	authPolicy := iampapClient.V1Policy()
+	
+	createdAuthPolicy, err := authPolicy.Create(policy)
 
 	if err != nil {
 		log.Fatal("Error creating authorization policy: %s", err)
 	}
 	
-	log.Println(authPolicy)
+	log.Println(createdAuthPolicy)
+	
+	getPolicy, err := authPolicy.Get(createdAuthPolicy.ID)
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	log.Println(getPolicy)
+
+	err = authPolicy.Delete(createdAuthPolicy.ID)
+	if err != nil {
+		log.Fatal(err)
+	}
 		
 }
