@@ -31,7 +31,8 @@ var _ = Describe("Clusters", func() {
 						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getClusters"),
 						ghttp.RespondWith(http.StatusOK, `[{
               "CreatedDate": "",
-              "DataCenter": "dal10",
+			  "DataCenter": "dal10",
+			  "Entitlement": "",
               "ID": "f91adfe2-76c9-4649-939e-b01c37a3704",
               "IngressHostname": "",
               "IngressSecretName": "",
@@ -92,7 +93,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null}}`),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": ""}}`),
 						ghttp.RespondWith(http.StatusCreated, `{							 	
 							 "clusterID": "f91adfe2-76c9-4649-939e-b01c37a3704c"
 						}`),
@@ -121,17 +122,17 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null}}`),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": ""}}`),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create cluster`),
 					),
 				)
 			})
 			It("should return error during cluster creation", func() {
 				WPools := WorkerPoolConfig{
-					Flavor: "", WorkerCount: 0, VpcID: "", Name: "",
+					Flavor: "", WorkerCount: 0, VpcID: "", Name: "", Entitlement: "",
 				}
 				params := ClusterCreateRequest{
-					DisablePublicServiceEndpoint: false, KubeVersion: "", PodSubnet: "podnet", Provider: "abc", ServiceSubnet: "svcnet", Name: "abcd", WorkerPools: WPools,
+					DisablePublicServiceEndpoint: false, KubeVersion: "", PodSubnet: "podnet", Provider: "abc", ServiceSubnet: "svcnet", Name: "abcd", WorkerPools: WPools, DefaultWorkerPoolEntitlement: "",
 				}
 				target := ClusterTargetHeader{}
 				myCluster, err := newCluster(server.URL()).Create(params, target)
