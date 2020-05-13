@@ -55,7 +55,7 @@ func main() {
 	}
 	log.Println("\nresp=", resp)
 
-	listres, err := rAPI.List("", "")
+	listres, err := rAPI.ListAll(iampapv2.RoleQuery{AccountID: acID, ServiceName: "kms"})
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -17,50 +17,6 @@ var _ = Describe("RoleRepository", func() {
 		server *ghttp.Server
 	)
 
-	Describe("List()", func() {
-		Context("When API error 403 returns", func() {
-			BeforeEach(func() {
-				server = ghttp.NewServer()
-				server.AppendHandlers(
-					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v2/roles"),
-						ghttp.RespondWith(http.StatusForbidden, `
-						{
-							"message": "The provided access token does not have the proper authority to access this operation."
-						}`),
-					),
-				)
-			})
-
-			It("should return API 403 error", func() {
-				_, err := newTestRoleRepo(server.URL()).List("", "")
-				Expect(err).Should(HaveOccurred())
-				Expect(err.Error()).Should(ContainSubstring("Request failed with status code: 403"))
-			})
-		})
-
-		Context("When other JSON error returns", func() {
-			BeforeEach(func() {
-				server = ghttp.NewServer()
-				server.AppendHandlers(
-					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v2/roles"),
-						ghttp.RespondWith(http.StatusBadGateway, `{
-							"message": "other json error"
-						}`),
-					),
-				)
-			})
-
-			It("should return server error", func() {
-				_, err := newTestRoleRepo(server.URL()).List("", "")
-				Expect(err).Should(HaveOccurred())
-				Expect(err.Error()).Should(ContainSubstring("other json error"))
-			})
-		})
-
-	})
-
 	Describe("Create()", func() {
 		Context("When create one role", func() {
 			BeforeEach(func() {
