@@ -29,7 +29,7 @@ var _ = Describe("Clusters", func() {
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters"),
 						ghttp.VerifyJSON(`{"GatewayEnabled": false,"defaultWorkerPoolName": "","disableAutoUpdate": false,"podSubnet": "","serviceSubnet": "","dataCenter":"dal10","isolation":"","machineType":"b2c.4x16","name":"testservice","privateVlan":"vlan","publicVlan":"vlan","workerNum":1,"noSubnet":false,"masterVersion":"1.8.1","prefix":"worker","diskEncryption": true,"privateSeviceEndpoint": false,"publicServiceEndpoint": false,"defaultWorkerPoolEntitlement": ""}
 `),
-						ghttp.RespondWith(http.StatusCreated, `{							 	
+						ghttp.RespondWith(http.StatusCreated, `{
 							 "id": "f91adfe2-76c9-4649-939e-b01c37a3704c"
 						}`),
 					),
@@ -88,7 +88,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters"),
-						ghttp.RespondWith(http.StatusOK, `[{							 	
+						ghttp.RespondWith(http.StatusOK, `[{
               "CreatedDate": "",
               "DataCenter": "dal10",
               "ID": "f91adfe2-76c9-4649-939e-b01c37a3704",
@@ -158,7 +158,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test/masters"),
-						ghttp.RespondWith(http.StatusOK, `{							
+						ghttp.RespondWith(http.StatusOK, `{
 						}`),
 					),
 				)
@@ -205,7 +205,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete, "/v1/clusters/test"),
-						ghttp.RespondWith(http.StatusOK, `{							
+						ghttp.RespondWith(http.StatusOK, `{
 						}`),
 					),
 				)
@@ -252,7 +252,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test"),
-						ghttp.RespondWith(http.StatusOK, `{							 	
+						ghttp.RespondWith(http.StatusOK, `{
               "CreatedDate": "",
               "DataCenter": "dal10",
               "ID": "f91adfe2-76c9-4649-939e-b01c37a3704",
@@ -304,6 +304,112 @@ var _ = Describe("Clusters", func() {
 			})
 		})
 		Context("When cluster retrieve is failed", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to retrieve cluster`),
+					),
+				)
+			})
+
+			It("should return error when cluster is retrieved", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				myCluster, err := newCluster(server.URL()).Find("test", target)
+				Expect(err).To(HaveOccurred())
+				Expect(myCluster.ID).Should(Equal(""))
+			})
+		})
+	})
+	//FindWithOutShowResourcesCompatible
+	Describe("FindWithOutShowResourcesCompatible", func() {
+		Context("When read of cluster v1 is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/getCluster"),
+						ghttp.RespondWith(http.StatusOK, `{
+              "CreatedDate": "",
+              "DataCenter": "dal10",
+              "ID": "f91adfe2-76c9-4649-939e-b01c37a3704",
+              "IngressHostname": "",
+              "IngressSecretName": "",
+              "Location": "",
+              "MasterKubeVersion": "",
+              "ModifiedDate": "",
+              "Name": "test",
+              "Region": "abc",
+              "ServerURL": "https://test.com",
+              "State": "normal",
+              "IsPaid": false,
+              "IsTrusted": true,
+              "ResourceGroup": "abcd",
+              "WorkerCount": 1
+            }`),
+					),
+				)
+			})
+
+			It("should return cluster", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				myCluster, err := newCluster(server.URL()).FindWithOutShowResourcesCompatible("test", target)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(myCluster).ShouldNot(BeNil())
+				Expect(myCluster.ServerURL).Should(Equal("https://test.com"))
+			})
+		})
+		Context("When read of cluster v2 is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/getCluster"),
+						ghttp.RespondWith(http.StatusOK, `{
+	              "CreatedDate": "",
+	              "DataCenter": "dal10",
+	              "ID": "f91adfe2-76c9-4649-939e-b01c37a3704",
+	              "IngressHostname": "",
+	              "IngressSecretName": "",
+	              "Location": "",
+	              "MasterKubeVersion": "",
+	              "ModifiedDate": "",
+	              "Name": "test",
+	              "Region": "abc",
+	              "MasterURL": "https://test.master.com",
+	              "State": "normal",
+	              "IsPaid": false,
+	              "IsTrusted": true,
+	              "ResourceGroup": "abcd",
+	              "WorkerCount": 1
+	            }`),
+					),
+				)
+			})
+
+			It("should return cluster with masterURL", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				myCluster, err := newCluster(server.URL()).FindWithOutShowResourcesCompatible("test", target)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(myCluster).ShouldNot(BeNil())
+				Expect(myCluster.ServerURL).Should(Equal("https://test.master.com"))
+			})
+		})
+		Context("When cluster v1 retrieve is failed", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
 				server.SetAllowUnhandledRequests(true)
@@ -532,7 +638,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test/services/default"),
-						ghttp.RespondWith(http.StatusOK, `[{							 	
+						ghttp.RespondWith(http.StatusOK, `[{
               "ServiceName": "testService",
               "ServiceID": "f91adfe2-76c9-4649-939e-b01c37a3704",
               "ServiceKeyName": "kube-testService",
@@ -589,7 +695,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/test/services/default"),
-						ghttp.RespondWith(http.StatusOK, `[{							 	
+						ghttp.RespondWith(http.StatusOK, `[{
               "ServiceName": "testService",
               "ServiceID": "f91adfe2-76c9-4649-939e-b01c37a3704",
               "ServiceKeyName": "kube-testService",
