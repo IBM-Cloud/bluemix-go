@@ -20,22 +20,23 @@ func main() {
 
 	var clusterInfo = v2.ClusterCreateRequest{
 		DisablePublicServiceEndpoint: true,
-		KubeVersion:                  "1.15.3_1515",
-		Name:                         "mycluscretaed12",
+		KubeVersion:                  "4.3.23_openshift",
+		Name:                         "mycluscretaed123",
 		PodSubnet:                    "172.30.0.0/16",
-		Provider:                     "vpc-classic",
+		Provider:                     "vpc-gen2",
 		ServiceSubnet:                "172.21.0.0/16",
+		CosInstanceCRN:               "crn:v1:bluemix:public:cloud-object-storage:global:a/96fe4b4beb8947bf85223e69dab47878:cf577e01-4095-4b5e-a223-1d515a825cfd::",
 		WorkerPools: v2.WorkerPoolConfig{
 			DiskEncryption: true,
-			Flavor:         "c2.2x4",
-			Isolation:      "dedicated",
+			Flavor:         "bx2.16x64",
+			Isolation:      "shared",
 			Name:           "mywork1",
-			VpcID:          "6015365a-9d93-4bb4-8248-79ae0db2dc26",
-			WorkerCount:    1,
+			VpcID:          "r018-b50f22c1-f9c1-4337-8cff-5eb89d53f604",
+			WorkerCount:    2,
 			Zones: []v2.Zone{
 				{
-					ID:       "us-south-1",
-					SubnetID: "015ffb8b-efb1-4c03-8757-29335a07493b",
+					ID:       "eu-gb-1",
+					SubnetID: "0787-5b33830d-616b-4f5c-861a-40849e5203ce",
 				},
 			},
 		},
@@ -62,5 +63,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("ouyt=", out)
+	fmt.Println("out=", out)
 }
