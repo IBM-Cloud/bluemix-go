@@ -81,6 +81,45 @@ var _ = Describe("ServiceEndpoints", func() {
 		})
 	})
 
+	Describe("ListServiceEndpoints", func() {
+		Context("When list executes successfuly", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/serviceendpoints"),
+						ghttp.RespondWith(http.StatusOK, `[{"service":{"srvid":"test-srv-id","service":"test-terraform","customer":"test-customer","serviceAddresses":["10.102.33.133"],"estadoProto":"http","estadoPort":8080,"estadoPath":"/service","estadoResultCode":0,"tcpports":[8080,8081],"udpports":null,"tcpportrange":"","udpportrange":"","region":"us-south","dataCenters":["dal13"],"maxSpeed":"1g","url":"test-terraform.test.cloud.ibm.com","hostname":"","dedicated":1,"multitenant":1,"acl":null,"creationTime":"2019-06-05T05:55:40Z","owner":"IBM","bss":"IBM"},"endpoints":[{"seid":"test-srv-id-dal13","srvid":"test-srv-id","mbid":"test-mbid","crn":"crn:v1:bluemix:public:serviceendpoint:dal13:a/xxxxxx:test-srv-id-dal13::","staticAddress":"166.9.1.144","netmask":"25","dnsStatus":"Y","region":"us-south","dataCenter":"dal13","vlanid":2288443,"status":"Ready","serverGroup":"groupA","serviceStatus":null,"statusDetails":[{"address":"10.102.33.133","ping":1,"estado":1,"ports":["8080:1","8081:1"]}],"heartbeatTime":"2019-06-14T01:32:39Z"}]}]`),
+					),
+				)
+			})
+			It("should return the service info as an array", func() {
+				srvObj, err := newTestCseAPI(server.URL()).GetServiceEndpoints()
+
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect((*srvObj)[0].Service.ServiceName).Should(Equal("test-terraform"))
+				Expect((*srvObj)[0].Service.CustomerName).Should(Equal("test-customer"))
+			})
+		})
+
+		Context("When list fails", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/serviceendpoints"),
+						ghttp.RespondWith(http.StatusNotFound,
+							fmt.Sprintf(`{{"message":"Cannot list service endpoints"}}`)),
+					),
+				)
+			})
+			It("should return nil and an error", func() {
+				srvObj, err := newTestCseAPI(server.URL()).GetServiceEndpoints()
+				Expect(err).Should(HaveOccurred())
+				Expect(srvObj).Should(BeNil())
+			})
+		})
+	})
+
 	Describe("CreateServiceEndpoint", func() {
 		Context("When creation is successful", func() {
 			BeforeEach(func() {
@@ -198,6 +237,79 @@ var _ = Describe("ServiceEndpoints", func() {
 				}
 				err := newTestCseAPI(server.URL()).UpdateServiceEndpoint("", payload)
 
+				Expect(err).Should(HaveOccurred())
+			})
+		})
+	})
+
+	Describe("PatchServiceEndpoint", func() {
+		Context("When patch is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPatch, fmt.Sprintf("/v2/serviceendpoint/%s", srvID)),
+						ghttp.RespondWith(http.StatusOK,
+							fmt.Sprintf(`{"message": "Success to patch service endpoint: %s"}`, srvID)),
+					),
+				)
+			})
+			It("should return nil", func() {
+				payload := SePatchData{
+					SeUpdateData: SeUpdateData{
+						DataCenters: []string{"dal10", "dal13"},
+						TCPPorts:    []int{8080, 80, 8081},
+					},
+					Action: "add",
+				}
+				err := newTestCseAPI(server.URL()).PatchServiceEndpoint(srvID, payload)
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+		})
+		Context("When patch is failed", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPatch, fmt.Sprintf("/v2/serviceendpoint/%s", srvID)),
+						ghttp.RespondWith(http.StatusNotFound,
+							fmt.Sprintf(`{"message": "Not found service endpoint with id: %s"}`, srvID)),
+					),
+				)
+			})
+			It("should return an error", func() {
+				payload := SePatchData{
+					SeUpdateData: SeUpdateData{
+						DataCenters: []string{"dal10", "dal13"},
+						TCPPorts:    []int{8080, 80, 8081},
+					},
+					Action: "add",
+				}
+				err := newTestCseAPI(server.URL()).PatchServiceEndpoint(srvID, payload)
+				Expect(err).Should(HaveOccurred())
+			})
+		})
+
+		Context("When srvID is empty", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPatch, fmt.Sprintf("/v2/serviceendpoint/%s", srvID)),
+						ghttp.RespondWith(http.StatusOK,
+							fmt.Sprintf(`{"message": "Success to delete service endpoint: %s"}`, srvID)),
+					),
+				)
+			})
+			It("should return an error", func() {
+				payload := SePatchData{
+					SeUpdateData: SeUpdateData{
+						DataCenters: []string{"dal10", "dal13"},
+						TCPPorts:    []int{8080, 80, 8081},
+					},
+					Action: "add",
+				}
+				err := newTestCseAPI(server.URL()).PatchServiceEndpoint("", payload)
 				Expect(err).Should(HaveOccurred())
 			})
 		})
