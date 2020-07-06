@@ -3,6 +3,7 @@ package csev2
 import (
 	"errors"
 	"fmt"
+
 	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
@@ -38,6 +39,11 @@ type SeUpdateData struct {
 	ACL              []string `json:"acl"`
 }
 
+type SePatchData struct {
+	SeUpdateData
+	Action string `json:"action"`
+}
+
 type ServiceCSE struct {
 	SeCreateData
 	Srvid string `json:"srvid"`
@@ -60,8 +66,10 @@ type ServiceObject struct {
 
 type ServiceEndpoints interface {
 	GetServiceEndpoint(srvID string) (*ServiceObject, error)
+	GetServiceEndpoints() (*[]ServiceObject, error)
 	CreateServiceEndpoint(payload SeCreateData) (string, error)
 	UpdateServiceEndpoint(srvID string, payload SeUpdateData) error
+	PatchServiceEndpoint(srvID string, payload SePatchData) error
 	DeleteServiceEndpoint(srvID string) error
 }
 
@@ -82,6 +90,17 @@ func (r *serviceendpoints) GetServiceEndpoint(srvID string) (*ServiceObject, err
 
 	srvObj := ServiceObject{}
 	rawURL := fmt.Sprintf("/v2/serviceendpoint/%s", srvID)
+	_, err := r.client.Get(rawURL, &srvObj, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return &srvObj, nil
+}
+
+func (r *serviceendpoints) GetServiceEndpoints() (*[]ServiceObject, error) {
+	srvObj := []ServiceObject{}
+	rawURL := "/v2/serviceendpoints"
 	_, err := r.client.Get(rawURL, &srvObj, nil)
 	if err != nil {
 		return nil, err
@@ -124,6 +143,22 @@ func (r *serviceendpoints) UpdateServiceEndpoint(srvID string, payload SeUpdateD
 	rawURL := fmt.Sprintf("/v2/serviceendpointtf/%s", srvID)
 	result := make(map[string]interface{})
 	_, err := r.client.Put(rawURL, &payload, &result)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// The data of servcieendpoint will be patched with that in SePatchdata
+func (r *serviceendpoints) PatchServiceEndpoint(srvID string, payload SePatchData) error {
+	if len(srvID) == 0 {
+		return errors.New("empty srvID")
+	}
+
+	rawURL := fmt.Sprintf("/v2/serviceendpoint/%s", srvID)
+	result := make(map[string]interface{})
+	_, err := r.client.Patch(rawURL, &payload, &result)
 	if err != nil {
 		return err
 	}
