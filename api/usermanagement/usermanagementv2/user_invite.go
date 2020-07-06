@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	_UsersIDPath = "/v2/accounts/%s/users/%s"
-	_UsersURL    = "/v2/accounts/%s/users"
+	_UsersIDPath      = "/v2/accounts/%s/users/%s"
+	_UsersURL         = "/v2/accounts/%s/users"
+	_UserSettingsPath = "/v2/accounts/%s/users/%s/settings"
 )
 
 // Users ...
@@ -20,6 +21,9 @@ type Users interface {
 	InviteUsers(ibmUniqueID string, users UserInvite) (UserInvite, error)
 	UpdateUserProfile(ibmUniqueID string, userID string, user UserInfo) error
 	RemoveUsers(ibmUniqueID string, userID string) error
+	GetUserSettings(accountID string, iamID string) (UserSettingOptions, error)
+	//Same patch request is being used to create, update and delete
+	ManageUserSettings(accountID string, iamID string, userSettings UserSettingOptions) error
 }
 
 type inviteUsersHandler struct {
@@ -88,4 +92,29 @@ func (r *inviteUsersHandler) RemoveUsers(ibmUniqueID string, userID string) erro
 	URL := fmt.Sprintf(_UsersIDPath, ibmUniqueID, userID)
 	_, err := r.client.Delete(URL)
 	return err
+}
+
+func (r *inviteUsersHandler) GetUserSettings(accountID string, iamID string) (UserSettingOptions, error) {
+	settings := UserSettingOptions{}
+	URL := fmt.Sprintf(_UserSettingsPath, accountID, iamID)
+	_, err := r.client.Get(URL, &settings)
+	if err != nil {
+		return UserSettingOptions{}, err
+	}
+
+	return settings, nil
+}
+
+//Same patch request is being used to create, update and delete
+func (r *inviteUsersHandler) ManageUserSettings(accountID string, iamID string, userSettings UserSettingOptions) error {
+	URL := fmt.Sprintf(_UserSettingsPath, accountID, iamID)
+	request := rest.PutRequest(*r.client.Config.Endpoint + URL)
+	request = request.Body(&userSettings)
+
+	_, err := r.client.SendRequest(request, nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

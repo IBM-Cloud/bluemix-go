@@ -8,6 +8,22 @@ type User struct {
 	AccountRole string `json:"account_role"`
 }
 
+// UserSettings ...
+type UserSettingOptions struct {
+
+	//The console UI language
+	Language string `json:"language"`
+
+	//The language for email and phone notifications.
+	NotificationLanguage string `json:"notification_language"`
+
+	//The IP addresses listed here are the only ones from which this user can log in to IBM Cloud.
+	AllowedIPAddresses []string `json:"allowed_ip_addresses"`
+
+	//Whether user-managed login is enabled.
+	SelfManage string `json:"self_manage"`
+}
+
 // UserInfo contains user info
 type UserInfo struct {
 	ID             string `json:"id"`
