@@ -75,6 +75,9 @@ func main() {
 	var spaceRoles string
 	flag.StringVar(&spaceRoles, "spaceRoles", "", "Comma seperated list of accessGroups")
 
+	var allowedIP string
+	flag.StringVar(&allowedIP, "allowedIP", "", "Comma seperated list of allowedIP")
+
 	trace.Logger = trace.NewLogger("true")
 	c := new(bluemix.Config)
 	flag.Parse()
@@ -249,6 +252,26 @@ func main() {
 			break
 		}
 	}
+
+	settings, geterror := userInvite.GetUserSettings(accountID, UserIAMID)
+	if geterror != nil {
+		log.Fatal(geterror)
+	}
+
+	fmt.Println("GET User Settings=", settings)
+
+	UserSettingsPayload := v2.UserSettingOptions{}
+
+	if allowedIP != "" {
+		UserSettingsPayload.AllowedIPAddresses = allowedIP
+	}
+
+	resp, UserSettingError := userInvite.ManageUserSettings(accountID, UserIAMID, UserSettingsPayload)
+	if UserSettingError != nil {
+		log.Fatal(UserSettingError)
+	}
+
+	fmt.Println("PATCH User Settings=", resp)
 
 	profile, errProf := userInvite.GetUserProfile(accountID, UserIAMID)
 	if errProf != nil {

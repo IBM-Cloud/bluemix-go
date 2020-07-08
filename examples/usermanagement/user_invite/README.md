@@ -50,5 +50,15 @@ Example:
 go run main.go -userEmail new@in.ibm.com -accountID <account-id> -org <org-name> -space <space-name> -region <region> -orgRoles "BillingManager,Manager" -spaceRoles "Developer,Manager"
 ```
 
+# Grant a permission to a user from a set of whitelisted IPs to IBM Cloud console 
+
+This example configure a user with list of white-listed IPs from which he/she can access the IBM Cloud console. White-listed ip is a string in which all the IPs are comma seperated.
+
+Example: 
+
+```
+go run main.go -userEmail new@in.ibm.com -accountID <account-id> -allowedIP "192.168.0.0,192.168.0.1" -org <org-name> -space <space-name> -region <region> -orgRoles "BillingManager,Manager" -spaceRoles "Developer,Manager"
+```
+
 
 
