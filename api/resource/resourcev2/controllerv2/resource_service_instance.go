@@ -34,6 +34,12 @@ type ServiceInstanceQuery struct {
 	ServiceID       string
 	ServicePlanID   string
 	Name            string
+	Type            string
+	SubType         string
+	Limit           string
+	UpdatedFrom     string
+	UpdatedTo       string
+	Guid            string
 }
 
 //ErrCodeResourceServiceInstanceDoesnotExist ...
@@ -59,7 +65,13 @@ func (r *resourceServiceInstance) ListInstances(query ServiceInstanceQuery) ([]m
 	listRequest := rest.GetRequest("/v2/resource_instances").
 		Query("resource_group_id", query.ResourceGroupID).
 		Query("resource_id", query.ServiceID).
-		Query("resource_plan_id", query.ServicePlanID)
+		Query("resource_plan_id", query.ServicePlanID).
+		Query("type", query.Type).
+		Query("sub_type", query.SubType).
+		Query("limit", query.Limit).
+		Query("updated_from", query.UpdatedFrom).
+		Query("updated_to", query.UpdatedTo).
+		Query("guid", query.Guid)
 
 	req, err := listRequest.Build()
 	if err != nil {
