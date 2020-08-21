@@ -43,14 +43,14 @@ type ScalersBody struct {
 
 // CapacityBody ...
 type CapacityBody struct {
-	Enabled                   bool `json:"enabled,omitempty"`
+	Enabled                   bool `json:"enabled"`
 	FreeSpaceRemainingPercent int  `json:"free_space_remaining_percent,omitempty"`
 	FreeSpaceLessThanPercent  int  `json:"free_space_less_than_percent,omitempty"`
 }
 
 // IOBody ...
 type IOBody struct {
-	Enabled      bool   `json:"enabled,omitempty"`
+	Enabled      bool   `json:"enabled"`
 	AbovePercent int    `json:"above_percent,omitempty"`
 	OverPeriod   string `json:"over_period,omitempty"`
 }
