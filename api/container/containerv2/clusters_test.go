@@ -28,7 +28,7 @@ var _ = Describe("Clusters", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getClusters"),
+						ghttp.VerifyRequest(http.MethodGet, ContainSubstring("/v2/vpc/getClusters")),
 						ghttp.RespondWith(http.StatusOK, `[{
               "CreatedDate": "",
 			  "DataCenter": "dal10",
@@ -49,6 +49,29 @@ var _ = Describe("Clusters", func() {
               "WorkerCount": 1
               }]`),
 					),
+
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, ContainSubstring("/v2/satellite/getClusters")),
+						ghttp.RespondWith(http.StatusOK, `[{
+	              "CreatedDate": "",
+				  "DataCenter": "dal10",
+				  "Entitlement": "",
+	              "ID": "d91adfe2-76c9-4649-939e-b01c37a3704",
+	              "IngressHostname": "",
+	              "IngressSecretName": "",
+	              "Location": "",
+	              "MasterKubeVersion": "1.8.1",
+	              "Prefix": "worker",
+	              "ModifiedDate": "",
+	              "Name": "test",
+	              "Region": "abc",
+	              "ServerURL": "",
+	              "State": "normal",
+	              "IsPaid": false,
+	              "IsTrusted": true,
+	              "WorkerCount": 1
+	              }]`),
+					),
 				)
 			})
 
@@ -58,7 +81,7 @@ var _ = Describe("Clusters", func() {
 				Expect(myCluster).ShouldNot(BeNil())
 				for _, cluster := range myCluster {
 					Expect(err).NotTo(HaveOccurred())
-					Expect(cluster.ID).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704"))
+					Expect(cluster.ID).Should(Equal("d91adfe2-76c9-4649-939e-b01c37a3704"))
 					Expect(cluster.WorkerCount).Should(Equal(1))
 					Expect(cluster.MasterKubeVersion).Should(Equal("1.8.1"))
 				}
@@ -66,11 +89,12 @@ var _ = Describe("Clusters", func() {
 		})
 		Context("When read of clusters is unsuccessful", func() {
 			BeforeEach(func() {
+
 				server = ghttp.NewServer()
 				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getClusters"),
+						ghttp.VerifyRequest(http.MethodGet, ContainSubstring("/v2/")),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to retrieve clusters`),
 					),
 				)
@@ -94,7 +118,7 @@ var _ = Describe("Clusters", func() {
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
 						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": ""}}`),
-						ghttp.RespondWith(http.StatusCreated, `{							 	
+						ghttp.RespondWith(http.StatusCreated, `{
 							 "clusterID": "f91adfe2-76c9-4649-939e-b01c37a3704c"
 						}`),
 					),

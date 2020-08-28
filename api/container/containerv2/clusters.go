@@ -157,6 +157,14 @@ func (r *clusters) List(target ClusterTargetHeader) ([]ClusterInfo, error) {
 	if err != nil {
 		return nil, err
 	}
+	// get satellite clusters
+	satelliteClusters := []ClusterInfo{}
+	_, err = r.client.Get("/v2/satellite/getClusters", &satelliteClusters, target.ToMap())
+	if err != nil {
+		//return vpc clusters only
+		return clusters, err
+	}
+	clusters = append(clusters, satelliteClusters...)
 
 	return clusters, err
 }
