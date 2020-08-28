@@ -49,7 +49,6 @@ var _ = Describe("Clusters", func() {
               "WorkerCount": 1
               }]`),
 					),
-
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, ContainSubstring("/v2/satellite/getClusters")),
 						ghttp.RespondWith(http.StatusOK, `[{
@@ -79,12 +78,14 @@ var _ = Describe("Clusters", func() {
 				target := ClusterTargetHeader{}
 				myCluster, err := newCluster(server.URL()).List(target)
 				Expect(myCluster).ShouldNot(BeNil())
-				for _, cluster := range myCluster {
-					Expect(err).NotTo(HaveOccurred())
-					Expect(cluster.ID).Should(Equal("d91adfe2-76c9-4649-939e-b01c37a3704"))
-					Expect(cluster.WorkerCount).Should(Equal(1))
-					Expect(cluster.MasterKubeVersion).Should(Equal("1.8.1"))
-				}
+				Expect(err).NotTo(HaveOccurred())
+				Expect(len(myCluster)).Should(Equal(2))
+				Expect(myCluster[0].ID).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704"))
+				Expect(myCluster[0].WorkerCount).Should(Equal(1))
+				Expect(myCluster[0].MasterKubeVersion).Should(Equal("1.8.1"))
+				Expect(myCluster[1].ID).Should(Equal("d91adfe2-76c9-4649-939e-b01c37a3704"))
+				Expect(myCluster[1].WorkerCount).Should(Equal(1))
+				Expect(myCluster[1].MasterKubeVersion).Should(Equal("1.8.1"))
 			})
 		})
 		Context("When read of clusters is unsuccessful", func() {
