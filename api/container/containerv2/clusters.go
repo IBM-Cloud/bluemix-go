@@ -2,6 +2,7 @@ package containerv2
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/IBM-Cloud/bluemix-go/client"
 )
@@ -98,6 +99,7 @@ type LifeCycleInfo struct {
 type ClusterTargetHeader struct {
 	AccountID     string
 	ResourceGroup string
+	Provider      string // supported providers e.g vpc-classic , vpc-gen2, satellite
 }
 type Endpoints struct {
 	PrivateServiceEndpointEnabled bool   `json:"privateServiceEndpointEnabled"`
@@ -153,19 +155,27 @@ func newClusterAPI(c *client.Client) Clusters {
 //List ...
 func (r *clusters) List(target ClusterTargetHeader) ([]ClusterInfo, error) {
 	clusters := []ClusterInfo{}
-	_, err := r.client.Get("/v2/vpc/getClusters", &clusters, target.ToMap())
-	if err != nil {
-		return nil, err
+	var err error
+	if target.Provider != "satellite" {
+		getClustersPath := "/v2/vpc/getClusters"
+		if len(target.Provider) > 0 {
+			getClustersPath = fmt.Sprintf(getClustersPath+"?provider=%s", url.QueryEscape(target.Provider))
+		}
+		_, err := r.client.Get(getClustersPath, &clusters, target.ToMap())
+		if err != nil {
+			return nil, err
+		}
 	}
-	// get satellite clusters
-	satelliteClusters := []ClusterInfo{}
-	_, err = r.client.Get("/v2/satellite/getClusters", &satelliteClusters, target.ToMap())
-	if err != nil {
-		//return vpc clusters only
-		return clusters, err
+	if len(target.Provider) == 0 || target.Provider == "satellite" {
+		// get satellite clusters
+		satelliteClusters := []ClusterInfo{}
+		_, err = r.client.Get("/v2/satellite/getClusters", &satelliteClusters, target.ToMap())
+		if err != nil {
+			//return vpc clusters only
+			return clusters, err
+		}
+		clusters = append(clusters, satelliteClusters...)
 	}
-	clusters = append(clusters, satelliteClusters...)
-
 	return clusters, err
 }
 
