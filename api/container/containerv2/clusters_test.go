@@ -22,7 +22,7 @@ var _ = Describe("Clusters", func() {
 	})
 
 	//List
-	FDescribe("List", func() {
+	Describe("List", func() {
 		Context("When read of clusters is successful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
