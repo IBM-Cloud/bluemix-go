@@ -122,7 +122,7 @@ type ClusterCreateResponse struct {
 type Clusters interface {
 	Create(params ClusterCreateRequest, target ClusterTargetHeader) (ClusterCreateResponse, error)
 	List(target ClusterTargetHeader) ([]ClusterInfo, error)
-	Delete(name string, target ClusterTargetHeader) error
+	Delete(name string, target ClusterTargetHeader, deleteDependencies ...bool) error
 	GetCluster(name string, target ClusterTargetHeader) (*ClusterInfo, error)
 
 	//TODO Add other opertaions
@@ -187,8 +187,13 @@ func (r *clusters) Create(params ClusterCreateRequest, target ClusterTargetHeade
 }
 
 //Delete ...
-func (r *clusters) Delete(name string, target ClusterTargetHeader) error {
-	rawURL := fmt.Sprintf("/v1/clusters/%s", name)
+func (r *clusters) Delete(name string, target ClusterTargetHeader, deleteDependencies ...bool) error {
+	var rawURL string
+	if len(deleteDependencies) != 0 {
+		rawURL = fmt.Sprintf("/v1/clusters/%s?deleteResources=%t", name, deleteDependencies[0])
+	} else {
+		rawURL = fmt.Sprintf("/v1/clusters/%s", name)
+	}
 	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
 }
