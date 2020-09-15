@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 //ClusterCreateRequest ...
@@ -156,9 +157,11 @@ func newClusterAPI(c *client.Client) Clusters {
 func (r *clusters) List(target ClusterTargetHeader) ([]ClusterInfo, error) {
 	clusters := []ClusterInfo{}
 	var err error
+	// get non satellite clusters
 	if target.Provider != "satellite" {
 		getClustersPath := "/v2/vpc/getClusters"
 		if len(target.Provider) > 0 {
+			// if provider is vpc-classic, vpc-gen2
 			getClustersPath = fmt.Sprintf(getClustersPath+"?provider=%s", url.QueryEscape(target.Provider))
 		}
 		_, err := r.client.Get(getClustersPath, &clusters, target.ToMap())
@@ -171,8 +174,10 @@ func (r *clusters) List(target ClusterTargetHeader) ([]ClusterInfo, error) {
 		satelliteClusters := []ClusterInfo{}
 		_, err = r.client.Get("/v2/satellite/getClusters", &satelliteClusters, target.ToMap())
 		if err != nil {
-			//return vpc clusters only
-			return clusters, err
+			//return vpc clusters only, do not return the error
+			//Not all the users has permission to satellite offering
+			trace.Logger.Println("Unable to get the satellite clusters ", err)
+			return clusters, nil
 		}
 		clusters = append(clusters, satelliteClusters...)
 	}
