@@ -123,7 +123,7 @@ type ClusterCreateResponse struct {
 type Clusters interface {
 	Create(params ClusterCreateRequest, target ClusterTargetHeader) (ClusterCreateResponse, error)
 	List(target ClusterTargetHeader) ([]ClusterInfo, error)
-	Delete(name string, target ClusterTargetHeader) error
+	Delete(name string, target ClusterTargetHeader, deleteDependencies ...bool) error
 	GetCluster(name string, target ClusterTargetHeader) (*ClusterInfo, error)
 
 	//TODO Add other opertaions
@@ -157,11 +157,9 @@ func newClusterAPI(c *client.Client) Clusters {
 func (r *clusters) List(target ClusterTargetHeader) ([]ClusterInfo, error) {
 	clusters := []ClusterInfo{}
 	var err error
-	// get non satellite clusters
 	if target.Provider != "satellite" {
 		getClustersPath := "/v2/vpc/getClusters"
 		if len(target.Provider) > 0 {
-			// if provider is vpc-classic, vpc-gen2
 			getClustersPath = fmt.Sprintf(getClustersPath+"?provider=%s", url.QueryEscape(target.Provider))
 		}
 		_, err := r.client.Get(getClustersPath, &clusters, target.ToMap())
@@ -191,8 +189,13 @@ func (r *clusters) Create(params ClusterCreateRequest, target ClusterTargetHeade
 }
 
 //Delete ...
-func (r *clusters) Delete(name string, target ClusterTargetHeader) error {
-	rawURL := fmt.Sprintf("/v1/clusters/%s", name)
+func (r *clusters) Delete(name string, target ClusterTargetHeader, deleteDependencies ...bool) error {
+	var rawURL string
+	if len(deleteDependencies) != 0 {
+		rawURL = fmt.Sprintf("/v1/clusters/%s?deleteResources=%t", name, deleteDependencies[0])
+	} else {
+		rawURL = fmt.Sprintf("/v1/clusters/%s", name)
+	}
 	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
 }
