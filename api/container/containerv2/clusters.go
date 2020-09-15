@@ -173,11 +173,10 @@ func (r *clusters) List(target ClusterTargetHeader) ([]ClusterInfo, error) {
 		// get satellite clusters
 		satelliteClusters := []ClusterInfo{}
 		_, err = r.client.Get("/v2/satellite/getClusters", &satelliteClusters, target.ToMap())
-		if err != nil {
-			//return vpc clusters only, do not return the error
-			//Not all the users has permission to satellite offering
+		if err != nil && target.Provider == "satellite" {
+			// return error only when provider is satellite. Else ignore error and return VPC clusters
 			trace.Logger.Println("Unable to get the satellite clusters ", err)
-			return clusters, nil
+			return nil, err
 		}
 		clusters = append(clusters, satelliteClusters...)
 	}
