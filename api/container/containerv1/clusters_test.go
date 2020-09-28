@@ -267,7 +267,8 @@ var _ = Describe("Clusters", func() {
               "State": "normal",
               "IsPaid": false,
               "IsTrusted": true,
-              "ResourceGroup": "abcd",
+			  "ResourceGroup": "abcd",
+			  "ResourceGroupName": "abcdefgh",
               "WorkerCount": 1,
               "workerZones": [
 				    "zone"
@@ -350,7 +351,8 @@ var _ = Describe("Clusters", func() {
               "State": "normal",
               "IsPaid": false,
               "IsTrusted": true,
-              "ResourceGroup": "abcd",
+			  "ResourceGroup": "abcd",
+			  "ResourceGroupName": "abcdefgh",
               "WorkerCount": 1
             }`),
 					),
@@ -390,7 +392,8 @@ var _ = Describe("Clusters", func() {
 	              "State": "normal",
 	              "IsPaid": false,
 	              "IsTrusted": true,
-	              "ResourceGroup": "abcd",
+				  "ResourceGroup": "abcd",
+				  "ResourceGroupName": "abcdefgh",
 	              "WorkerCount": 1
 	            }`),
 					),
