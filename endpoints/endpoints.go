@@ -55,6 +55,7 @@ var regionToEndpoint = map[string]map[string]string{
 		"au-syd":   "https://api.au-syd.bluemix.net",
 		"eu-de":    "https://api.eu-de.bluemix.net",
 		"jp-tok":   "https://api.jp-tok.bluemix.net",
+		"eu-fr2":   "https://api.eu-fr2.bluemix.net",
 	},
 	"cr": {
 		"us-south": "https://registry.ng.bluemix.net",
@@ -63,6 +64,7 @@ var regionToEndpoint = map[string]map[string]string{
 		"au-syd":   "https://registry.au-syd.bluemix.net",
 		"eu-gb":    "https://registry.eu-gb.bluemix.net",
 		"jp-tok":   "https://registry.jp-tok.bluemix.net",
+		"eu-fr2":   "https://registry.eu-fr2.bluemix.net",
 	},
 	"cs": {
 		"global": "https://containers.cloud.ibm.com/global",
@@ -124,6 +126,7 @@ var regionToEndpoint = map[string]map[string]string{
 		"us-south": "https://us.schematics.cloud.ibm.com",
 		"eu-gb":    "https://eu-gb.schematics.cloud.ibm.com",
 		"eu-de":    "https://eu-de.schematics.cloud.ibm.com",
+		"eu-fr2":   "https://eu-fr2.schematics.cloud.ibm.com",
 	},
 	"usermanagement": {
 		"global": "https://user-management.cloud.ibm.com",
