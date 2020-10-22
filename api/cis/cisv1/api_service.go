@@ -24,6 +24,7 @@ type CisServiceAPI interface {
 	Settings() Settings
 	Ips() Ips
 	Dns() Dns
+	Certificates() Certificates
 }
 
 //CisService holds the client
@@ -102,6 +103,11 @@ func (c *cisService) Ips() Ips {
 //Settings implements DNS records API
 func (c *cisService) Dns() Dns {
 	return newDnsAPI(c.Client)
+}
+
+//Certificates implements Certificates records API
+func (c *cisService) Certificates() Certificates {
+	return newCertificatesApi(c.Client)
 }
 
 func errorsToString(e []Error) string {
