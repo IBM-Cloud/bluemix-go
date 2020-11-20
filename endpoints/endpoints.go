@@ -29,6 +29,7 @@ type EndpointLocator interface {
 	SchematicsEndpoint() (string, error)
 	UserManagementEndpoint() (string, error)
 	HpcsEndpoint() (string, error)
+	FunctionsEndpoint() (string, error)
 }
 
 const (
@@ -132,6 +133,13 @@ var regionToEndpoint = map[string]map[string]string{
 		"us-east":  "https://us-east.broker.hs-crypto.cloud.ibm.com/crypto_v2/",
 		"au-syd":   "https://au-syd.broker.hs-crypto.cloud.ibm.com/crypto_v2/",
 		"eu-de":    "https://eu-de.broker.hs-crypto.cloud.ibm.com/crypto_v2/",
+	},
+	"functions": {
+		"us-south": "https://us-south.functions.cloud.ibm.com",
+		"us-east":  "https://us-east.functions.cloud.ibm.com",
+		"eu-gb":    "https://eu-gb.functions.cloud.ibm.com",
+		"au-syd":   "https://au-syd.functions.cloud.ibm.com",
+		"eu-de":    "https://eu-de.functions.cloud.ibm.com",
 	},
 }
 
@@ -368,4 +376,15 @@ func (e *endpointLocator) HpcsEndpoint() (string, error) {
 		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("HPCS Service endpoint doesn't exist for region: %q", e.region))
+}
+
+func (e *endpointLocator) FunctionsEndpoint() (string, error) {
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_FUNCTIONS_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["functions"][e.region]; ok {
+		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+		return ep, nil
+	}
+	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Namespace Service endpoint doesn't exist for region: %q", e.region))
 }
