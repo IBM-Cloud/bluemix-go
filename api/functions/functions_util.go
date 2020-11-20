@@ -174,8 +174,16 @@ func (ns *NamespaceResponse) IsCf() bool {
 //IsIamEnabled ..
 func (ns *NamespaceResponse) IsIamEnabled() bool {
 	// IAM support - classic_type field is not included for new IAM namespaces so always return true if nil
-	if ns.ClassicType != nil {
-		return (*ns.ClassicType == NamespaceTypeIamMigrated)
+	if ns.ClassicType == nil {
+		return true
 	}
-	return true
+	return false
+}
+
+//IsMigrated ..
+func (ns *NamespaceResponse) IsMigrated() bool {
+	if *ns.ClassicType == NamespaceTypeIamMigrated {
+		return true
+	}
+	return false
 }
