@@ -240,6 +240,7 @@ func main() {
 
 	fmt.Println("Invited User=", out)
 
+	//Fetch users in first page (max 100 users)
 	usersList, errList := userInvite.GetUsers(accountID)
 	if errList != nil {
 		log.Fatal(errList)
@@ -247,11 +248,18 @@ func main() {
 	fmt.Println("List Of Users=", usersList)
 	var UserIAMID string
 	for _, u := range usersList.Resources {
-		if u.Email == userEmail {
+		if strings.ToLower(u.Email) == strings.ToLower(userEmail) {
 			UserIAMID = u.IamID
 			break
 		}
 	}
+
+	//Fetch ALL users in account
+	users_in_account, errList := userInvite.ListUsers(accountID)
+	if errList != nil {
+		log.Fatal(errList)
+	}
+	fmt.Println("Number Of Users=", len(users_in_account))
 
 	settings, geterror := userInvite.GetUserSettings(accountID, UserIAMID)
 	if geterror != nil {
