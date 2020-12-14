@@ -69,13 +69,13 @@ func newIngressAPI(c *client.Client) Ingress {
 // GetIngressSecretList returns a list of ingress secrets for a given cluster
 func (r *ingress) GetIngressSecretList(clusterNameOrID string, showDeleted bool) (response Secrets, err error) {
 	deleted := strconv.FormatBool(showDeleted)
-	_, err = r.client.Get(fmt.Sprintf("/ingress/v2/secret/getSecrets?cluster=%s&showDeleted=%s", clusterNameOrID, deleted), nil, &response)
+	_, err = r.client.Get(fmt.Sprintf("/ingress/v2/secret/getSecrets?cluster=%s&showDeleted=%s", clusterNameOrID, deleted), &response)
 	return
 }
 
 // GetIngressSecret returns a single ingress secret in a given cluster
 func (r *ingress) GetIngressSecret(clusterNameOrID, secretName, secretNamespace string) (response Secret, err error) {
-	_, err = r.client.Get(fmt.Sprintf("/ingress/v2/secret/getSecret?cluster=%s&name=%s&namespace=%s", clusterNameOrID, secretName, secretNamespace), nil, &response)
+	_, err = r.client.Get(fmt.Sprintf("/ingress/v2/secret/getSecret?cluster=%s&name=%s&namespace=%s", clusterNameOrID, secretName, secretNamespace), &response)
 	return
 }
 
