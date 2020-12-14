@@ -36,28 +36,27 @@ func main() {
 		log.Fatal(err)
 	}
 	ingressAPI := ingressClient.Ingresses()
-	target := v2.ClusterTargetHeader{}
 
 	// CREATE INGRESS SECRET
 	req := v2.SecretCreateConfig{
-		Cluster:     "bugi52rf0rtfgadjfso0",
-		Name:        "testabc2",
-		CRN:         "crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc",
+		Cluster:     clusterID,
+		Name:        "testabc123",
+		CRN:         certcrn,
 		Persistence: true,
 	}
-	resp, err := ingressAPI.CreateIngressSecret(req, target)
+	resp, err := ingressAPI.CreateIngressSecret(req)
 	fmt.Println("err=", err)
 
 	// Get INGRESS SECRET
-	_, err = ingressAPI.GetIngressSecret("bugi52rf0rtfgadjfso0", "testabc2", resp.Namespace, target)
+	_, err = ingressAPI.GetIngressSecret(clusterID, "testabc123", resp.Namespace)
 	fmt.Println("err=", err)
 
 	// Delete INGRESS SECRET
 	req1 := v2.SecretDeleteConfig{
-		Cluster:   "bugi52rf0rtfgadjfso0",
-		Name:      "testabc2",
+		Cluster:   clusterID,
+		Name:      "testabc123",
 		Namespace: resp.Namespace,
 	}
-	err = ingressAPI.DeleteIngressSecret(req1, target)
+	err = ingressAPI.DeleteIngressSecret(req1)
 	fmt.Println("err=", err)
 }

@@ -53,11 +53,11 @@ type ingress struct {
 
 //Ingress interface
 type Ingress interface {
-	CreateIngressSecret(req SecretCreateConfig, target ClusterTargetHeader) (response Secret, err error)
-	UpdateIngressSecret(req SecretUpdateConfig, target ClusterTargetHeader) (response Secret, err error)
-	DeleteIngressSecret(req SecretDeleteConfig, target ClusterTargetHeader) (err error)
-	GetIngressSecretList(clusterNameOrID string, showDeleted bool, target ClusterTargetHeader) (response Secrets, err error)
-	GetIngressSecret(clusterNameOrID, secretName, secretNamespace string, target ClusterTargetHeader) (response Secret, err error)
+	CreateIngressSecret(req SecretCreateConfig) (response Secret, err error)
+	UpdateIngressSecret(req SecretUpdateConfig) (response Secret, err error)
+	DeleteIngressSecret(req SecretDeleteConfig) (err error)
+	GetIngressSecretList(clusterNameOrID string, showDeleted bool) (response Secrets, err error)
+	GetIngressSecret(clusterNameOrID, secretName, secretNamespace string) (response Secret, err error)
 }
 
 func newIngressAPI(c *client.Client) Ingress {
@@ -67,32 +67,32 @@ func newIngressAPI(c *client.Client) Ingress {
 }
 
 // GetIngressSecretList returns a list of ingress secrets for a given cluster
-func (r *ingress) GetIngressSecretList(clusterNameOrID string, showDeleted bool, target ClusterTargetHeader) (response Secrets, err error) {
+func (r *ingress) GetIngressSecretList(clusterNameOrID string, showDeleted bool) (response Secrets, err error) {
 	deleted := strconv.FormatBool(showDeleted)
-	_, err = r.client.Get(fmt.Sprintf("/ingress/v2/secret/getSecrets?cluster=%s&showDeleted=%s", clusterNameOrID, deleted), nil, &response, target.ToMap())
+	_, err = r.client.Get(fmt.Sprintf("/ingress/v2/secret/getSecrets?cluster=%s&showDeleted=%s", clusterNameOrID, deleted), nil, &response)
 	return
 }
 
 // GetIngressSecret returns a single ingress secret in a given cluster
-func (r *ingress) GetIngressSecret(clusterNameOrID, secretName, secretNamespace string, target ClusterTargetHeader) (response Secret, err error) {
-	_, err = r.client.Get(fmt.Sprintf("/ingress/v2/secret/getSecret?cluster=%s&name=%s&namespace=%s", clusterNameOrID, secretName, secretNamespace), nil, &response, target.ToMap())
+func (r *ingress) GetIngressSecret(clusterNameOrID, secretName, secretNamespace string) (response Secret, err error) {
+	_, err = r.client.Get(fmt.Sprintf("/ingress/v2/secret/getSecret?cluster=%s&name=%s&namespace=%s", clusterNameOrID, secretName, secretNamespace), nil, &response)
 	return
 }
 
 // CreateIngressSecret creates an ingress secret with the given name in the given namespace
-func (r *ingress) CreateIngressSecret(req SecretCreateConfig, target ClusterTargetHeader) (response Secret, err error) {
-	_, err = r.client.Post("/ingress/v2/secret/createSecret", req, &response, target.ToMap())
+func (r *ingress) CreateIngressSecret(req SecretCreateConfig) (response Secret, err error) {
+	_, err = r.client.Post("/ingress/v2/secret/createSecret", req, &response)
 	return
 }
 
 // UpdateIngressSecret updates an existing secret with new cert values
-func (r *ingress) UpdateIngressSecret(req SecretUpdateConfig, target ClusterTargetHeader) (response Secret, err error) {
-	_, err = r.client.Post("/ingress/v2/secret/updateSecret", req, &response, target.ToMap())
+func (r *ingress) UpdateIngressSecret(req SecretUpdateConfig) (response Secret, err error) {
+	_, err = r.client.Post("/ingress/v2/secret/updateSecret", req, &response)
 	return
 }
 
 // DeleteIngressSecret deletes the ingress secret from the cluster
-func (r *ingress) DeleteIngressSecret(req SecretDeleteConfig, target ClusterTargetHeader) (err error) {
-	_, err = r.client.Post("/ingress/v2/secret/deleteSecret", req, nil, target.ToMap())
+func (r *ingress) DeleteIngressSecret(req SecretDeleteConfig) (err error) {
+	_, err = r.client.Post("/ingress/v2/secret/deleteSecret", req, nil)
 	return
 }
