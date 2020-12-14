@@ -35,14 +35,14 @@ var _ = Describe("Ingress Secrets", func() {
 			})
 
 			It("should create Ingress Secret in a cluster", func() {
-				target := ClusterTargetHeader{}
+
 				params := SecretCreateConfig{
 					Cluster:     "bugi52rf0rtfgadjfso0",
 					Name:        "testabc2",
 					CRN:         "crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc",
 					Persistence: true,
 				}
-				_, err := newIngresses(server.URL()).CreateIngressSecret(params, target)
+				_, err := newIngresses(server.URL()).CreateIngressSecret(params)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -67,8 +67,8 @@ var _ = Describe("Ingress Secrets", func() {
 					CRN:         "crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc",
 					Persistence: true,
 				}
-				target := ClusterTargetHeader{}
-				_, err := newIngresses(server.URL()).CreateIngressSecret(params, target)
+
+				_, err := newIngresses(server.URL()).CreateIngressSecret(params)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -89,13 +89,13 @@ var _ = Describe("Ingress Secrets", func() {
 			})
 
 			It("should destroy Ingress Secret in a cluster", func() {
-				target := ClusterTargetHeader{}
+
 				params := SecretDeleteConfig{
 					Cluster:   "bugi52rf0rtfgadjfso0",
 					Name:      "testabc2",
 					Namespace: "default",
 				}
-				err := newIngresses(server.URL()).DeleteIngressSecret(params, target)
+				err := newIngresses(server.URL()).DeleteIngressSecret(params)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -118,8 +118,8 @@ var _ = Describe("Ingress Secrets", func() {
 					Name:      "testabc2",
 					Namespace: "default",
 				}
-				target := ClusterTargetHeader{}
-				err := newIngresses(server.URL()).DeleteIngressSecret(params, target)
+
+				err := newIngresses(server.URL()).DeleteIngressSecret(params)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -139,9 +139,8 @@ var _ = Describe("Ingress Secrets", func() {
 			})
 
 			It("should get Ingress Secret in a cluster", func() {
-				target := ClusterTargetHeader{}
 
-				_, err := newIngresses(server.URL()).GetIngressSecret("bugi52rf0rtfgadjfso0", "testabc2", "default", target)
+				_, err := newIngresses(server.URL()).GetIngressSecret("bugi52rf0rtfgadjfso0", "testabc2", "default")
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -158,8 +157,8 @@ var _ = Describe("Ingress Secrets", func() {
 			})
 
 			It("should return error during get ingress", func() {
-				target := ClusterTargetHeader{}
-				_, err := newIngresses(server.URL()).GetIngressSecret("bugi52rf0rtfgadjfso0", "testabc2", "default", target)
+
+				_, err := newIngresses(server.URL()).GetIngressSecret("bugi52rf0rtfgadjfso0", "testabc2", "default")
 				Expect(err).To(HaveOccurred())
 			})
 		})
