@@ -16,13 +16,16 @@ import (
 
 func main() {
 	var org string
-	flag.StringVar(&org, "org", "smjtorg", "Bluemix Organization")
+	flag.StringVar(&org, "org", "umaraliorg", "Bluemix Organization")
 
 	var accessGroup string
-	flag.StringVar(&accessGroup, "accessGroup", "myacgroup1", "Bluemix access group name")
+	flag.StringVar(&accessGroup, "accessGroup", "test", "Bluemix access group name")
+
+	var user string
+	flag.StringVar(&user, "user", "umarali.nagoor@in.ibm.com", "IBM-id or email id of the user")
 
 	flag.Parse()
-	if org == "" || accessGroup == "" {
+	if org == "" || accessGroup == "" || user == "" {
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -82,5 +85,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	accGroups, err1 := accessGroupAPI.List(myAccount.GUID, user)
+	if err1 != nil {
+		log.Fatal(err1)
+	}
+	log.Println("ListAccGroups=> ", accGroups)
 
 }

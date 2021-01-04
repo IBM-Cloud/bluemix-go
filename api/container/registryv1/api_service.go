@@ -15,7 +15,8 @@ import (
 const ErrCodeAPICreation = "APICreationError"
 
 const (
-	accountIDHeader = "Account"
+	accountIDHeader     = "Account"
+	resourceGroupHeader = "X-Auth-Resource-Group"
 )
 
 //RegistryServiceAPI is the IBM Cloud Registry client ...
