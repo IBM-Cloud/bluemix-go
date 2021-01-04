@@ -178,7 +178,7 @@ func (r *clusters) List(target ClusterTargetHeader) ([]ClusterInfo, error) {
 		}
 		clusters = append(clusters, satelliteClusters...)
 	}
-	return clusters, err
+	return clusters, nil
 }
 
 //Create ...
