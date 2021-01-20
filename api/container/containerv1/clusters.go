@@ -61,6 +61,8 @@ type ClusterInfo struct {
 	PublicServiceEndpointURL      string   `json:"publicServiceEndpointURL"`
 	Type                          string   `json:"type"`
 	Provider                      string   `json:"provider"`
+	PodSubnet                     string   `json:"podSubnet"`
+	ServiceSubnet                 string   `json:"serviceSubnet"`
 }
 
 // ClusterUpdateParam ...
