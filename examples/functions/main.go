@@ -79,6 +79,17 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Println(">>>>>>>>>  Update namespace by ID")
+	updateName := "namespace-update-01"
+	updateNamespaceOpts := functions.UpdateNamespaceOptions{
+		ID:   namespaceResponse.ID,
+		Name: &updateName,
+	}
+	_, err = nsAPI.UpdateNamespace(updateNamespaceOpts)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	log.Println(">>>>>>>>>  Delete Namespace")
 	_, err = nsAPI.DeleteNamespace(*namespaceResponse.ID)
 	if err != nil {

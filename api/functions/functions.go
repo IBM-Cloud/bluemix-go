@@ -28,6 +28,7 @@ type Functions interface {
 	CreateNamespace(CreateNamespaceOptions) (NamespaceResponse, error)
 	GetNamespaces() (NamespaceResponseList, error)
 	GetNamespace(payload GetNamespaceOptions) (NamespaceResponse, error)
+	UpdateNamespace(payload UpdateNamespaceOptions) (NamespaceResponse, error)
 }
 
 func newFunctionsAPI(c *client.Client) Functions {
@@ -66,5 +67,11 @@ func (r *functions) GetNamespace(payload GetNamespaceOptions) (NamespaceResponse
 func (r *functions) DeleteNamespace(namespaceID string) (NamespaceResponse, error) {
 	var successV NamespaceResponse
 	_, err := r.client.Delete(fmt.Sprintf("/api/v1/namespaces/%s", namespaceID))
+	return successV, err
+}
+
+func (r *functions) UpdateNamespace(payload UpdateNamespaceOptions) (NamespaceResponse, error) {
+	var successV NamespaceResponse
+	_, err := r.client.Patch(fmt.Sprintf("/api/v1/namespaces/%s", *payload.ID), payload, &successV)
 	return successV, err
 }
