@@ -122,6 +122,22 @@ type DeleteNamespaceOptions struct {
 	Headers map[string]string
 }
 
+// UpdateNamespaceOptions : The UpdateNamespace options.
+type UpdateNamespaceOptions struct {
+
+	// The id of the namespace to update.
+	ID *string `json:"id" validate:"required"`
+
+	// New description.
+	Description *string `json:"description,omitempty"`
+
+	// New name.
+	Name *string `json:"name,omitempty"`
+
+	// Allows users to set headers to be GDPR compliant
+	Headers map[string]string
+}
+
 //NamespaceResource ..
 type NamespaceResource interface {
 	GetID() string
