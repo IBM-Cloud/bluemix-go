@@ -11,6 +11,7 @@ type SearchParams struct {
 	AccessGroupID string
 	Type          string
 	ServiceType   string
+	Sort          string
 }
 
 func (p SearchParams) buildRequest(r *rest.Request) {
@@ -28,6 +29,9 @@ func (p SearchParams) buildRequest(r *rest.Request) {
 	}
 	if p.ServiceType != "" {
 		r.Query("service_type", p.ServiceType)
+	}
+	if p.Sort != "" {
+		r.Query("sort", p.Sort)
 	}
 }
 
