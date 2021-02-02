@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/softlayer/softlayer-go/sl"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
 
 	"github.com/IBM-Cloud/bluemix-go/api/mccp/mccpv2"
 	"github.com/IBM-Cloud/bluemix-go/session"
@@ -60,7 +60,7 @@ func main() {
 	log.Println(myorg.GUID, myorg.Name)
 
 	updatedPayload := mccpv2.OrgUpdateRequest{
-		Name: sl.String(neworg),
+		Name: helpers.String(neworg),
 	}
 
 	updatedOrgDetails, err := orgAPI.Update(myorg.GUID, updatedPayload)
