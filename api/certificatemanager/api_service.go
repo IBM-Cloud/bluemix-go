@@ -25,7 +25,7 @@ type cmService struct {
 }
 
 //New ...
-func New(sess *session.Session) (CertificateManagerServiceAPI, error) {
+func New(sess *session.Session, visibility ...string) (CertificateManagerServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.CertificateManager)
 	if err != nil {
@@ -50,7 +50,7 @@ func New(sess *session.Session) (CertificateManagerServiceAPI, error) {
 		}
 	}
 	if config.Endpoint == nil {
-		ep, err := config.EndpointLocator.CertificateManagerEndpoint()
+		ep, err := config.EndpointLocator.CertificateManagerEndpoint(visibility[0])
 		if err != nil {
 			return nil, err
 		}
