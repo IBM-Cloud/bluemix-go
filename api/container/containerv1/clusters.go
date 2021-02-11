@@ -531,7 +531,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 				old := filepath.Join(kubedir, f.Name())
 				new := filepath.Join(kubedir, "../", f.Name())
 				if strings.HasSuffix(f.Name(), ".yml") {
-					new = filepath.Join(kubedir, "../", kubeConfigName)
+					new = filepath.Join(path.Clean(kubedir), "../", path.Clean(kubeConfigName))
 					kubeyml = new
 				}
 				err := os.Rename(old, new)
