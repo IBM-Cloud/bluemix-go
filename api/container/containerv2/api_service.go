@@ -16,6 +16,8 @@ const ErrCodeAPICreation = "APICreationError"
 
 //ContainerServiceAPI is the Aramda K8s client ...
 type ContainerServiceAPI interface {
+	Monitoring() Monitoring
+	Logging() Logging
 	Clusters() Clusters
 	WorkerPools() WorkerPool
 	Albs() Alb
@@ -72,6 +74,16 @@ func New(sess *session.Session) (ContainerServiceAPI, error) {
 //Clusters implements Clusters API
 func (c *csService) Clusters() Clusters {
 	return newClusterAPI(c.Client)
+}
+
+//Monitor implements Monitor API
+func (c *csService) Monitoring() Monitoring {
+	return newMonitoringAPI(c.Client)
+}
+
+//Logging implements Monitor API
+func (c *csService) Logging() Logging {
+	return newLoggingAPI(c.Client)
 }
 
 //WorkerPools implements Cluster WorkerPools API
