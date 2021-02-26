@@ -58,12 +58,12 @@ var regionToEndpoint = map[string]map[string]string{
 		"jp-tok":   "https://api.jp-tok.bluemix.net",
 	},
 	"cr": {
-		"us-south": "https://registry.ng.bluemix.net",
-		"us-east":  "https://registry.ng.bluemix.net",
-		"eu-de":    "https://registry.eu-de.bluemix.net",
-		"au-syd":   "https://registry.au-syd.bluemix.net",
-		"eu-gb":    "https://registry.eu-gb.bluemix.net",
-		"jp-tok":   "https://registry.jp-tok.bluemix.net",
+		"us-south": "https://us.icr.io",
+		"eu-de":    "https://de.icr.io",
+		"au-syd":   "https://au.icr.io",
+		"eu-gb":    "https://uk.icr.io",
+		"jp-tok":   "https://jp.icr.io",
+		"jp-osa":   "https://jp2.icr.io",
 	},
 	"cs": {
 		"global": "https://containers.cloud.ibm.com/global",

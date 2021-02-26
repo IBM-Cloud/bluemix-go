@@ -15,7 +15,7 @@ var _ = Describe("EndPoints", func() {
 			Expect(locator.UAAEndpoint()).To(Equal("https://iam.cloud.ibm.com/cloudfoundry/login/us-south"))
 			Expect(locator.ICDEndpoint()).To(Equal("https://api.us-south.databases.cloud.ibm.com"))
 			Expect(locator.MCCPAPIEndpoint()).To(Equal("https://mccp.us-south.cf.cloud.ibm.com"))
-			Expect(locator.ContainerRegistryEndpoint()).To(Equal("https://registry.ng.bluemix.net"))
+			Expect(locator.ContainerRegistryEndpoint()).To(Equal("https://us.icr.io"))
 		})
 	})
 
