@@ -146,7 +146,13 @@ func (auth *IAMAuthRepository) getToken(data map[string]string) error {
 
 	if apiErr.ErrorCode != "" {
 		if apiErr.ErrorCode == "BXNIM0407E" {
+			if resp != nil && resp.Header != nil {
+				return bmxerror.New(ErrCodeInvalidToken, fmt.Sprintf("Transaction-Id:%s %s", resp.Header["Transaction-Id"], apiErr.Description()))
+			}
 			return bmxerror.New(ErrCodeInvalidToken, apiErr.Description())
+		}
+		if resp != nil && resp.Header != nil {
+			return bmxerror.NewRequestFailure(apiErr.ErrorCode, fmt.Sprintf("Transaction-Id:%s %s", resp.Header["Transaction-Id"], apiErr.Description()), resp.StatusCode)
 		}
 		return bmxerror.NewRequestFailure(apiErr.ErrorCode, apiErr.Description(), resp.StatusCode)
 	}
