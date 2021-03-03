@@ -2,7 +2,6 @@ package cisv1
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/IBM-Cloud/bluemix-go/client"
