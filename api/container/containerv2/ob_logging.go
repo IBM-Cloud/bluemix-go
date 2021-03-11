@@ -141,6 +141,6 @@ func (r *logging) UpdateLoggingConfig(params LoggingUpdateRequest, target Loggin
 //DeleteLoggingConfig ...
 //Remove a Logging configuration from a cluster.
 func (r *logging) DeleteLoggingConfig(params LoggingDeleteRequest, target LoggingTargetHeader) error {
-	_, err := r.client.Delete("/v2/observe/logging/removeConfig", params, target.ToMap())
+	_, err := r.client.Post("/v2/observe/logging/removeConfig", params, target.ToMap())
 	return err
 }
