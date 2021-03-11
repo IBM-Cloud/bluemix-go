@@ -36,8 +36,8 @@ func main() {
 	monitoringAPI := monitoringClient.Monitoring()
 
 	var monitoringInfo = v2.MonitoringDeleteRequest{
-		Cluster:  "DragonBoat-cluster",
-		Instance: "ec4f0886-edc4-409e-8720-574035538f91",
+		Cluster:  "vpc-cluster2",
+		Instance: "b22d551c-238b-4849-9b16-63edf1e45e7d",
 	}
 
 	err1 := monitoringAPI.DeleteMonitoringConfig(monitoringInfo, target)

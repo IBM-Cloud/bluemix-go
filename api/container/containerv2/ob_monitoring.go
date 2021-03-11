@@ -141,6 +141,6 @@ func (r *monitoring) UpdateMonitoringConfig(params MonitoringUpdateRequest, targ
 //DeleteMonitoringConfig ...
 //Remove a Sysdig monitoring configuration from a cluster.
 func (r *monitoring) DeleteMonitoringConfig(params MonitoringDeleteRequest, target MonitoringTargetHeader) error {
-	_, err := r.client.Delete("/v2/observe/monitoring/removeConfig", params, target.ToMap())
+	_, err := r.client.Post("/v2/observe/monitoring/removeConfig", params, target.ToMap())
 	return err
 }
