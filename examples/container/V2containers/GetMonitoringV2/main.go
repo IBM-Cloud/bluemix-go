@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
+	"os"
 
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 
@@ -15,6 +17,19 @@ import (
 func main() {
 
 	c := new(bluemix.Config)
+
+	var cluster string
+	flag.StringVar(&cluster, "cluster", "", "Clusetr Name")
+
+	var InstanceID string
+	flag.StringVar(&InstanceID, "InstanceID", "", " monitoring InstanceID")
+	flag.Parse()
+
+	trace.Logger = trace.NewLogger("true")
+	if cluster == "" || InstanceID == "" {
+		flag.Usage()
+		os.Exit(1)
+	}
 
 	trace.Logger = trace.NewLogger("true")
 
@@ -31,7 +46,7 @@ func main() {
 	}
 	monitoringAPI := monitoringClient.Monitoring()
 
-	out, err := monitoringAPI.GetMonitoringConfig("DragonBoat-cluster", "ec4f0886-edc4-409e-8720-574035538f91", target)
+	out, err := monitoringAPI.GetMonitoringConfig(cluster, InstanceID, target)
 	if err != nil {
 		log.Fatal(err)
 	}

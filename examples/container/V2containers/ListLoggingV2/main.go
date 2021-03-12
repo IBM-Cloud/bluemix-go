@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
+	"os"
 
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/session"
@@ -15,7 +17,15 @@ func main() {
 
 	c := new(bluemix.Config)
 
+	var cluster string
+	flag.StringVar(&cluster, "cluster", "", "Clusetr Name")
+	flag.Parse()
+
 	trace.Logger = trace.NewLogger("true")
+	if cluster == "" {
+		flag.Usage()
+		os.Exit(1)
+	}
 
 	sess, err := session.New(c)
 	if err != nil {
@@ -34,7 +44,7 @@ func main() {
 	}
 	loggingAPI := loggingClient.Logging()
 
-	out, err := loggingAPI.ListLoggingInstances("DragonBoat-cluster", target)
+	out, err := loggingAPI.ListLoggingInstances(cluster, target)
 	if err != nil {
 		log.Fatal(err)
 	}

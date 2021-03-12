@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
+	"os"
 
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/session"
@@ -13,6 +15,19 @@ import (
 )
 
 func main() {
+
+	var cluster string
+	flag.StringVar(&cluster, "cluster", "", "Clusetr Name")
+
+	var InstanceID string
+	flag.StringVar(&InstanceID, "InstanceID", "", " monitoring InstanceID")
+	flag.Parse()
+
+	trace.Logger = trace.NewLogger("true")
+	if cluster == "" || InstanceID == "" {
+		flag.Usage()
+		os.Exit(1)
+	}
 
 	c := new(bluemix.Config)
 
@@ -36,8 +51,8 @@ func main() {
 	monitoringAPI := monitoringClient.Monitoring()
 
 	var monitoringInfo = v2.MonitoringDeleteRequest{
-		Cluster:  "vpc-cluster2",
-		Instance: "b22d551c-238b-4849-9b16-63edf1e45e7d",
+		Cluster:  cluster,
+		Instance: InstanceID,
 	}
 
 	err1 := monitoringAPI.DeleteMonitoringConfig(monitoringInfo, target)
