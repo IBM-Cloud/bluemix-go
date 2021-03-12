@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 
@@ -16,13 +17,27 @@ func main() {
 
 	c := new(bluemix.Config)
 
+	var cluster string
+	flag.StringVar(&cluster, "cluster", "", "Clusetr Name")
+
+	var InstanceID string
+	flag.StringVar(&InstanceID, "InstanceID", "", " monitoring InstanceID")
+
+	var ingestionKey string
+	flag.StringVar(&ingestionKey, "ingestionKey", "", "ingestion Key")
+
+	var endPoint bool
+	flag.BoolVar(&endPoint, "endPoint", false, "private EndPoint (true/false)")
+
+	flag.Parse()
+
 	trace.Logger = trace.NewLogger("true")
 
 	var loggingInfo = v2.LoggingUpdateRequest{
-		Cluster:         "DragonBoat-cluster",
-		IngestionKey:    "",
-		Instance:        "bb8011cf-a42c-4637-867d-585ca27eac8d",
-		PrivateEndpoint: false,
+		Cluster:         cluster,
+		IngestionKey:    ingestionKey,
+		Instance:        InstanceID,
+		PrivateEndpoint: endPoint,
 	}
 
 	sess, err := session.New(c)

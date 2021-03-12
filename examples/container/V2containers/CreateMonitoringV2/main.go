@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
+	"os"
 
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/session"
@@ -14,15 +16,35 @@ import (
 
 func main() {
 
+	var cluster string
+	flag.StringVar(&cluster, "cluster", "", "Clusetr Name")
+
+	var InstanceID string
+	flag.StringVar(&InstanceID, "InstanceID", "", " monitoring InstanceID")
+
+	var ingestionKey string
+	flag.StringVar(&ingestionKey, "ingestionKey", "", "ingestion Key")
+
+	var endPoint bool
+	flag.BoolVar(&endPoint, "endPoint", false, "private EndPoint (true/false)")
+
+	flag.Parse()
+
+	trace.Logger = trace.NewLogger("true")
+	if cluster == "" || InstanceID == "" {
+		flag.Usage()
+		os.Exit(1)
+	}
+
 	c := new(bluemix.Config)
 
 	trace.Logger = trace.NewLogger("true")
 
 	var monitoringInfo = v2.MonitoringCreateRequest{
-		Cluster: "DragonBoat-cluster",
-		//IngestionKey:    "",
-		SysidigInstance: "ec4f0886-edc4-409e-8720-574035538f91",
-		//PrivateEndpoint: true,
+		Cluster:         cluster,
+		IngestionKey:    ingestionKey,
+		SysidigInstance: InstanceID,
+		PrivateEndpoint: endPoint,
 	}
 
 	sess, err := session.New(c)
