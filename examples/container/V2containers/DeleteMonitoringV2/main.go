@@ -55,10 +55,10 @@ func main() {
 		Instance: InstanceID,
 	}
 
-	err1 := monitoringAPI.DeleteMonitoringConfig(monitoringInfo, target)
+	resp, err1 := monitoringAPI.DeleteMonitoringConfig(monitoringInfo, target)
 	if err1 != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("out=", err1)
+	fmt.Println("Deleted the monitor instance successfully", resp)
 
 }

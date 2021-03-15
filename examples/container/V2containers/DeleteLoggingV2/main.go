@@ -53,10 +53,10 @@ func main() {
 		Instance: InstanceID,
 	}
 
-	err1 := loggingAPI.DeleteLoggingConfig(loggingInfo, target)
+	response, err1 := loggingAPI.DeleteLoggingConfig(loggingInfo, target)
 	if err1 != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("out=", err1)
+	fmt.Println("Logging instance successfully deleted", response)
 
 }
