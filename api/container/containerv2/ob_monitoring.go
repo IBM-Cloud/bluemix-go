@@ -86,7 +86,7 @@ type Monitoring interface {
 	GetMonitoringConfig(clusterName string, monitoringInstance string, target MonitoringTargetHeader) (*MonitoringInfo, error)
 	ListAllMonitors(clusterName string, target MonitoringTargetHeader) ([]MonitoringInfo, error)
 	UpdateMonitoringConfig(params MonitoringUpdateRequest, target MonitoringTargetHeader) (MonitoringUpdateResponse, error)
-	DeleteMonitoringConfig(params MonitoringDeleteRequest, target MonitoringTargetHeader) error
+	DeleteMonitoringConfig(params MonitoringDeleteRequest, target MonitoringTargetHeader) (interface{}, error)
 }
 type monitoring struct {
 	client *client.Client
@@ -140,7 +140,12 @@ func (r *monitoring) UpdateMonitoringConfig(params MonitoringUpdateRequest, targ
 
 //DeleteMonitoringConfig ...
 //Remove a Sysdig monitoring configuration from a cluster.
-func (r *monitoring) DeleteMonitoringConfig(params MonitoringDeleteRequest, target MonitoringTargetHeader) error {
-	_, err := r.client.Post("/v2/observe/monitoring/removeConfig", params, target.ToMap())
-	return err
+func (r *monitoring) DeleteMonitoringConfig(params MonitoringDeleteRequest, target MonitoringTargetHeader) (interface{}, error) {
+	var response interface{}
+	_, err := r.client.Post("/v2/observe/monitoring/removeConfig", params, &response, target.ToMap())
+	if err != nil {
+		return response, err
+	}
+	return response, err
+
 }

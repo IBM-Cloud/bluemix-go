@@ -86,7 +86,7 @@ type Logging interface {
 	GetLoggingConfig(clusterName string, LoggingInstance string, target LoggingTargetHeader) (*LoggingInfo, error)
 	ListLoggingInstances(clusterName string, target LoggingTargetHeader) ([]LoggingInfo, error)
 	UpdateLoggingConfig(params LoggingUpdateRequest, target LoggingTargetHeader) (LoggingUpdateResponse, error)
-	DeleteLoggingConfig(params LoggingDeleteRequest, target LoggingTargetHeader) error
+	DeleteLoggingConfig(params LoggingDeleteRequest, target LoggingTargetHeader) (interface{}, error)
 }
 type logging struct {
 	client *client.Client
@@ -140,7 +140,11 @@ func (r *logging) UpdateLoggingConfig(params LoggingUpdateRequest, target Loggin
 
 //DeleteLoggingConfig ...
 //Remove a Logging configuration from a cluster.
-func (r *logging) DeleteLoggingConfig(params LoggingDeleteRequest, target LoggingTargetHeader) error {
-	_, err := r.client.Post("/v2/observe/logging/removeConfig", params, target.ToMap())
-	return err
+func (r *logging) DeleteLoggingConfig(params LoggingDeleteRequest, target LoggingTargetHeader) (interface{}, error) {
+	var response interface{}
+	_, err := r.client.Post("/v2/observe/logging/removeConfig", params, &response, target.ToMap())
+	if err != nil {
+		return response, err
+	}
+	return response, err
 }
