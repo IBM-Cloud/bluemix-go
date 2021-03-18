@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -45,7 +46,7 @@ func tarGzContext(context string) (string, error) {
 	}
 
 	err = filepath.Walk(context,
-		func(path string, info os.FileInfo, err error) error {
+		func(location string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
@@ -55,7 +56,7 @@ func tarGzContext(context string) (string, error) {
 			}
 
 			if baseDir != "" {
-				header.Name = filepath.Join(baseDir, strings.TrimPrefix(path, context))
+				header.Name = filepath.Join(path.Clean(baseDir), path.Clean(strings.TrimPrefix(location, context)))
 			}
 
 			if err := tarball.WriteHeader(header); err != nil {
@@ -66,7 +67,7 @@ func tarGzContext(context string) (string, error) {
 				return nil
 			}
 
-			file, err := os.Open(path)
+			file, err := os.Open(location)
 			if err != nil {
 				return err
 			}

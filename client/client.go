@@ -174,6 +174,18 @@ func (c *Client) Post(path string, data interface{}, respV interface{}, extraHea
 	for _, t := range extraHeader {
 		addToRequestHeader(t, r)
 	}
+
+	return c.SendRequest(r, respV)
+}
+
+//PostWithForm ...
+func (c *Client) PostWithForm(path string, form interface{}, respV interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
+	r := rest.PostRequest(c.URL(path))
+	for _, t := range extraHeader {
+		addToRequestHeader(t, r)
+	}
+	addToRequestForm(form, r)
+
 	return c.SendRequest(r, respV)
 }
 
@@ -209,6 +221,15 @@ func addToRequestHeader(h interface{}, r *rest.Request) {
 	case map[string]string:
 		for key, value := range v {
 			r.Set(key, value)
+		}
+	}
+}
+
+func addToRequestForm(h interface{}, r *rest.Request) {
+	switch v := h.(type) {
+	case map[string]string:
+		for key, value := range v {
+			r.Field(key, value)
 		}
 	}
 }
@@ -315,6 +336,9 @@ func getDefaultAuthHeaders(serviceName bluemix.ServiceName, c *bluemix.Config) g
 		h.Set(authorizationHeader, c.IAMAccessToken)
 	case bluemix.HPCService:
 		h.Set(authorizationHeader, c.IAMAccessToken)
+	case bluemix.FunctionsService:
+		h.Set(userAgentHeader, http.UserAgent())
+		h.Set(authorizationHeader, c.IAMAccessToken)
 
 	default:
 		log.Println("Unknown service - No auth headers set")
@@ -325,7 +349,7 @@ func getDefaultAuthHeaders(serviceName bluemix.ServiceName, c *bluemix.Config) g
 func isTimeout(err error) bool {
 	if bmErr, ok := err.(bmxerror.RequestFailure); ok {
 		switch bmErr.StatusCode() {
-		case 408, 504, 599, 429, 500, 502, 520:
+		case 408, 504, 599, 429, 500, 502, 520, 503:
 			return true
 		}
 	}

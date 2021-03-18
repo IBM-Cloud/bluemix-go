@@ -2,7 +2,6 @@ package cisv1
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/IBM-Cloud/bluemix-go/client"
@@ -103,7 +102,6 @@ func (r *dns) DeleteDns(cisId string, zoneId string, dnsId string) error {
 func (r *dns) CreateDns(cisId string, zoneId string, dnsBody DnsBody) (*DnsRecord, error) {
 	dnsResult := DnsResult{}
 	rawURL := fmt.Sprintf("/v1/%s/zones/%s/dns_records", cisId, zoneId)
-	log.Printf(">>>> rawURL : %s\n", rawURL)
 	_, err := r.client.Post(rawURL, &dnsBody, &dnsResult)
 	if err != nil {
 		return nil, err

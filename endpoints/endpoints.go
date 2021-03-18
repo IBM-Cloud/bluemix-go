@@ -29,6 +29,7 @@ type EndpointLocator interface {
 	SchematicsEndpoint() (string, error)
 	UserManagementEndpoint() (string, error)
 	HpcsEndpoint() (string, error)
+	FunctionsEndpoint() (string, error)
 }
 
 const (
@@ -57,12 +58,12 @@ var regionToEndpoint = map[string]map[string]string{
 		"jp-tok":   "https://api.jp-tok.bluemix.net",
 	},
 	"cr": {
-		"us-south": "https://registry.ng.bluemix.net",
-		"us-east":  "https://registry.ng.bluemix.net",
-		"eu-de":    "https://registry.eu-de.bluemix.net",
-		"au-syd":   "https://registry.au-syd.bluemix.net",
-		"eu-gb":    "https://registry.eu-gb.bluemix.net",
-		"jp-tok":   "https://registry.jp-tok.bluemix.net",
+		"us-south": "https://us.icr.io",
+		"eu-de":    "https://de.icr.io",
+		"au-syd":   "https://au.icr.io",
+		"eu-gb":    "https://uk.icr.io",
+		"jp-tok":   "https://jp.icr.io",
+		"jp-osa":   "https://jp2.icr.io",
 	},
 	"cs": {
 		"global": "https://containers.cloud.ibm.com/global",
@@ -86,10 +87,10 @@ var regionToEndpoint = map[string]map[string]string{
 		"us-south": "https://api.us-south.databases.cloud.ibm.com",
 		"us-east":  "https://api.us-east.databases.cloud.ibm.com",
 		"eu-de":    "https://api.eu-de.databases.cloud.ibm.com",
-		"eu-fr2":   "https://api.eu-fr2.databases.cloud.ibm.com",
 		"eu-gb":    "https://api.eu-gb.databases.cloud.ibm.com",
 		"au-syd":   "https://api.au-syd.databases.cloud.ibm.com",
 		"jp-tok":   "https://api.jp-tok.databases.cloud.ibm.com",
+		"jp-osa":   "https://api.jp-osa.databases.cloud.ibm.com",
 		"osl01":    "https://api.osl01.databases.cloud.ibm.com",
 		"seo01":    "https://api.seo01.databases.cloud.ibm.com",
 		"che01":    "https://api.che01.databases.cloud.ibm.com",
@@ -129,10 +130,17 @@ var regionToEndpoint = map[string]map[string]string{
 		"global": "https://user-management.cloud.ibm.com",
 	},
 	"hpcs": {
-		"us-south": "https://zcryptobroker.mybluemix.net/crypto_v2/",
-		"us-east":  "https://zcryptobroker-wdc.us-east.mybluemix.net/crypto_v2/",
-		"au-syd":   "https://zcryptobroker-syd.au-syd.mybluemix.net/crypto_v2/",
-		"eu-de":    "https://zcryptobroker-de.eu-de.mybluemix.net/crypto_v2/",
+		"us-south": "https://us-south.broker.hs-crypto.cloud.ibm.com/crypto_v2/",
+		"us-east":  "https://us-east.broker.hs-crypto.cloud.ibm.com/crypto_v2/",
+		"au-syd":   "https://au-syd.broker.hs-crypto.cloud.ibm.com/crypto_v2/",
+		"eu-de":    "https://eu-de.broker.hs-crypto.cloud.ibm.com/crypto_v2/",
+	},
+	"functions": {
+		"us-south": "https://us-south.functions.cloud.ibm.com",
+		"us-east":  "https://us-east.functions.cloud.ibm.com",
+		"eu-gb":    "https://eu-gb.functions.cloud.ibm.com",
+		"au-syd":   "https://au-syd.functions.cloud.ibm.com",
+		"eu-de":    "https://eu-de.functions.cloud.ibm.com",
 	},
 }
 
@@ -151,172 +159,233 @@ func NewEndpointLocator(region string) EndpointLocator {
 }
 
 func (e *endpointLocator) AccountManagementEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["account"]["global"]; ok {
-		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_ACCOUNT_MANAGEMENT_API_ENDPOINT"}, ep), nil
-
+	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_ACCOUNT_MANAGEMENT_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["account"]["global"]; ok {
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Account Management endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) CertificateManagerEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["certificate-manager"][e.region]; ok {
-		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_CERTIFICATE_MANAGER_API_ENDPOINT"}, ep), nil
+	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_CERTIFICATE_MANAGER_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["certificate-manager"][e.region]; ok {
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Certificate Manager Service endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) CFAPIEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["cf"][e.region]; ok {
-		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_CF_API_ENDPOINT"}, ep), nil
-
+	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_CF_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["cf"][e.region]; ok {
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Cloud Foundry endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) ContainerEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["cs"]["global"]; ok {
-		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_CS_API_ENDPOINT"}, ep), nil
+	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_CS_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["cs"]["global"]; ok {
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Container Service endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) SchematicsEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["schematics"][e.region]; ok {
-		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_SCHEMATICS_API_ENDPOINT"}, ep), nil
+	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_SCHEMATICS_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["schematics"][e.region]; ok {
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Schematics Service endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) ContainerRegistryEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["cr"][e.region]; ok {
-		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_CR_API_ENDPOINT"}, ep), nil
+	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_CR_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["cr"][e.region]; ok {
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Container Registry Service endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) CisEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["cis"]["global"]; ok {
-		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_CIS_API_ENDPOINT"}, ep), nil
+	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_CIS_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["cis"]["global"]; ok {
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Cis Service endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) GlobalSearchEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["global-search"]["global"]; ok {
-		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_GS_API_ENDPOINT"}, ep), nil
+	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_GS_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["global-search"]["global"]; ok {
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Global Search Service endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) GlobalTaggingEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["global-tagging"]["global"]; ok {
-		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_GT_API_ENDPOINT"}, ep), nil
+	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_GT_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["global-tagging"]["global"]; ok {
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Global Tagging Service endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) IAMEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["iam"]["global"]; ok {
-		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_IAM_API_ENDPOINT"}, ep), nil
-
+	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_IAM_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["iam"]["global"]; ok {
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("IAM endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) IAMPAPEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["iampap"]["global"]; ok {
+	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_IAMPAP_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["iampap"]["global"]; ok {
 		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_IAMPAP_API_ENDPOINT"}, ep), nil
-
+		return ep, nil
 	}
 	return "", fmt.Errorf("IAMPAP endpoint doesn't exist for region: %q", e.region)
 }
 
 func (e *endpointLocator) ICDEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["icd"][e.region]; ok {
-		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_ICD_API_ENDPOINT"}, ep), nil
+	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_ICD_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["icd"][e.region]; ok {
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("ICD Service endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) MCCPAPIEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["mccp"][e.region]; ok {
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_MCCP_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["mccp"][e.region]; ok {
 		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_MCCP_API_ENDPOINT"}, ep), nil
-
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("MCCP API endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) ResourceManagementEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["resource-manager"]["global"]; ok {
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_RESOURCE_MANAGEMENT_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["resource-manager"]["global"]; ok {
 		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_RESOURCE_MANAGEMENT_API_ENDPOINT"}, ep), nil
-
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Resource Management endpoint doesn't exist"))
 }
 
 func (e *endpointLocator) ResourceControllerEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["resource-controller"]["global"]; ok {
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_RESOURCE_CONTROLLER_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["resource-controller"]["global"]; ok {
 		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_RESOURCE_CONTROLLER_API_ENDPOINT"}, ep), nil
-
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Resource Controller endpoint doesn't exist"))
 }
 
 func (e *endpointLocator) ResourceCatalogEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["resource-catalog"]["global"]; ok {
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_RESOURCE_CATALOG_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["resource-catalog"]["global"]; ok {
 		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_RESOURCE_CATALOG_API_ENDPOINT"}, ep), nil
-
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Resource Catalog endpoint doesn't exist"))
 }
 
 func (e *endpointLocator) UAAEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["uaa"][e.region]; ok {
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_UAA_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["uaa"][e.region]; ok {
 		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_UAA_ENDPOINT"}, ep), nil
-
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("UAA endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) CseEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["cse"]["global"]; ok {
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_CSE_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["cse"]["global"]; ok {
 		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_CSE_ENDPOINT"}, ep), nil
-
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("CSE endpoint doesn't exist for region: %q", e.region))
 }
 
 func (e *endpointLocator) UserManagementEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["usermanagement"]["global"]; ok {
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_USER_MANAGEMENT_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["usermanagement"]["global"]; ok {
 		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_USER_MANAGEMENT_ENDPOINT"}, ep), nil
-
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("User Management endpoint doesn't exist"))
 }
 
 func (e *endpointLocator) HpcsEndpoint() (string, error) {
-	if ep, ok := regionToEndpoint["hpcs"][e.region]; ok {
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_HPCS_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["hpcs"][e.region]; ok {
 		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
-		return helpers.EnvFallBack([]string{"IBMCLOUD_HPCS_API_ENDPOINT"}, ep), nil
+		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("HPCS Service endpoint doesn't exist for region: %q", e.region))
+}
+
+func (e *endpointLocator) FunctionsEndpoint() (string, error) {
+	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_FUNCTIONS_API_ENDPOINT"}, "")
+	if endpoint != "" {
+		return endpoint, nil
+	} else if ep, ok := regionToEndpoint["functions"][e.region]; ok {
+		//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+		return ep, nil
+	}
+	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Namespace Service endpoint doesn't exist for region: %q", e.region))
 }

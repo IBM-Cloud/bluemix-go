@@ -4,10 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/softlayer/softlayer-go/sl"
-
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
 	bluemixHttp "github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/session"
 
@@ -397,7 +396,7 @@ var _ = Describe("Organizations", func() {
 
 			It("Should update Organization", func() {
 				payload := OrgUpdateRequest{
-					Name: sl.String("new-org-name"),
+					Name: helpers.String("new-org-name"),
 				}
 				_, err := newOrganizations(server.URL()).Update("007c547f-9d6e-4d75-bb03-d9584e7bc62c", payload)
 				Expect(err).ShouldNot(HaveOccurred())
@@ -419,7 +418,7 @@ var _ = Describe("Organizations", func() {
 
 			It("Should return error when updated", func() {
 				payload := OrgUpdateRequest{
-					Name: sl.String("new-org-name"),
+					Name: helpers.String("new-org-name"),
 				}
 				_, err := newOrganizations(server.URL()).Update("007c547f-9d6e-4d75-bb03-d9584e7bc62c", payload)
 				Expect(err).To(HaveOccurred())
