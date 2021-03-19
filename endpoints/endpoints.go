@@ -10,7 +10,7 @@ import (
 //EndpointLocator ...
 type EndpointLocator interface {
 	AccountManagementEndpoint() (string, error)
-	CertificateManagerEndpoint() (string, error)
+	CertificateManagerEndpoint(visibility ...string) (string, error)
 	CFAPIEndpoint() (string, error)
 	ContainerEndpoint() (string, error)
 	ContainerRegistryEndpoint() (string, error)
@@ -26,7 +26,7 @@ type EndpointLocator interface {
 	ResourceCatalogEndpoint() (string, error)
 	UAAEndpoint() (string, error)
 	CseEndpoint() (string, error)
-	SchematicsEndpoint() (string, error)
+	SchematicsEndpoint(visibility ...string) (string, error)
 	UserManagementEndpoint() (string, error)
 	HpcsEndpoint() (string, error)
 	FunctionsEndpoint() (string, error)
@@ -36,6 +36,39 @@ const (
 	//ErrCodeServiceEndpoint ...
 	ErrCodeServiceEndpoint = "ServiceEndpointDoesnotExist"
 )
+
+type EndpointKey struct {
+	Service    string
+	Visibility string
+}
+
+var tempRegionToEndPoint = map[EndpointKey]map[string]string{
+	EndpointKey{"certificate-manager", "public"}: {
+		"us-south": "https://us-south.certificate-manager.cloud.ibm.com",
+		"us-east":  "https://us-east.certificate-manager.cloud.ibm.com",
+		"eu-gb":    "https://eu-gb.certificate-manager.cloud.ibm.com",
+		"au-syd":   "https://au-syd.certificate-manager.cloud.ibm.com",
+		"eu-de":    "https://eu-de.certificate-manager.cloud.ibm.com",
+		"jp-tok":   "https://jp-tok.certificate-manager.cloud.ibm.com",
+	},
+	EndpointKey{"certificate-manager", "private"}: {
+		"us-south": "https://private.us-south.certificate-manager.cloud.ibm.com",
+		"us-east":  "https://private.us-east.certificate-manager.cloud.ibm.com",
+		"eu-gb":    "https://private.eu-gb.certificate-manager.cloud.ibm.com",
+		"au-syd":   "https://private.au-syd.certificate-manager.cloud.ibm.com",
+		"eu-de":    "https://private.eu-de.certificate-manager.cloud.ibm.com",
+		"jp-tok":   "https://private.jp-tok.certificate-manager.cloud.ibm.com",
+	},
+	EndpointKey{"schematics", "public"}: {
+		"us-south": "https://us.schematics.cloud.ibm.com",
+		"eu-gb":    "https://eu-gb.schematics.cloud.ibm.com",
+		"eu-de":    "https://eu-de.schematics.cloud.ibm.com",
+	},
+	EndpointKey{"schematics", "private"}: {
+		"us-south": "https://private-us.schematics.cloud.ibm.com",
+		"eu-de":    "https://private-eu.schematics.cloud.ibm.com",
+	},
+}
 
 var regionToEndpoint = map[string]map[string]string{
 	"account": {
@@ -169,12 +202,16 @@ func (e *endpointLocator) AccountManagementEndpoint() (string, error) {
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Account Management endpoint doesn't exist for region: %q", e.region))
 }
 
-func (e *endpointLocator) CertificateManagerEndpoint() (string, error) {
+func (e *endpointLocator) CertificateManagerEndpoint(visibility ...string) (string, error) {
 	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	if len(visibility) == 0 {
+		return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Certificate Manager Service endpoint doesn't exist for region: %q", e.region))
+	}
 	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_CERTIFICATE_MANAGER_API_ENDPOINT"}, "")
 	if endpoint != "" {
 		return endpoint, nil
-	} else if ep, ok := regionToEndpoint["certificate-manager"][e.region]; ok {
+		//} else if ep, ok := tempRegionToEndpoint["certificate-manager"][e.region]; ok {
+	} else if ep, ok := tempRegionToEndPoint[EndpointKey{"certificate-manager", visibility[0]}][e.region]; ok {
 		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Certificate Manager Service endpoint doesn't exist for region: %q", e.region))
@@ -202,12 +239,15 @@ func (e *endpointLocator) ContainerEndpoint() (string, error) {
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Container Service endpoint doesn't exist for region: %q", e.region))
 }
 
-func (e *endpointLocator) SchematicsEndpoint() (string, error) {
+func (e *endpointLocator) SchematicsEndpoint(visibility ...string) (string, error) {
 	//As the current list of regionToEndpoint above is not exhaustive we allow to read endpoints from the env
+	if len(visibility) == 0 {
+		return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Schematics Service endpoint doesn't exist for region: %q", e.region))
+	}
 	endpoint := helpers.EnvFallBack([]string{"IBMCLOUD_SCHEMATICS_API_ENDPOINT"}, "")
 	if endpoint != "" {
 		return endpoint, nil
-	} else if ep, ok := regionToEndpoint["schematics"][e.region]; ok {
+	} else if ep, ok := tempRegionToEndPoint[EndpointKey{"schematics", visibility[0]}][e.region]; ok {
 		return ep, nil
 	}
 	return "", bmxerror.New(ErrCodeServiceEndpoint, fmt.Sprintf("Schematics Service endpoint doesn't exist for region: %q", e.region))

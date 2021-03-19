@@ -27,7 +27,7 @@ type scService struct {
 }
 
 //New ...
-func New(sess *session.Session) (SchematicsServiceAPI, error) {
+func New(sess *session.Session, visibility ...string) (SchematicsServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.SchematicsService)
 	if err != nil {
@@ -52,7 +52,7 @@ func New(sess *session.Session) (SchematicsServiceAPI, error) {
 		}
 	}
 	if config.Endpoint == nil {
-		ep, err := config.EndpointLocator.SchematicsEndpoint()
+		ep, err := config.EndpointLocator.SchematicsEndpoint(visibility[0])
 		if err != nil {
 			return nil, err
 		}
