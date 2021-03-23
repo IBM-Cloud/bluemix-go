@@ -335,10 +335,18 @@ func (e *endpointLocator) ResourceManagementEndpoint() (string, error) {
 	if endpoint != "" {
 		return endpoint, nil
 	}
-	if e.visibility == "private" || e.visibility == "public-and-private" {
+	if e.visibility == "private" {
 		r, err := validateRegion(e.region, privateRegions["resource"])
 		if err != nil {
+			fmt.Println("Private Endpint supports only us-south and us-east region specific endpoint")
 			return contructEndpoint("private.resource-controller", cloudEndpoint), nil
+		}
+		return contructEndpoint(fmt.Sprintf("private.%s.resource-controller", r), cloudEndpoint), nil
+	}
+	if e.visibility == "public-and-private" {
+		r, err := validateRegion(e.region, privateRegions["resource"])
+		if err != nil {
+			return contructEndpoint("resource-controller", cloudEndpoint), nil
 		}
 		return contructEndpoint(fmt.Sprintf("private.%s.resource-controller", r), cloudEndpoint), nil
 	}
@@ -350,10 +358,18 @@ func (e *endpointLocator) ResourceControllerEndpoint() (string, error) {
 	if endpoint != "" {
 		return endpoint, nil
 	}
-	if e.visibility == "private" || e.visibility == "public-and-private" {
+	if e.visibility == "private" {
 		r, err := validateRegion(e.region, privateRegions["resource"])
 		if err != nil {
+			fmt.Println("Private Endpint supports only us-south and us-east region specific endpoint")
 			return contructEndpoint("private.resource-controller", cloudEndpoint), nil
+		}
+		return contructEndpoint(fmt.Sprintf("private.%s.resource-controller", r), cloudEndpoint), nil
+	}
+	if e.visibility == "public-and-private" {
+		r, err := validateRegion(e.region, privateRegions["resource"])
+		if err != nil {
+			return contructEndpoint("resource-controller", cloudEndpoint), nil
 		}
 		return contructEndpoint(fmt.Sprintf("private.%s.resource-controller", r), cloudEndpoint), nil
 	}
