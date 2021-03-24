@@ -11,17 +11,29 @@ type GroupList struct {
 }
 
 type Group struct {
-	Id     string `json:"id"`
-	Count  int    `json:"count"`
-	Memory Memory `json:"memory"`
-	Cpu    Cpu    `json:"cpu"`
-	Disk   Disk   `json:"disk"`
+	Id      string  `json:"id"`
+	Count   int     `json:"count"`
+	Members Members `json:"members"`
+	Memory  Memory `json:"memory"`
+	Cpu     Cpu    `json:"cpu"`
+	Disk    Disk   `json:"disk"`
+}
+
+type Members struct {
+	Units           string `json:"units"`
+	AllocationCount int    `json:"allocation_count"`
+	MinimumCount    int    `json:"minimum_count"`
+	MaximumCount    int    `json:"maximum_count"`
+	StepSizeCount   int    `json:"step_size_count"`
+	IsAdjustable    bool   `json:"is_adjustable"`
+	CanScaleDown    bool   `json:"can_scale_down"`
 }
 
 type Memory struct {
 	Units        string `json:"units"`
 	AllocationMb int    `json:"allocation_mb"`
 	MinimumMb    int    `json:"minimum_mb"`
+	MaximumMb    int    `json:"maximum_mb"`
 	StepSizeMb   int    `json:"step_size_mb"`
 	IsAdjustable bool   `json:"is_adjustable"`
 	CanScaleDown bool   `json:"can_scale_down"`
@@ -31,6 +43,7 @@ type Cpu struct {
 	Units           string `json:"units"`
 	AllocationCount int    `json:"allocation_count"`
 	MinimumCount    int    `json:"minimum_count"`
+	MaximumCount    int    `json:"maximum_count"`
 	StepSizeCount   int    `json:"step_size_count"`
 	IsAdjustable    bool   `json:"is_adjustable"`
 	CanScaleDown    bool   `json:"can_scale_down"`
@@ -40,6 +53,7 @@ type Disk struct {
 	Units        string `json:"units"`
 	AllocationMb int    `json:"allocation_mb"`
 	MinimumMb    int    `json:"minimum_mb"`
+	MaximumMb    int    `json:"maximum_mb"`
 	StepSizeMb   int    `json:"step_size_mb"`
 	IsAdjustable bool   `json:"is_adjustable"`
 	CanScaleDown bool   `json:"can_scale_down"`
@@ -48,12 +62,17 @@ type Disk struct {
 type GroupReq struct {
 	GroupBdy GroupBdy `json:"group"`
 }
+
 type GroupBdy struct {
-	Memory *MemoryReq `json:"memory,omitempty"`
-	Cpu    *CpuReq    `json:"cpu,omitempty"`
-	Disk   *DiskReq   `json:"disk,omitempty"`
+	Members *MembersReq `json:"members,omitempty"`
+	Memory  *MemoryReq  `json:"memory,omitempty"`
+	Cpu     *CpuReq     `json:"cpu,omitempty"`
+	Disk    *DiskReq    `json:"disk,omitempty"`
 }
 
+type MembersReq struct {
+	AllocationCount int `json:"allocation_count,omitempty"`
+}
 type MemoryReq struct {
 	AllocationMb int `json:"allocation_mb,omitempty"`
 }
@@ -109,3 +128,5 @@ func (r *groups) UpdateGroup(icdId string, groupId string, groupReq GroupReq) (T
 	}
 	return taskResult.Task, nil
 }
+
+
