@@ -108,11 +108,17 @@ func (r *Certificates) ReimportCertificate(CertID string, reimportData models.Ce
 //ListCertificates ...
 func (r *Certificates) ListCertificates(InstanceID string) ([]models.CertificateInfo, error) {
 	certificatesInfo := models.CertificatesInfo{}
-	_, err := r.client.Get(fmt.Sprintf("/api/v3/%s/certificates", url.QueryEscape(InstanceID)), &certificatesInfo)
-	if err != nil {
-		return nil, err
+	rawURL := fmt.Sprintf("/api/v3/%s/certificates?page_size=200", url.QueryEscape(InstanceID))
+	if _, err := r.client.GetPaginated(rawURL, NewCMSPaginatedResources(models.CertificateInfo{}), func(resource interface{}) bool {
+		if certificate, ok := resource.(models.CertificateInfo); ok {
+			certificatesInfo.CertificateList = append(certificatesInfo.CertificateList, certificate)
+			return true
+		}
+		return false
+	}); err != nil {
+		return nil, fmt.Errorf("failed to list paginated Certificates: %s", err)
 	}
-	return certificatesInfo.CertificateList, err
+	return certificatesInfo.CertificateList, nil
 }
 
 //UpdateOrderPolicy ..
