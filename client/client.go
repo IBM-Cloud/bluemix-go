@@ -104,6 +104,9 @@ func (c *Client) MakeRequest(r *rest.Request, respV interface{}) (*gohttp.Respon
 				}
 				c.DefaultHeader = restClient.DefaultHeader
 				resp, err := restClient.Do(r, respV, nil)
+				if resp == nil {
+					return new(gohttp.Response), err
+				}
 				if err != nil {
 					err = bmxerror.WrapNetworkErrors(resp.Request.URL.Host, err)
 				}

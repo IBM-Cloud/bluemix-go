@@ -8,7 +8,7 @@ import (
 var _ = Describe("EndPoints", func() {
 
 	Context("When region is us-south", func() {
-		locator := newEndpointLocator("us-south")
+		locator := newEndpointLocator("us-south", "public")
 
 		It("should return endpoints with region us-south", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.ng.bluemix.net"))
@@ -20,7 +20,7 @@ var _ = Describe("EndPoints", func() {
 	})
 
 	Context("When region is eu-gb", func() {
-		locator := newEndpointLocator("eu-gb")
+		locator := newEndpointLocator("eu-gb", "public")
 
 		It("should return endpoints with region eu-gb", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.eu-gb.bluemix.net"))
@@ -31,7 +31,7 @@ var _ = Describe("EndPoints", func() {
 	})
 
 	Context("When region is au-syd", func() {
-		locator := newEndpointLocator("au-syd")
+		locator := newEndpointLocator("au-syd", "public")
 
 		It("should return endpoints with region au-syd", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.au-syd.bluemix.net"))
@@ -42,7 +42,7 @@ var _ = Describe("EndPoints", func() {
 	})
 
 	Context("When region is eu-de", func() {
-		locator := newEndpointLocator("eu-de")
+		locator := newEndpointLocator("eu-de", "public")
 
 		It("should return endpoints with region eu-de", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.eu-de.bluemix.net"))
@@ -53,7 +53,7 @@ var _ = Describe("EndPoints", func() {
 	})
 
 	Context("When region is us-east", func() {
-		locator := newEndpointLocator("us-east")
+		locator := newEndpointLocator("us-east", "public")
 
 		It("should return endpoints with region us-east", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.us-east.bluemix.net"))
@@ -63,7 +63,7 @@ var _ = Describe("EndPoints", func() {
 	})
 
 	Context("When region is jp-tok", func() {
-		locator := newEndpointLocator("jp-tok")
+		locator := newEndpointLocator("jp-tok", "public")
 
 		It("should return endpoints with region jp-tok", func() {
 			Expect(locator.CFAPIEndpoint()).To(Equal("https://api.jp-tok.bluemix.net"))
@@ -72,7 +72,7 @@ var _ = Describe("EndPoints", func() {
 	})
 
 	Context("When region is global", func() {
-		locator := newEndpointLocator("global")
+		locator := newEndpointLocator("global", "public")
 
 		It("should return endpoints with global endpoits", func() {
 			Expect(locator.AccountManagementEndpoint()).To(Equal("https://accounts.cloud.ibm.com"))
@@ -90,16 +90,12 @@ var _ = Describe("EndPoints", func() {
 	})
 
 	Context("When region is not supported", func() {
-		locator := newEndpointLocator("in")
+		locator := newEndpointLocator("in", "public")
 
 		It("should return error", func() {
 			_, err := locator.CFAPIEndpoint()
 			Expect(err).To(HaveOccurred())
 			_, err = locator.UAAEndpoint()
-			Expect(err).To(HaveOccurred())
-			_, err = locator.MCCPAPIEndpoint()
-			Expect(err).To(HaveOccurred())
-			_, err = locator.ICDEndpoint()
 			Expect(err).To(HaveOccurred())
 			_, err = locator.ContainerRegistryEndpoint()
 			Expect(err).To(HaveOccurred())
@@ -108,6 +104,6 @@ var _ = Describe("EndPoints", func() {
 
 })
 
-func newEndpointLocator(region string) EndpointLocator {
-	return NewEndpointLocator(region)
+func newEndpointLocator(region, visibility string) EndpointLocator {
+	return NewEndpointLocator(region, visibility)
 }
