@@ -66,8 +66,8 @@ var regionToEndpoint = map[string]map[string]string{
 }
 var privateRegions = map[string][]string{
 	"accounts":              {"us-south", "us-east"},
-	"certificate-manager":   {"us-south", "us-east", "eu-gb", "eu-de", "jp-tok", "au-syd"},
-	"icd":                   {"us-south", "us-east", "eu-gb", "eu-de", "jp-tok", "au-syd", "osl01", "seo01", "che01"},
+	"certificate-manager":   {"us-south", "us-east", "eu-gb", "eu-de", "jp-tok", "au-syd", "jp-osa"},
+	"icd":                   {"us-south", "us-east", "eu-gb", "eu-de", "jp-tok", "au-syd", "osl01", "seo01", "che01", "ca-tor"},
 	"schematics":            {"us-south", "us-east", "eu-de", "eu-gb"},
 	"global-search-tagging": {"us-south", "us-east"},
 	"container":             {"us-south", "us-east", "eu-gb", "eu-de", "jp-tok", "au-syd", "jp-osa", "ca-tor"},
