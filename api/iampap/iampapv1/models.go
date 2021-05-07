@@ -333,6 +333,7 @@ func (r *Resource) SetServiceType(value string) {
 
 // Attribute is part of policy subject and resource
 type Attribute struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
+	Name     string `json:"name"`
+	Value    string `json:"value"`
+	Operator string `json:"operator,omitempty"`
 }
