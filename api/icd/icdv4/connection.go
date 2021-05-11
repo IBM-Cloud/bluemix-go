@@ -16,13 +16,30 @@ type ConnectionRes struct {
 }
 
 type Connection struct {
-	Rediss   Uri     `json:"rediss"`
-	Grpc     Uri     `json:"grpc"`
-	Postgres Uri     `json:"postgres"`
-	Https    Uri     `json:"https"`
-	Amqps    Uri     `json:"amqps"`
-	Cli      CliConn `json:"cli"`
-	Mongo    Uri     `json:"mongodb"`
+	Rediss   Uri           `json:"rediss"`
+	Grpc     Uri           `json:"grpc"`
+	Postgres Uri           `json:"postgres"`
+	Https    Uri           `json:"https"`
+	Amqps    Uri           `json:"amqps"`
+	Cli      CliConn       `json:"cli"`
+	Mongo    Uri           `json:"mongodb"`
+	Secure   CassandraUri  `json:"secure"`
+}
+
+type CassandraUri struct {
+	Hosts []struct {
+		HostName string `json:"hostname"`
+		Port     int    `json:"port"`
+	} `json:"hosts"`
+	Authentication struct {
+		Method   string `json:"method"`
+		UserName string `json:"username"`
+		Password string `json:"password"`
+	}
+	Bundle struct {
+		Name         string `json:"name"`
+		BundleBase64 string `json:"bundle_base64"`
+	} `json:"bundle"`
 }
 
 type Uri struct {
