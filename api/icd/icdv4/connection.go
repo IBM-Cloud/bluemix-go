@@ -62,7 +62,6 @@ type Uri struct {
 		CertificateBase64 string `json:"certificate_base64"`
 	} `json:"certificate"`
 	Database interface{} `json:"database"`
-	Bundle interface{}   `json:"bundle"`
 }
 
 type CliConn struct {
