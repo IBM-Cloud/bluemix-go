@@ -667,7 +667,7 @@ func (r *clusters) StoreConfig(name, dir string, admin, createCalicoConfig bool,
 
 	if createCalicoConfig {
 		// Proccess calico golang template file if it exists
-		calicoConfig, err = generateCalicoConfig(resultDir)
+		calicoConfig, err = GenerateCalicoConfig(resultDir)
 		if err != nil {
 			return "", "", err
 		}
@@ -783,7 +783,7 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 
 	if createCalicoConfig {
 		// Proccess calico golang template file if it exists
-		calicoConfig, err = generateCalicoConfig(resultDir)
+		calicoConfig, err = GenerateCalicoConfig(resultDir)
 		if err != nil {
 			return "", clusterkey, err
 		}
@@ -873,8 +873,8 @@ func kubeConfigDir(baseDir string) (string, error) {
 	return "", errors.New("Unable to locate extracted configuration directory")
 }
 
-//generateCalicoConfig ...
-func generateCalicoConfig(desiredConfigPath string) (string, error) {
+//GenerateCalicoConfig ...
+func GenerateCalicoConfig(desiredConfigPath string) (string, error) {
 	// Proccess calico golang template file if it exists
 	calicoConfigFile := fmt.Sprintf("%s/%s", desiredConfigPath, "calicoctl.cfg.template")
 	newCalicoConfigFile := fmt.Sprintf("%s/%s", desiredConfigPath, "calicoctl.cfg")
