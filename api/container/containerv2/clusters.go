@@ -443,7 +443,7 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 			if f.Name() == "admin.pem" {
 				clusterkey.Admin = string(fileContent)
 			}
-			if strings.HasPrefix(f.Name(), "ca-") && strings.HasSuffix(f.Name(), ".pem") {
+			if strings.HasPrefix(f.Name(), "ca") && strings.HasSuffix(f.Name(), ".pem") {
 				clusterkey.ClusterCACertificate = string(fileContent)
 			}
 			old := filepath.Join(unzipConfigPath, f.Name())
