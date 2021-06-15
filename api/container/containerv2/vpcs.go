@@ -20,7 +20,7 @@ type vpc struct {
 
 //VPCs interface
 type VPCs interface {
-	GetVPCs(target ClusterTargetHeader) ([]VPCConfig, error)
+	ListVPCs(target ClusterTargetHeader) ([]VPCConfig, error)
 }
 
 func newVPCsAPI(c *client.Client) VPCs {
@@ -30,7 +30,7 @@ func newVPCsAPI(c *client.Client) VPCs {
 }
 
 //GetVPCs lists the vpcs
-func (r *vpc) GetVPCs(target ClusterTargetHeader) ([]VPCConfig, error) {
+func (r *vpc) ListVPCs(target ClusterTargetHeader) ([]VPCConfig, error) {
 	var successV []VPCConfig
 	_, err := r.client.Get(fmt.Sprintf("/v2/vpc/getVPCs?provider=%s", target.Provider), &successV, target.ToMap())
 	return successV, err

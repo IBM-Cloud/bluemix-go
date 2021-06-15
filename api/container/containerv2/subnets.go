@@ -24,7 +24,7 @@ type subnet struct {
 
 //Subnets interface
 type Subnets interface {
-	GetSubnets(vpcID, zone string, target ClusterTargetHeader) ([]SubnetConfig, error)
+	ListSubnets(vpcID, zone string, target ClusterTargetHeader) ([]SubnetConfig, error)
 }
 
 func newSubnetsAPI(c *client.Client) Subnets {
@@ -33,8 +33,8 @@ func newSubnetsAPI(c *client.Client) Subnets {
 	}
 }
 
-//GetSubnets list the subnets for a given VPC
-func (r *subnet) GetSubnets(vpcID, zone string, target ClusterTargetHeader) ([]SubnetConfig, error) {
+//ListSubnets list the subnets for a given VPC
+func (r *subnet) ListSubnets(vpcID, zone string, target ClusterTargetHeader) ([]SubnetConfig, error) {
 	var successV []SubnetConfig
 	_, err := r.client.Get(fmt.Sprintf("/v2/vpc/getSubnets?vpc=%s&provider=%s&zone=%s", vpcID, target.Provider, zone), &successV, target.ToMap())
 	return successV, err
