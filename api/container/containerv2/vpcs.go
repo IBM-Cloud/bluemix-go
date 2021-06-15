@@ -29,7 +29,7 @@ func newVPCsAPI(c *client.Client) VPCs {
 	}
 }
 
-//GetVPCs lists the vpcs
+//ListVPCs lists the vpcs
 func (r *vpc) ListVPCs(target ClusterTargetHeader) ([]VPCConfig, error) {
 	var successV []VPCConfig
 	_, err := r.client.Get(fmt.Sprintf("/v2/vpc/getVPCs?provider=%s", target.Provider), &successV, target.ToMap())
