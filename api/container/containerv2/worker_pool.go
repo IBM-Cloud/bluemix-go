@@ -12,6 +12,11 @@ type WorkerPoolRequest struct {
 	Cluster string `json:"cluster" description:"cluster name where the worker pool will be created"`
 	WorkerPoolConfig
 }
+type WorkerPoolTaintRequest struct {
+	Cluster    string            `json:"cluster" description:"cluster name"`
+	WorkerPool string            `json:"workerpool" description:"worker Pool name"`
+	Taints     map[string]string `json:"taints" description:"map of taints that has to be applied on workerpool"`
+}
 
 // WorkerPoolResponse provides worker pool data
 // swagger:model
@@ -62,6 +67,7 @@ type WorkerPool interface {
 	ListWorkerPools(clusterNameOrID string, target ClusterTargetHeader) ([]GetWorkerPoolResponse, error)
 	CreateWorkerPoolZone(workerPoolZone WorkerPoolZone, target ClusterTargetHeader) error
 	DeleteWorkerPool(clusterNameOrID string, workerPoolNameOrID string, target ClusterTargetHeader) error
+	UpdateWorkerPoolTaints(taintRequest WorkerPoolTaintRequest, target ClusterTargetHeader) error
 }
 
 type workerpool struct {
@@ -106,5 +112,12 @@ func (w *workerpool) DeleteWorkerPool(clusterNameOrID string, workerPoolNameOrID
 func (w *workerpool) CreateWorkerPoolZone(workerPoolZone WorkerPoolZone, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
 	_, err := w.client.Post("/v2/vpc/createWorkerPoolZone", workerPoolZone, nil, target.ToMap())
+	return err
+}
+
+// UpdateWorkerPoolTaints calls the API to update taints to a worker pool
+func (w *workerpool) UpdateWorkerPoolTaints(taintRequest WorkerPoolTaintRequest, target ClusterTargetHeader) error {
+	// Make the request, don't care about return value
+	_, err := w.client.Post("/v2/setWorkerPoolTaints", taintRequest, nil, target.ToMap())
 	return err
 }
