@@ -36,6 +36,7 @@ type GetWorkerPoolResponse struct {
 	ID          string            `json:"id"`
 	Isolation   string            `json:"isolation"`
 	Labels      map[string]string `json:"labels,omitempty"`
+	Taints      map[string]string `json:"taints,omitempty"`
 	Lifecycle   `json:"lifecycle"`
 	VpcID       string     `json:"vpcID"`
 	WorkerCount int        `json:"workerCount"`
