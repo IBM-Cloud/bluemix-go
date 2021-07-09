@@ -29,6 +29,9 @@ func main() {
 	var region string
 	flag.StringVar(&region, "region", "us-south", "Bluemix region")
 
+	var clusterRegion string
+	flag.StringVar(&clusterRegion, "cluster-region", "", "Cluster region if different from Bluemix region")
+
 	var admin bool
 	flag.BoolVar(&admin, "admin", false, "If true download the admin config")
 
@@ -40,6 +43,10 @@ func main() {
 	if org == "" || space == "" || clusterName == "" || path == "" {
 		flag.Usage()
 		os.Exit(1)
+	}
+	
+	if clusterRegion == "" {
+		clusterRegion = region
 	}
 
 	sess, err := session.New()
@@ -81,7 +88,7 @@ func main() {
 		OrgID:     myorg.GUID,
 		SpaceID:   myspace.GUID,
 		AccountID: myAccount.GUID,
-		Region:    region,
+		Region:    clusterRegion,
 	}
 
 	clusterClient, err := v1.New(sess)
