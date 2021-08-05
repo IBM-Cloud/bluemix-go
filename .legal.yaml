@@ -3,6 +3,16 @@ name: bluemix-go
 source: https://github.com/IBM-Cloud/bluemix-go
 issues: https://github.ibm.com/blueprint/schematics-compliance/issues
 objectCodeOnly: false
+additionalDownloads:
+  include:
+  - go modules
+  exclude:
+  - name: glide
+    documentation: Package manager not invoked in build nor runtime use
+  - name: nodejs
+    documentation: Package manager not invoked in build nor runtime use
+  - name: yarn
+    documentation: Package manager not invoked in build nor runtime use
 dependencies:
   - name: github.com/BurntSushi/toml
     version: v0.3.1
