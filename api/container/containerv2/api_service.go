@@ -26,6 +26,7 @@ type ContainerServiceAPI interface {
 	Kms() Kms
 	Ingresses() Ingress
 	Subnets() Subnets
+	NlbDns() Nlbdns
 
 	//TODO Add other services
 }
@@ -99,6 +100,9 @@ func (c *csService) WorkerPools() WorkerPool {
 }
 func (c *csService) Albs() Alb {
 	return newAlbAPI(c.Client)
+}
+func (c *csService) NlbDns() Nlbdns {
+	return newNlbdnsAPI(c.Client)
 }
 func (c *csService) Ingresses() Ingress {
 	return newIngressAPI(c.Client)
