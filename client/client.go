@@ -97,10 +97,10 @@ func (c *Client) MakeRequest(r *rest.Request, respV interface{}) (*gohttp.Respon
 			defer c.headerLock.Unlock()
 			var err error
 			if c.Config.BluemixAPIKey != "" {
-				log.Println("Retring authentication using API Key")
+				log.Println("Retrying authentication using API Key")
 				err = c.TokenRefresher.AuthenticateAPIKey(c.Config.BluemixAPIKey)
 			} else {
-				log.Println("Retring authentication using Refresh Token")
+				log.Println("Retrying authentication using Refresh Token")
 				_, err = c.TokenRefresher.RefreshToken()
 			}
 			switch err.(type) {
