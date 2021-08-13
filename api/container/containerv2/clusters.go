@@ -216,11 +216,12 @@ func (r *clusters) Delete(name string, target ClusterTargetHeader, deleteDepende
 //GetClusterByIDorName
 func (r *clusters) GetCluster(name string, target ClusterTargetHeader) (*ClusterInfo, error) {
 	ClusterInfo := &ClusterInfo{}
-	rawURL := fmt.Sprintf("/v2/vpc/getCluster?cluster=%s", name)
+	rawURL := fmt.Sprintf("/v2/getCluster?cluster=%s&v1-compatible", name)
 	_, err := r.client.Get(rawURL, &ClusterInfo, target.ToMap())
 	if err != nil {
 		return nil, err
 	}
+
 	return ClusterInfo, err
 }
 func (r *ClusterInfo) IsStagingSatelliteCluster() bool {
