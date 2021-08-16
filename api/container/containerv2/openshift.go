@@ -118,27 +118,32 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 		return kubecfg, err
 	}
 
-	var token string
+	var token, passcode string
 	trace.Logger.Println("Creating user passcode to login for getting oc token")
-	passcode, err := r.client.TokenRefresher.GetPasscode()
+
+	// Retry to cover rate limiting on passcode endpoint in particular
+	for try := 1; err != nil && try <= 3; try++ {
+		passcode, err = r.client.TokenRefresher.GetPasscode()
+
+		if err == nil {
+			break
+		}
+
+		if err != nil && try == 3 {
+			return kubecfg, err
+		}
+
+		time.Sleep(1 * time.Second)
+	}
 
 	authEP, err := func(meta *ClusterInfo) (*authEndpoints, error) {
 		request := rest.GetRequest(meta.ServerURL + "/.well-known/oauth-authorization-server")
 		var auth authEndpoints
-		tempVar := r.client.ServiceName
-		r.client.ServiceName = ""
 
-		tempSSL := r.client.Config.SSLDisable
-		tempClient := r.client.Config.HTTPClient
-		r.client.Config.SSLDisable = skipSSLVerification
-		r.client.Config.HTTPClient = bxhttp.NewHTTPClient(r.client.Config)
+		// Create new REST client - reusing modified existing client instances could lead to race conditions
+		restClient := &rest.Client{}
+		resp, err := restClient.Do(request, &auth, nil)
 
-		defer func() {
-			r.client.ServiceName = tempVar
-			r.client.Config.SSLDisable = tempSSL
-			r.client.Config.HTTPClient = tempClient
-		}()
-		resp, err := r.client.SendRequest(request, &auth)
 		if err != nil {
 			return &auth, err
 		}
@@ -220,7 +225,8 @@ func (r *clusters) openShiftAuthorizePasscode(authEP *authEndpoints, passcode st
 			}
 		}
 		defer resp.Body.Close()
-		if resp.StatusCode > 399 {
+		// Only expecting a 302 redirect with access token. Covers specifially instances where the endpoint intermittently returns 200 or > 399.
+		if resp.StatusCode != 302 {
 			if try >= 3 {
 				msg, _ := ioutil.ReadAll(resp.Body)
 				return "", "", fmt.Errorf("Bad status code [%d] returned when openshift login: %s", resp.StatusCode, string(msg))
