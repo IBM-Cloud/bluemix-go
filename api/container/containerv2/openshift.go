@@ -156,8 +156,17 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 		return &auth, nil
 	}(cMeta)
 
+	if err != nil {
+		return kubecfg, err
+	}
+
 	trace.Logger.Println("Got authentication end points for getting oc token")
 	token, uname, err := r.openShiftAuthorizePasscode(authEP, passcode, cMeta.IsStagingSatelliteCluster())
+
+	if err != nil {
+		return kubecfg, err
+	}
+
 	trace.Logger.Println("Got the token and user ", uname)
 	clusterName, _ := NormalizeName(authEP.ServerURL[len("https://"):len(authEP.ServerURL)]) //TODO deal with http
 	ccontext := "default/" + clusterName + "/" + uname
