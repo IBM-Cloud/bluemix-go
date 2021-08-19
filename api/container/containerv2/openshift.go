@@ -122,7 +122,7 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 	trace.Logger.Println("Creating user passcode to login for getting oc token")
 
 	// Retry to cover rate limiting on passcode endpoint in particular
-	for try := 1; err != nil && try <= 3; try++ {
+	for try := 1; try <= 3; try++ {
 		passcode, err = r.client.TokenRefresher.GetPasscode()
 
 		if err == nil {
