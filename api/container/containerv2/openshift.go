@@ -29,6 +29,7 @@ import (
 
 	yaml "github.com/ghodss/yaml"
 
+	"github.com/IBM-Cloud/bluemix-go/client"
 	bxhttp "github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/rest"
 	"github.com/IBM-Cloud/bluemix-go/trace"
@@ -208,40 +209,27 @@ func (r *clusters) openShiftAuthorizePasscode(authEP *authEndpoints, passcode st
 	request := rest.GetRequest(authEP.AuthorizationEndpoint+"?response_type=token&client_id=openshift-challenging-client").
 		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("passcode:%s", passcode))))
 
-	tempSSL := r.client.Config.SSLDisable
-	tempClient := r.client.Config.HTTPClient
-	r.client.Config.SSLDisable = skipSSLVerification
-	r.client.Config.HTTPClient = bxhttp.NewHTTPClient(r.client.Config)
+	// Creating a new client instance (instead of tempering with existing one) to avoid race conditions
+	copyConfig := r.client.Config.Copy()
+	copyConfig.SSLDisable = skipSSLVerification
+	copyConfig.HTTPClient = bxhttp.NewHTTPClient(copyConfig)
+	copyConfig.HTTPClient.CheckRedirect = neverRedirect
 
-	// To never redirect for this call
-	tempVar := r.client.Config.HTTPClient.CheckRedirect
-	r.client.Config.HTTPClient.CheckRedirect = neverRedirect
-	defer func() {
-		r.client.Config.HTTPClient.CheckRedirect = tempVar
-		r.client.Config.SSLDisable = tempSSL
-		r.client.Config.HTTPClient = tempClient
-	}()
+	client := client.New(copyConfig, r.client.ServiceName, r.client.TokenRefresher)
 
 	var respInterface interface{}
 	var resp *http.Response
 	var err error
 	for try := 1; try <= 3; try++ {
 		// bmxerror.NewRequestFailure("ServerErrorResponse", string(raw), resp.StatusCode)
-		resp, err = r.client.SendRequest(request, respInterface)
+		resp, err = client.SendRequest(request, respInterface)
 		if err != nil {
 			if resp.StatusCode != 302 {
-				// Retry at least 3 times before returning error to caller
-				if try >= 3 {
-					return "", "", err
-				} else {
-					time.Sleep(200 * time.Millisecond)
-					continue
-				}
+				return "", "", err
 			}
 		}
 		defer resp.Body.Close()
-		// Only expecting a 302 redirect with access token. Covers specifially instances where the endpoint intermittently returns 200 or > 399.
-		if resp.StatusCode != 302 {
+		if resp.StatusCode > 399 {
 			if try >= 3 {
 				msg, _ := ioutil.ReadAll(resp.Body)
 				return "", "", fmt.Errorf("Bad status code [%d] returned when openshift login: %s", resp.StatusCode, string(msg))
