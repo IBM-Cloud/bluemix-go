@@ -230,7 +230,13 @@ func (r *clusters) openShiftAuthorizePasscode(authEP *authEndpoints, passcode st
 		resp, err = r.client.SendRequest(request, respInterface)
 		if err != nil {
 			if resp.StatusCode != 302 {
-				return "", "", err
+				// Retry at least 3 times before returning error to caller
+				if try >= 3 {
+					return "", "", err
+				} else {
+					time.Sleep(200 * time.Millisecond)
+					continue
+				}
 			}
 		}
 		defer resp.Body.Close()
