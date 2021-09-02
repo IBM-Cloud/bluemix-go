@@ -27,6 +27,7 @@ type ContainerServiceAPI interface {
 	Ingresses() Ingress
 	Subnets() Subnets
 	NlbDns() Nlbdns
+	Satellite() Satellite
 
 	//TODO Add other services
 }
@@ -72,6 +73,11 @@ func New(sess *session.Session) (ContainerServiceAPI, error) {
 	return &csService{
 		Client: client.New(config, bluemix.VpcContainerService, tokenRefreher),
 	}, nil
+}
+
+//Clusters implements Clusters API
+func (c *csService) Satellite() Satellite {
+	return newSatelliteAPI(c.Client)
 }
 
 //Clusters implements Clusters API
