@@ -80,6 +80,7 @@ type ClusterInfo struct {
 	APIUser           string        `json:"apiUser"`
 	ServerURL         string        `json:"serverURL"`
 	MasterURL         string        `json:"masterURL"`
+	MasterStatus      string        `json:"masterStatus"`
 	DisableAutoUpdate bool          `json:"disableAutoUpdate"`
 	WorkerZones       []string      `json:"workerZones"`
 	Vpcs              []string      `json:"vpcs"`
