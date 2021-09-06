@@ -120,21 +120,23 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 	}
 
 	var token, passcode string
-	trace.Logger.Println("Creating user passcode to login for getting oc token")
+	if r.client.Config.BluemixAPIKey == "" {
+		trace.Logger.Println("Creating user passcode to login for getting oc token")
 
-	// Retry to cover rate limiting on passcode endpoint in particular
-	for try := 1; try <= 3; try++ {
-		passcode, err = r.client.TokenRefresher.GetPasscode()
+		// Retry to cover rate limiting on passcode endpoint in particular
+		for try := 1; try <= 3; try++ {
+			passcode, err = r.client.TokenRefresher.GetPasscode()
 
-		if err == nil {
-			break
+			if err == nil {
+				break
+			}
+
+			if err != nil && try == 3 {
+				return kubecfg, err
+			}
+
+			time.Sleep(1 * time.Second)
 		}
-
-		if err != nil && try == 3 {
-			return kubecfg, err
-		}
-
-		time.Sleep(1 * time.Second)
 	}
 
 	authEP, err := func(meta *ClusterInfo) (*authEndpoints, error) {
@@ -206,9 +208,14 @@ func neverRedirect(req *http.Request, via []*http.Request) error {
 }
 
 func (r *clusters) openShiftAuthorizePasscode(authEP *authEndpoints, passcode string, skipSSLVerification bool) (string, string, error) {
-	request := rest.GetRequest(authEP.AuthorizationEndpoint+"?response_type=token&client_id=openshift-challenging-client").
-		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("passcode:%s", passcode))))
-
+	var request *rest.Request
+	authString := "passcode:" + passcode
+	if r.client.Config.BluemixAPIKey != "" {
+		apikey := r.client.Config.BluemixAPIKey
+		authString = "apikey:" + apikey
+	}
+	request = rest.GetRequest(authEP.AuthorizationEndpoint+"?response_type=token&client_id=openshift-challenging-client").
+		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(authString)))
 	// Creating a new client instance (instead of tempering with existing one) to avoid race conditions
 	copyConfig := r.client.Config.Copy()
 	copyConfig.SSLDisable = skipSSLVerification
