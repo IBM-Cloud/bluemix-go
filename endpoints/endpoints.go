@@ -112,16 +112,16 @@ func NewEndpointLocator(region, visibility, file string) EndpointLocator {
 	if f := helpers.EnvFallBack([]string{"IBMCLOUD_ENDPOINTS_FILE", "IC_ENDPOINTS_FILE"}, file); f != "" {
 		jsonFile, err := os.Open(f)
 		if err != nil {
-			fmt.Printf("Unable to open File %s", err)
+			log.Fatalf("Unable to open endpoints file %s", err)
 		}
 		defer jsonFile.Close()
 		bytes, err := ioutil.ReadAll(jsonFile)
 		if err != nil {
-			fmt.Printf("Unable to read File %s", err)
+			log.Fatalf("Unable to read endpoints file %s", err)
 		}
 		err = json.Unmarshal([]byte(bytes), &fileMap)
 		if err != nil {
-			fmt.Printf("Unable to unmarshal File %s", err)
+			log.Fatalf("Unable to unmarshal endpoints file %s", err)
 		}
 	}
 	return &endpointLocator{region: region, visibility: visibility, endpointsFile: fileMap}
