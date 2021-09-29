@@ -53,23 +53,28 @@ func (r *nlbdns) GetNLBDNSList(clusterNameOrID string) ([]NlbVPCListConfig, erro
 	var successV []interface{}
 	rawURL := fmt.Sprintf("/v2/nlb-dns/getNlbDNSList?cluster=%s", clusterNameOrID)
 	_, err := r.client.Get(rawURL, &successV)
-	if _, isVpc := successV[0].(map[string]interface{})["Nlb"]; isVpc {
-		bodyBytes, _ := json.Marshal(successV)
-		json.Unmarshal(bodyBytes, &success)
-	} else {
-		nlb := NlbVPCListConfig{}
-		for _, s := range successV {
-			b := s.(map[string]interface{})
-			nlb.SecretName = b["nlbSslSecretName"].(string)
-			nlb.SecretStatus = b["nlbSslSecretStatus"].(string)
-			nlb.Nlb.Cluster = b["clusterID"].(string)
-			nlb.Nlb.Type = b["nlbType"].(string)
-			nlb.Nlb.DnsType = b["nlbDnsType"].(string)
-			nlb.Nlb.NlbSubdomain = b["nlbHost"].(string)
-			nlb.Nlb.SecretNamespace = b["secretNamespace"].(string)
-			nlb.Nlb.NlbIPArray = b["nlbIPArray"].([]interface{})
-			nlb.Nlb.NlbMonitorState = b["nlbMonitorState"].(string)
-			success = append(success, nlb)
+	if err != nil {
+		return success, err
+	}
+	if len(successV) > 0 {
+		if _, isVpc := successV[0].(map[string]interface{})["Nlb"]; isVpc {
+			bodyBytes, _ := json.Marshal(successV)
+			json.Unmarshal(bodyBytes, &success)
+		} else {
+			nlb := NlbVPCListConfig{}
+			for _, s := range successV {
+				b := s.(map[string]interface{})
+				nlb.SecretName = b["nlbSslSecretName"].(string)
+				nlb.SecretStatus = b["nlbSslSecretStatus"].(string)
+				nlb.Nlb.Cluster = b["clusterID"].(string)
+				nlb.Nlb.Type = b["nlbType"].(string)
+				nlb.Nlb.DnsType = b["nlbDnsType"].(string)
+				nlb.Nlb.NlbSubdomain = b["nlbHost"].(string)
+				nlb.Nlb.SecretNamespace = b["secretNamespace"].(string)
+				nlb.Nlb.NlbIPArray = b["nlbIPArray"].([]interface{})
+				nlb.Nlb.NlbMonitorState = b["nlbMonitorState"].(string)
+				success = append(success, nlb)
+			}
 		}
 	}
 	return success, err
@@ -79,23 +84,28 @@ func (r *nlbdns) GetLocationNLBDNSList(location string) ([]NlbVPCListConfig, err
 	var successV []interface{}
 	rawURL := fmt.Sprintf("/v2/nlb-dns/getSatLocationSubdomains?controller=%s", location)
 	_, err := r.client.Get(rawURL, &successV)
-	if _, isVpc := successV[0].(map[string]interface{})["Nlb"]; isVpc {
-		bodyBytes, _ := json.Marshal(successV)
-		json.Unmarshal(bodyBytes, &success)
-	} else {
-		nlb := NlbVPCListConfig{}
-		for _, s := range successV {
-			b := s.(map[string]interface{})
-			nlb.SecretName = b["nlbSslSecretName"].(string)
-			nlb.SecretStatus = b["nlbSslSecretStatus"].(string)
-			nlb.Nlb.Cluster = b["clusterID"].(string)
-			nlb.Nlb.Type = b["nlbType"].(string)
-			nlb.Nlb.DnsType = b["nlbDnsType"].(string)
-			nlb.Nlb.NlbSubdomain = b["nlbHost"].(string)
-			nlb.Nlb.SecretNamespace = b["secretNamespace"].(string)
-			nlb.Nlb.NlbIPArray = b["nlbIPArray"].([]interface{})
-			nlb.Nlb.NlbMonitorState = b["nlbMonitorState"].(string)
-			success = append(success, nlb)
+	if err != nil {
+		return success, err
+	}
+	if len(successV) > 0 {
+		if _, isVpc := successV[0].(map[string]interface{})["Nlb"]; isVpc {
+			bodyBytes, _ := json.Marshal(successV)
+			json.Unmarshal(bodyBytes, &success)
+		} else {
+			nlb := NlbVPCListConfig{}
+			for _, s := range successV {
+				b := s.(map[string]interface{})
+				nlb.SecretName = b["nlbSslSecretName"].(string)
+				nlb.SecretStatus = b["nlbSslSecretStatus"].(string)
+				nlb.Nlb.Cluster = b["clusterID"].(string)
+				nlb.Nlb.Type = b["nlbType"].(string)
+				nlb.Nlb.DnsType = b["nlbDnsType"].(string)
+				nlb.Nlb.NlbSubdomain = b["nlbHost"].(string)
+				nlb.Nlb.SecretNamespace = b["secretNamespace"].(string)
+				nlb.Nlb.NlbIPArray = b["nlbIPArray"].([]interface{})
+				nlb.Nlb.NlbMonitorState = b["nlbMonitorState"].(string)
+				success = append(success, nlb)
+			}
 		}
 	}
 	return success, err
