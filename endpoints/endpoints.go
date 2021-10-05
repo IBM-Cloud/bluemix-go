@@ -109,7 +109,7 @@ type endpointLocator struct {
 //NewEndpointLocator ...
 func NewEndpointLocator(region, visibility, file string) EndpointLocator {
 	var fileMap map[string]interface{}
-	if f := helpers.EnvFallBack([]string{"IBMCLOUD_ENDPOINTS_FILE", "IC_ENDPOINTS_FILE"}, file); f != "" {
+	if f := helpers.EnvFallBack([]string{"IBMCLOUD_ENDPOINTS_FILE_PATH", "IC_ENDPOINTS_FILE_PATH"}, file); f != "" {
 		jsonFile, err := os.Open(f)
 		if err != nil {
 			log.Fatalf("Unable to open endpoints file %s", err)
