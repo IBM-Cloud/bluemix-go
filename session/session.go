@@ -81,7 +81,7 @@ func New(configs ...*bluemix.Config) (*Session, error) {
 		c.Visibility = helpers.EnvFallBack([]string{"IC_VISIBILITY", "IBMCLOUD_VISIBILITY"}, "public")
 	}
 	if len(c.EndpointsFile) == 0 {
-		c.EndpointsFile = helpers.EnvFallBack([]string{"IC_ENDPOINTS_FILE", "IBMCLOUD_ENDPOINTS_FILE"}, "")
+		c.EndpointsFile = helpers.EnvFallBack([]string{"IC_ENDPOINTS_FILE_PATH", "IBMCLOUD_ENDPOINTS_FILE_PATH"}, "")
 	}
 	if c.RetryDelay == nil {
 		c.RetryDelay = helpers.Duration(30 * time.Second)
