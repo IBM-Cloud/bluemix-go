@@ -90,6 +90,10 @@ type SatelliteLocationInfo struct {
 	OpenVpnServerPort int `json:"open_vpn_server_port"`
 }
 
+type SatelliteEndpoints struct {
+	Endpoint []SatelliteEndpointInfo `json:"endpoints"`
+}
+
 type SatelliteEndpointInfo struct {
 	Cert             *EndpointCerts `json:"certs,omitempty"`
 	ClientHost       string         `json:"client_host"`
@@ -210,7 +214,7 @@ type EndpointCerts struct {
 type Endpoint interface {
 	GetEndpointInfo(locationID, endpointID string, target containerv2.ClusterTargetHeader) (SatelliteEndpointInfo, error)
 	CreateSatelliteEndpoint(params CreateEndpointRequest, target containerv2.ClusterTargetHeader) (CreateEndpointResponse, error)
-	GetEndpoints(locationID string, target containerv2.ClusterTargetHeader) ([]SatelliteEndpointInfo, error)
+	GetEndpoints(locationID string, target containerv2.ClusterTargetHeader) (*SatelliteEndpoints, error)
 	DeleteEndpoint(locationID, endpointID string, target containerv2.ClusterTargetHeader) error
 }
 
@@ -232,8 +236,8 @@ func (s *endpoint) GetEndpointInfo(locationID, endpointID string, target contain
 	return SatEndpointInfo, err
 }
 
-func (s *endpoint) GetEndpoints(locationID string, target containerv2.ClusterTargetHeader) ([]SatelliteEndpointInfo, error) {
-	SatEndpointInfo := []SatelliteEndpointInfo{}
+func (s *endpoint) GetEndpoints(locationID string, target containerv2.ClusterTargetHeader) (*SatelliteEndpoints, error) {
+	SatEndpointInfo := new(SatelliteEndpoints)
 	rawURL := fmt.Sprintf("v1/locations/%s/endpoints", locationID)
 	_, err := s.client.Get(rawURL, &SatEndpointInfo, target.ToMap())
 	if err != nil {
