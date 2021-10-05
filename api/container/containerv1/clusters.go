@@ -1,7 +1,9 @@
 package containerv1
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
+	"encoding/base32"
 	"errors"
 	"fmt"
 	"html/template"
@@ -959,7 +961,13 @@ func ComputeClusterConfigDir(dir, name string, admin bool) string {
 	if admin {
 		resultDirPrefix = fmt.Sprintf("%s_admin", resultDirPrefix)
 	}
-	resultDir := filepath.Join(dir, fmt.Sprintf("%s%s", path.Clean(resultDirPrefix), path.Clean(resultDirSuffix)))
+
+	//Ensure uniqueness of path to support concurrent executions against same cluster, without having to rely on a mutex
+	randomBytes := make([]byte, 10)
+	rand.Read(randomBytes)
+	resultDirRandom := base32.StdEncoding.EncodeToString(randomBytes)
+
+	resultDir := filepath.Join(dir, fmt.Sprintf("%s_%s%s", path.Clean(resultDirPrefix), path.Clean(resultDirRandom), path.Clean(resultDirSuffix)))
 	return resultDir
 }
 
