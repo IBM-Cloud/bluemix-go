@@ -20,6 +20,64 @@ var _ = Describe("Albs", func() {
 	AfterEach(func() {
 		server.Close()
 	})
+	//CreateALB
+	Describe("Create", func() {
+		Context("When alb is created", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v1​/alb​/clusters​/testCluster/zone​/testZone"),
+						ghttp.VerifyJSON(`{"zone":"testZone","vlanID":"testVlan","type":"testType","enableByDefault":true,"ip":"1.2.3.4","nlbVersion":"testnlbVersion","ingressImage":"testingressImage"}`),
+						ghttp.RespondWith(http.StatusCreated, `{}`),
+					),
+				)
+			})
+
+			It("should create an alb to a cluster", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				params := CreateALB{
+					Zone: "testZone", VlanID: "testVlan", Type: "testType", EnableByDefault: true, IP: "1.2.3.4", NLBVersion: "testnlbVersion", IngressImage: "testingressImage",
+				}
+
+				err := newAlbs(server.URL()).CreateALB(params, "testCluster", target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When creating alb is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v1​/alb​/clusters​/testCluster/zone​/testZone"),
+						ghttp.VerifyJSON(`{"zone":"testZone","vlanID":"testVlan","type":"testType","enableByDefault":true,"ip":"1.2.3.4","nlbVersion":"testnlbVersion","ingressImage":"testingressImage"}`),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to configure alb`),
+					),
+				)
+			})
+
+			It("should return error during creation of alb", func() {
+				params := CreateALB{
+					Zone: "testZone", VlanID: "testVlan", Type: "testType", EnableByDefault: true, IP: "1.2.3.4", NLBVersion: "testnlbVersion", IngressImage: "testingressImage",
+				}
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).CreateALB(params, "testCluster", target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+
 	//Configure
 	Describe("Configure", func() {
 		Context("When configuring alb is successful", func() {
