@@ -45,7 +45,7 @@ var _ = Describe("Albs", func() {
 					Zone: "testZone", VlanID: "testVlan", Type: "testType", EnableByDefault: true, IP: "1.2.3.4", NLBVersion: "testnlbVersion", IngressImage: "testingressImage",
 				}
 
-				err := newAlbs(server.URL()).CreateALB(params, "testCluster", target)
+				_, err := newAlbs(server.URL()).CreateALB(params, "testCluster", target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -72,7 +72,7 @@ var _ = Describe("Albs", func() {
 					AccountID: "ghi",
 					Region:    "eu-de",
 				}
-				err := newAlbs(server.URL()).CreateALB(params, "testCluster", target)
+				_, err := newAlbs(server.URL()).CreateALB(params, "testCluster", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})

@@ -74,7 +74,7 @@ type CreateALB struct {
 
 //Clusters interface
 type Albs interface {
-	CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) error
+	CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) (string, error)
 	ListClusterALBs(clusterNameOrID string, target ClusterTargetHeader) ([]ALBConfig, error)
 	GetALB(albID string, target ClusterTargetHeader) (ALBConfig, error)
 	ConfigureALB(albID string, config ALBConfig, disableDeployment bool, target ClusterTargetHeader) error
@@ -100,14 +100,14 @@ func newAlbAPI(c *client.Client) Albs {
 }
 
 // ListClusterALBs returns the list of albs available for cluster
-func (r *alb) CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) error {
-	var successV interface{}
+func (r *alb) CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) (string, error) {
+	var successV ALBConfig
 
 	//     /v1​/alb​/clusters​/{idOrName}​/zone​/{zoneId}
 	rawURL := fmt.Sprintf("/v1​/alb​/clusters​/%s/zone​/%s", clusterID, alb.Zone)
 
 	_, err := r.client.Post(rawURL, alb, &successV, target.ToMap())
-	return err
+	return successV.ALBID, err
 }
 
 // ListClusterALBs returns the list of albs available for cluster
