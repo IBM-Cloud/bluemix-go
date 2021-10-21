@@ -59,14 +59,14 @@ func main() {
 		Zone: "testZone", VlanID: "testVlan", Type: "testType", EnableByDefault: true, IP: "1.2.3.4", NLBVersion: "testnlbVersion", IngressImage: "testingressImage",
 	}
 
-	albid, err := albAPI.CreateALB(params, clusterID, target)
+	albResp, err := albAPI.CreateALB(params, clusterID, target)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	time.Sleep(10 * time.Second)
 
-	alb, err := albAPI.GetALB(albid, target)
+	alb, err := albAPI.GetALB(albResp.Alb, target)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -62,6 +62,7 @@ type ALBSecretsPerCRN struct {
 	ALBSecrets []string `json:"albsecrets" description:"ALB secrets correponding to a CRN"`
 }
 
+// CreateALB ...
 type CreateALB struct {
 	Zone            string `json:"zone"`
 	VlanID          string `json:"vlanID"`
@@ -72,9 +73,15 @@ type CreateALB struct {
 	IngressImage    string `json:"ingressImage,omitempty"`
 }
 
+// AlbCreateResp used to send back the albid on a create request
+type AlbCreateResp struct {
+	Alb     string `json:"alb"`
+	Cluster string `json:"cluster"`
+}
+
 //Clusters interface
 type Albs interface {
-	CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) (string, error)
+	CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) (AlbCreateResp, error)
 	ListClusterALBs(clusterNameOrID string, target ClusterTargetHeader) ([]ALBConfig, error)
 	GetALB(albID string, target ClusterTargetHeader) (ALBConfig, error)
 	ConfigureALB(albID string, config ALBConfig, disableDeployment bool, target ClusterTargetHeader) error
@@ -100,14 +107,14 @@ func newAlbAPI(c *client.Client) Albs {
 }
 
 // ListClusterALBs returns the list of albs available for cluster
-func (r *alb) CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) (string, error) {
-	var successV ALBConfig
+func (r *alb) CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) (AlbCreateResp, error) {
+	var successV AlbCreateResp
 
 	//     /v1​/alb​/clusters​/{idOrName}​/zone​/{zoneId}
 	rawURL := fmt.Sprintf("/v1​/alb​/clusters​/%s/zone​/%s", clusterID, alb.Zone)
 
 	_, err := r.client.Post(rawURL, alb, &successV, target.ToMap())
-	return successV.ALBID, err
+	return successV, err
 }
 
 // ListClusterALBs returns the list of albs available for cluster

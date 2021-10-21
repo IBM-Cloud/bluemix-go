@@ -29,7 +29,7 @@ var _ = Describe("Albs", func() {
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1​/alb​/clusters​/testCluster/zone​/testZone"),
 						ghttp.VerifyJSON(`{"zone":"testZone","vlanID":"testVlan","type":"testType","enableByDefault":true,"ip":"1.2.3.4","nlbVersion":"testnlbVersion","ingressImage":"testingressImage"}`),
-						ghttp.RespondWith(http.StatusCreated, `{}`),
+						ghttp.RespondWith(http.StatusCreated, `{"alb":"1234", "cluster":"clusterID"}`),
 					),
 				)
 			})
@@ -45,7 +45,9 @@ var _ = Describe("Albs", func() {
 					Zone: "testZone", VlanID: "testVlan", Type: "testType", EnableByDefault: true, IP: "1.2.3.4", NLBVersion: "testnlbVersion", IngressImage: "testingressImage",
 				}
 
-				_, err := newAlbs(server.URL()).CreateALB(params, "testCluster", target)
+				AlbResp, err := newAlbs(server.URL()).CreateALB(params, "testCluster", target)
+				Expect(AlbResp.Alb).To(Equal("1234"))
+				Expect(AlbResp.Cluster).To(Equal("clusterID"))
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
