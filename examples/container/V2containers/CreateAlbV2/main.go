@@ -40,8 +40,9 @@ func main() {
 
 	albAPI := clusterClient.Albs()
 
-	err2 := albAPI.CreateAlb(albinfo, target)
+	alb, err2 := albAPI.CreateAlb(albinfo, target)
 
 	fmt.Println("err=", err2)
+	fmt.Println("created albID=", alb.Alb)
 
 }

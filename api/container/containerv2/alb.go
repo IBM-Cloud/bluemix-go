@@ -13,6 +13,11 @@ type AlbCreateReq struct {
 	ZoneAlb         string `json:"zone"`
 }
 
+type AlbCreateResp struct {
+	Alb     string
+	Cluster string
+}
+
 type ClusterALB struct {
 	ID                      string      `json:"id"`
 	Region                  string      `json:"region"`
@@ -46,7 +51,7 @@ type alb struct {
 
 //Clusters interface
 type Alb interface {
-	CreateAlb(albCreateReq AlbCreateReq, target ClusterTargetHeader) error
+	CreateAlb(albCreateReq AlbCreateReq, target ClusterTargetHeader) (AlbCreateResp, error)
 	DisableAlb(disableAlbReq AlbConfig, target ClusterTargetHeader) error
 	EnableAlb(enableAlbReq AlbConfig, target ClusterTargetHeader) error
 	GetAlb(albid string, target ClusterTargetHeader) (AlbConfig, error)
@@ -59,10 +64,11 @@ func newAlbAPI(c *client.Client) Alb {
 	}
 }
 
-func (r *alb) CreateAlb(albCreateReq AlbCreateReq, target ClusterTargetHeader) error {
-	// Make the request, don't care about return value
-	_, err := r.client.Post("/v2/alb/vpc/createAlb", albCreateReq, nil, target.ToMap())
-	return err
+func (r *alb) CreateAlb(albCreateReq AlbCreateReq, target ClusterTargetHeader) (AlbCreateResp, error) {
+	var successV AlbCreateResp
+
+	_, err := r.client.Post("/v2/alb/vpc/createAlb", albCreateReq, &successV, target.ToMap())
+	return successV, err
 }
 
 func (r *alb) DisableAlb(disableAlbReq AlbConfig, target ClusterTargetHeader) error {
