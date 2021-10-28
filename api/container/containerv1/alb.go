@@ -110,9 +110,8 @@ func newAlbAPI(c *client.Client) Albs {
 func (r *alb) CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) (AlbCreateResp, error) {
 	var successV AlbCreateResp
 
-	//     /v1​/alb​/clusters​/{idOrName}​/zone​/{zoneId}
-	rawURL := fmt.Sprintf("/v1​/alb​/clusters​/%s/zone​/%s", clusterID, alb.Zone)
-
+	rawURL := fmt.Sprintf("/v1/alb/clusters/%s/zone/%s", clusterID, alb.Zone)
+	fmt.Println(rawURL)
 	_, err := r.client.Post(rawURL, alb, &successV, target.ToMap())
 	return successV, err
 }

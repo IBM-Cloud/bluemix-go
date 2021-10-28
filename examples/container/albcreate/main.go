@@ -28,7 +28,7 @@ func main() {
 	flag.StringVar(&vlanID, "vlanID", "", "vlanID of alb - mandatory")
 
 	var zone string //mandatory
-	flag.StringVar(&vlanID, "zone", "", "zone of alb - mandatory")
+	flag.StringVar(&zone, "zone", "", "zone of alb - mandatory")
 
 	var region string //mandatory
 	flag.StringVar(&region, "region", "us-south", "region of cluster - mandatory")
@@ -37,6 +37,11 @@ func main() {
 
 	trace.Logger = trace.NewLogger("true")
 	if region == "" || albtype == "" || clusterID == "" || vlanID == "" || zone == "" {
+		fmt.Println("region: ", region)
+		fmt.Println("albtype: ", albtype)
+		fmt.Println("clusterID: ", clusterID)
+		fmt.Println("vlanID: ", vlanID)
+		fmt.Println("zone: ", zone)
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -56,7 +61,7 @@ func main() {
 	}
 
 	params := v1.CreateALB{
-		Zone: "testZone", VlanID: "testVlan", Type: "testType", EnableByDefault: true, IP: "1.2.3.4", NLBVersion: "testnlbVersion", IngressImage: "testingressImage",
+		Zone: zone, VlanID: vlanID, Type: albtype, EnableByDefault: enable,
 	}
 
 	albResp, err := albAPI.CreateALB(params, clusterID, target)
