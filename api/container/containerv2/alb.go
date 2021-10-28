@@ -66,7 +66,6 @@ func newAlbAPI(c *client.Client) Alb {
 
 func (r *alb) CreateAlb(albCreateReq AlbCreateReq, target ClusterTargetHeader) (AlbCreateResp, error) {
 	var successV AlbCreateResp
-
 	_, err := r.client.Post("/v2/alb/vpc/createAlb", albCreateReq, &successV, target.ToMap())
 	return successV, err
 }
