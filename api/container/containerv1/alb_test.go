@@ -27,7 +27,7 @@ var _ = Describe("Albs", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPost, "/v1​/alb​/clusters​/testCluster/zone​/testZone"),
+						ghttp.VerifyRequest(http.MethodPost, "/v1/alb/clusters/testCluster/zone/testZone"),
 						ghttp.VerifyJSON(`{"zone":"testZone","vlanID":"testVlan","type":"testType","enableByDefault":true,"ip":"1.2.3.4","nlbVersion":"testnlbVersion","ingressImage":"testingressImage"}`),
 						ghttp.RespondWith(http.StatusCreated, `{"alb":"1234", "cluster":"clusterID"}`),
 					),
@@ -57,7 +57,7 @@ var _ = Describe("Albs", func() {
 				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPost, "/v1​/alb​/clusters​/testCluster/zone​/testZone"),
+						ghttp.VerifyRequest(http.MethodPost, "/v1/alb/clusters/testCluster/zone/testZone"),
 						ghttp.VerifyJSON(`{"zone":"testZone","vlanID":"testVlan","type":"testType","enableByDefault":true,"ip":"1.2.3.4","nlbVersion":"testnlbVersion","ingressImage":"testingressImage"}`),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to configure alb`),
 					),
