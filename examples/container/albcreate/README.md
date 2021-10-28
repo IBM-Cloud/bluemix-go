@@ -1,6 +1,6 @@
 # Alb example
 
-This example shows how to enable or disable an alb.
+This example shows how to create a new an alb.
 
 Example: 
 

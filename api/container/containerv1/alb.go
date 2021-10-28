@@ -62,7 +62,7 @@ type ALBSecretsPerCRN struct {
 	ALBSecrets []string `json:"albsecrets" description:"ALB secrets correponding to a CRN"`
 }
 
-// CreateALB ...
+// CreateALB struct representation of ALB arriving in create requests
 type CreateALB struct {
 	Zone            string `json:"zone"`
 	VlanID          string `json:"vlanID"`
@@ -109,9 +109,7 @@ func newAlbAPI(c *client.Client) Albs {
 // CreateALB creates a new ALB in the target cluster
 func (r *alb) CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) (AlbCreateResp, error) {
 	var successV AlbCreateResp
-
 	rawURL := fmt.Sprintf("/v1/alb/clusters/%s/zone/%s", clusterID, alb.Zone)
-	fmt.Println(rawURL)
 	_, err := r.client.Post(rawURL, alb, &successV, target.ToMap())
 	return successV, err
 }
