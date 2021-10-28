@@ -106,7 +106,7 @@ func newAlbAPI(c *client.Client) Albs {
 	}
 }
 
-// ListClusterALBs returns the list of albs available for cluster
+// CreateALB creates a new ALB in the target cluster
 func (r *alb) CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) (AlbCreateResp, error) {
 	var successV AlbCreateResp
 
