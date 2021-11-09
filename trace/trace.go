@@ -72,7 +72,10 @@ func NewLogger(bluemix_trace string) Printer {
 
 // NewStdLogger return a printer that writes to StdOut.
 func NewStdLogger() PrinterCloser {
-	return newLoggerImpl(os.Stderr, "", 0)
+	if os.Getenv("IBMCLOUD_BLUEMIX_GO_TRACE") != "" {
+		return newLoggerImpl(os.Stdout, "", 0)
+	}
+	return newLoggerImpl(os.Stdin, "", 0)
 }
 
 // NewFileLogger return a printer that writes to the given file path.

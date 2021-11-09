@@ -8,6 +8,7 @@ import (
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/endpoints"
 	"github.com/IBM-Cloud/bluemix-go/helpers"
+	"github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
@@ -93,7 +94,9 @@ func New(configs ...*bluemix.Config) (*Session, error) {
 	if c.Debug {
 		trace.Logger = trace.NewLogger("true")
 	}
-
+	if c.UserAgent == "" {
+		c.UserAgent = http.UserAgent()
+	}
 	return sess, nil
 }
 
