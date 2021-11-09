@@ -14,6 +14,7 @@ import (
 
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
@@ -295,61 +296,63 @@ func cleanPath(p string) string {
 }
 
 const (
-	userAgentHeader       = "X-Original-User-Agent"
-	authorizationHeader   = "Authorization"
-	uaaAccessTokenHeader  = "X-Auth-Uaa-Token"
-	userAccessTokenHeader = "X-Auth-User-Token"
-	iamRefreshTokenHeader = "X-Auth-Refresh-Token"
-	crRefreshTokenHeader  = "RefreshToken"
+	userAgentHeader         = "User-Agent"
+	originalUserAgentHeader = "X-Original-User-Agent"
+	authorizationHeader     = "Authorization"
+	uaaAccessTokenHeader    = "X-Auth-Uaa-Token"
+	userAccessTokenHeader   = "X-Auth-User-Token"
+	iamRefreshTokenHeader   = "X-Auth-Refresh-Token"
+	crRefreshTokenHeader    = "RefreshToken"
 )
 
 func getDefaultAuthHeaders(serviceName bluemix.ServiceName, c *bluemix.Config) gohttp.Header {
 	h := gohttp.Header{}
+	h.Set(originalUserAgentHeader, c.UserAgent)
 	switch serviceName {
 	case bluemix.MccpService, bluemix.AccountService:
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.UAAAccessToken)
 	case bluemix.ContainerService:
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
 		h.Set(iamRefreshTokenHeader, c.IAMRefreshToken)
 		h.Set(uaaAccessTokenHeader, c.UAAAccessToken)
 	case bluemix.VpcContainerService:
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
 		h.Set(iamRefreshTokenHeader, c.IAMRefreshToken)
 	case bluemix.SchematicsService:
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
 		h.Set(iamRefreshTokenHeader, c.IAMRefreshToken)
 	case bluemix.ContainerRegistryService:
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
 		h.Set(crRefreshTokenHeader, c.IAMRefreshToken)
 	case bluemix.IAMPAPService, bluemix.AccountServicev1, bluemix.ResourceCatalogrService, bluemix.ResourceControllerService, bluemix.ResourceControllerServicev2, bluemix.ResourceManagementService, bluemix.ResourceManagementServicev2, bluemix.IAMService, bluemix.IAMUUMService, bluemix.IAMUUMServicev2, bluemix.IAMPAPServicev2, bluemix.CseService:
 		h.Set(authorizationHeader, c.IAMAccessToken)
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 	case bluemix.UserManagement:
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
 	case bluemix.CisService:
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(userAccessTokenHeader, c.IAMAccessToken)
 	case bluemix.GlobalSearchService, bluemix.GlobalTaggingService:
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
 		h.Set(iamRefreshTokenHeader, c.IAMRefreshToken)
 	case bluemix.ICDService:
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
 	case bluemix.CertificateManager:
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
 	case bluemix.HPCService:
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
 	case bluemix.FunctionsService:
-		h.Set(userAgentHeader, c.UserAgent)
+		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
 
 	default:
