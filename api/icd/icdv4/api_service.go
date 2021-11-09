@@ -23,6 +23,7 @@ type ICDServiceAPI interface {
 	Tasks() Tasks
 	Connections() Connections
 	AutoScaling() AutoScaling
+	Configurations() Configurations
 }
 
 //ICDService holds the client
@@ -76,6 +77,9 @@ func (c *icdService) Cdbs() Cdbs {
 //Users implements users API
 func (c *icdService) Users() Users {
 	return newUsersAPI(c.Client)
+}
+func (c *icdService) Configurations() Configurations {
+	return newConfigurationsAPI(c.Client)
 }
 
 //Whilelists implements whitelists API
