@@ -49,7 +49,7 @@ func New(sess *session.Session) (MccpServiceAPI, error) {
 	}
 	tokenRefreher, err := authentication.NewUAARepository(config, &rest.Client{
 		DefaultHeader: gohttp.Header{
-			"User-Agent": []string{http.UserAgent()},
+			"X-Original-User-Agent": []string{config.UserAgent},
 		},
 		HTTPClient: config.HTTPClient,
 	})

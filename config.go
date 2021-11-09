@@ -102,6 +102,7 @@ type Config struct {
 	SSLDisable    bool
 	Visibility    string
 	EndpointsFile string
+	UserAgent     string
 }
 
 //Copy allows the configuration to be overriden or added
