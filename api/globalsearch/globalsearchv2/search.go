@@ -2,6 +2,7 @@ package globalsearchv2
 
 import (
 	"fmt"
+
 	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
@@ -17,6 +18,10 @@ type Item struct {
 	Name        string   `json:"name,omitempty"`
 	CRN         string   `json:"crn,omitempty"`
 	ServiceName string   `json:"service_name,omitempty"`
+	Region      string   `json:"region,omitempty"`
+	Family      string   `json:"family,omitempty"`
+	Type        string   `json:"type,omitempty"`
+	ResourceId  string   `json:"resource_id,omitempty"`
 	Tags        []string `json:"tags,omitempty"`
 }
 
