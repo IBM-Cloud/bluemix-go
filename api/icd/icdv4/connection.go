@@ -2,6 +2,7 @@ package icdv4
 
 import (
 	"fmt"
+
 	"github.com/IBM-Cloud/bluemix-go/client"
 	"github.com/IBM-Cloud/bluemix-go/utils"
 )
@@ -16,14 +17,15 @@ type ConnectionRes struct {
 }
 
 type Connection struct {
-	Rediss   Uri           `json:"rediss"`
-	Grpc     Uri           `json:"grpc"`
-	Postgres Uri           `json:"postgres"`
-	Https    Uri           `json:"https"`
-	Amqps    Uri           `json:"amqps"`
-	Cli      CliConn       `json:"cli"`
-	Mongo    Uri           `json:"mongodb"`
-	Secure   CassandraUri  `json:"secure"`
+	Rediss   Uri          `json:"rediss"`
+	Grpc     Uri          `json:"grpc"`
+	Postgres Uri          `json:"postgres"`
+	Https    Uri          `json:"https"`
+	Amqps    Uri          `json:"amqps"`
+	Cli      CliConn      `json:"cli"`
+	Mongo    Uri          `json:"mongodb"`
+	Secure   CassandraUri `json:"secure"`
+	Mysql    Uri          `json:"mysql"`
 }
 
 type CassandraUri struct {
