@@ -253,6 +253,55 @@ var _ = Describe("workerpools", func() {
 				Expect(err).To(HaveOccurred())
 			})
 		})
+
+		//Resize
+		Describe("Resize", func() {
+			Context("When resizing workerpool is successful", func() {
+				BeforeEach(func() {
+					server = ghttp.NewServer()
+					server.AppendHandlers(
+						ghttp.CombineHandlers(
+							ghttp.VerifyRequest(http.MethodPost, "/v2/resizeWorkerPool"),
+							ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","workerpool":"mywork211","size":5}`),
+						),
+					)
+				})
+				It("should resize Workerpool in a cluster", func() {
+					target := ClusterTargetHeader{}
+					params := ResizeWorkerPoolReq{
+						Cluster:    "bm64u3ed02o93vv36hb0",
+						Workerpool: "mywork211",
+						Size:       5,
+					}
+					err := newWorkerPool(server.URL()).ResizeWorkerPool(params, target)
+					Expect(err).NotTo(HaveOccurred())
+				})
+			})
+			Context("When resizing workerpool is unsuccessful", func() {
+				BeforeEach(func() {
+					server = ghttp.NewServer()
+					server.SetAllowUnhandledRequests(true)
+					server.AppendHandlers(
+						ghttp.CombineHandlers(
+							ghttp.VerifyRequest(http.MethodPost, "/v2/resizeWorkerPool"),
+							ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","workerpool":"mywork211","size":5}`),
+							ghttp.RespondWith(http.StatusInternalServerError, `Failed to resize workerpool`),
+						),
+					)
+				})
+
+				It("should return error during resizing workerpool", func() {
+					params := ResizeWorkerPoolReq{
+						Cluster:    "bm64u3ed02o93vv36hb0",
+						Workerpool: "mywork211",
+						Size:       5,
+					}
+					target := ClusterTargetHeader{}
+					err := newWorkerPool(server.URL()).ResizeWorkerPool(params, target)
+					Expect(err).To(HaveOccurred())
+				})
+			})
+		})
 	})
 })
 
