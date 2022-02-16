@@ -29,6 +29,7 @@ import (
 
 	yaml "github.com/ghodss/yaml"
 
+	"github.com/IBM-Cloud/bluemix-go/client"
 	bxhttp "github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/rest"
 	"github.com/IBM-Cloud/bluemix-go/trace"
@@ -118,27 +119,34 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 		return kubecfg, err
 	}
 
-	var token string
-	trace.Logger.Println("Creating user passcode to login for getting oc token")
-	passcode, err := r.client.TokenRefresher.GetPasscode()
+	var token, passcode string
+	if r.client.Config.BluemixAPIKey == "" {
+		trace.Logger.Println("Creating user passcode to login for getting oc token")
+
+		// Retry to cover rate limiting on passcode endpoint in particular
+		for try := 1; try <= 3; try++ {
+			passcode, err = r.client.TokenRefresher.GetPasscode()
+
+			if err == nil {
+				break
+			}
+
+			if err != nil && try == 3 {
+				return kubecfg, err
+			}
+
+			time.Sleep(1 * time.Second)
+		}
+	}
 
 	authEP, err := func(meta *ClusterInfo) (*authEndpoints, error) {
 		request := rest.GetRequest(meta.ServerURL + "/.well-known/oauth-authorization-server")
 		var auth authEndpoints
-		tempVar := r.client.ServiceName
-		r.client.ServiceName = ""
 
-		tempSSL := r.client.Config.SSLDisable
-		tempClient := r.client.Config.HTTPClient
-		r.client.Config.SSLDisable = skipSSLVerification
-		r.client.Config.HTTPClient = bxhttp.NewHTTPClient(r.client.Config)
+		// Create new REST client - reusing modified existing client instances could lead to race conditions
+		restClient := &rest.Client{}
+		resp, err := restClient.Do(request, &auth, nil)
 
-		defer func() {
-			r.client.ServiceName = tempVar
-			r.client.Config.SSLDisable = tempSSL
-			r.client.Config.HTTPClient = tempClient
-		}()
-		resp, err := r.client.SendRequest(request, &auth)
 		if err != nil {
 			return &auth, err
 		}
@@ -151,8 +159,17 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 		return &auth, nil
 	}(cMeta)
 
+	if err != nil {
+		return kubecfg, err
+	}
+
 	trace.Logger.Println("Got authentication end points for getting oc token")
 	token, uname, err := r.openShiftAuthorizePasscode(authEP, passcode, cMeta.IsStagingSatelliteCluster())
+
+	if err != nil {
+		return kubecfg, err
+	}
+
 	trace.Logger.Println("Got the token and user ", uname)
 	clusterName, _ := NormalizeName(authEP.ServerURL[len("https://"):len(authEP.ServerURL)]) //TODO deal with http
 	ccontext := "default/" + clusterName + "/" + uname
@@ -191,29 +208,28 @@ func neverRedirect(req *http.Request, via []*http.Request) error {
 }
 
 func (r *clusters) openShiftAuthorizePasscode(authEP *authEndpoints, passcode string, skipSSLVerification bool) (string, string, error) {
-	request := rest.GetRequest(authEP.AuthorizationEndpoint+"?response_type=token&client_id=openshift-challenging-client").
-		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("passcode:%s", passcode))))
+	var request *rest.Request
+	authString := "passcode:" + passcode
+	if r.client.Config.BluemixAPIKey != "" {
+		apikey := r.client.Config.BluemixAPIKey
+		authString = "apikey:" + apikey
+	}
+	request = rest.GetRequest(authEP.AuthorizationEndpoint+"?response_type=token&client_id=openshift-challenging-client").
+		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(authString)))
+	// Creating a new client instance (instead of tempering with existing one) to avoid race conditions
+	copyConfig := r.client.Config.Copy()
+	copyConfig.SSLDisable = skipSSLVerification
+	copyConfig.HTTPClient = bxhttp.NewHTTPClient(copyConfig)
+	copyConfig.HTTPClient.CheckRedirect = neverRedirect
 
-	tempSSL := r.client.Config.SSLDisable
-	tempClient := r.client.Config.HTTPClient
-	r.client.Config.SSLDisable = skipSSLVerification
-	r.client.Config.HTTPClient = bxhttp.NewHTTPClient(r.client.Config)
-
-	// To never redirect for this call
-	tempVar := r.client.Config.HTTPClient.CheckRedirect
-	r.client.Config.HTTPClient.CheckRedirect = neverRedirect
-	defer func() {
-		r.client.Config.HTTPClient.CheckRedirect = tempVar
-		r.client.Config.SSLDisable = tempSSL
-		r.client.Config.HTTPClient = tempClient
-	}()
+	client := client.New(copyConfig, r.client.ServiceName, r.client.TokenRefresher)
 
 	var respInterface interface{}
 	var resp *http.Response
 	var err error
 	for try := 1; try <= 3; try++ {
 		// bmxerror.NewRequestFailure("ServerErrorResponse", string(raw), resp.StatusCode)
-		resp, err = r.client.SendRequest(request, respInterface)
+		resp, err = client.SendRequest(request, respInterface)
 		if err != nil {
 			if resp.StatusCode != 302 {
 				return "", "", err

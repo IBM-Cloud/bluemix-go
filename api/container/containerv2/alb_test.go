@@ -30,7 +30,7 @@ var _ = Describe("Albs", func() {
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/alb/vpc/createAlb"),
 						ghttp.VerifyJSON(`{"cluster":"345","type":"public","enableByDefault":true,"zone": "us-south-1"}`),
-						ghttp.RespondWith(http.StatusCreated, `{}`),
+						ghttp.RespondWith(http.StatusCreated, `{"alb":"1234", "cluster":"clusterID"}`),
 					),
 				)
 			})
@@ -40,7 +40,9 @@ var _ = Describe("Albs", func() {
 				params := AlbCreateReq{
 					Cluster: "345", Type: "public", EnableByDefault: true, ZoneAlb: "us-south-1",
 				}
-				err := newAlbs(server.URL()).CreateAlb(params, target)
+				AlbResp, err := newAlbs(server.URL()).CreateAlb(params, target)
+				Expect(AlbResp.Alb).To(Equal("1234"))
+				Expect(AlbResp.Cluster).To(Equal("clusterID"))
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
@@ -63,7 +65,7 @@ var _ = Describe("Albs", func() {
 					Cluster: "345", Type: "public", EnableByDefault: true, ZoneAlb: "us-south-1",
 				}
 				target := ClusterTargetHeader{}
-				err := newAlbs(server.URL()).CreateAlb(params, target)
+				_, err := newAlbs(server.URL()).CreateAlb(params, target)
 				Expect(err).To(HaveOccurred())
 			})
 		})

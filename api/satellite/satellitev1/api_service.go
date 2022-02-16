@@ -1,4 +1,4 @@
-package iamuumv1
+package satellitev1
 
 import (
 	gohttp "net/http"
@@ -11,24 +11,23 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-//IAMUUMServiceAPI is the resource client ...
-type IAMUUMServiceAPI interface {
-	AccessGroup() AccessGroupRepository
-	AccessGroupMember() AccessGroupMemberRepository
-}
-
 //ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-//iamService holds the client
-type iamuumService struct {
+//SatelliteServiceAPI is the Aramda K8s client ...
+type SatelliteServiceAPI interface {
+	Endpoint() Endpoint
+
+	//TODO Add other services
+}
+
+type satService struct {
 	*client.Client
 }
 
-//New ...
-func New(sess *session.Session) (IAMUUMServiceAPI, error) {
+func New(sess *session.Session) (SatelliteServiceAPI, error) {
 	config := sess.Config.Copy()
-	err := config.ValidateConfigForService(bluemix.IAMUUMService)
+	err := config.ValidateConfigForService(bluemix.VpcContainerService)
 	if err != nil {
 		return nil, err
 	}
@@ -52,24 +51,19 @@ func New(sess *session.Session) (IAMUUMServiceAPI, error) {
 		}
 	}
 	if config.Endpoint == nil {
-		ep, err := config.EndpointLocator.IAMEndpoint()
+		ep, err := config.EndpointLocator.SatelliteEndpoint()
 		if err != nil {
 			return nil, err
 		}
 		config.Endpoint = &ep
 	}
 
-	return &iamuumService{
-		Client: client.New(config, bluemix.IAMUUMService, tokenRefreher),
+	return &satService{
+		Client: client.New(config, bluemix.VpcContainerService, tokenRefreher),
 	}, nil
 }
 
-//AccessGroup API
-func (a *iamuumService) AccessGroup() AccessGroupRepository {
-	return NewAccessGroupRepository(a.Client)
-}
-
-//AccessGroupMember API
-func (a *iamuumService) AccessGroupMember() AccessGroupMemberRepository {
-	return NewAccessGroupMemberRepository(a.Client)
+//Clusters implements Clusters API
+func (c *satService) Endpoint() Endpoint {
+	return newEndpointAPI(c.Client)
 }

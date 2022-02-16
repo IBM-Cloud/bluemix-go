@@ -23,6 +23,7 @@ type ICDServiceAPI interface {
 	Tasks() Tasks
 	Connections() Connections
 	AutoScaling() AutoScaling
+	Configurations() Configurations
 }
 
 //ICDService holds the client
@@ -42,7 +43,8 @@ func New(sess *session.Session) (ICDServiceAPI, error) {
 	}
 	tokenRefreher, err := authentication.NewIAMAuthRepository(config, &rest.Client{
 		DefaultHeader: gohttp.Header{
-			"User-Agent": []string{http.UserAgent()},
+			"X-Original-User-Agent": []string{config.UserAgent},
+			"User-Agent":            []string{http.UserAgent()},
 		},
 		HTTPClient: config.HTTPClient,
 	})
@@ -76,6 +78,9 @@ func (c *icdService) Cdbs() Cdbs {
 //Users implements users API
 func (c *icdService) Users() Users {
 	return newUsersAPI(c.Client)
+}
+func (c *icdService) Configurations() Configurations {
+	return newConfigurationsAPI(c.Client)
 }
 
 //Whilelists implements whitelists API

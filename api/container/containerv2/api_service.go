@@ -26,6 +26,8 @@ type ContainerServiceAPI interface {
 	Kms() Kms
 	Ingresses() Ingress
 	Subnets() Subnets
+	NlbDns() Nlbdns
+	Satellite() Satellite
 
 	//TODO Add other services
 }
@@ -47,7 +49,8 @@ func New(sess *session.Session) (ContainerServiceAPI, error) {
 	}
 	tokenRefreher, err := authentication.NewIAMAuthRepository(config, &rest.Client{
 		DefaultHeader: gohttp.Header{
-			"User-Agent": []string{http.UserAgent()},
+			"X-Original-User-Agent": []string{config.UserAgent},
+			"User-Agent":            []string{http.UserAgent()},
 		},
 		HTTPClient: config.HTTPClient,
 	})
@@ -71,6 +74,11 @@ func New(sess *session.Session) (ContainerServiceAPI, error) {
 	return &csService{
 		Client: client.New(config, bluemix.VpcContainerService, tokenRefreher),
 	}, nil
+}
+
+//Clusters implements Clusters API
+func (c *csService) Satellite() Satellite {
+	return newSatelliteAPI(c.Client)
 }
 
 //Clusters implements Clusters API
@@ -99,6 +107,9 @@ func (c *csService) WorkerPools() WorkerPool {
 }
 func (c *csService) Albs() Alb {
 	return newAlbAPI(c.Client)
+}
+func (c *csService) NlbDns() Nlbdns {
+	return newNlbdnsAPI(c.Client)
 }
 func (c *csService) Ingresses() Ingress {
 	return newIngressAPI(c.Client)

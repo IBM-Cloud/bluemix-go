@@ -2,6 +2,7 @@ package containerv1
 
 import (
 	"fmt"
+
 	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
@@ -61,8 +62,26 @@ type ALBSecretsPerCRN struct {
 	ALBSecrets []string `json:"albsecrets" description:"ALB secrets correponding to a CRN"`
 }
 
+// CreateALB struct representation of ALB arriving in create requests
+type CreateALB struct {
+	Zone            string `json:"zone"`
+	VlanID          string `json:"vlanID"`
+	Type            string `json:"type"`
+	EnableByDefault bool   `json:"enableByDefault"`
+	IP              string `json:"ip"`
+	NLBVersion      string `json:"nlbVersion"`
+	IngressImage    string `json:"ingressImage,omitempty"`
+}
+
+// AlbCreateResp used to send back the albid on a create request
+type AlbCreateResp struct {
+	Alb     string `json:"alb"`
+	Cluster string `json:"cluster"`
+}
+
 //Clusters interface
 type Albs interface {
+	CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) (AlbCreateResp, error)
 	ListClusterALBs(clusterNameOrID string, target ClusterTargetHeader) ([]ALBConfig, error)
 	GetALB(albID string, target ClusterTargetHeader) (ALBConfig, error)
 	ConfigureALB(albID string, config ALBConfig, disableDeployment bool, target ClusterTargetHeader) error
@@ -85,6 +104,14 @@ func newAlbAPI(c *client.Client) Albs {
 	return &alb{
 		client: c,
 	}
+}
+
+// CreateALB creates a new ALB in the target cluster
+func (r *alb) CreateALB(alb CreateALB, clusterID string, target ClusterTargetHeader) (AlbCreateResp, error) {
+	var successV AlbCreateResp
+	rawURL := fmt.Sprintf("/v1/alb/clusters/%s/zone/%s", clusterID, alb.Zone)
+	_, err := r.client.Post(rawURL, alb, &successV, target.ToMap())
+	return successV, err
 }
 
 // ListClusterALBs returns the list of albs available for cluster
