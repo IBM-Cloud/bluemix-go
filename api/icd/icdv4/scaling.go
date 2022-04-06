@@ -27,6 +27,7 @@ type Members struct {
 	MaximumCount    int    `json:"maximum_count"`
 	StepSizeCount   int    `json:"step_size_count"`
 	IsAdjustable    bool   `json:"is_adjustable"`
+	IsOptional    	bool   `json:"is_optional"`
 	CanScaleDown    bool   `json:"can_scale_down"`
 }
 
@@ -37,6 +38,7 @@ type Memory struct {
 	MaximumMb    int    `json:"maximum_mb"`
 	StepSizeMb   int    `json:"step_size_mb"`
 	IsAdjustable bool   `json:"is_adjustable"`
+	IsOptional 	bool   `json:"is_optional"`
 	CanScaleDown bool   `json:"can_scale_down"`
 }
 
@@ -47,6 +49,7 @@ type Cpu struct {
 	MaximumCount    int    `json:"maximum_count"`
 	StepSizeCount   int    `json:"step_size_count"`
 	IsAdjustable    bool   `json:"is_adjustable"`
+	IsOptional    	bool   `json:"is_optional"`
 	CanScaleDown    bool   `json:"can_scale_down"`
 }
 
@@ -57,6 +60,7 @@ type Disk struct {
 	MaximumMb    int    `json:"maximum_mb"`
 	StepSizeMb   int    `json:"step_size_mb"`
 	IsAdjustable bool   `json:"is_adjustable"`
+	IsOptional 	bool   `json:"is_optional"`
 	CanScaleDown bool   `json:"can_scale_down"`
 }
 
