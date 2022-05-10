@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 
@@ -14,31 +15,60 @@ import (
 
 func main() {
 
+	var KmsInstanceID string
+	flag.StringVar(&KmsInstanceID, "kmsid", "", "KmsInstanceID")
+
+	var WorkerVolumeCRKID string
+	flag.StringVar(&WorkerVolumeCRKID, "crkid", "", "WorkerVolumeCRKID")
+
+	var VpcID string
+	flag.StringVar(&VpcID, "vpcid", "", "VpcID")
+
+	var SubnetID string
+	flag.StringVar(&SubnetID, "subnetid", "", "SubnetID")
+
+	var Name string
+	flag.StringVar(&Name, "Name", "bluemixV2Test", "Name")
+
+	var Zone string
+	flag.StringVar(&Zone, "Zone", "us-south-1", "Zone")
+
+	flag.Parse()
+	fmt.Println("[FLAG]KmsInstanceID: ", KmsInstanceID)
+	fmt.Println("[FLAG]WorkerVolumeCRKID: ", WorkerVolumeCRKID)
+	fmt.Println("[FLAG]VpcID: ", VpcID)
+	fmt.Println("[FLAG]SubnetID: ", SubnetID)
+	fmt.Println("[FLAG]Name: ", Name)
+	fmt.Println("[FLAG]Zone: ", Zone)
+
 	c := new(bluemix.Config)
 
 	trace.Logger = trace.NewLogger("true")
 
+	var wve *v2.WorkerVolumeEncryption
+	if KmsInstanceID != "" && WorkerVolumeCRKID != "" {
+		wve = &v2.WorkerVolumeEncryption{
+			KmsInstanceID:     KmsInstanceID,
+			WorkerVolumeCRKID: WorkerVolumeCRKID,
+		}
+	}
+
 	var clusterInfo = v2.ClusterCreateRequest{
 		DisablePublicServiceEndpoint: true,
-		KubeVersion:                  "4.3.23_openshift",
-		Name:                         "mycluscretaed123",
-		PodSubnet:                    "172.30.0.0/16",
+		Name:                         Name,
 		Provider:                     "vpc-gen2",
-		ServiceSubnet:                "172.21.0.0/16",
-		CosInstanceCRN:               "crn:v1:bluemix:public:cloud-object-storage:global:a/96fe4b4beb8947bf85223e69dab47878:cf577e01-4095-4b5e-a223-1d515a825cfd::",
 		WorkerPools: v2.WorkerPoolConfig{
 			DiskEncryption: true,
 			Flavor:         "bx2.16x64",
-			Isolation:      "shared",
-			Name:           "mywork1",
-			VpcID:          "r018-b50f22c1-f9c1-4337-8cff-5eb89d53f604",
+			VpcID:          VpcID,
 			WorkerCount:    2,
 			Zones: []v2.Zone{
 				{
-					ID:       "eu-gb-1",
-					SubnetID: "0787-5b33830d-616b-4f5c-861a-40849e5203ce",
+					ID:       Zone,
+					SubnetID: SubnetID,
 				},
 			},
+			WorkerVolumeEncryption: wve,
 		},
 	}
 
