@@ -36,6 +36,7 @@ type WorkerPoolConfig struct {
 	DiskEncryption bool              `json:"diskEncryption,omitempty"`
 	Entitlement    string            `json:"entitlement"`
 	Flavor         string            `json:"flavor"`
+	HostPoolID     string            `json:"hostPoolID,omitempty"`
 	Isolation      string            `json:"isolation,omitempty"`
 	Labels         map[string]string `json:"labels,omitempty"`
 	Name           string            `json:"name" binding:"required" description:"The workerpool's name"`

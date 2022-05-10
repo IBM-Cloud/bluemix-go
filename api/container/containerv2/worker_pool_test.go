@@ -28,7 +28,7 @@ var _ = Describe("workerpools", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createWorkerPool"),
-						ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","flavor":"b2.4x16","name":"mywork211","vpcID":"6015365a-9d93-4bb4-8248-79ae0db2dc26","workerCount":1,"zones":[], "entitlement":""}`),
+						ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","flavor":"b2.4x16", "hostPoolID":"hostpoolid1", "name":"mywork211","vpcID":"6015365a-9d93-4bb4-8248-79ae0db2dc26","workerCount":1,"zones":[], "entitlement":""}`),
 						ghttp.RespondWith(http.StatusCreated, `{
 							"workerPoolID":"string"
 						}`),
@@ -42,6 +42,7 @@ var _ = Describe("workerpools", func() {
 					Cluster: "bm64u3ed02o93vv36hb0",
 					WorkerPoolConfig: WorkerPoolConfig{
 						Flavor:      "b2.4x16",
+						HostPoolID:  "hostpoolid1",
 						Name:        "mywork211",
 						VpcID:       "6015365a-9d93-4bb4-8248-79ae0db2dc26",
 						WorkerCount: 1,
@@ -95,6 +96,7 @@ var _ = Describe("workerpools", func() {
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkerPool"),
 						ghttp.RespondWith(http.StatusCreated, `{
+							"dedicatedHostPoolId": "dedicatedhostpoolid1",
 							"flavor": "string",
 							"id": "string",
 							"isolation": "string",
@@ -126,8 +128,9 @@ var _ = Describe("workerpools", func() {
 			It("should get Workerpool in a cluster", func() {
 				target := ClusterTargetHeader{}
 
-				_, err := newWorkerPool(server.URL()).GetWorkerPool("aaa", "bbb", target)
+				wp, err := newWorkerPool(server.URL()).GetWorkerPool("aaa", "bbb", target)
 				Expect(err).NotTo(HaveOccurred())
+				Expect(wp.DedicatedHostPoolID).To(BeIdenticalTo("dedicatedhostpoolid1"))
 			})
 		})
 		Context("When get workerpool is unsuccessful", func() {

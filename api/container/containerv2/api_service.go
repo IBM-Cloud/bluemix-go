@@ -28,6 +28,8 @@ type ContainerServiceAPI interface {
 	Subnets() Subnets
 	NlbDns() Nlbdns
 	Satellite() Satellite
+	DedicatedHost() DedicatedHost
+	DedicatedHostPool() DedicatedHostPool
 
 	//TODO Add other services
 }
@@ -128,4 +130,14 @@ func (c *csService) Workers() Workers {
 //Subnets implements Cluster Subnets API
 func (c *csService) Subnets() Subnets {
 	return newSubnetsAPI(c.Client)
+}
+
+//DedicatedHost implements DedicatedHost API
+func (c *csService) DedicatedHost() DedicatedHost {
+	return newDedicatedHostAPI(c.Client)
+}
+
+//DedicatedHostPool implements DedicatedHostPool API
+func (c *csService) DedicatedHostPool() DedicatedHostPool {
+	return newDedicatedHostPoolAPI(c.Client)
 }

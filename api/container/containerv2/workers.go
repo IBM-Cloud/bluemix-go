@@ -8,16 +8,18 @@ import (
 
 //Worker ...
 type Worker struct {
-	Billing           string `json:"billing,omitempty"`
-	Flavor            string `json:"flavor"`
-	ID                string `json:"id"`
-	KubeVersion       KubeDetails
-	Location          string          `json:"location"`
-	PoolID            string          `json:"poolid"`
-	PoolName          string          `json:"poolName"`
-	LifeCycle         WorkerLifeCycle `json:"lifecycle"`
-	Health            HealthStatus    `json:"health"`
-	NetworkInterfaces []Network       `json:"networkInterfaces"`
+	Billing             string `json:"billing,omitempty"`
+	DedicatedHostID     string `json:"dedicatedHostId,omitempty"`
+	DedicatedHostPoolID string `json:"dedicatedHostPoolId,omitempty"`
+	Flavor              string `json:"flavor"`
+	ID                  string `json:"id"`
+	KubeVersion         KubeDetails
+	Location            string          `json:"location"`
+	PoolID              string          `json:"poolid"`
+	PoolName            string          `json:"poolName"`
+	LifeCycle           WorkerLifeCycle `json:"lifecycle"`
+	Health              HealthStatus    `json:"health"`
+	NetworkInterfaces   []Network       `json:"networkInterfaces"`
 }
 
 type KubeDetails struct {
