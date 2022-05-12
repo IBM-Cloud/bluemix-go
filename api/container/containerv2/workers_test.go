@@ -153,8 +153,8 @@ var _ = Describe("Workers", func() {
 
 				w, err := newWorker(server.URL()).Get("test", "kube-bmrtar0d0st4h9b09vm0-myclustervp-default-0000013", target)
 				Expect(err).NotTo(HaveOccurred())
-				Expect(w.DedicatedHostID).To(BeEquivalentTo("dedicatedhostid1"))
-				Expect(w.DedicatedHostPoolID).To(BeEquivalentTo("dedicatedhostpoolid1"))
+				Expect(w.HostID).To(BeEquivalentTo("dedicatedhostid1"))
+				Expect(w.HostPoolID).To(BeEquivalentTo("dedicatedhostpoolid1"))
 			})
 		})
 		Context("When get worker is unsuccessful", func() {

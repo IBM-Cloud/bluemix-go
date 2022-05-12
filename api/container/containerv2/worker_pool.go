@@ -32,7 +32,7 @@ type WorkerPoolZone struct {
 }
 
 type GetWorkerPoolResponse struct {
-	DedicatedHostPoolID    string            `json:"dedicatedHostPoolId,omitempty"`
+	HostPoolID             string            `json:"dedicatedHostPoolId,omitempty"`
 	Flavor                 string            `json:"flavor"`
 	ID                     string            `json:"id"`
 	Isolation              string            `json:"isolation"`

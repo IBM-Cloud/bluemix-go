@@ -130,7 +130,7 @@ var _ = Describe("workerpools", func() {
 
 				wp, err := newWorkerPool(server.URL()).GetWorkerPool("aaa", "bbb", target)
 				Expect(err).NotTo(HaveOccurred())
-				Expect(wp.DedicatedHostPoolID).To(BeIdenticalTo("dedicatedhostpoolid1"))
+				Expect(wp.HostPoolID).To(BeIdenticalTo("dedicatedhostpoolid1"))
 			})
 		})
 		Context("When get workerpool is unsuccessful", func() {

@@ -65,10 +65,12 @@ type DedicatedHostResource struct {
 // RemoveDedicatedHostRequest provides dedicated host data for remove call
 // swagger:model
 type RemoveDedicatedHostRequest struct {
-	Host     string `json:"host" description:""`
-	HostPool string `json:"hostPool" description:""`
+	HostID     string `json:"host" description:""`
+	HostPoolID string `json:"hostPool" description:""`
 }
 
+// UpdateDedicatedHostPlacementRequest provides dedicated host data for update call
+// swagger:model
 type UpdateDedicatedHostPlacementRequest struct {
 	HostPoolID string `json:"hostPoolID"`
 	HostID     string `json:"hostID"`

@@ -22,7 +22,7 @@ func main() {
 	trace.Logger = trace.NewLogger("true")
 
 	var removeDedicatedHostPool = v2.RemoveDedicatedHostPoolRequest{
-		HostPool: HostPoolID,
+		HostPoolID: HostPoolID,
 	}
 	sess, err := session.New(c)
 	if err != nil {

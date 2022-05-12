@@ -291,8 +291,8 @@ var _ = Describe("dedicatedhosts", func() {
 			It("should remove dedicatedhost", func() {
 				target := ClusterTargetHeader{}
 				params := RemoveDedicatedHostRequest{
-					Host:     "host1",
-					HostPool: "hostpoolid1",
+					HostID:     "host1",
+					HostPoolID: "hostpoolid1",
 				}
 				err := newDedicatedHost(server.URL()).RemoveDedicatedHost(params, target)
 				Expect(err).NotTo(HaveOccurred())
@@ -317,8 +317,8 @@ var _ = Describe("dedicatedhosts", func() {
 			It("should return error during creating dedicatedhost", func() {
 				target := ClusterTargetHeader{}
 				params := RemoveDedicatedHostRequest{
-					Host:     "host1",
-					HostPool: "hostpoolid1",
+					HostID:     "host1",
+					HostPoolID: "hostpoolid1",
 				}
 				err := newDedicatedHost(server.URL()).RemoveDedicatedHost(params, target)
 				Expect(err).To(HaveOccurred())

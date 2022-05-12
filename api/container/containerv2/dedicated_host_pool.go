@@ -49,7 +49,7 @@ type DedicatedHostZoneResources struct {
 // RemoveDedicatedHostPoolRequest provides dedicated host pool data for remove call
 // swagger:model
 type RemoveDedicatedHostPoolRequest struct {
-	HostPool string `json:"hostPool" description:""`
+	HostPoolID string `json:"hostPool" description:""`
 }
 
 //DedicatedHostPool ...

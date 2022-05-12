@@ -25,8 +25,8 @@ func main() {
 	trace.Logger = trace.NewLogger("true")
 
 	var removeDedicatedHost = v2.RemoveDedicatedHostRequest{
-		Host:     HostID,
-		HostPool: HostPoolID,
+		HostID:     HostID,
+		HostPoolID: HostPoolID,
 	}
 	sess, err := session.New(c)
 	if err != nil {
