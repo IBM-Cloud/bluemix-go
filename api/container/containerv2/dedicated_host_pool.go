@@ -52,7 +52,7 @@ type RemoveDedicatedHostPoolRequest struct {
 	HostPool string `json:"hostPool" description:""`
 }
 
-//Workers ...
+//DedicatedHostPool ...
 type DedicatedHostPool interface {
 	CreateDedicatedHostPool(dedicatedHostPoolReq CreateDedicatedHostPoolRequest, target ClusterTargetHeader) (CreateDedicatedHostPoolResponse, error)
 	GetDedicatedHostPool(dedicatedHostPoolID string, target ClusterTargetHeader) (GetDedicatedHostPoolResponse, error)

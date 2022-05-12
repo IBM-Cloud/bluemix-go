@@ -30,6 +30,7 @@ type ContainerServiceAPI interface {
 	Satellite() Satellite
 	DedicatedHost() DedicatedHost
 	DedicatedHostPool() DedicatedHostPool
+	DedicatedHostFlavor() DedicatedHostFlavor
 
 	//TODO Add other services
 }
@@ -140,4 +141,9 @@ func (c *csService) DedicatedHost() DedicatedHost {
 //DedicatedHostPool implements DedicatedHostPool API
 func (c *csService) DedicatedHostPool() DedicatedHostPool {
 	return newDedicatedHostPoolAPI(c.Client)
+}
+
+//DedicatedHostFlavor implements DedicatedHostFlavor API
+func (c *csService) DedicatedHostFlavor() DedicatedHostFlavor {
+	return newDedicatedHostFlavorAPI(c.Client)
 }

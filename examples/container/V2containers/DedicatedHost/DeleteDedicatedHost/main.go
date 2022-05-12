@@ -33,17 +33,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	target := v2.ClusterTargetHeader{}
 
-	clusterClient, err := v2.New(sess)
+	v2Client, err := v2.New(sess)
 	if err != nil {
 		log.Fatal(err)
 	}
-	dedicatedHostAPI := clusterClient.DedicatedHost()
+	dedicatedHostAPI := v2Client.DedicatedHost()
 
 	err = dedicatedHostAPI.RemoveDedicatedHost(removeDedicatedHost, target)
 	if err != nil {

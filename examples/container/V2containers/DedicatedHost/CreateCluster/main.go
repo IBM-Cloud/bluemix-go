@@ -52,15 +52,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err != nil {
-		log.Fatal(err)
-	}
 	target := v2.ClusterTargetHeader{}
-	clusterClient, err := v2.New(sess)
+	v2Client, err := v2.New(sess)
 	if err != nil {
 		log.Fatal(err)
 	}
-	clustersAPI := clusterClient.Clusters()
+	clustersAPI := v2Client.Clusters()
 	out, err := clustersAPI.Create(clusterInfo, target)
 	if err != nil {
 		log.Fatal(err)

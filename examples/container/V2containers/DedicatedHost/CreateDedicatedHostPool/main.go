@@ -37,17 +37,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	target := v2.ClusterTargetHeader{}
 
-	clusterClient, err := v2.New(sess)
+	v2Client, err := v2.New(sess)
 	if err != nil {
 		log.Fatal(err)
 	}
-	dedicatedHostPoolAPI := clusterClient.DedicatedHostPool()
+	dedicatedHostPoolAPI := v2Client.DedicatedHostPool()
 
 	dh, err := dedicatedHostPoolAPI.CreateDedicatedHostPool(createDedicatedHostPool, target)
 	if err != nil {

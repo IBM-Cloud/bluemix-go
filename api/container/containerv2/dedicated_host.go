@@ -74,7 +74,7 @@ type UpdateDedicatedHostPlacementRequest struct {
 	HostID     string `json:"hostID"`
 }
 
-//Workers ...
+//DedicatedHost ...
 type DedicatedHost interface {
 	CreateDedicatedHost(dedicatedHostReq CreateDedicatedHostRequest, target ClusterTargetHeader) (CreateDedicatedHostResponse, error)
 	GetDedicatedHost(dedicatedHostID, dedicatedHostPoolID string, target ClusterTargetHeader) (GetDedicatedHostResponse, error)

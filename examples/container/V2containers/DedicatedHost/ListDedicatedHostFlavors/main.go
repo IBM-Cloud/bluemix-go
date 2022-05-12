@@ -13,17 +13,15 @@ import (
 )
 
 func main() {
-	var HostPoolID string
-	flag.StringVar(&HostPoolID, "hostpoolid", "", "HostPoolID")
+
+	var Zone string
+	flag.StringVar(&Zone, "zone", "", "Zone")
 	flag.Parse()
-	fmt.Println("[FLAG]HostPoolID: ", HostPoolID)
+	fmt.Println("[FLAG]Zone: ", Zone)
 	c := new(bluemix.Config)
 
 	trace.Logger = trace.NewLogger("true")
 
-	var removeDedicatedHostPool = v2.RemoveDedicatedHostPoolRequest{
-		HostPool: HostPoolID,
-	}
 	sess, err := session.New(c)
 	if err != nil {
 		log.Fatal(err)
@@ -35,12 +33,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	dedicatedHostPoolAPI := v2Client.DedicatedHostPool()
+	dedicatedHostFlavorAPI := v2Client.DedicatedHostFlavor()
 
-	err = dedicatedHostPoolAPI.RemoveDedicatedHostPool(removeDedicatedHostPool, target)
+	dhf, err := dedicatedHostFlavorAPI.ListDedicatedHostFlavors(Zone, target)
 	if err != nil {
-		fmt.Printf("Remove was not successful: %v \n", err)
+		fmt.Printf("ListDedicatedHostFlavors was not successful: %v \n", err)
 		return
 	}
-	fmt.Printf("Remove dedicated hostpool was successful \n")
+	fmt.Printf("ListDedicatedHostFlavors was successful: %v \n", dhf)
+
 }
