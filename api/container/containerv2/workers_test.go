@@ -107,6 +107,8 @@ var _ = Describe("Workers", func() {
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorker"),
 						ghttp.RespondWith(http.StatusCreated, `{
+							  "dedicatedHostId": "dedicatedhostid1",
+							  "dedicatedHostPoolId": "dedicatedhostpoolid1",
 							  "flavor": "string",
 							  "health": {
 								"message": "string",
@@ -149,8 +151,10 @@ var _ = Describe("Workers", func() {
 			It("should get workers in a cluster", func() {
 				target := ClusterTargetHeader{}
 
-				_, err := newWorker(server.URL()).Get("test", "kube-bmrtar0d0st4h9b09vm0-myclustervp-default-0000013", target)
+				w, err := newWorker(server.URL()).Get("test", "kube-bmrtar0d0st4h9b09vm0-myclustervp-default-0000013", target)
 				Expect(err).NotTo(HaveOccurred())
+				Expect(w.HostID).To(BeEquivalentTo("dedicatedhostid1"))
+				Expect(w.HostPoolID).To(BeEquivalentTo("dedicatedhostpoolid1"))
 			})
 		})
 		Context("When get worker is unsuccessful", func() {
