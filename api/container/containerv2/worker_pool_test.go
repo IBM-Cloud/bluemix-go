@@ -148,6 +148,54 @@ var _ = Describe("workerpools", func() {
 				Expect(err).To(HaveOccurred())
 			})
 		})
+		Context("When Get workerpool is successful and worker volume encyiption is enabled", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkerPool"),
+						ghttp.RespondWith(http.StatusCreated, `{
+							"flavor": "string",
+							"id": "string",
+							"isolation": "string",
+							"lifecycle": {
+							  "actualState": "string",
+							  "desiredState": "string"
+							},
+							"poolName": "string",
+							"provider": "string",
+							"vpcID": "string",
+							"workerCount": 0,
+							"zones": [
+							  {
+								"id": "string",
+								"subnets": [
+								  {
+									"id": "string",
+									"primary": true
+								  }
+								],
+								"workerCount": 0
+							  }
+							],
+							"workerVolumeEncryption": {
+								"workerVolumeCRKID": "crk",
+								"kmsInstanceID": "kmsid"
+							}
+						  }`),
+					),
+				)
+			})
+
+			It("should get Workerpool in a cluster", func() {
+				target := ClusterTargetHeader{}
+
+				wpresp, err := newWorkerPool(server.URL()).GetWorkerPool("aaa", "bbb", target)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(wpresp.WorkerVolumeEncryption.KmsInstanceID).Should(Equal("kmsid"))
+				Expect(wpresp.WorkerVolumeEncryption.WorkerVolumeCRKID).Should(Equal("crk"))
+			})
+		})
 	})
 
 	//List
