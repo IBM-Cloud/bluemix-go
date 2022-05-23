@@ -18,14 +18,12 @@ func main() {
 	trace.Logger = trace.NewLogger("true")
 
 	var poolinfo = v2.WorkerPoolRequest{
-		Cluster: "bm64u3ed02o93vv36hb0",
-		WorkerPoolConfig: v2.WorkerPoolConfig{
-			Flavor:      "c2.2x4",
-			Name:        "mywork21",
-			VpcID:       "6015365a-9d93-4bb4-8248-79ae0db2dc26",
-			WorkerCount: 1,
-			Zones:       []v2.Zone{},
-		},
+		Cluster:     "bm64u3ed02o93vv36hb0",
+		Flavor:      "c2.2x4",
+		Name:        "mywork21",
+		VpcID:       "6015365a-9d93-4bb4-8248-79ae0db2dc26",
+		WorkerCount: 1,
+		Zones:       []v2.Zone{},
 	}
 	sess, err := session.New(c)
 	if err != nil {
