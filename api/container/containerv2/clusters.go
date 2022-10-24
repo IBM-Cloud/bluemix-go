@@ -49,6 +49,7 @@ type WorkerPoolConfig struct {
 type WorkerVolumeEncryption struct {
 	KmsInstanceID     string `json:"kmsInstanceID,omitempty"`
 	WorkerVolumeCRKID string `json:"workerVolumeCRKID,omitempty"`
+	KMSAccountID      string `json:"kmsAccountID,omitempty"`
 }
 
 // type Label struct {

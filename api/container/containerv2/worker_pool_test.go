@@ -52,6 +52,41 @@ var _ = Describe("workerpools", func() {
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
+		Context("When creating workerpool is successful with kms enabled and provided by different account", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createWorkerPool"),
+						ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","flavor":"b2.4x16", "hostPool":"hostpoolid1", "name":"mywork211","vpcID":"6015365a-9d93-4bb4-8248-79ae0db2dc26","workerCount":1,"zones":[], "entitlement":"", "workerVolumeEncryption": {"kmsInstanceID": "kmsid", "workerVolumeCRKID": "rootkeyid", "kmsAccountID":"OtherAccountID"}}`),
+						ghttp.RespondWith(http.StatusCreated, `{
+							"workerPoolID":"string"
+						}`),
+					),
+				)
+			})
+
+			It("should create Workerpool in a cluster", func() {
+				target := ClusterTargetHeader{}
+				params := WorkerPoolRequest{
+					Cluster:     "bm64u3ed02o93vv36hb0",
+					Flavor:      "b2.4x16",
+					HostPoolID:  "hostpoolid1",
+					Name:        "mywork211",
+					VpcID:       "6015365a-9d93-4bb4-8248-79ae0db2dc26",
+					WorkerCount: 1,
+					Zones:       []Zone{},
+					Entitlement: "",
+					WorkerVolumeEncryption: &WorkerVolumeEncryption{
+						KmsInstanceID:     "kmsid",
+						WorkerVolumeCRKID: "rootkeyid",
+						KMSAccountID:      "OtherAccountID",
+					},
+				}
+				_, err := newWorkerPool(server.URL()).CreateWorkerPool(params, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
 		Context("When creating workerpool is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
@@ -193,6 +228,56 @@ var _ = Describe("workerpools", func() {
 				Expect(err).NotTo(HaveOccurred())
 				Expect(wpresp.WorkerVolumeEncryption.KmsInstanceID).Should(Equal("kmsid"))
 				Expect(wpresp.WorkerVolumeEncryption.WorkerVolumeCRKID).Should(Equal("crk"))
+			})
+		})
+		Context("When Get workerpool is successful and worker volume encyiption is enabled and provided by another account", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkerPool"),
+						ghttp.RespondWith(http.StatusCreated, `{
+							"flavor": "string",
+							"id": "string",
+							"isolation": "string",
+							"lifecycle": {
+							  "actualState": "string",
+							  "desiredState": "string"
+							},
+							"poolName": "string",
+							"provider": "string",
+							"vpcID": "string",
+							"workerCount": 0,
+							"zones": [
+							  {
+								"id": "string",
+								"subnets": [
+								  {
+									"id": "string",
+									"primary": true
+								  }
+								],
+								"workerCount": 0
+							  }
+							],
+							"workerVolumeEncryption": {
+								"workerVolumeCRKID": "crk",
+								"kmsInstanceID": "kmsid",
+								"kmsAccountID":"OtherAccountID"
+							}
+						  }`),
+					),
+				)
+			})
+
+			It("should get Workerpool in a cluster with KMSAccountID present in WorkerVolumeEncryption", func() {
+				target := ClusterTargetHeader{}
+
+				wpresp, err := newWorkerPool(server.URL()).GetWorkerPool("aaa", "bbb", target)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(wpresp.WorkerVolumeEncryption.KmsInstanceID).Should(Equal("kmsid"))
+				Expect(wpresp.WorkerVolumeEncryption.WorkerVolumeCRKID).Should(Equal("crk"))
+				Expect(wpresp.WorkerVolumeEncryption.KMSAccountID).Should(Equal("OtherAccountID"))
 			})
 		})
 	})
