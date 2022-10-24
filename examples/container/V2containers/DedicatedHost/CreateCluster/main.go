@@ -35,15 +35,17 @@ func main() {
 		Name:                         Name,
 		Provider:                     "vpc-gen2",
 		WorkerPools: v2.WorkerPoolConfig{
-			DiskEncryption: false,
-			Flavor:         "bx2d.16x64",
-			VpcID:          VpcID,
-			WorkerCount:    1,
-			HostPoolID:     HostPoolID,
-			Zones: []v2.Zone{
-				{
-					ID:       Zone,
-					SubnetID: SubnetID,
+			HostPoolID: HostPoolID,
+			CommonWorkerPoolConfig: v2.CommonWorkerPoolConfig{
+				DiskEncryption: false,
+				Flavor:         "bx2d.16x64",
+				VpcID:          VpcID,
+				WorkerCount:    1,
+				Zones: []v2.Zone{
+					{
+						ID:       Zone,
+						SubnetID: SubnetID,
+					},
 				},
 			},
 		},
