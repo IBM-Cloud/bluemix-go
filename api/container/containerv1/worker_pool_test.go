@@ -50,6 +50,41 @@ var _ = Describe("WorkerPool", func() {
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
+		Context("When creating a worker pool with OS is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters/test/workerpools"),
+						ghttp.RespondWith(http.StatusCreated, `{"Name":"testpool","Size":5,"MachineType": "u2c.2x4","Isolation": "public","ID":"rtr4tg5", "Region":"us-south", "State":"normal", "ReasonForDelete":"","IsBalanced":true,"Entitlement":"", "operatingSystem":"REDHAT_7_64"}`),
+					),
+				)
+			})
+
+			It("should return worker pools added to cluster", func() {
+				workerPoolProperties := WorkerPoolRequest{
+					WorkerPoolConfig: WorkerPoolConfig{
+						Name:            "test-pool",
+						Size:            5,
+						MachineType:     "u2c.2x4",
+						Isolation:       "public",
+						Entitlement:     "",
+						OperatingSystem: "REDHAT_7_64",
+					},
+					DiskEncryption: true,
+				}
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				wp, err := newWorkerPool(server.URL()).CreateWorkerPool("test", workerPoolProperties, target)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(wp.OperatingSystem).Should(Equal("REDHAT_7_64"))
+			})
+		})
 		Context("When creating worker pool is unsuccessful", func() {
 			BeforeEach(func() {
 
@@ -148,7 +183,7 @@ var _ = Describe("WorkerPool", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workerpools/abc-123-def"),
-						ghttp.RespondWith(http.StatusOK, `{"Name":"testpool","Size":5,"MachineType": "u2c.2x4","Isolation": "public","ID":"rtr4tg5", "Region":"us-south", "State":"normal", "ReasonForDelete":"","IsBalanced":true,"Entitlement":""}`),
+						ghttp.RespondWith(http.StatusOK, `{"Name":"testpool","Size":5,"MachineType": "u2c.2x4","Isolation": "public","ID":"rtr4tg5", "Region":"us-south", "State":"normal", "ReasonForDelete":"","IsBalanced":true,"Entitlement":"", "operatingSystem":"REDHAT_7_64"}`),
 					),
 				)
 			})
@@ -161,8 +196,9 @@ var _ = Describe("WorkerPool", func() {
 					Region:    "eu-de",
 				}
 
-				_, err := newWorkerPool(server.URL()).GetWorkerPool("myCluster", "abc-123-def", target)
+				wp, err := newWorkerPool(server.URL()).GetWorkerPool("myCluster", "abc-123-def", target)
 				Expect(err).NotTo(HaveOccurred())
+				Expect(wp.OperatingSystem).Should(Equal("REDHAT_7_64"))
 			})
 		})
 		Context("When retrieving worker pool is unsuccessful", func() {
