@@ -334,7 +334,7 @@ var _ = Describe("Clusters", func() {
 			It("should return cluster created", func() {
 				WVE := WorkerVolumeEncryption{KmsInstanceID: "kmsid", WorkerVolumeCRKID: "rootkeyid", KMSAccountID: "OtherAccountID"}
 				WPools := WorkerPoolConfig{
-					Flavor: "", WorkerCount: 0, VpcID: "", Name: "", WorkerVolumeEncryption: &WVE,
+					CommonWorkerPoolConfig: CommonWorkerPoolConfig{Flavor: "", WorkerCount: 0, VpcID: "", Name: "", WorkerVolumeEncryption: &WVE},
 				}
 				params := ClusterCreateRequest{
 					DisablePublicServiceEndpoint: false, KubeVersion: "", PodSubnet: "podnet", Provider: "abc", ServiceSubnet: "svcnet", Name: "abcd", WorkerPools: WPools, CosInstanceCRN: "",
@@ -363,7 +363,7 @@ var _ = Describe("Clusters", func() {
 			It("should return cluster created", func() {
 				WVE := WorkerVolumeEncryption{KmsInstanceID: "kmsid", WorkerVolumeCRKID: "rootkeyid", KMSAccountID: "OtherAccountID"}
 				WPools := WorkerPoolConfig{
-					Flavor: "", WorkerCount: 0, VpcID: "", Name: "", WorkerVolumeEncryption: &WVE,
+					CommonWorkerPoolConfig: CommonWorkerPoolConfig{Flavor: "", WorkerCount: 0, VpcID: "", Name: "", WorkerVolumeEncryption: &WVE},
 				}
 				params := ClusterCreateRequest{
 					DisablePublicServiceEndpoint: false, KubeVersion: "", PodSubnet: "podnet", Provider: "abc", ServiceSubnet: "svcnet", Name: "abcd", WorkerPools: WPools, CosInstanceCRN: "",

@@ -104,18 +104,20 @@ var _ = Describe("workerpools", func() {
 			It("should create Workerpool in a cluster", func() {
 				target := ClusterTargetHeader{}
 				params := WorkerPoolRequest{
-					Cluster:     "bm64u3ed02o93vv36hb0",
-					Flavor:      "b2.4x16",
-					HostPoolID:  "hostpoolid1",
-					Name:        "mywork211",
-					VpcID:       "6015365a-9d93-4bb4-8248-79ae0db2dc26",
-					WorkerCount: 1,
-					Zones:       []Zone{},
-					Entitlement: "",
-					WorkerVolumeEncryption: &WorkerVolumeEncryption{
-						KmsInstanceID:     "kmsid",
-						WorkerVolumeCRKID: "rootkeyid",
-						KMSAccountID:      "OtherAccountID",
+					Cluster:    "bm64u3ed02o93vv36hb0",
+					HostPoolID: "hostpoolid1",
+					CommonWorkerPoolConfig: CommonWorkerPoolConfig{
+						Flavor:      "b2.4x16",
+						Name:        "mywork211",
+						VpcID:       "6015365a-9d93-4bb4-8248-79ae0db2dc26",
+						WorkerCount: 1,
+						Zones:       []Zone{},
+						Entitlement: "",
+						WorkerVolumeEncryption: &WorkerVolumeEncryption{
+							KmsInstanceID:     "kmsid",
+							WorkerVolumeCRKID: "rootkeyid",
+							KMSAccountID:      "OtherAccountID",
+						},
 					},
 				}
 				_, err := newWorkerPool(server.URL()).CreateWorkerPool(params, target)
@@ -139,18 +141,20 @@ var _ = Describe("workerpools", func() {
 			It("should create Workerpool in a cluster", func() {
 				target := ClusterTargetHeader{}
 				params := WorkerPoolRequest{
-					Cluster:     "bm64u3ed02o93vv36hb0",
-					Flavor:      "b2.4x16",
-					HostPoolID:  "hostpoolid1",
-					Name:        "mywork211",
-					VpcID:       "6015365a-9d93-4bb4-8248-79ae0db2dc26",
-					WorkerCount: 1,
-					Zones:       []Zone{},
-					Entitlement: "",
-					WorkerVolumeEncryption: &WorkerVolumeEncryption{
-						KmsInstanceID:     "kmsid",
-						WorkerVolumeCRKID: "rootkeyid",
-						KMSAccountID:      "OtherAccountID",
+					Cluster:    "bm64u3ed02o93vv36hb0",
+					HostPoolID: "hostpoolid1",
+					CommonWorkerPoolConfig: CommonWorkerPoolConfig{
+						Flavor:      "b2.4x16",
+						Name:        "mywork211",
+						VpcID:       "6015365a-9d93-4bb4-8248-79ae0db2dc26",
+						WorkerCount: 1,
+						Zones:       []Zone{},
+						Entitlement: "",
+						WorkerVolumeEncryption: &WorkerVolumeEncryption{
+							KmsInstanceID:     "kmsid",
+							WorkerVolumeCRKID: "rootkeyid",
+							KMSAccountID:      "OtherAccountID",
+						},
 					},
 				}
 				_, err := newWorkerPool(server.URL()).CreateWorkerPool(params, target)
