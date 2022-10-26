@@ -31,16 +31,18 @@ func main() {
 	c := new(bluemix.Config)
 	trace.Logger = trace.NewLogger("true")
 	var workerPoolInfo = v2.WorkerPoolRequest{
-		Cluster:     Name,
-		Name:        fmt.Sprintf("%s-dhost-workerpool", Name),
-		Flavor:      "bx2d.16x64",
-		VpcID:       VpcID,
-		WorkerCount: 1,
-		HostPoolID:  HostPoolID,
-		Zones: []v2.Zone{
-			{
-				ID:       Zone,
-				SubnetID: SubnetID,
+		Cluster:    Name,
+		HostPoolID: HostPoolID,
+		CommonWorkerPoolConfig: v2.CommonWorkerPoolConfig{
+			Name:        fmt.Sprintf("%s-dhost-workerpool", Name),
+			Flavor:      "bx2d.16x64",
+			VpcID:       VpcID,
+			WorkerCount: 1,
+			Zones: []v2.Zone{
+				{
+					ID:       Zone,
+					SubnetID: SubnetID,
+				},
 			},
 		},
 	}

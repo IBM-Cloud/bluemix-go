@@ -51,6 +51,45 @@ var _ = Describe("Clusters", func() {
 				Expect(myCluster.ID).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704c"))
 			})
 		})
+		Context("When creation with OS is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters"),
+						ghttp.VerifyJSON(`{"GatewayEnabled": false,"defaultWorkerPoolName": "","disableAutoUpdate": false,"podSubnet": "","serviceSubnet": "","dataCenter":"dal10","isolation":"","machineType":"b2c.4x16","name":"testservice","privateVlan":"vlan","publicVlan":"vlan","workerNum":1,"noSubnet":false,"masterVersion":"1.8.1","prefix":"worker","diskEncryption": true,"privateSeviceEndpoint": false,"publicServiceEndpoint": false,"defaultWorkerPoolEntitlement": "","operatingSystem":"REDHAT_7_64"}
+`),
+						ghttp.RespondWith(http.StatusCreated, `{
+							 "id": "f91adfe2-76c9-4649-939e-b01c37a3704c"
+						}`),
+					),
+				)
+			})
+
+			It("should return cluster created", func() {
+				params := ClusterCreateRequest{
+					Name:            "testservice",
+					Datacenter:      "dal10",
+					MachineType:     "b2c.4x16",
+					PublicVlan:      "vlan",
+					PrivateVlan:     "vlan",
+					MasterVersion:   "1.8.1",
+					Prefix:          "worker",
+					WorkerNum:       1,
+					DiskEncryption:  true,
+					OperatingSystem: "REDHAT_7_64",
+				}
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+				}
+				myCluster, err := newCluster(server.URL()).Create(params, target)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(myCluster).ShouldNot(BeNil())
+				Expect(myCluster.ID).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704c"))
+			})
+		})
 		Context("When creation is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()

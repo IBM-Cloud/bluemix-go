@@ -39,6 +39,71 @@ var _ = Describe("workerpools", func() {
 			It("should create Workerpool in a cluster", func() {
 				target := ClusterTargetHeader{}
 				params := WorkerPoolRequest{
+					Cluster:    "bm64u3ed02o93vv36hb0",
+					HostPoolID: "hostpoolid1",
+					CommonWorkerPoolConfig: CommonWorkerPoolConfig{
+						Flavor:      "b2.4x16",
+						Name:        "mywork211",
+						VpcID:       "6015365a-9d93-4bb4-8248-79ae0db2dc26",
+						WorkerCount: 1,
+						Zones:       []Zone{},
+						Entitlement: "",
+					},
+				}
+				_, err := newWorkerPool(server.URL()).CreateWorkerPool(params, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When creating workerpool is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createWorkerPool"),
+						ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","flavor":"b2.4x16", "hostPool":"hostpoolid1", "name":"mywork211","vpcID":"6015365a-9d93-4bb4-8248-79ae0db2dc26","workerCount":1,"zones":[], "entitlement":"", "operatingSystem":"REDHAT_7_64"}`),
+						ghttp.RespondWith(http.StatusCreated, `{
+							"workerPoolID":"string"
+						}`),
+					),
+				)
+			})
+
+			It("should create Workerpool in a cluster", func() {
+				target := ClusterTargetHeader{}
+				params := WorkerPoolRequest{
+					Cluster:    "bm64u3ed02o93vv36hb0",
+					HostPoolID: "hostpoolid1",
+					CommonWorkerPoolConfig: CommonWorkerPoolConfig{
+						Flavor:          "b2.4x16",
+						Name:            "mywork211",
+						VpcID:           "6015365a-9d93-4bb4-8248-79ae0db2dc26",
+						WorkerCount:     1,
+						Zones:           []Zone{},
+						Entitlement:     "",
+						OperatingSystem: "REDHAT_7_64",
+					},
+				}
+				_, err := newWorkerPool(server.URL()).CreateWorkerPool(params, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When creating workerpool is successful with kms enabled and provided by different account", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createWorkerPool"),
+						ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","flavor":"b2.4x16", "hostPool":"hostpoolid1", "name":"mywork211","vpcID":"6015365a-9d93-4bb4-8248-79ae0db2dc26","workerCount":1,"zones":[], "entitlement":"", "workerVolumeEncryption": {"kmsInstanceID": "kmsid", "workerVolumeCRKID": "rootkeyid", "kmsAccountID":"OtherAccountID"}}`),
+						ghttp.RespondWith(http.StatusCreated, `{
+							"workerPoolID":"string"
+						}`),
+					),
+				)
+			})
+
+			It("should create Workerpool in a cluster", func() {
+				target := ClusterTargetHeader{}
+				params := WorkerPoolRequest{
 					Cluster:     "bm64u3ed02o93vv36hb0",
 					Flavor:      "b2.4x16",
 					HostPoolID:  "hostpoolid1",
@@ -47,6 +112,11 @@ var _ = Describe("workerpools", func() {
 					WorkerCount: 1,
 					Zones:       []Zone{},
 					Entitlement: "",
+					WorkerVolumeEncryption: &WorkerVolumeEncryption{
+						KmsInstanceID:     "kmsid",
+						WorkerVolumeCRKID: "rootkeyid",
+						KMSAccountID:      "OtherAccountID",
+					},
 				}
 				_, err := newWorkerPool(server.URL()).CreateWorkerPool(params, target)
 				Expect(err).NotTo(HaveOccurred())
@@ -103,13 +173,15 @@ var _ = Describe("workerpools", func() {
 
 			It("should return error during creating workerpool", func() {
 				params := WorkerPoolRequest{
-					Cluster:     "bm64u3ed02o93vv36hb0",
-					Flavor:      "b2.4x16",
-					Name:        "mywork211",
-					VpcID:       "6015365a-9d93-4bb4-8248-79ae0db2dc26",
-					WorkerCount: 1,
-					Zones:       []Zone{},
-					Entitlement: "",
+					Cluster: "bm64u3ed02o93vv36hb0",
+					CommonWorkerPoolConfig: CommonWorkerPoolConfig{
+						Flavor:      "b2.4x16",
+						Name:        "mywork211",
+						VpcID:       "6015365a-9d93-4bb4-8248-79ae0db2dc26",
+						WorkerCount: 1,
+						Zones:       []Zone{},
+						Entitlement: "",
+					},
 				}
 				target := ClusterTargetHeader{}
 				_, err := newWorkerPool(server.URL()).CreateWorkerPool(params, target)
@@ -135,6 +207,7 @@ var _ = Describe("workerpools", func() {
 							  "actualState": "string",
 							  "desiredState": "string"
 							},
+							"operatingSystem": "REDHAT_7_64",
 							"poolName": "string",
 							"provider": "string",
 							"vpcID": "string",
@@ -162,6 +235,7 @@ var _ = Describe("workerpools", func() {
 				wp, err := newWorkerPool(server.URL()).GetWorkerPool("aaa", "bbb", target)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(wp.HostPoolID).To(BeIdenticalTo("dedicatedhostpoolid1"))
+				Expect(wp.OperatingSystem).To(BeIdenticalTo("REDHAT_7_64"))
 			})
 		})
 		Context("When get workerpool is unsuccessful", func() {
