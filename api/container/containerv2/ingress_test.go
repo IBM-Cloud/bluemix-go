@@ -28,7 +28,7 @@ var _ = Describe("Ingress Secrets", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/ingress/v2/secret/createSecret"),
-						ghttp.VerifyJSON(`{"cluster":"bugi52rf0rtfgadjfso0","name":"testabc2","namespace":"","crn":"crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc","persistence":true}`),
+						ghttp.VerifyJSON(`{"cluster":"bugi52rf0rtfgadjfso0","name":"testabc2","namespace":"","crn":"crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc","persistence":true,"type":"","add":null}`),
 						ghttp.RespondWith(http.StatusCreated, `{}`),
 					),
 				)
@@ -53,8 +53,7 @@ var _ = Describe("Ingress Secrets", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/ingress/v2/secret/createSecret"),
-						ghttp.VerifyJSON(`{"cluster":"bugi52rf0rtfgadjfso0","name":"testabc2","namespace":"","crn":"crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc","persistence":true}
-`),
+						ghttp.VerifyJSON(`{"cluster":"bugi52rf0rtfgadjfso0","name":"testabc2","namespace":"","crn":"crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc","persistence":true,"type":"","add":null}`),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to enable ingress`),
 					),
 				)
@@ -172,7 +171,7 @@ var _ = Describe("Ingress Secrets", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/ingress/v2/secret/registerInstance"),
-						ghttp.VerifyJSON(`{"cluster":"bugi52rf0rtfgadjfso0","name":"testabc2","namespace":"","crn":"crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc","persistence":true}`),
+						ghttp.VerifyJSON(`{"cluster":"bugi52rf0rtfgadjfso0","crn":"crn:v1:bluemix:public:secrets-manager:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba::","isDefault":true,"secretGroupID":"b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba"}`),
 						ghttp.RespondWith(http.StatusCreated, `{}`),
 					),
 				)
@@ -197,22 +196,20 @@ var _ = Describe("Ingress Secrets", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/ingress/v2/secret/registerInstance"),
-						ghttp.VerifyJSON(`{"cluster":"bugi52rf0rtfgadjfso0","name":"testabc2","namespace":"","crn":"crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc","persistence":true}
-`),
+						ghttp.VerifyJSON(`{"cluster":"bugi52rf0rtfgadjfso0","crn":"crn:v1:bluemix:public:secrets-manager:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba::","isDefault":true,"secretGroupID":"b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba"}`),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to enable ingress`),
 					),
 				)
 			})
 
 			It("should return error during registering ingress instance", func() {
-				params := SecretCreateConfig{
-					Cluster:     "bugi52rf0rtfgadjfso0",
-					Name:        "testabc2",
-					CRN:         "crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc",
-					Persistence: true,
+				params := InstanceRegisterConfig{
+					Cluster:       "bugi52rf0rtfgadjfso0",
+					IsDefault:     true,
+					CRN:           "crn:v1:bluemix:public:secrets-manager:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba::",
+					SecretGroupID: "b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba",
 				}
-
-				_, err := newIngresses(server.URL()).CreateIngressSecret(params)
+				_, err := newIngresses(server.URL()).RegisterIngressInstance(params)
 				Expect(err).To(HaveOccurred())
 			})
 		})
@@ -267,7 +264,7 @@ var _ = Describe("Ingress Secrets", func() {
 	})
 
 	//GetIngress Instance
-	Describe("Get", func() {
+	Describe("Get Instance", func() {
 		Context("When Get Ingress Instance is successful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
@@ -306,14 +303,27 @@ var _ = Describe("Ingress Secrets", func() {
 	})
 
 	//GetIngress Instance List
-	Describe("List", func() {
+	Describe("List Instances", func() {
 		Context("When List Ingress Instance is successful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/ingress/v2/secret/getInstances"),
-						ghttp.RespondWith(http.StatusCreated, `{"cluster":"bugi52rf0rtfgadjfso0","name":"testabc2","namespace":"default","domain":"*.mytestclustercb8f-dce1dcf4a47f9ff42332256e6c4eb998-0000.us-south.containers.appdomain.cloud","crn":"crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc","expiresOn":"2021-01-27T00:18:56+0000","status":"created","userManaged":true,"persistence":true}`),
+						ghttp.RespondWith(http.StatusCreated, `[
+							{
+								"cluster": "bugi52rf0rtfgadjfso0",
+								"name": "kube-bugi52rf0rtfgadjfso0",
+								"crn": "crn:v1:bluemix:public:secrets-manager:us-south:a/f8ea34ae7f494076a9f5ad6a763b91f0:c19eaa85-328e-4ee9-93b6-a6d118097e59::",
+								"secretGroupID": "",
+								"secretGroupName": "",
+								"callbackChannel": "",
+								"userManaged": false,
+								"isDefault": true,
+								"type": "secrets-manager",
+								"status": "created"
+							}
+						]`),
 					),
 				)
 			})
