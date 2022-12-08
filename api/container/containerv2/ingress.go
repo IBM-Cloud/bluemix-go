@@ -47,17 +47,56 @@ type SecretUpdateConfig struct {
 	CRN       string `json:"crn" description:"crn of the certificate in certificate manager"`
 }
 
+type Instance struct {
+	Cluster         string `json:"cluster" description:"id of cluster"`
+	Name            string `json:"name" description:"name of instance"`
+	CRN             string `json:"crn" description:"crn of the instance"`
+	SecretGroupID   string `json:"secretGroupID" description:"ID of the secret group where secrets will be stored"`
+	SecretGroupName string `json:"secretGroupName" description:"name of the secret group where secrets will be stored"`
+	CallbackChannel string `json:"callbackChannel" description:"callback channel of the instance"`
+	UserManaged     bool   `json:"userManaged" description:"true or false. Used to show which certs and secrets are system generated and which are not"`
+	IsDefault       bool   `json:"isDefault" description:"true or false. Used to show which instance subdomains certificates are uploaded into"`
+	Type            string `json:"type" description:"designates instance type as either certificate manager instance or secrets manager instance"`
+	Status          string `json:"status" description:"Used to show the status indicating if the instance is registered to the cluster or not"`
+}
+
+type Instances []Instance
+
+type InstanceRegisterConfig struct {
+	Cluster       string `json:"cluster" description:"id of cluster" binding:"required"`
+	CRN           string `json:"crn" description:"crn of the instance"`
+	IsDefault     bool   `json:"isDefault" description:"true or false. Used to show which instance subdomains certificates are uploaded into"`
+	SecretGroupID string `json:"secretGroupID" description:"ID of the secret group where secrets will be stored"`
+}
+
+type InstanceDeleteConfig struct {
+	Cluster string `json:"cluster" description:"id of cluster" binding:"required"`
+	Name    string `json:"name" description:"name of instance" binding:"required"`
+}
+
+type InstanceUpdateConfig struct {
+	Cluster       string `json:"cluster" description:"id of cluster" binding:"required"`
+	Name          string `json:"name" description:"name of instance" binding:"required"`
+	IsDefault     bool   `json:"isDefault" description:"true or false. Used to show which instance subdomains certificates are uploaded into"`
+	SecretGroupID string `json:"secretGroupID" description:"ID of the secret group where secrets will be stored"`
+}
+
 type ingress struct {
 	client *client.Client
 }
 
-//Ingress interface
+// Ingress interface
 type Ingress interface {
 	CreateIngressSecret(req SecretCreateConfig) (response Secret, err error)
 	UpdateIngressSecret(req SecretUpdateConfig) (response Secret, err error)
 	DeleteIngressSecret(req SecretDeleteConfig) (err error)
 	GetIngressSecretList(clusterNameOrID string, showDeleted bool) (response Secrets, err error)
 	GetIngressSecret(clusterNameOrID, secretName, secretNamespace string) (response Secret, err error)
+	RegisterIngressInstance(req InstanceRegisterConfig) (response Instance, err error)
+	UpdateIngressInstance(req InstanceUpdateConfig) (err error)
+	DeleteIngressInstance(req InstanceDeleteConfig) (err error)
+	GetIngressInstance(clusterNameOrID, instanceName string) (response Instance, err error)
+	GetIngressInstanceList(clusterNameOrID string, showDeleted bool) (response Instances, err error)
 }
 
 func newIngressAPI(c *client.Client) Ingress {
@@ -94,5 +133,31 @@ func (r *ingress) UpdateIngressSecret(req SecretUpdateConfig) (response Secret, 
 // DeleteIngressSecret deletes the ingress secret from the cluster
 func (r *ingress) DeleteIngressSecret(req SecretDeleteConfig) (err error) {
 	_, err = r.client.Post("/ingress/v2/secret/deleteSecret", req, nil)
+	return
+}
+
+func (r *ingress) RegisterIngressInstance(req InstanceRegisterConfig) (response Instance, err error) {
+	_, err = r.client.Post("/ingress/v2/secret/registerInstance", req, &response)
+	return
+}
+
+func (r *ingress) UpdateIngressInstance(req InstanceUpdateConfig) (err error) {
+	_, err = r.client.Post("/ingress/v2/secret/updateInstance", req, nil)
+	return
+}
+
+func (r *ingress) DeleteIngressInstance(req InstanceDeleteConfig) (err error) {
+	_, err = r.client.Post("/ingress/v2/secret/unregisterInstance", req, nil)
+	return
+}
+
+func (r *ingress) GetIngressInstance(clusterNameOrID, instanceName string) (response Instance, err error) {
+	_, err = r.client.Get(fmt.Sprintf("/ingress/v2/secret/getInstance?cluster=%s&name=%s", clusterNameOrID, instanceName), &response)
+	return
+}
+
+func (r *ingress) GetIngressInstanceList(clusterNameOrID string, showDeleted bool) (response Instances, err error) {
+	deleted := strconv.FormatBool(showDeleted)
+	_, err = r.client.Get(fmt.Sprintf("/ingress/v2/secret/getInstances?cluster=%s&showDeleted=%s", clusterNameOrID, deleted), &response)
 	return
 }
