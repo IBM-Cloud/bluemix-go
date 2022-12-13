@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 
@@ -12,6 +14,14 @@ import (
 )
 
 func main() {
+
+	var Cluster string
+	flag.StringVar(&Cluster, "cluster", "", "Cluster")
+
+	var WorkerPool string
+	flag.StringVar(&WorkerPool, "workerpool", "", "WorkerPool")
+
+	flag.Parse()
 
 	c := new(bluemix.Config)
 
@@ -28,16 +38,17 @@ func main() {
 
 	target := v2.ClusterTargetHeader{}
 
-	var cluster_id = "bm64u3ed02o93vv36hb0"
-	var workerpool_id = "bm64u3ed02o93vv36hb0-0dc20a0"
-
 	clusterClient, err := v2.New(sess)
 	if err != nil {
 		log.Fatal(err)
 	}
 	workerpoolAPI := clusterClient.WorkerPools()
 
-	out, err := workerpoolAPI.GetWorkerPool(cluster_id, workerpool_id, target)
-
-	fmt.Println("out=", out)
+	out, err := workerpoolAPI.GetWorkerPool(Cluster, WorkerPool, target)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Get workerpool request was successful")
+	json, _ := json.Marshal(out)
+	fmt.Println("Response:", string(json))
 }

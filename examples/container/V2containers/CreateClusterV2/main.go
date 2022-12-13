@@ -28,10 +28,13 @@ func main() {
 	flag.StringVar(&SubnetID, "subnetid", "", "SubnetID")
 
 	var Name string
-	flag.StringVar(&Name, "Name", "bluemixV2Test", "Name")
+	flag.StringVar(&Name, "name", "bluemixV2Test", "Name")
 
 	var Zone string
-	flag.StringVar(&Zone, "Zone", "us-south-1", "Zone")
+	flag.StringVar(&Zone, "zone", "us-south-1", "Zone")
+
+	var SecondaryStorageOption string
+	flag.StringVar(&SecondaryStorageOption, "secondarystorage", "", "SecondaryStorageOption")
 
 	flag.Parse()
 	fmt.Println("[FLAG]KmsInstanceID: ", KmsInstanceID)
@@ -60,9 +63,9 @@ func main() {
 		WorkerPools: v2.WorkerPoolConfig{
 			CommonWorkerPoolConfig: v2.CommonWorkerPoolConfig{
 				DiskEncryption: true,
-				Flavor:         "bx2.16x64",
+				Flavor:         "bx2.4x16",
 				VpcID:          VpcID,
-				WorkerCount:    2,
+				WorkerCount:    1,
 				Zones: []v2.Zone{
 					{
 						ID:       Zone,
@@ -70,6 +73,7 @@ func main() {
 					},
 				},
 				WorkerVolumeEncryption: wve,
+				SecondaryStorageOption: SecondaryStorageOption,
 			},
 		},
 	}
@@ -95,5 +99,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("out=", out)
+	fmt.Println("Cluster create request was successful")
+	fmt.Println("Response:", out)
 }
