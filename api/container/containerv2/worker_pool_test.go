@@ -54,7 +54,7 @@ var _ = Describe("workerpools", func() {
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
-		Context("When creating workerpool is successful", func() {
+		Context("When creating workerpool is successful with OS", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
@@ -155,6 +155,39 @@ var _ = Describe("workerpools", func() {
 							WorkerVolumeCRKID: "rootkeyid",
 							KMSAccountID:      "OtherAccountID",
 						},
+					},
+				}
+				_, err := newWorkerPool(server.URL()).CreateWorkerPool(params, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When creating workerpool is successful with SecondaryStorageOption", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createWorkerPool"),
+						ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","flavor":"b2.4x16", "hostPool":"hostpoolid1", "name":"mywork211","vpcID":"6015365a-9d93-4bb4-8248-79ae0db2dc26","workerCount":1,"zones":[], "entitlement":"", "secondaryStorageOption": "secondarystoragename1"}`),
+						ghttp.RespondWith(http.StatusCreated, `{
+							"workerPoolID":"string"
+						}`),
+					),
+				)
+			})
+
+			It("should create Workerpool in a cluster", func() {
+				target := ClusterTargetHeader{}
+				params := WorkerPoolRequest{
+					Cluster:    "bm64u3ed02o93vv36hb0",
+					HostPoolID: "hostpoolid1",
+					CommonWorkerPoolConfig: CommonWorkerPoolConfig{
+						Flavor:                 "b2.4x16",
+						Name:                   "mywork211",
+						VpcID:                  "6015365a-9d93-4bb4-8248-79ae0db2dc26",
+						WorkerCount:            1,
+						Zones:                  []Zone{},
+						Entitlement:            "",
+						SecondaryStorageOption: "secondarystoragename1",
 					},
 				}
 				_, err := newWorkerPool(server.URL()).CreateWorkerPool(params, target)
@@ -356,6 +389,53 @@ var _ = Describe("workerpools", func() {
 				Expect(wpresp.WorkerVolumeEncryption.KmsInstanceID).Should(Equal("kmsid"))
 				Expect(wpresp.WorkerVolumeEncryption.WorkerVolumeCRKID).Should(Equal("crk"))
 				Expect(wpresp.WorkerVolumeEncryption.KMSAccountID).Should(Equal("OtherAccountID"))
+			})
+		})
+		Context("When Get workerpool is successful with UserDefinedSecondaryDisk", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkerPool"),
+						ghttp.RespondWith(http.StatusCreated, `{
+							"flavor": "flavor1",
+							"id": "id1",
+							"lifecycle": {
+							  "actualState": "actual",
+							  "desiredState": "desired"
+							},
+							"operatingSystem": "REDHAT_7_64",
+							"poolName": "name1",
+							"provider": "provider1",
+							"vpcID": "vpcid1",
+							"workerCount": 0,
+							"secondaryStorageOption": {
+								"Count": 1,
+								"DeviceType": "devtype1",
+								"RAIDConfiguration": "config1",
+								"Size": 2,
+								"name": "name3",
+								"profile": "profile3"
+							  }
+						  }`),
+					),
+				)
+			})
+
+			It("should get Workerpool in a cluster", func() {
+				target := ClusterTargetHeader{}
+
+				wp, err := newWorkerPool(server.URL()).GetWorkerPool("aaa", "bbb", target)
+				Expect(err).NotTo(HaveOccurred())
+				storage := DiskConfigResp{
+					Count:             1,
+					DeviceType:        "devtype1",
+					RAIDConfiguration: "config1",
+					Size:              2,
+					Name:              "name3",
+					Profile:           "profile3",
+				}
+				Expect(*wp.UserDefinedSecondaryDisk).To(BeIdenticalTo(storage))
 			})
 		})
 	})

@@ -19,6 +19,7 @@ type CommonWorkerPoolConfig struct {
 	WorkerCount            int                     `json:"workerCount"`
 	Zones                  []Zone                  `json:"zones"`
 	WorkerVolumeEncryption *WorkerVolumeEncryption `json:"workerVolumeEncryption,omitempty"`
+	SecondaryStorageOption string                  `json:"secondaryStorageOption,omitempty"`
 }
 
 // WorkerPoolRequest provides worker pool data
@@ -48,20 +49,33 @@ type WorkerPoolZone struct {
 }
 
 type GetWorkerPoolResponse struct {
-	HostPoolID             string            `json:"dedicatedHostPoolId,omitempty"`
-	Flavor                 string            `json:"flavor"`
-	ID                     string            `json:"id"`
-	Isolation              string            `json:"isolation"`
-	Labels                 map[string]string `json:"labels,omitempty"`
-	OperatingSystem        string            `json:"operatingSystem,omitempty"`
-	Taints                 map[string]string `json:"taints,omitempty"`
-	Lifecycle              `json:"lifecycle"`
-	VpcID                  string                  `json:"vpcID"`
-	WorkerCount            int                     `json:"workerCount"`
-	PoolName               string                  `json:"poolName"`
-	Provider               string                  `json:"provider"`
-	Zones                  []ZoneResp              `json:"zones"`
-	WorkerVolumeEncryption *WorkerVolumeEncryption `json:"workerVolumeEncryption,omitempty"`
+	HostPoolID               string            `json:"dedicatedHostPoolId,omitempty"`
+	Flavor                   string            `json:"flavor"`
+	ID                       string            `json:"id"`
+	Isolation                string            `json:"isolation"`
+	Labels                   map[string]string `json:"labels,omitempty"`
+	OperatingSystem          string            `json:"operatingSystem,omitempty"`
+	Taints                   map[string]string `json:"taints,omitempty"`
+	Lifecycle                `json:"lifecycle"`
+	VpcID                    string                  `json:"vpcID"`
+	WorkerCount              int                     `json:"workerCount"`
+	PoolName                 string                  `json:"poolName"`
+	Provider                 string                  `json:"provider"`
+	Zones                    []ZoneResp              `json:"zones"`
+	WorkerVolumeEncryption   *WorkerVolumeEncryption `json:"workerVolumeEncryption,omitempty"`
+	UserDefinedSecondaryDisk *DiskConfigResp         `json:"secondaryStorageOption,omitempty"`
+}
+
+// DiskConfigResp response type for describing a disk configuration
+// swagger:model
+type DiskConfigResp struct {
+	Name  string `json:"name,omitempty"`
+	Count int
+	// the size of each individual device in GB
+	Size              int
+	DeviceType        string
+	RAIDConfiguration string
+	Profile           string `json:"profile,omitempty"`
 }
 
 type Lifecycle struct {

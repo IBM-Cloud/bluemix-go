@@ -263,6 +263,42 @@ var _ = Describe("Clusters", func() {
 				Expect(myCluster.ID).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704c"))
 			})
 		})
+		Context("When creation with SecondaryStorageOption is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "hostPoolID": "hostpoolid", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": "", "secondaryStorageOption": "secondarystoragename1"}}`),
+						ghttp.RespondWith(http.StatusCreated, `{
+							 "clusterID": "f91adfe2-76c9-4649-939e-b01c37a3704c"
+						}`),
+					),
+				)
+			})
+
+			It("should return cluster created", func() {
+				WPools := WorkerPoolConfig{
+					CommonWorkerPoolConfig: CommonWorkerPoolConfig{
+						Flavor:                 "",
+						WorkerCount:            0,
+						VpcID:                  "",
+						Name:                   "",
+						SecondaryStorageOption: "secondarystoragename1",
+					},
+					HostPoolID: "hostpoolid",
+				}
+				params := ClusterCreateRequest{
+					DisablePublicServiceEndpoint: false, KubeVersion: "", PodSubnet: "podnet", Provider: "abc", ServiceSubnet: "svcnet", Name: "abcd", WorkerPools: WPools, CosInstanceCRN: "",
+				}
+				target := ClusterTargetHeader{}
+				myCluster, err := newCluster(server.URL()).Create(params, target)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(myCluster).ShouldNot(BeNil())
+				Expect(myCluster.ID).Should(Equal("f91adfe2-76c9-4649-939e-b01c37a3704c"))
+			})
+		})
+
 		Context("When creation is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
