@@ -435,7 +435,7 @@ var _ = Describe("workerpools", func() {
 					Name:              "name3",
 					Profile:           "profile3",
 				}
-				Expect(*wp.UserDefinedSecondaryDisk).To(BeIdenticalTo(storage))
+				Expect(*wp.SecondaryStorageOption).To(BeIdenticalTo(storage))
 			})
 		})
 	})
