@@ -49,21 +49,22 @@ type WorkerPoolZone struct {
 }
 
 type GetWorkerPoolResponse struct {
+	AutoscaleEnabled       bool              `json:"autoscaleEnabled,omitempty"`
 	HostPoolID             string            `json:"dedicatedHostPoolId,omitempty"`
 	Flavor                 string            `json:"flavor"`
 	ID                     string            `json:"id"`
 	Isolation              string            `json:"isolation"`
 	Labels                 map[string]string `json:"labels,omitempty"`
-	OperatingSystem        string            `json:"operatingSystem,omitempty"`
-	Taints                 map[string]string `json:"taints,omitempty"`
 	Lifecycle              `json:"lifecycle"`
-	VpcID                  string                  `json:"vpcID"`
-	WorkerCount            int                     `json:"workerCount"`
+	OperatingSystem        string                  `json:"operatingSystem,omitempty"`
 	PoolName               string                  `json:"poolName"`
 	Provider               string                  `json:"provider"`
-	Zones                  []ZoneResp              `json:"zones"`
-	WorkerVolumeEncryption *WorkerVolumeEncryption `json:"workerVolumeEncryption,omitempty"`
 	SecondaryStorageOption *DiskConfigResp         `json:"secondaryStorageOption,omitempty"`
+	Taints                 map[string]string       `json:"taints,omitempty"`
+	VpcID                  string                  `json:"vpcID"`
+	WorkerCount            int                     `json:"workerCount"`
+	WorkerVolumeEncryption *WorkerVolumeEncryption `json:"workerVolumeEncryption,omitempty"`
+	Zones                  []ZoneResp              `json:"zones"`
 }
 
 // DiskConfigResp response type for describing a disk configuration

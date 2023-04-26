@@ -199,6 +199,44 @@ var _ = Describe("WorkerPool", func() {
 				wp, err := newWorkerPool(server.URL()).GetWorkerPool("myCluster", "abc-123-def", target)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(wp.OperatingSystem).Should(Equal("REDHAT_7_64"))
+				Expect(wp.AutoscaleEnabled).Should(BeFalse())
+			})
+		})
+		Context("When retrieving a worker pool with AutoscaleEnabled is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workerpools/abc-123-def"),
+						ghttp.RespondWith(http.StatusOK, `{
+								"Name":"testpool",
+								"Size":5,
+								"MachineType": "u2c.2x4",
+								"Isolation": "public",
+								"ID":"rtr4tg5", 
+								"Region":"us-south", 
+								"State":"normal", 
+								"ReasonForDelete":"",
+								"IsBalanced":true,
+								"Entitlement":"", 
+								"operatingSystem":"REDHAT_7_64",
+								"autoscaleEnabled" : true
+							}`),
+					),
+				)
+			})
+
+			It("should return worker pool", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+
+				wp, err := newWorkerPool(server.URL()).GetWorkerPool("myCluster", "abc-123-def", target)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(wp.AutoscaleEnabled).Should(BeTrue())
 			})
 		})
 		Context("When retrieving worker pool is unsuccessful", func() {

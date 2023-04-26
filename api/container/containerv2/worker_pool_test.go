@@ -273,6 +273,7 @@ var _ = Describe("workerpools", func() {
 				Expect(err).NotTo(HaveOccurred())
 				Expect(wp.HostPoolID).To(BeIdenticalTo("dedicatedhostpoolid1"))
 				Expect(wp.OperatingSystem).To(BeIdenticalTo("REDHAT_7_64"))
+				Expect(wp.AutoscaleEnabled).To(BeFalse())
 			})
 		})
 		Context("When get workerpool is unsuccessful", func() {
@@ -436,6 +437,37 @@ var _ = Describe("workerpools", func() {
 					Profile:           "profile3",
 				}
 				Expect(*wp.SecondaryStorageOption).To(BeIdenticalTo(storage))
+			})
+		})
+		Context("When Get workerpool is successful with AutoscaleEnabled", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/vpc/getWorkerPool"),
+						ghttp.RespondWith(http.StatusCreated, `{
+							"flavor": "flavor1",
+							"id": "id1",
+							"lifecycle": {
+							  "actualState": "actual",
+							  "desiredState": "desired"
+							},
+							"poolName": "name1",
+							"provider": "provider1",
+							"vpcID": "vpcid1",
+							"workerCount": 0,
+							"autoscaleEnabled" : true
+						  }`),
+					),
+				)
+			})
+
+			It("should get Workerpool in a cluster", func() {
+				target := ClusterTargetHeader{}
+
+				wp, err := newWorkerPool(server.URL()).GetWorkerPool("aaa", "bbb", target)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(wp.AutoscaleEnabled).To(BeTrue())
 			})
 		})
 	})
