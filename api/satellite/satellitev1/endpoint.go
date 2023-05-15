@@ -186,6 +186,15 @@ type CreateEndpointRequest struct {
 	Cert             *EndpointCerts `json:"certs,omitempty"`
 }
 
+type AddSourcesRequest struct {
+	Sources []EndpointSource `json:"sources"`
+}
+
+type EndpointSource struct {
+	SourceID string `json:"source_id"`
+	Enabled  bool   `json:"enabled"`
+}
+
 type EndpointCerts struct {
 	Client struct {
 		Cert struct {
@@ -216,6 +225,7 @@ type Endpoint interface {
 	CreateSatelliteEndpoint(params CreateEndpointRequest, target containerv2.ClusterTargetHeader) (CreateEndpointResponse, error)
 	GetEndpoints(locationID string, target containerv2.ClusterTargetHeader) (*SatelliteEndpoints, error)
 	DeleteEndpoint(locationID, endpointID string, target containerv2.ClusterTargetHeader) error
+	AddSourcesToEndpoint(locationID, endpointID string, params AddSourcesRequest, target containerv2.ClusterTargetHeader) error
 }
 
 type endpoint struct {
@@ -256,5 +266,15 @@ func (s *endpoint) CreateSatelliteEndpoint(params CreateEndpointRequest, target 
 func (s *endpoint) DeleteEndpoint(locationID, endpointID string, target containerv2.ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("v1/locations/%s/endpoints/%s", locationID, endpointID)
 	_, err := s.client.Delete(rawURL, target.ToMap())
+	return err
+}
+
+func (s *endpoint) AddSourcesToEndpoint(locationID,
+	endpointID string, params AddSourcesRequest,
+	target containerv2.ClusterTargetHeader) error {
+
+	var endpoint CreateEndpointResponse
+	rawURL := fmt.Sprintf("/v1/locations/%s/endpoints/%s/sources", locationID, endpointID)
+	_, err := s.client.Patch(rawURL, params, &endpoint, target.ToMap())
 	return err
 }
