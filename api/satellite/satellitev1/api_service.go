@@ -11,12 +11,13 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-//ErrCodeAPICreation ...
+// ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-//SatelliteServiceAPI is the Aramda K8s client ...
+// SatelliteServiceAPI is the Aramda K8s client ...
 type SatelliteServiceAPI interface {
 	Endpoint() Endpoint
+	Source() Source
 
 	//TODO Add other services
 }
@@ -63,7 +64,12 @@ func New(sess *session.Session) (SatelliteServiceAPI, error) {
 	}, nil
 }
 
-//Clusters implements Clusters API
+// Endpoint implements Endpoint API
 func (c *satService) Endpoint() Endpoint {
 	return newEndpointAPI(c.Client)
+}
+
+// Source implements Source API
+func (c *satService) Source() Source {
+	return newSourceAPI(c.Client)
 }
