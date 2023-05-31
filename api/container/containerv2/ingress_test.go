@@ -52,7 +52,7 @@ var _ = Describe("Ingress Secrets", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/ingress/v2/secret/addField"),
-						ghttp.VerifyJSON(`{"cluster":"bugi52rf0rtfgadjfso0","name":"testabc2","namespace":"default","add":[]{"crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc"}}`),
+						ghttp.VerifyJSON(`{"cluster":"bugi52rf0rtfgadjfso0","name":"testabc2","namespace":"default","add":[{"crn":"crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc"}]}`),
 						ghttp.RespondWith(http.StatusCreated, `{}`),
 					),
 				)
