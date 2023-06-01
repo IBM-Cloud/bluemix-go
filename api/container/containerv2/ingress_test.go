@@ -46,6 +46,34 @@ var _ = Describe("Ingress Secrets", func() {
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
+		Context("When add ingress secret field successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/ingress/v2/secret/addField"),
+						ghttp.VerifyJSON(`{"cluster":"bugi52rf0rtfgadjfso0","name":"testabc2","namespace":"default","crn":"","add":[{"name":"","crn":"crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc","append_prefix": false}],"remove":null}`),
+						ghttp.RespondWith(http.StatusCreated, `{}`),
+					),
+				)
+			})
+
+			It("should create Ingress Secret in a cluster", func() {
+
+				params := SecretUpdateConfig{
+					Cluster:   "bugi52rf0rtfgadjfso0",
+					Name:      "testabc2",
+					Namespace: "default",
+					FieldsToAdd: []FieldAdd{
+						{
+							CRN: "crn:v1:bluemix:public:cloudcerts:us-south:a/883079c85357a1f3f85d968780e56518:b65b5b7f-e904-4d2b-bd87-f0ccd57e76ba:certificate:333d8673f4d03c148ff81192b9edaafc",
+						},
+					},
+				}
+				_, err := newIngresses(server.URL()).AddIngressSecretField(params)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
 		Context("When creating is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
