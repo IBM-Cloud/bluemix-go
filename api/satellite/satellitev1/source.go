@@ -24,6 +24,13 @@ type CreateSatelliteEndpointSourceResponse struct {
 	SourceID   string   `json:"source_id"`
 }
 
+type UpdateSatelliteEndpointSourceRequest struct {
+	SourceName string   `json:"source_name"`
+	Addresses  []string `json:"addresses"`
+}
+
+type UpdateSatelliteEndpointSourceResponse CreateSatelliteEndpointSourceResponse
+
 type source struct {
 	client     *client.Client
 	pathPrefix string
@@ -48,6 +55,9 @@ type Source interface {
 		target containerv2.ClusterTargetHeader) (CreateSatelliteEndpointSourceResponse, error)
 	ListSatelliteEndpointSources(locationID string,
 		target containerv2.ClusterTargetHeader) (*SatelliteSources, error)
+	UpdateSatelliteEndpointSources(locationID string, sourceID string,
+		params UpdateSatelliteEndpointSourceRequest,
+		target containerv2.ClusterTargetHeader) (UpdateSatelliteEndpointSourceResponse, error)
 }
 
 func newSourceAPI(c *client.Client) Source {
@@ -75,4 +85,14 @@ func (s *source) ListSatelliteEndpointSources(locationID string,
 		return nil, err
 	}
 	return SatSourceInfo, nil
+}
+
+func (s *source) UpdateSatelliteEndpointSources(locationID string, sourceID string,
+	params UpdateSatelliteEndpointSourceRequest,
+	target containerv2.ClusterTargetHeader) (UpdateSatelliteEndpointSourceResponse, error) {
+	var source UpdateSatelliteEndpointSourceResponse
+
+	rawURL := fmt.Sprintf("/v1/locations/%s/sources/%s", locationID, sourceID)
+	_, err := s.client.Patch(rawURL, params, &source, target.ToMap())
+	return source, err
 }
