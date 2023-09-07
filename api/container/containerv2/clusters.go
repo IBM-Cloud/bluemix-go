@@ -18,7 +18,7 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
-//ClusterCreateRequest ...
+// ClusterCreateRequest ...
 type ClusterCreateRequest struct {
 	DisablePublicServiceEndpoint bool             `json:"disablePublicServiceEndpoint"`
 	KubeVersion                  string           `json:"kubeVersion" description:"kubeversion of cluster"`
@@ -54,7 +54,7 @@ type Zone struct {
 	SubnetID string `json:"subnetID,omitempty"`
 }
 
-//ClusterInfo ...
+// ClusterInfo ...
 type ClusterInfo struct {
 	CreatedDate          string        `json:"createdDate"`
 	DataCenter           string        `json:"dataCenter"`
@@ -108,7 +108,7 @@ type LifeCycleInfo struct {
 	MasterState              string `json:"masterState"`
 }
 
-//ClusterTargetHeader ...
+// ClusterTargetHeader ...
 type ClusterTargetHeader struct {
 	AccountID     string
 	ResourceGroup string
@@ -126,19 +126,19 @@ type Addon struct {
 	Version string `json:"version"`
 }
 
-//ClusterCreateResponse ...
+// ClusterCreateResponse ...
 type ClusterCreateResponse struct {
 	ID string `json:"clusterID"`
 }
 
-//Clusters interface
+// Clusters interface
 type Clusters interface {
 	Create(params ClusterCreateRequest, target ClusterTargetHeader) (ClusterCreateResponse, error)
 	List(target ClusterTargetHeader) ([]ClusterInfo, error)
 	Delete(name string, target ClusterTargetHeader, deleteDependencies ...bool) error
 	GetCluster(name string, target ClusterTargetHeader) (*ClusterInfo, error)
-	GetClusterConfigDetail(name, homeDir string, admin bool, target ClusterTargetHeader) (containerv1.ClusterKeyInfo, error)
-	StoreConfigDetail(name, baseDir string, admin bool, createCalicoConfig bool, target ClusterTargetHeader) (string, containerv1.ClusterKeyInfo, error)
+	GetClusterConfigDetail(name, homeDir string, admin bool, target ClusterTargetHeader, endpointType string) (containerv1.ClusterKeyInfo, error)
+	StoreConfigDetail(name, baseDir string, admin bool, createCalicoConfig bool, target ClusterTargetHeader, endpointType string) (string, containerv1.ClusterKeyInfo, error)
 	EnableImageSecurityEnforcement(name string, target ClusterTargetHeader) error
 	DisableImageSecurityEnforcement(name string, target ClusterTargetHeader) error
 	//TODO Add other opertaions
@@ -153,7 +153,7 @@ const (
 	resourceGroupHeader = "X-Auth-Resource-Group"
 )
 
-//ToMap ...
+// ToMap ...
 func (c ClusterTargetHeader) ToMap() map[string]string {
 	m := make(map[string]string, 3)
 	m[accountIDHeader] = c.AccountID
@@ -168,7 +168,7 @@ func newClusterAPI(c *client.Client) Clusters {
 	}
 }
 
-//List ...
+// List ...
 func (r *clusters) List(target ClusterTargetHeader) ([]ClusterInfo, error) {
 	clusters := []ClusterInfo{}
 	var err error
@@ -196,14 +196,14 @@ func (r *clusters) List(target ClusterTargetHeader) ([]ClusterInfo, error) {
 	return clusters, nil
 }
 
-//Create ...
+// Create ...
 func (r *clusters) Create(params ClusterCreateRequest, target ClusterTargetHeader) (ClusterCreateResponse, error) {
 	var cluster ClusterCreateResponse
 	_, err := r.client.Post("/v2/vpc/createCluster", params, &cluster, target.ToMap())
 	return cluster, err
 }
 
-//Delete ...
+// Delete ...
 func (r *clusters) Delete(name string, target ClusterTargetHeader, deleteDependencies ...bool) error {
 	var rawURL string
 	if len(deleteDependencies) != 0 {
@@ -215,7 +215,7 @@ func (r *clusters) Delete(name string, target ClusterTargetHeader, deleteDepende
 	return err
 }
 
-//GetClusterByIDorName
+// GetClusterByIDorName
 func (r *clusters) GetCluster(name string, target ClusterTargetHeader) (*ClusterInfo, error) {
 	ClusterInfo := &ClusterInfo{}
 	rawURL := fmt.Sprintf("/v2/getCluster?cluster=%s&v1-compatible", name)
@@ -230,7 +230,7 @@ func (r *ClusterInfo) IsStagingSatelliteCluster() bool {
 	return strings.Index(r.ServerURL, "stg") > 0 && r.Provider == "satellite"
 }
 
-//FindWithOutShowResourcesCompatible ...
+// FindWithOutShowResourcesCompatible ...
 func (r *clusters) FindWithOutShowResourcesCompatible(name string, target ClusterTargetHeader) (ClusterInfo, error) {
 	rawURL := fmt.Sprintf("/v2/getCluster?v1-compatible&cluster=%s", name)
 	cluster := ClusterInfo{}
@@ -245,8 +245,8 @@ func (r *clusters) FindWithOutShowResourcesCompatible(name string, target Cluste
 	return cluster, err
 }
 
-//GetClusterConfigDetail ...
-func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target ClusterTargetHeader) (containerv1.ClusterKeyInfo, error) {
+// GetClusterConfigDetail ...
+func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target ClusterTargetHeader, endpointType string) (containerv1.ClusterKeyInfo, error) {
 	clusterkey := containerv1.ClusterKeyInfo{}
 	// Block to add token for openshift clusters (This can be temporary until iks team handles openshift clusters)
 	clusterInfo, err := r.FindWithOutShowResourcesCompatible(name, target)
@@ -270,6 +270,8 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 	if clusterInfo.Provider == "satellite" {
 		postBody["endpointType"] = "link"
 		postBody["admin"] = true
+	} else if endpointType != "" {
+		postBody["endpointType"] = endpointType
 	}
 	resultDir := containerv1.ComputeClusterConfigDir(dir, name, admin)
 	const kubeConfigName = "config.yml"
@@ -383,8 +385,8 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 	return clusterkey, err
 }
 
-//StoreConfigDetail ...
-func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig bool, target ClusterTargetHeader) (string, containerv1.ClusterKeyInfo, error) {
+// StoreConfigDetail ...
+func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig bool, target ClusterTargetHeader, endpointType string) (string, containerv1.ClusterKeyInfo, error) {
 	clusterkey := containerv1.ClusterKeyInfo{}
 	clusterInfo, err := r.FindWithOutShowResourcesCompatible(name, target)
 	if err != nil {
@@ -406,6 +408,8 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 	if clusterInfo.Provider == "satellite" {
 		postBody["endpointType"] = "link"
 		postBody["admin"] = true
+	} else if endpointType != "" {
+		postBody["endpointType"] = endpointType
 	}
 	if createCalicoConfig {
 		postBody["network"] = true
