@@ -7,5 +7,5 @@ This downloads the configuration of given cluster at the destination path specif
 Example: 
 
 ```
-go run main.go -org example.com -space test -clustername myCluster -path /home/myCluster/config
+go run main.go -clustername myCluster -path /home/myCluster/config
 ```

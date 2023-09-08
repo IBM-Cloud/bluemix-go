@@ -6,28 +6,23 @@ import (
 	"log"
 	"os"
 
-	"github.com/IBM-Cloud/bluemix-go/api/account/accountv2"
-	v1 "github.com/IBM-Cloud/bluemix-go/api/container/containerv1"
-	"github.com/IBM-Cloud/bluemix-go/api/mccp/mccpv2"
+	v2 "github.com/IBM-Cloud/bluemix-go/api/container/containerv2"
 	"github.com/IBM-Cloud/bluemix-go/session"
 	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 func main() {
-	var org string
-	flag.StringVar(&org, "org", "", "Bluemix Organization")
-
 	var clusterName string
 	flag.StringVar(&clusterName, "clustername", "", "The cluster whose config will be downloaded")
 
 	var path string
 	flag.StringVar(&path, "path", "", "The Path where the config will be downloaded")
 
-	var space string
-	flag.StringVar(&space, "space", "", "Bluemix Space")
+	var resourceGroup string
+	flag.StringVar(&resourceGroup, "resourcegroup", "", "ResourceGroup where the cluster is deployed")
 
-	var region string
-	flag.StringVar(&region, "region", "us-south", "Bluemix region")
+	var endpointType string
+	flag.StringVar(&endpointType, "endpoint", "", "Endpoint defines how the kubeconfig will connect to the cluster. Can be public, private and vpe in case of VPC")
 
 	var admin bool
 	flag.BoolVar(&admin, "admin", false, "If true download the admin config")
@@ -37,71 +32,34 @@ func main() {
 
 	flag.Parse()
 	trace.Logger = trace.NewLogger("true")
-	if org == "" || space == "" || clusterName == "" || path == "" {
+	if clusterName == "" || path == "" {
 		flag.Usage()
 		os.Exit(1)
 	}
-
 	sess, err := session.New()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	client, err := mccpv2.New(sess)
-
-	if err != nil {
-		log.Fatal(err)
+	target := v2.ClusterTargetHeader{
+		ResourceGroup: resourceGroup,
 	}
-
-	orgAPI := client.Organizations()
-	myorg, err := orgAPI.FindByName(org, region)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	spaceAPI := client.Spaces()
-	myspace, err := spaceAPI.FindByNameInOrg(myorg.GUID, space, region)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	accClient, err := accountv2.New(sess)
-	if err != nil {
-		log.Fatal(err)
-	}
-	accountAPI := accClient.Accounts()
-	myAccount, err := accountAPI.FindByOrg(myorg.GUID, region)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	target := v1.ClusterTargetHeader{
-		OrgID:     myorg.GUID,
-		SpaceID:   myspace.GUID,
-		AccountID: myAccount.GUID,
-		Region:    region,
-	}
-
-	clusterClient, err := v1.New(sess)
+	clusterClient, err := v2.New(sess)
 	if err != nil {
 		log.Fatal(err)
 	}
 	clustersAPI := clusterClient.Clusters()
 
 	if network {
-		kubeConfig, configPath, err := clustersAPI.StoreConfigDetail(clusterName, path, admin, network, target)
+		kubeConfig, configPath, err := clustersAPI.StoreConfigDetail(clusterName, path, admin, network, target, endpointType)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(kubeConfig, configPath)
+		fmt.Println(kubeConfig, configPath.FilePath)
 	} else {
-		configPath, err := clustersAPI.GetClusterConfigDetail(clusterName, path, admin, target)
+		configPath, err := clustersAPI.GetClusterConfigDetail(clusterName, path, admin, target, endpointType)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(configPath)
+		fmt.Println(configPath.FilePath)
 	}
-
 }
