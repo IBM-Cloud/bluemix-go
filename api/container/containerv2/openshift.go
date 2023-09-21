@@ -192,8 +192,6 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 	users = append(users, newUser)
 	cfg["users"] = users
 
-	cfg["current-context"] = ccontext
-
 	bytes, err := yaml.Marshal(cfg)
 	if err != nil {
 		return kubecfg, err
