@@ -109,6 +109,33 @@ type IngressStatusState struct {
 	Enable  bool   `json:"enable" description:"true or false to enable or disable ingress status"`
 }
 
+// ALBLBConfig ingress ALB load balancer configuration
+type ALBLBConfig struct {
+	Cluster       string                    `json:"cluster" description:"The ID or name of the cluster" binding:"required"`
+	Type          string                    `json:"type,omitempty" description:"type of load balancers to configure ('public' or 'private')"`
+	ProxyProtocol *ALBLBProxyProtocolConfig `json:"proxyProtocol,omitempty" description:"PROXY protocol related configurations"`
+}
+
+// ALBLBProxyProtocolConfig ingress ALB load balancer Proxy Protocol configuration
+type ALBLBProxyProtocolConfig struct {
+	Enable        bool     `json:"enable" description:"PROXY protocol state"`
+	CIDR          []string `json:"cidr,omitempty" description:"trusted address ranges"`
+	HeaderTimeout int      `json:"headerTimeout,omitempty" description:"timeout value for receiving PROXY protocol headers"`
+}
+
+// AutoscaleDetails
+type AutoscaleDetails struct {
+	Config *AutoscaleConfig `json:"config,omitempty" description:"Autoscaling configuration"`
+}
+
+// AutoscaleConfig
+type AutoscaleConfig struct {
+	MinReplicas           int    `json:"minReplicas" description:"Minimum number of replicas"`
+	MaxReplicas           int    `json:"maxReplicas" description:"Maximum number of replicas"`
+	CustomMetrics         string `json:"customMetrics,omitempty" description:"An array of MetricSpec (autoscaling.k8s.io/v2) encoded as JSON"`
+	CPUAverageUtilization int    `json:"cpuAverageUtilization,omitempty" description:"CPU Average Utilization"`
+}
+
 type alb struct {
 	client *client.Client
 }
@@ -129,6 +156,8 @@ type Alb interface {
 	AddIgnoredIngressStatusErrors(ignoredErrorsReq IgnoredIngressStatusErrors, target ClusterTargetHeader) error
 	RemoveIgnoredIngressStatusErrors(ignoredErrorsReq IgnoredIngressStatusErrors, target ClusterTargetHeader) error
 	SetIngressStatusState(ingressStatusStateReq IngressStatusState, target ClusterTargetHeader) error
+	GetIngressLoadBalancerConfig(clusterNameOrID, lbType string, target ClusterTargetHeader) (ALBLBConfig, error)
+	UpdateIngressLoadBalancerConfig(lbConfig ALBLBConfig, target ClusterTargetHeader) error
 }
 
 func newAlbAPI(c *client.Client) Alb {
@@ -227,5 +256,41 @@ func (r *alb) RemoveIgnoredIngressStatusErrors(ignoredErrorsReq IgnoredIngressSt
 func (r *alb) SetIngressStatusState(ingressStatusStateReq IngressStatusState, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
 	_, err := r.client.Post("/v2/alb/setIngressStatusState", ingressStatusStateReq, nil, target.ToMap())
+	return err
+}
+
+// GetIngressLoadBalancerConfig get the configuration of load balancers for Ingress ALBs
+func (r *alb) GetIngressLoadBalancerConfig(clusterNameOrID, lbType string, target ClusterTargetHeader) (ALBLBConfig, error) {
+	var successV ALBLBConfig
+	_, err := r.client.Get(fmt.Sprintf("/ingress/v2/load-balancer/configuration/?cluster=%s&type=%s", clusterNameOrID, lbType), &successV, target.ToMap())
+	return successV, err
+}
+
+// UpdateIngressLoadBalancerConfig update the configuration of load balancers for Ingress ALBs
+func (r *alb) UpdateIngressLoadBalancerConfig(lbConfig ALBLBConfig, target ClusterTargetHeader) error {
+	// Make the request, don't care about return value
+	_, err := r.client.Patch("/ingress/v2/load-balancer/configuration", lbConfig, nil, target.ToMap())
+	return err
+}
+
+// GetALBAutoscaleConfiguration get the autoscaling configuration for an ALB
+func (r *alb) GetALBAutoscaleConfiguration(clusterNameOrID, albID string, target ClusterTargetHeader) (AutoscaleDetails, error) {
+	var successV AutoscaleDetails
+	_, err := r.client.Get(fmt.Sprintf("/ingress/v2/load-balancer/configuration/?cluster=%s&type=%s", clusterNameOrID, albID), &successV, target.ToMap())
+	return successV, err
+}
+
+// SetALBAutoscaleConfiguration set the autoscaling configuration for an ALB
+func (r *alb) SetALBAutoscaleConfiguration(clusterNameOrID, albID string, autoscaleDetails AutoscaleDetails, target ClusterTargetHeader) error {
+	// Make the request, don't care about return value
+	_, err := r.client.Put(fmt.Sprintf("/ingress/v2/load-balancer/configuration/?cluster=%s&type=%s", clusterNameOrID, albID), autoscaleDetails, nil, target.ToMap())
+	return err
+}
+
+// RemoveALBAutoscaleConfiguration delete the autoscaling configuration for an ALB
+func (r *alb) RemoveALBAutoscaleConfiguration(clusterNameOrID, albID string, target ClusterTargetHeader) error {
+	var successV interface{}
+	// Make the request, don't care about return value
+	_, err := r.client.Delete(fmt.Sprintf("/ingress/v2/load-balancer/configuration/?cluster=%s&type=%s", clusterNameOrID, albID), successV, nil, target.ToMap())
 	return err
 }

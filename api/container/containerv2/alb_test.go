@@ -29,7 +29,7 @@ var _ = Describe("Albs", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/alb/vpc/createAlb"),
-						ghttp.VerifyJSON(`{"cluster":"345","type":"public","enableByDefault":true,"zone": "us-south-1"}`),
+						ghttp.VerifyJSON(`{"cluster":"345","type":"public","enableByDefault":true,"zone": "us-south-1", "ingressImage": "1.5.1_5367_iks"}`),
 						ghttp.RespondWith(http.StatusCreated, `{"alb":"1234", "cluster":"clusterID"}`),
 					),
 				)
@@ -38,7 +38,7 @@ var _ = Describe("Albs", func() {
 			It("should create Alb in a cluster", func() {
 				target := ClusterTargetHeader{}
 				params := AlbCreateReq{
-					Cluster: "345", Type: "public", EnableByDefault: true, ZoneAlb: "us-south-1",
+					Cluster: "345", Type: "public", EnableByDefault: true, ZoneAlb: "us-south-1", IngressImage: "1.5.1_5367_iks",
 				}
 				AlbResp, err := newAlbs(server.URL()).CreateAlb(params, target)
 				Expect(AlbResp.Alb).To(Equal("1234"))
@@ -53,7 +53,7 @@ var _ = Describe("Albs", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/alb/vpc/createAlb"),
-						ghttp.VerifyJSON(`{"cluster":"345","type":"public","enableByDefault":true,"zone": "us-south-1"}
+						ghttp.VerifyJSON(`{"cluster":"345","type":"public","enableByDefault":true,"zone": "us-south-1","ingressImage": "1.5.1_5367_iks"}
 `),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create alb`),
 					),
@@ -62,7 +62,7 @@ var _ = Describe("Albs", func() {
 
 			It("should return error during creating alb", func() {
 				params := AlbCreateReq{
-					Cluster: "345", Type: "public", EnableByDefault: true, ZoneAlb: "us-south-1",
+					Cluster: "345", Type: "public", EnableByDefault: true, ZoneAlb: "us-south-1", IngressImage: "1.5.1_5367_iks",
 				}
 				target := ClusterTargetHeader{}
 				_, err := newAlbs(server.URL()).CreateAlb(params, target)
