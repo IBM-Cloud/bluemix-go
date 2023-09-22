@@ -158,6 +158,9 @@ type Alb interface {
 	SetIngressStatusState(ingressStatusStateReq IngressStatusState, target ClusterTargetHeader) error
 	GetIngressLoadBalancerConfig(clusterNameOrID, lbType string, target ClusterTargetHeader) (ALBLBConfig, error)
 	UpdateIngressLoadBalancerConfig(lbConfig ALBLBConfig, target ClusterTargetHeader) error
+	GetALBAutoscaleConfiguration(clusterNameOrID, albID string, target ClusterTargetHeader) (AutoscaleDetails, error)
+	SetALBAutoscaleConfiguration(clusterNameOrID, albID string, autoscaleDetails AutoscaleDetails, target ClusterTargetHeader) error
+	RemoveALBAutoscaleConfiguration(clusterNameOrID, albID string, target ClusterTargetHeader) error
 }
 
 func newAlbAPI(c *client.Client) Alb {
