@@ -147,12 +147,13 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 	switch endpointType {
 	case PrivateServiceEndpoint:
 		if !strings.Contains(cMeta.ServerURL, PrivateEndpointDNS) || strings.Contains(cMeta.ServerURL, VirtualPrivateEndpointDNS) {
-			if cMeta.ServiceEndpoints.PrivateServiceEndpointEnabled && cMeta.ServiceEndpoints.PrivateServiceEndpointURL != "" {
+			// Could be changed to private only if the cluster's private service endpoint is enabled and public is enabled
+			if cMeta.ServiceEndpoints.PrivateServiceEndpointEnabled && cMeta.ServiceEndpoints.PrivateServiceEndpointURL != "" && !cMeta.ServiceEndpoints.PublicServiceEndpointEnabled {
 				// As this is Openshift, we need to use the URL with the signed certificate (-e) (the right URL is not available in getCluster response)
 				urlParts := strings.Split(cMeta.ServiceEndpoints.PrivateServiceEndpointURL, ".")
 				cMeta.ServerURL = urlParts[0] + "-e." + strings.Join(urlParts[1:], ".")
 			} else {
-				return kubecfg, fmt.Errorf("private service endpoint is not supported by the cluster")
+				trace.Logger.Println("Ignore endpoint parameter and use default ServerURL - currently unsupported scenario")
 			}
 		}
 	case VirtualPrivateEndpoint:
@@ -322,7 +323,9 @@ func reconfigureAuthorizationEndpoint(originalAuthEndpoint string, endpointType 
 	}
 	switch endpointType {
 	case PrivateServiceEndpoint:
-		if !strings.Contains(originalAuthEndpoint, PrivateEndpointDNS) || strings.Contains(originalAuthEndpoint, VirtualPrivateEndpointDNS) {
+		if (!strings.Contains(originalAuthEndpoint, PrivateEndpointDNS) || strings.Contains(originalAuthEndpoint, VirtualPrivateEndpointDNS)) &&
+			!clusterInfo.ServiceEndpoints.PublicServiceEndpointEnabled &&
+			clusterInfo.ServiceEndpoints.PrivateServiceEndpointEnabled {
 			urlPrivate, err := url.ParseRequestURI(clusterInfo.ServiceEndpoints.PrivateServiceEndpointURL)
 			if err != nil || urlPrivate.Host == "" {
 				return "", fmt.Errorf("could not parse private service endpoint raw url, cluster may not support it: %s, error: %v", clusterInfo.ServiceEndpoints.PrivateServiceEndpointURL, err)
@@ -330,12 +333,15 @@ func reconfigureAuthorizationEndpoint(originalAuthEndpoint string, endpointType 
 			// As this is Openshift, we need to use the URL with the signed certificate (the right URL is not available in getCluster response)
 			hostNameParts := strings.Split(urlPrivate.Hostname(), ".")
 			hostName := hostNameParts[0] + "-e." + strings.Join(hostNameParts[1:], ".")
+
 			u := url.URL{
 				Scheme: urlDefault.Scheme,
 				Host:   hostName + ":" + urlDefault.Port(),
 				Path:   urlDefault.Path,
 			}
 			return u.String(), nil
+		} else {
+			trace.Logger.Println("Ignore endpoint parameter and use default OauthServerURL - currently unsupported scenario")
 		}
 	case VirtualPrivateEndpoint:
 		if !strings.Contains(originalAuthEndpoint, VirtualPrivateEndpointDNS) {

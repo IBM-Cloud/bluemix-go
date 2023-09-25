@@ -116,7 +116,7 @@ var _ = Describe("Openshift utils", func() {
 			It("should fail as Private Service Endpoint URL is empty", func() {
 				clusterInfo := ClusterInfo{
 					ServiceEndpoints: Endpoints{
-						PrivateServiceEndpointEnabled: false,
+						PrivateServiceEndpointEnabled: true,
 						PrivateServiceEndpointURL:     "",
 					},
 					VirtualPrivateEndpointURL: ServerVirtualPrivateEndpoint,
