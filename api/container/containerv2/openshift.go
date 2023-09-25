@@ -104,12 +104,12 @@ func NormalizeName(name string) (string, error) {
 }
 
 // logInAndFillOCToken will update kubeConfig with an Openshift token, if one is not there
-func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo, skipSSLVerification bool) (kubecfgEdited []byte, rerr error) {
+func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo, skipSSLVerification bool, endpointType string) (kubecfgEdited []byte, rerr error) {
 	// TODO: this is not a a standard manner to login ... using propriatary OC cli reverse engineering
 	defer func() {
 		err := PanicCatch(recover())
 		if err != nil {
-			rerr = fmt.Errorf("Could not login to openshift account %s", err)
+			rerr = fmt.Errorf("could not login to openshift account %s", err)
 		}
 	}()
 
@@ -118,7 +118,6 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 	if err != nil {
 		return kubecfg, err
 	}
-
 	var token, passcode string
 	if r.client.Config.BluemixAPIKey == "" {
 		trace.Logger.Println("Creating user passcode to login for getting oc token")
@@ -139,6 +138,22 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 		}
 	}
 
+	// honor the endpointType parameter
+	switch endpointType {
+	case "private":
+		if cMeta.ServiceEndpoints.PrivateServiceEndpointEnabled && cMeta.ServiceEndpoints.PrivateServiceEndpointURL != "" {
+			cMeta.ServerURL = cMeta.ServiceEndpoints.PrivateServiceEndpointURL
+		} else {
+			return kubecfg, fmt.Errorf("private service endpoint is not supported by the cluster")
+		}
+	case "vpe":
+		if cMeta.VirtualPrivateEndpointURL != "" {
+			cMeta.ServerURL = cMeta.VirtualPrivateEndpointURL
+		} else {
+			return kubecfg, fmt.Errorf("virtual private endpoint is not supported by the cluster")
+
+		}
+	}
 	authEP, err := func(meta *ClusterInfo) (*authEndpoints, error) {
 		request := rest.GetRequest(meta.ServerURL + "/.well-known/oauth-authorization-server")
 		var auth authEndpoints
@@ -153,7 +168,7 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 		defer resp.Body.Close()
 		if resp.StatusCode > 299 {
 			msg, _ := ioutil.ReadAll(resp.Body)
-			return nil, fmt.Errorf("Bad status code [%d] returned when fetching Cluster authentication endpoints: %s", resp.StatusCode, msg)
+			return nil, fmt.Errorf("bad status code [%d] returned when fetching Cluster authentication endpoints: %s", resp.StatusCode, msg)
 		}
 		auth.ServerURL = meta.ServerURL
 		return &auth, nil
@@ -191,6 +206,8 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 	newUser := map[string]interface{}{"name": uname, "user": map[string]interface{}{"token": token}}
 	users = append(users, newUser)
 	cfg["users"] = users
+
+	cfg["current-context"] = ccontext
 
 	bytes, err := yaml.Marshal(cfg)
 	if err != nil {
