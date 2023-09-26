@@ -157,7 +157,7 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 			}
 		}
 	case VirtualPrivateEndpoint:
-		if !strings.Contains(cMeta.ServerURL, VirtualPrivateEndpointDNS) {
+		if !strings.Contains(cMeta.ServerURL, VirtualPrivateEndpointDNS) && !cMeta.ServiceEndpoints.PublicServiceEndpointEnabled {
 			if cMeta.VirtualPrivateEndpointURL != "" {
 				cMeta.ServerURL = cMeta.VirtualPrivateEndpointURL
 			} else {
@@ -344,7 +344,7 @@ func reconfigureAuthorizationEndpoint(originalAuthEndpoint string, endpointType 
 			trace.Logger.Println("Ignore endpoint parameter and use default OauthServerURL - currently unsupported scenario")
 		}
 	case VirtualPrivateEndpoint:
-		if !strings.Contains(originalAuthEndpoint, VirtualPrivateEndpointDNS) {
+		if !strings.Contains(originalAuthEndpoint, VirtualPrivateEndpointDNS) && !clusterInfo.ServiceEndpoints.PublicServiceEndpointEnabled {
 			urlVPE, err := url.ParseRequestURI(clusterInfo.VirtualPrivateEndpointURL)
 			if err != nil || urlVPE.Host == "" {
 				return "", fmt.Errorf("could not parse virtual private endpoint raw url, cluster may not support it: %s, error: %v", clusterInfo.VirtualPrivateEndpointURL, err)
