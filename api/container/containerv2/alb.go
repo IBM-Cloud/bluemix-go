@@ -251,7 +251,7 @@ func (r *alb) AddIgnoredIngressStatusErrors(ignoredErrorsReq IgnoredIngressStatu
 // RemoveIgnoredIngressStatusErrors
 func (r *alb) RemoveIgnoredIngressStatusErrors(ignoredErrorsReq IgnoredIngressStatusErrors, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
-	_, err := r.client.Delete("/v2/alb/removeIgnoredIngressStatusErrors", ignoredErrorsReq, nil, target.ToMap())
+	_, err := r.client.DeleteWithBody("/v2/alb/removeIgnoredIngressStatusErrors", ignoredErrorsReq, nil, target.ToMap())
 	return err
 }
 
@@ -265,7 +265,7 @@ func (r *alb) SetIngressStatusState(ingressStatusStateReq IngressStatusState, ta
 // GetIngressLoadBalancerConfig get the configuration of load balancers for Ingress ALBs
 func (r *alb) GetIngressLoadBalancerConfig(clusterNameOrID, lbType string, target ClusterTargetHeader) (ALBLBConfig, error) {
 	var successV ALBLBConfig
-	_, err := r.client.Get(fmt.Sprintf("/ingress/v2/load-balancer/configuration/?cluster=%s&type=%s", clusterNameOrID, lbType), &successV, target.ToMap())
+	_, err := r.client.Get(fmt.Sprintf("/ingress/v2/load-balancer/configuration?cluster=%s&type=%s", clusterNameOrID, lbType), &successV, target.ToMap())
 	return successV, err
 }
 
@@ -279,14 +279,14 @@ func (r *alb) UpdateIngressLoadBalancerConfig(lbConfig ALBLBConfig, target Clust
 // GetALBAutoscaleConfiguration get the autoscaling configuration for an ALB
 func (r *alb) GetALBAutoscaleConfiguration(clusterNameOrID, albID string, target ClusterTargetHeader) (AutoscaleDetails, error) {
 	var successV AutoscaleDetails
-	_, err := r.client.Get(fmt.Sprintf("/ingress/v2/load-balancer/configuration/?cluster=%s&type=%s", clusterNameOrID, albID), &successV, target.ToMap())
+	_, err := r.client.Get(fmt.Sprintf("/ingress/v2/clusters/%s/albs/%s/autoscale", clusterNameOrID, albID), &successV, target.ToMap())
 	return successV, err
 }
 
 // SetALBAutoscaleConfiguration set the autoscaling configuration for an ALB
 func (r *alb) SetALBAutoscaleConfiguration(clusterNameOrID, albID string, autoscaleDetails AutoscaleDetails, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
-	_, err := r.client.Put(fmt.Sprintf("/ingress/v2/load-balancer/configuration/?cluster=%s&type=%s", clusterNameOrID, albID), autoscaleDetails, nil, target.ToMap())
+	_, err := r.client.Put(fmt.Sprintf("/ingress/v2/clusters/%s/albs/%s/autoscale", clusterNameOrID, albID), autoscaleDetails, nil, target.ToMap())
 	return err
 }
 
@@ -294,6 +294,6 @@ func (r *alb) SetALBAutoscaleConfiguration(clusterNameOrID, albID string, autosc
 func (r *alb) RemoveALBAutoscaleConfiguration(clusterNameOrID, albID string, target ClusterTargetHeader) error {
 	var successV interface{}
 	// Make the request, don't care about return value
-	_, err := r.client.Delete(fmt.Sprintf("/ingress/v2/load-balancer/configuration/?cluster=%s&type=%s", clusterNameOrID, albID), successV, nil, target.ToMap())
+	_, err := r.client.Delete(fmt.Sprintf("/ingress/v2/clusters/%s/albs/%s/autoscale", clusterNameOrID, albID), successV, nil, target.ToMap())
 	return err
 }

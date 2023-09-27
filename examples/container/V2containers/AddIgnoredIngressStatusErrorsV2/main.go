@@ -36,13 +36,13 @@ func main() {
 	}
 
 	albAPI := clusterClient.Albs()
-	ingressStatusReq := v2.IgnoredIngressStatusErrors{
+	errorCodes := v2.IgnoredIngressStatusErrors{
 		Cluster: clusterID,
 		IgnoredErrors: []string{
 			"ERRADRUH",
 		},
 	}
 
-	err = albAPI.AddIgnoredIngressStatusErrors(ingressStatusReq, target)
+	err = albAPI.AddIgnoredIngressStatusErrors(errorCodes, target)
 	fmt.Println("err: ", err)
 }

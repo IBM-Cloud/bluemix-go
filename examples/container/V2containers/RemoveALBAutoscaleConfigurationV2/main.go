@@ -25,6 +25,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	clusterID := "ck6k27hd0s1542093c6g"
+	albID := "public-crck6k27hd0s1542093c6g-alb1"
+
 	target := v2.ClusterTargetHeader{}
 
 	clusterClient, err := v2.New(sess)
@@ -34,10 +38,7 @@ func main() {
 
 	albAPI := clusterClient.Albs()
 
-	images, listErr := albAPI.ListAlbImages(target)
-
-	fmt.Println("err: ", listErr)
-	fmt.Println("default: ", images.DefaultK8sVersion)
-	fmt.Println("supported versions: ", images.SupportedK8sVersions)
+	err = albAPI.RemoveALBAutoscaleConfiguration(clusterID, albID, target)
+	fmt.Println("err: ", err)
 
 }

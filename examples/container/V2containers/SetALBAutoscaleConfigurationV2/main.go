@@ -26,7 +26,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	clusterID := "ck4ufagd0e3bch0a3e8g"
+	clusterID := "ck6k27hd0s1542093c6g"
+	albID := "public-crck6k27hd0s1542093c6g-alb1"
 
 	target := v2.ClusterTargetHeader{}
 
@@ -35,9 +36,22 @@ func main() {
 		log.Fatal(err)
 	}
 
+	autoscaleConf := v2.AutoscaleDetails{
+		Config: &v2.AutoscaleConfig{
+			MinReplicas:           2,
+			MaxReplicas:           4,
+			CPUAverageUtilization: 600,
+		},
+	}
+
 	albAPI := clusterClient.Albs()
 
-	ignoredErrors, getErr := albAPI.GetIgnoredIngressStatusErrors(clusterID, target)
-	fmt.Println("err: ", getErr)
-	fmt.Printf("ignoredErrors: %+v\n", ignoredErrors.IgnoredErrors)
+	err = albAPI.SetALBAutoscaleConfiguration(clusterID, albID, autoscaleConf, target)
+	fmt.Println("setErr: ", err)
+
+	getAutoscaleConf, err := albAPI.GetALBAutoscaleConfiguration(clusterID, albID, target)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("getAutoscaleConf.Config=%+v\n", getAutoscaleConf.Config)
 }

@@ -38,6 +38,6 @@ func main() {
 	albAPI := clusterClient.Albs()
 
 	status, err2 := albAPI.GetIngressStatus(clusterID, target)
-	fmt.Println("err=", err2)
-	fmt.Printf("status=%+v\n", status)
+	fmt.Println("err: ", err2)
+	fmt.Printf("status: %+v\n", status)
 }

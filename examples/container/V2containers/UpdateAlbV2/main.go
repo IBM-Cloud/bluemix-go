@@ -33,8 +33,7 @@ func main() {
 
 	updateReq := v2.UpdateALBReq{
 		ClusterID: clusterID,
-		//ALBBuild:  "1.8.1_5365_iks",
-		ALBBuild: "1.5.1_5367_iks",
+		ALBBuild:  "1.8.1_5365_iks",
 		ALBList: []string{
 			albID,
 		},

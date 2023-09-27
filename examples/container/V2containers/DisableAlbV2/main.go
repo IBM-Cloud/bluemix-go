@@ -51,8 +51,8 @@ func main() {
 
 	albAPI := clusterClient.Albs()
 
-	err2 := albAPI.DisableAlb(albinfo, target)
+	disableErr := albAPI.DisableAlb(albinfo, target)
 
-	fmt.Println("err=", err2)
+	fmt.Println("err: ", disableErr)
 
 }

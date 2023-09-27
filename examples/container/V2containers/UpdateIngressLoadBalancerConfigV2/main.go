@@ -25,6 +25,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	clusterID := "ck9aaedd0p8vjmqa0asg"
+	lbType := "public"
+
 	target := v2.ClusterTargetHeader{}
 
 	clusterClient, err := v2.New(sess)
@@ -32,12 +36,21 @@ func main() {
 		log.Fatal(err)
 	}
 
+	lbConf := v2.ALBLBConfig{
+		Cluster: clusterID,
+		ProxyProtocol: &v2.ALBLBProxyProtocolConfig{
+			Enable: true,
+		},
+	}
+
 	albAPI := clusterClient.Albs()
 
-	images, listErr := albAPI.ListAlbImages(target)
+	err = albAPI.UpdateIngressLoadBalancerConfig(lbConf, target)
+	fmt.Println("updateErr: ", err)
 
-	fmt.Println("err: ", listErr)
-	fmt.Println("default: ", images.DefaultK8sVersion)
-	fmt.Println("supported versions: ", images.SupportedK8sVersions)
-
+	getLbConf, err := albAPI.GetIngressLoadBalancerConfig(clusterID, lbType, target)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("getLbConf.ProxyProtocol: %+v\n", getLbConf.ProxyProtocol)
 }

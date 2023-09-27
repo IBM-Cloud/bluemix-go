@@ -37,7 +37,7 @@ func main() {
 
 	albAPI := clusterClient.Albs()
 
-	albHCConfig, err2 := albAPI.GetAlbClusterHealthCheckConfig(clusterID, target)
-	fmt.Println("err=", err2)
-	fmt.Printf("albHCConfig.Enable=%+v\n", albHCConfig.Enable)
+	albHCConfig, getErr := albAPI.GetAlbClusterHealthCheckConfig(clusterID, target)
+	fmt.Println("err: ", getErr)
+	fmt.Printf("albHCConfig.Enable: %+v\n", albHCConfig.Enable)
 }
