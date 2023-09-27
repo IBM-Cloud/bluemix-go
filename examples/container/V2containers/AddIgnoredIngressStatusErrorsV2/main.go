@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
+	"os"
 
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/session"
@@ -13,9 +15,19 @@ import (
 
 func main() {
 
-	c := new(bluemix.Config)
+	var errCode, clusterID string
+	flag.StringVar(&errCode, "errCode", "", "ignored error code")
+	flag.StringVar(&clusterID, "clusterNameOrID", "", "cluster name or ID")
+	flag.Parse()
 
 	trace.Logger = trace.NewLogger("true")
+
+	if clusterID == "" || errCode == "" {
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	c := new(bluemix.Config)
 
 	sess, err := session.New(c)
 	if err != nil {
@@ -25,8 +37,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	clusterID := "ck4ufagd0e3bch0a3e8g"
 
 	target := v2.ClusterTargetHeader{}
 
@@ -39,7 +49,7 @@ func main() {
 	errorCodes := v2.IgnoredIngressStatusErrors{
 		Cluster: clusterID,
 		IgnoredErrors: []string{
-			"ERRADRUH",
+			errCode,
 		},
 	}
 

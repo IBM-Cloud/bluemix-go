@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
+	"os"
 
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/session"
@@ -13,9 +15,19 @@ import (
 
 func main() {
 
-	c := new(bluemix.Config)
+	var clusterID, albID string
+	flag.StringVar(&clusterID, "clusterNameOrID", "", "cluster name or ID")
+	flag.StringVar(&albID, "albID", "", "ALB ID")
+	flag.Parse()
 
 	trace.Logger = trace.NewLogger("true")
+
+	if clusterID == "" || albID == "" {
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	c := new(bluemix.Config)
 
 	sess, err := session.New(c)
 	if err != nil {
@@ -25,9 +37,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	clusterID := "ck6k27hd0s1542093c6g"
-	albID := "public-crck6k27hd0s1542093c6g-alb1"
 
 	target := v2.ClusterTargetHeader{}
 

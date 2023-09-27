@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	bluemix "github.com/IBM-Cloud/bluemix-go"
@@ -15,9 +17,20 @@ import (
 
 func main() {
 
-	c := new(bluemix.Config)
+	var clusterID, albID, albVersion string
+	flag.StringVar(&clusterID, "clusterNameOrID", "", "cluster name or ID")
+	flag.StringVar(&albID, "albID", "", "ALB ID")
+	flag.StringVar(&albVersion, "albVersion", "", "target ALB build version")
+	flag.Parse()
 
 	trace.Logger = trace.NewLogger("true")
+
+	if clusterID == "" || albID == "" || albVersion == "" {
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	c := new(bluemix.Config)
 
 	sess, err := session.New(c)
 	if err != nil {
@@ -28,12 +41,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	clusterID := "ck4ufagd0e3bch0a3e8g"
-	albID := "public-crck4ufagd0e3bch0a3e8g-alb1"
-
 	updateReq := v2.UpdateALBReq{
 		ClusterID: clusterID,
-		ALBBuild:  "1.8.1_5365_iks",
+		ALBBuild:  albVersion,
 		ALBList: []string{
 			albID,
 		},

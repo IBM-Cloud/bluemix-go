@@ -206,6 +206,8 @@ func (r *alb) RemoveALBCertByCertCRN(clusterID string, certCRN string, target Cl
 }
 
 // GetClusterALBCertBySecretName returns details about specified alb cert for given secretName
+//
+// Deprecated: Unsupported and replaced with other solution.
 func (r *alb) GetClusterALBCertBySecretName(clusterID string, secretName string, target ClusterTargetHeader) (ALBSecretConfig, error) {
 	var successV ALBSecretConfig
 	_, err := r.client.Get(fmt.Sprintf("/v1/alb/clusters/%s/albsecrets?albSecretName=%s", clusterID, secretName), &successV, target.ToMap())
