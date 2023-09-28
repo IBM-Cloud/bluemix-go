@@ -68,7 +68,7 @@ func main() {
 
 	autoUpdateOff := false
 	albUpdatePolicy := v1.ALBUpdatePolicy{
-		AutoUpdate: &autoUpdateOff,
+		AutoUpdate: autoUpdateOff,
 	}
 
 	fmt.Println("turn off auto update")

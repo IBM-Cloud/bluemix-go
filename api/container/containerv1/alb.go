@@ -81,8 +81,8 @@ type AlbCreateResp struct {
 
 // ALBUpdatePolicy represents the body for interacting with the update ALB APIs.
 type ALBUpdatePolicy struct {
-	AutoUpdate    *bool `json:"autoUpdate" binding:"required"`
-	LatestVersion bool  `json:"latestVersion"`
+	AutoUpdate    bool `json:"autoUpdate" binding:"required"`
+	LatestVersion bool `json:"latestVersion"`
 }
 
 // Clusters interface
@@ -103,6 +103,8 @@ type Albs interface {
 	GetALBUpdatePolicy(clusterID string, target ClusterTargetHeader) (ALBUpdatePolicy, error)
 	ChangeALBUpdatePolicy(clusterID string, config ALBUpdatePolicy, target ClusterTargetHeader) error
 	UpdateALBs(clusterID string, target ClusterTargetHeader) error
+	EnableALB(albID string, config ALBConfig, target ClusterTargetHeader) error
+	DisableALB(albID string, target ClusterTargetHeader) error
 }
 
 type alb struct {
@@ -139,7 +141,7 @@ func (r *alb) GetALB(albID string, target ClusterTargetHeader) (ALBConfig, error
 }
 
 // EnableALB enables alb for cluster
-func (r *alb) EnableALB(albID string, config ALBConfig, disableDeployment bool, target ClusterTargetHeader) error {
+func (r *alb) EnableALB(albID string, config ALBConfig, target ClusterTargetHeader) error {
 	var successV interface{}
 	_, err := r.client.Post("/v1/alb/albs", config, &successV, target.ToMap())
 	return err
