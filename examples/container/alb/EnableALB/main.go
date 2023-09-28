@@ -21,9 +21,6 @@ func main() {
 	var albID string
 	flag.StringVar(&albID, "albID", "", "ALB ID")
 
-	var enable bool
-	flag.BoolVar(&enable, "enable", false, "enable alb")
-
 	var region string
 	flag.StringVar(&region, "region", "us-south", "region of cluster")
 
@@ -52,7 +49,7 @@ func main() {
 	albConf := v1.ALBConfig{
 		ALBID:     albID,
 		ClusterID: clusterID,
-		Enable:    enable,
+		Enable:    true,
 	}
 
 	err = albAPI.EnableALB(albID, albConf, target)
