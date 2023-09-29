@@ -16,7 +16,9 @@ import (
 func main() {
 
 	var clusterID string
+	var enable bool
 	flag.StringVar(&clusterID, "clusterNameOrID", "", "cluster name or ID")
+	flag.BoolVar(&enable, "enable", false, "turn on or off the in-cluster healthcheck")
 	flag.Parse()
 
 	trace.Logger = trace.NewLogger("true")
@@ -47,7 +49,7 @@ func main() {
 	albAPI := clusterClient.Albs()
 	hcReq := v2.ALBClusterHealthCheckConfig{
 		Cluster: clusterID,
-		Enable:  true,
+		Enable:  enable,
 	}
 
 	err = albAPI.SetAlbClusterHealthCheckConfig(hcReq, target)

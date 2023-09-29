@@ -16,8 +16,12 @@ import (
 func main() {
 
 	var clusterID, albID string
+	var cpuAverageUtilization, minReplicas, maxReplicas int
 	flag.StringVar(&clusterID, "clusterNameOrID", "", "cluster name or ID")
 	flag.StringVar(&albID, "albID", "", "ALB ID")
+	flag.IntVar(&minReplicas, "minReplicas", 0, "minimum ALB replicas")
+	flag.IntVar(&maxReplicas, "maxReplicas", 0, "maximum ALB replicas")
+	flag.IntVar(&cpuAverageUtilization, "cpuAverageUtilization", 0, "the CPU Average Utilization")
 	flag.Parse()
 
 	trace.Logger = trace.NewLogger("true")
@@ -47,9 +51,9 @@ func main() {
 
 	autoscaleConf := v2.AutoscaleDetails{
 		Config: &v2.AutoscaleConfig{
-			MinReplicas:           2,
-			MaxReplicas:           4,
-			CPUAverageUtilization: 600,
+			MinReplicas:           minReplicas,
+			MaxReplicas:           maxReplicas,
+			CPUAverageUtilization: cpuAverageUtilization,
 		},
 	}
 

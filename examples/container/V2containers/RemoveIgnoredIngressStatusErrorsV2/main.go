@@ -15,13 +15,14 @@ import (
 
 func main() {
 
-	var clusterID string
+	var errCode, clusterID string
+	flag.StringVar(&errCode, "errCode", "", "ignored error code")
 	flag.StringVar(&clusterID, "clusterNameOrID", "", "cluster name or ID")
 	flag.Parse()
 
 	trace.Logger = trace.NewLogger("true")
 
-	if clusterID == "" {
+	if clusterID == "" || errCode == "" {
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -48,7 +49,7 @@ func main() {
 	errorCodes := v2.IgnoredIngressStatusErrors{
 		Cluster: clusterID,
 		IgnoredErrors: []string{
-			"ERRADRUH",
+			errCode,
 		},
 	}
 

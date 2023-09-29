@@ -1,6 +1,6 @@
 # ChangeALBUpdatePolicy example
 
-This example shows how to enable or disable the ALB autoupdate.
+This example shows how to enable or disable the Ingress status report.
 
 Example: 
 

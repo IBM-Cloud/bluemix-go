@@ -16,8 +16,10 @@ import (
 func main() {
 
 	var clusterID, lbType string
+	var enable bool
 	flag.StringVar(&clusterID, "clusterNameOrID", "", "cluster name or ID")
 	flag.StringVar(&lbType, "lbType", "", "loadbalancer type")
+	flag.BoolVar(&enable, "enable", false, "turn on or off the in-cluster healthcheck")
 	flag.Parse()
 
 	trace.Logger = trace.NewLogger("true")
@@ -48,7 +50,7 @@ func main() {
 	lbConf := v2.ALBLBConfig{
 		Cluster: clusterID,
 		ProxyProtocol: &v2.ALBLBProxyProtocolConfig{
-			Enable: true,
+			Enable: enable,
 		},
 	}
 
