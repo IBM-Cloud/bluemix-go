@@ -17,6 +17,8 @@ import (
 
 var _ = Describe("Albs", func() {
 	var server *ghttp.Server
+
+	updatePolicy := ALBUpdatePolicy{AutoUpdate: true, LatestVersion: true}
 	AfterEach(func() {
 		server.Close()
 	})
@@ -670,6 +672,152 @@ var _ = Describe("Albs", func() {
 					Region:    "eu-de",
 				}
 				err := newAlbs(server.URL()).RemoveALBCertByCertCRN("mycluster", "test", target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+	//GetALBUpdatePolicy
+	Describe("Get alb update policy", func() {
+		Context("When read of alb update policy is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v1/alb/clusters/testCluster/updatepolicy"),
+						ghttp.RespondWith(http.StatusOK, `{"autoUpdate": true,"latestVersion": true}`),
+					),
+				)
+			})
+
+			It("should return enabled autoupdate", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				updatePolicyResp, err := newAlbs(server.URL()).GetALBUpdatePolicy("testCluster", target)
+				Expect(updatePolicyResp).ShouldNot(BeNil())
+				Expect(updatePolicyResp).Should(Equal(updatePolicy))
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When read of alb update policy is failed", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v1/alb/clusters/testCluster/updatepolicy"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to get alb update policy`),
+					),
+				)
+			})
+
+			It("should return error when alb update policy get", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				_, err := newAlbs(server.URL()).GetALBUpdatePolicy("testCluster", target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+	//ChangeALBUpdatePolicy
+	Describe("Change alb update policy", func() {
+		Context("When change alb update policy is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPut, "/v1/alb/clusters/testCluster/updatepolicy"),
+						ghttp.RespondWith(http.StatusOK, ``),
+					),
+				)
+			})
+
+			It("should enable autoupdate", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).ChangeALBUpdatePolicy("testCluster", updatePolicy, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When change of alb update policy is failed", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPut, "/v1/alb/clusters/testCluster/updatepolicy"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to set alb update policy`),
+					),
+				)
+			})
+
+			It("should return error when alb update policy set", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).ChangeALBUpdatePolicy("testCluster", updatePolicy, target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+	//UpdateALBs
+	Describe("Update ALBs", func() {
+		Context("When change force ALB update", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPut, "/v1/alb/clusters/testCluster/update"),
+						ghttp.RespondWith(http.StatusOK, ``),
+					),
+				)
+			})
+
+			It("should update ALBs", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).UpdateALBs("testCluster", target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When update ALBs is failed", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPut, "/v1/alb/clusters/testCluster/update"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to update ALBs`),
+					),
+				)
+			})
+
+			It("should return error when update ALBs", func() {
+				target := ClusterTargetHeader{
+					OrgID:     "abc",
+					SpaceID:   "def",
+					AccountID: "ghi",
+					Region:    "eu-de",
+				}
+				err := newAlbs(server.URL()).UpdateALBs("testCluster", target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
