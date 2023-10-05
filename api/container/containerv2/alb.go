@@ -214,6 +214,7 @@ func (r *alb) ListAlbImages(target ClusterTargetHeader) (AlbImageVersions, error
 	return successV, err
 }
 
+// GetIngressStatus returns the ingress status report for the cluster
 func (r *alb) GetIngressStatus(clusterNameOrID string, target ClusterTargetHeader) (IngressStatus, error) {
 	var successV IngressStatus
 	_, err := r.client.Get(fmt.Sprintf("/v2/alb/getStatus?cluster=%s", clusterNameOrID), &successV, target.ToMap())
@@ -241,21 +242,21 @@ func (r *alb) GetIgnoredIngressStatusErrors(clusterNameOrID string, target Clust
 	return successV, err
 }
 
-// AddIgnoredIngressStatusErrors
+// AddIgnoredIngressStatusErrors ignore one or more ingress status error
 func (r *alb) AddIgnoredIngressStatusErrors(ignoredErrorsReq IgnoredIngressStatusErrors, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
 	_, err := r.client.Post("/v2/alb/addIgnoredIngressStatusErrors", ignoredErrorsReq, nil, target.ToMap())
 	return err
 }
 
-// RemoveIgnoredIngressStatusErrors
+// RemoveIgnoredIngressStatusErrors remove one or more ignored ingress status error
 func (r *alb) RemoveIgnoredIngressStatusErrors(ignoredErrorsReq IgnoredIngressStatusErrors, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
 	_, err := r.client.DeleteWithBody("/v2/alb/removeIgnoredIngressStatusErrors", ignoredErrorsReq, nil, target.ToMap())
 	return err
 }
 
-// SetIngressStatusState
+// SetIngressStatusState set the state of the ingress status for a cluster
 func (r *alb) SetIngressStatusState(ingressStatusStateReq IngressStatusState, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
 	_, err := r.client.Post("/v2/alb/setIngressStatusState", ingressStatusStateReq, nil, target.ToMap())
