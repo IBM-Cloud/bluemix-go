@@ -1,4 +1,4 @@
-# ChangeALBUpdatePolicy example
+# GetIngressStatus example
 
 This example shows how to get the Ingress status.
 

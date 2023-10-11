@@ -1,4 +1,4 @@
-# ChangeALBUpdatePolicy example
+# UpdateAlb example
 
 This example shows how to update an ALB to a specific version.
 

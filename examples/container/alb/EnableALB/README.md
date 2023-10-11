@@ -1,4 +1,4 @@
-# Alb example
+# EnableALB example
 
 This example shows how to enable an ALB.
 

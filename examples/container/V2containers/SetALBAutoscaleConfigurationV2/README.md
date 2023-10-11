@@ -1,4 +1,4 @@
-# ChangeALBUpdatePolicy example
+# SetALBAutoscaleConfiguration example
 
 This example shows how to set the ALB autoscale config.
 

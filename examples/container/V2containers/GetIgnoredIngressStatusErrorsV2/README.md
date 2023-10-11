@@ -1,4 +1,4 @@
-# ChangeALBUpdatePolicy example
+# GetIgnoredIngressStatusErrors example
 
 This example shows how to get the ignored errors.
 

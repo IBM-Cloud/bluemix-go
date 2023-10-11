@@ -1,4 +1,4 @@
-# ChangeALBUpdatePolicy example
+# RemoveIgnoredIngressStatusErrors example
 
 This example shows how to remove Ingress status error code.
 

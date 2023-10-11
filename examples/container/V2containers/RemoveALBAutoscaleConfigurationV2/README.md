@@ -1,4 +1,4 @@
-# ChangeALBUpdatePolicy example
+# RemoveALBAutoscaleConfiguration example
 
 This example shows how to remove ALB autoscale config.
 

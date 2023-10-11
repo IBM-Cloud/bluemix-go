@@ -1,4 +1,4 @@
-# Alb example
+# GetALBUpdatePolicy example
 
 This example shows how to get autoupdate config for ALBs.
 

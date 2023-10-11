@@ -1,4 +1,4 @@
-# Alb example
+# UpdateALBs example
 
 This example shows how to force one-time update of all ALBs.
 

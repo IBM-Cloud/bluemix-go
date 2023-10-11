@@ -1,4 +1,4 @@
-# Alb example
+# DisableALB example
 
 This example shows how to disable an ALB.
 

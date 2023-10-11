@@ -1,4 +1,4 @@
-# ChangeALBUpdatePolicy example
+# GetIngressLoadBalancerConfig example
 
 This example shows how to get the Ingress load balancer config.
 

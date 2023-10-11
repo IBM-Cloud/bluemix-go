@@ -1,4 +1,4 @@
-# ChangeALBUpdatePolicy example
+# GetAlbClusterHealthCheckConfig example
 
 This example shows how to get the in-cluster health check config.
 

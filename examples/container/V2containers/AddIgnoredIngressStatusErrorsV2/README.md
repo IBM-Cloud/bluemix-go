@@ -1,4 +1,4 @@
-# ChangeALBUpdatePolicy example
+# AddIgnoredIngressStatusErrors example
 
 This example shows how to ignore an Ingress Status related error code.
 

@@ -170,30 +170,35 @@ func newAlbAPI(c *client.Client) Alb {
 	}
 }
 
+// CreateAlb create an ALB in a specified zone and cluster.
 func (r *alb) CreateAlb(albCreateReq AlbCreateReq, target ClusterTargetHeader) (AlbCreateResp, error) {
 	var successV AlbCreateResp
 	_, err := r.client.Post("/v2/alb/vpc/createAlb", albCreateReq, &successV, target.ToMap())
 	return successV, err
 }
 
+// DisableAlb disable an ALB in your cluster
 func (r *alb) DisableAlb(disableAlbReq AlbConfig, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
 	_, err := r.client.Post("/v2/alb/vpc/disableAlb", disableAlbReq, nil, target.ToMap())
 	return err
 }
 
+// EnableAlb enable an ALB in your cluster
 func (r *alb) EnableAlb(enableAlbReq AlbConfig, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
 	_, err := r.client.Post("/v2/alb/vpc/enableAlb", enableAlbReq, nil, target.ToMap())
 	return err
 }
 
+// GetAlb returns with the details of an ALB
 func (r *alb) GetAlb(albID string, target ClusterTargetHeader) (AlbConfig, error) {
 	var successV AlbConfig
 	_, err := r.client.Get(fmt.Sprintf("/v2/alb/getAlb?albID=%s", albID), &successV, target.ToMap())
 	return successV, err
 }
 
+// UpdateAlb update one or more ALBs
 func (r *alb) UpdateAlb(updateAlbReq UpdateALBReq, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
 	_, err := r.client.Post("/v2/alb/updateAlb", updateAlbReq, nil, target.ToMap())

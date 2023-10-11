@@ -1,4 +1,4 @@
-# Alb example
+# GetALB example
 
 This example shows how to get an ALB details.
 

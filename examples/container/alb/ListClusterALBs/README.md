@@ -1,4 +1,4 @@
-# Alb example
+# ListClusterALBs example
 
 This example shows how to list the ALBs for a cluster.
 

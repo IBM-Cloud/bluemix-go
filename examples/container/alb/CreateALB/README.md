@@ -1,4 +1,4 @@
-# Alb example
+# CreateALB example
 
 This example shows how to create a new an ALB.
 
