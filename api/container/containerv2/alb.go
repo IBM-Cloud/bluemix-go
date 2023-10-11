@@ -198,7 +198,7 @@ func (r *alb) GetAlb(albID string, target ClusterTargetHeader) (AlbConfig, error
 	return successV, err
 }
 
-// UpdateAlb update one or more ALBs
+// UpdateAlb update one or more ALBs. To update your ALB to a specified image version, automatic updates must be disabled.
 func (r *alb) UpdateAlb(updateAlbReq UpdateALBReq, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
 	_, err := r.client.Post("/v2/alb/updateAlb", updateAlbReq, nil, target.ToMap())
