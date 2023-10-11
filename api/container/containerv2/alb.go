@@ -170,7 +170,7 @@ func newAlbAPI(c *client.Client) Alb {
 	}
 }
 
-// CreateAlb create an ALB in a specified zone and cluster.
+// CreateAlb create an ALB in a specified zone and cluster
 func (r *alb) CreateAlb(albCreateReq AlbCreateReq, target ClusterTargetHeader) (AlbCreateResp, error) {
 	var successV AlbCreateResp
 	_, err := r.client.Post("/v2/alb/vpc/createAlb", albCreateReq, &successV, target.ToMap())
@@ -198,7 +198,7 @@ func (r *alb) GetAlb(albID string, target ClusterTargetHeader) (AlbConfig, error
 	return successV, err
 }
 
-// UpdateAlb update one or more ALBs. To update your ALB to a specified image version, automatic updates must be disabled.
+// UpdateAlb update one or more ALBs. To update your ALB to a specified image version, automatic updates must be disabled
 func (r *alb) UpdateAlb(updateAlbReq UpdateALBReq, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
 	_, err := r.client.Post("/v2/alb/updateAlb", updateAlbReq, nil, target.ToMap())
@@ -299,8 +299,7 @@ func (r *alb) SetALBAutoscaleConfiguration(clusterNameOrID, albID string, autosc
 
 // RemoveALBAutoscaleConfiguration delete the autoscaling configuration for an ALB
 func (r *alb) RemoveALBAutoscaleConfiguration(clusterNameOrID, albID string, target ClusterTargetHeader) error {
-	var successV interface{}
 	// Make the request, don't care about return value
-	_, err := r.client.Delete(fmt.Sprintf("/ingress/v2/clusters/%s/albs/%s/autoscale", clusterNameOrID, albID), successV, nil, target.ToMap())
+	_, err := r.client.Delete(fmt.Sprintf("/ingress/v2/clusters/%s/albs/%s/autoscale", clusterNameOrID, albID), nil, nil, target.ToMap())
 	return err
 }
