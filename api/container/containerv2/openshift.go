@@ -109,7 +109,7 @@ func NormalizeName(name string) (string, error) {
 }
 
 // logInAndFillOCToken will update kubeConfig with an Openshift token, if one is not there
-func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo, skipSSLVerification bool, endpointType string) (kubecfgEdited []byte, rerr error) {
+func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo, skipSSLVerification bool, endpointType string) (kubecfgEdited []byte, host string, rerr error) {
 	// TODO: this is not a a standard manner to login ... using propriatary OC cli reverse engineering
 	defer func() {
 		err := PanicCatch(recover())
@@ -121,7 +121,7 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 	var cfg map[string]interface{}
 	err := yaml.Unmarshal(kubecfg, &cfg)
 	if err != nil {
-		return kubecfg, err
+		return kubecfg, "", err
 	}
 	var token, passcode string
 	if r.client.Config.BluemixAPIKey == "" {
@@ -136,7 +136,7 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 			}
 
 			if err != nil && try == 3 {
-				return kubecfg, err
+				return kubecfg, "", err
 			}
 
 			time.Sleep(1 * time.Second)
@@ -161,7 +161,7 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 			if cMeta.VirtualPrivateEndpointURL != "" {
 				cMeta.ServerURL = cMeta.VirtualPrivateEndpointURL
 			} else {
-				return kubecfg, fmt.Errorf("virtual private endpoint is not supported by the cluster")
+				return kubecfg, "", fmt.Errorf("virtual private endpoint is not supported by the cluster")
 			}
 		}
 	}
@@ -193,14 +193,14 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 	}(cMeta)
 
 	if err != nil {
-		return kubecfg, err
+		return kubecfg, "", err
 	}
 
 	trace.Logger.Println("Got authentication endpoints for getting oc token")
 	token, uname, err := r.openShiftAuthorizePasscode(authEP, passcode, cMeta.IsStagingSatelliteCluster())
 
 	if err != nil {
-		return kubecfg, err
+		return kubecfg, "", err
 	}
 
 	trace.Logger.Println("Got the token and user ", uname)
@@ -229,10 +229,10 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 
 	bytes, err := yaml.Marshal(cfg)
 	if err != nil {
-		return kubecfg, err
+		return kubecfg, "", err
 	}
 	kubecfg = bytes
-	return kubecfg, nil
+	return kubecfg, cMeta.ServerURL, nil
 }
 
 // Never redirect. Let caller handle. This is an http.Client callback method (CheckRedirect)
