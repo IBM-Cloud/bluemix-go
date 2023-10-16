@@ -30,6 +30,7 @@ type ClusterCreateRequest struct {
 	DefaultWorkerPoolEntitlement string           `json:"defaultWorkerPoolEntitlement"`
 	CosInstanceCRN               string           `json:"cosInstanceCRN"`
 	WorkerPools                  WorkerPoolConfig `json:"workerPool"`
+	SecurityGroupIDs	         []string	`json:"securityGroupIDs"`
 }
 
 type WorkerPoolConfig struct {
@@ -375,7 +376,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 		if yamlConfig, err = ioutil.ReadFile(kubeyml); err != nil {
 			return clusterkey, err
 		}
-		yamlConfig, err = r.FetchOCTokenForKubeConfig(yamlConfig, &clusterInfo, clusterInfo.IsStagingSatelliteCluster(), endpointType)
+		yamlConfig, clusterkey.Host, err = r.FetchOCTokenForKubeConfig(yamlConfig, &clusterInfo, clusterInfo.IsStagingSatelliteCluster(), endpointType)
 		if err != nil {
 			return clusterkey, err
 		}
@@ -394,9 +395,6 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 			if strings.HasPrefix(usr.Name, "IAM") {
 				clusterkey.Token = usr.User.Token
 			}
-		}
-		if len(openshiftyaml.Clusters) != 0 {
-			clusterkey.Host = openshiftyaml.Clusters[0].Cluster.Server
 		}
 		clusterkey.ClusterCACertificate = ""
 
@@ -531,7 +529,7 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 		if yamlConfig, err = ioutil.ReadFile(kubeconfigFileName); err != nil {
 			return "", clusterkey, err
 		}
-		yamlConfig, err = r.FetchOCTokenForKubeConfig(yamlConfig, &clusterInfo, clusterInfo.IsStagingSatelliteCluster(), endpointType)
+		yamlConfig, clusterkey.Host, err = r.FetchOCTokenForKubeConfig(yamlConfig, &clusterInfo, clusterInfo.IsStagingSatelliteCluster(), endpointType)
 		if err != nil {
 			return "", clusterkey, err
 		}
@@ -550,9 +548,6 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 			if strings.HasPrefix(usr.Name, "IAM") {
 				clusterkey.Token = usr.User.Token
 			}
-		}
-		if len(openshiftyaml.Clusters) != 0 {
-			clusterkey.Host = openshiftyaml.Clusters[0].Cluster.Server
 		}
 		clusterkey.ClusterCACertificate = ""
 
