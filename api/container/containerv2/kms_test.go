@@ -23,7 +23,7 @@ var _ = Describe("Kms", func() {
 
 	//Enable
 	Describe("Enable", func() {
-		Context("When Enabling kms is successful", func() {
+		Context("When enabling kms is successful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
@@ -39,6 +39,31 @@ var _ = Describe("Kms", func() {
 				target := ClusterHeader{}
 				params := KmsEnableReq{
 					Cluster: "bs65tjud0j4njc8pu30g", Kms: "12043812-757f-4e1e-8436-6af3245e6a69", Crk: "0792853c-b9f9-4b35-9d9e-ffceab51d3c1", PrivateEndpoint: false,
+				}
+				err := newKms(server.URL()).EnableKms(params, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When enabling kms with account ID is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v2/enableKMS"),
+						ghttp.VerifyJSON(`{"cluster":"bs65tjud0j4njc8pu30g","instance_id":"12043812-757f-4e1e-8436-6af3245e6a69","crk_id":"0792853c-b9f9-4b35-9d9e-ffceab51d3c1","private_endpoint":false,"account_id":"accountID1"}`),
+						ghttp.RespondWith(http.StatusCreated, `{}`),
+					),
+				)
+			})
+
+			It("should enable Kms in a cluster", func() {
+				target := ClusterHeader{}
+				params := KmsEnableReq{
+					Cluster:         "bs65tjud0j4njc8pu30g",
+					Kms:             "12043812-757f-4e1e-8436-6af3245e6a69",
+					Crk:             "0792853c-b9f9-4b35-9d9e-ffceab51d3c1",
+					PrivateEndpoint: false,
+					AccountID:       "accountID1",
 				}
 				err := newKms(server.URL()).EnableKms(params, target)
 				Expect(err).NotTo(HaveOccurred())
