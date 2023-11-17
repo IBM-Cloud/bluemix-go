@@ -42,7 +42,7 @@ var _ = Describe("Accountsv1", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost,
-							fmt.Sprintf("/v1/accounts/%s/users", accountGuid)),
+							fmt.Sprintf("/v2/accounts/%s/users", accountGuid)),
 						ghttp.RespondWith(http.StatusOK, jsonAccountInviteResponse),
 					),
 				)
@@ -64,7 +64,7 @@ var _ = Describe("Accountsv1", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodDelete,
-							fmt.Sprintf("/v1/accounts/%s/users/%s", accountGuid, userGuid)),
+							fmt.Sprintf("/v2/accounts/%s/users/%s", accountGuid, userGuid)),
 						ghttp.RespondWith(http.StatusOK, jsonAccountInviteResponse),
 					),
 				)
