@@ -30,6 +30,7 @@ type ClusterCreateRequest struct {
 	DefaultWorkerPoolEntitlement string           `json:"defaultWorkerPoolEntitlement"`
 	CosInstanceCRN               string           `json:"cosInstanceCRN"`
 	WorkerPools                  WorkerPoolConfig `json:"workerPool"`
+	SecurityGroupIDs             []string         `json:"securityGroupIDs,omitempty"`
 }
 
 type WorkerPoolConfig struct {

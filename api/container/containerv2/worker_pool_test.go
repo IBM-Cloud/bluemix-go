@@ -624,6 +624,36 @@ var _ = Describe("workerpools", func() {
 				})
 			})
 		})
+
+		// UpdateWorkerPoolLabels
+		Describe("UpdateWorkerPoolLabels", func() {
+			Context("When updateing workerpool labels successful", func() {
+				BeforeEach(func() {
+					server = ghttp.NewServer()
+					server.SetAllowUnhandledRequests(true)
+					server.AppendHandlers(
+						ghttp.CombineHandlers(
+							ghttp.VerifyRequest(http.MethodPost, "/v2/setWorkerPoolLabels"),
+							ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","workerpool":"mywork211","labels": {"a": "apple","b": "banana"}}`),
+						),
+					)
+				})
+
+				It("should update labels in the workerpool", func() {
+					params := SetWorkerPoolLabelsRequest{
+						Cluster:    "bm64u3ed02o93vv36hb0",
+						WorkerPool: "mywork211",
+						Labels: map[string]string{
+							"a": "apple",
+							"b": "banana",
+						},
+					}
+					target := ClusterTargetHeader{}
+					err := newWorkerPool(server.URL()).UpdateWorkerPoolLabels(params, target)
+					Expect(err).ToNot(HaveOccurred())
+				})
+			})
+		})
 	})
 })
 
