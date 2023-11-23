@@ -46,7 +46,8 @@ var _ = Describe("Clusters", func() {
               "State": "normal",
               "IsPaid": false,
               "IsTrusted": true,
-              "WorkerCount": 1
+              "WorkerCount": 1,
+			  "securityGroupIDs": "null"
               }]`),
 					),
 
@@ -69,7 +70,8 @@ var _ = Describe("Clusters", func() {
 	              "State": "normal",
 	              "IsPaid": false,
 	              "IsTrusted": true,
-	              "WorkerCount": 1
+	              "WorkerCount": 1,
+				  "securityGroupIDs": "null"
 	              }]`),
 					),
 				)
@@ -113,7 +115,8 @@ var _ = Describe("Clusters", func() {
 							"State": "normal",
 							"IsPaid": false,
 							"IsTrusted": true,
-							"WorkerCount": 1
+							"WorkerCount": 1,
+							"securityGroupIDs": "null"
 							}]`),
 					),
 				)
@@ -156,7 +159,8 @@ var _ = Describe("Clusters", func() {
 									"State": "normal",
 									"IsPaid": false,
 									"IsTrusted": true,
-									"WorkerCount": 1
+									"WorkerCount": 1,
+									"securityGroupIDs": "null"
 									}]`),
 					),
 				)
@@ -205,7 +209,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "hostPoolID": "hostpoolid", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": ""}}`),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "hostPoolID": "hostpoolid", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": ""},"securityGroupIDs":null}`),
 						ghttp.RespondWith(http.StatusCreated, `{
 							 "clusterID": "f91adfe2-76c9-4649-939e-b01c37a3704c"
 						}`),
@@ -234,7 +238,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "hostPoolID": "hostpoolid", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": "", "operatingSystem":"REDHAT_7_64"}}`),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "hostPoolID": "hostpoolid", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": "", "operatingSystem":"REDHAT_7_64"},"securityGroupIDs":null}`),
 						ghttp.RespondWith(http.StatusCreated, `{
 							 "clusterID": "f91adfe2-76c9-4649-939e-b01c37a3704c"
 						}`),
@@ -269,7 +273,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "hostPoolID": "hostpoolid", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": "", "secondaryStorageOption": "secondarystoragename1"}}`),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "hostPoolID": "hostpoolid", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": "", "secondaryStorageOption": "secondarystoragename1"},"securityGroupIDs":null}`),
 						ghttp.RespondWith(http.StatusCreated, `{
 							 "clusterID": "f91adfe2-76c9-4649-939e-b01c37a3704c"
 						}`),
@@ -306,7 +310,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": ""}}`),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": ""},"securityGroupIDs":null}`),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create cluster`),
 					),
 				)
@@ -330,7 +334,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": "", "workerVolumeEncryption": {"kmsInstanceID": "kmsid", "workerVolumeCRKID": "rootkeyid"}}}`),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": "", "workerVolumeEncryption": {"kmsInstanceID": "kmsid", "workerVolumeCRKID": "rootkeyid"}},"securityGroupIDs":null}`),
 						ghttp.RespondWith(http.StatusCreated, `{
 							 "clusterID": "f91adfe2-76c9-4649-939e-b01c37a3704c"
 						}`),
@@ -359,7 +363,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": "", "workerVolumeEncryption": {"kmsInstanceID": "kmsid", "workerVolumeCRKID": "rootkeyid", "kmsAccountID":"OtherAccountID"}}}`),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": "", "workerVolumeEncryption": {"kmsInstanceID": "kmsid", "workerVolumeCRKID": "rootkeyid", "kmsAccountID":"OtherAccountID"}}, "securityGroupIDs":null}`),
 						ghttp.RespondWith(http.StatusCreated, `{
 							 "clusterID": "f91adfe2-76c9-4649-939e-b01c37a3704c"
 						}`),
@@ -388,7 +392,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v2/vpc/createCluster"),
-						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": "", "workerVolumeEncryption": {"kmsInstanceID": "kmsid", "workerVolumeCRKID": "rootkeyid", "kmsAccountID":"OtherAccountID"}}}`),
+						ghttp.VerifyJSON(`{"disablePublicServiceEndpoint": false, "defaultWorkerPoolEntitlement": "", "kubeVersion": "", "podSubnet": "podnet", "provider": "abc", "serviceSubnet": "svcnet", "name": "abcd", "cosInstanceCRN": "", "workerPool": {"flavor": "", "name": "", "vpcID": "", "workerCount": 0, "zones": null, "entitlement": "", "workerVolumeEncryption": {"kmsInstanceID": "kmsid", "workerVolumeCRKID": "rootkeyid", "kmsAccountID":"OtherAccountID"}}, "securityGroupIDs":null}`),
 						ghttp.RespondWith(http.StatusCreated, `{
 							 "clusterID": "f91adfe2-76c9-4649-939e-b01c37a3704c"
 						}`),
