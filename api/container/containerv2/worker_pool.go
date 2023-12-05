@@ -20,6 +20,7 @@ type CommonWorkerPoolConfig struct {
 	Zones                  []Zone                  `json:"zones"`
 	WorkerVolumeEncryption *WorkerVolumeEncryption `json:"workerVolumeEncryption,omitempty"`
 	SecondaryStorageOption string                  `json:"secondaryStorageOption,omitempty"`
+	SecurityGroupIDs       []string                `json:"securityGroupIDs,omitempty"`
 }
 
 // WorkerPoolRequest provides worker pool data
@@ -101,7 +102,7 @@ type ResizeWorkerPoolReq struct {
 	Workerpool string `json:"workerpool"`
 }
 
-//Workers ...
+// Workers ...
 type WorkerPool interface {
 	CreateWorkerPool(workerPoolReq WorkerPoolRequest, target ClusterTargetHeader) (WorkerPoolResponse, error)
 	GetWorkerPool(clusterNameOrID, workerPoolNameOrID string, target ClusterTargetHeader) (GetWorkerPoolResponse, error)
