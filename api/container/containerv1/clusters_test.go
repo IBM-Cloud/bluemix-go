@@ -97,7 +97,7 @@ var _ = Describe("Clusters", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/clusters"),
-						ghttp.VerifyJSON(`{"GatewayEnabled": false,"defaultWorkerPoolName": "","disableAutoUpdate": false,"podSubnet": "","serviceSubnet": "","dataCenter":"dal10","isolation":"","machineType":"free","name":"testservice","privateVlan":"vlan","publicVlan":"vlan","workerNum":1,"noSubnet":false,"masterVersion":"1.8.1","prefix":"worker","diskEncryption": false,"privateSeviceEndpoint": false,"publicServiceEndpoint": false,"defaultWorkerPoolEntitlement": ""}
+						ghttp.VerifyJSON(`{"GatewayEnabled": false,"defaultWorkerPoolName": "","disableAutoUpdate": false,"podSubnet": "","serviceSubnet": "","dataCenter":"dal10","isolation":"","machineType":"u2c.2x4","name":"testservice","privateVlan":"vlan","publicVlan":"vlan","workerNum":1,"noSubnet":false,"masterVersion":"1.8.1","prefix":"worker","diskEncryption": false,"privateSeviceEndpoint": false,"publicServiceEndpoint": false,"defaultWorkerPoolEntitlement": ""}
 `),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to create cluster`),
 					),
@@ -106,7 +106,7 @@ var _ = Describe("Clusters", func() {
 
 			It("should return error during cluster creation", func() {
 				params := ClusterCreateRequest{
-					Name: "testservice", Datacenter: "dal10", MachineType: "free", PublicVlan: "vlan", PrivateVlan: "vlan", MasterVersion: "1.8.1", Prefix: "worker", WorkerNum: 1,
+					Name: "testservice", Datacenter: "dal10", MachineType: "u2c.2x4", PublicVlan: "vlan", PrivateVlan: "vlan", MasterVersion: "1.8.1", Prefix: "worker", WorkerNum: 1,
 				}
 				target := ClusterTargetHeader{
 					OrgID:     "abc",
