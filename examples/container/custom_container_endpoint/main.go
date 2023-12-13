@@ -18,7 +18,7 @@ import (
 var clusterInfo = v1.ClusterCreateRequest{
 	Name:        "my_cluster",
 	Datacenter:  "dal10",
-	MachineType: "free",
+	MachineType: "u2c.2x4",
 	WorkerNum:   1,
 	PrivateVlan: "vlan",
 	PublicVlan:  "vlan",

@@ -75,7 +75,7 @@ var _ = Describe("Workers", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/workers/abc-123-def-ghi"),
-						ghttp.RespondWith(http.StatusOK, `{"ErrorMessage":"","Isolation":"","MachineType":"free","KubeVersion":"","PrivateIP":"","PublicIP":"","PrivateVlan":"vlan","PublicVlan":"vlan","state":"normal","status":"ready"}`),
+						ghttp.RespondWith(http.StatusOK, `{"ErrorMessage":"","Isolation":"","MachineType":"u2c.2x4","KubeVersion":"","PrivateIP":"","PublicIP":"","PrivateVlan":"vlan","PublicVlan":"vlan","state":"normal","status":"ready"}`),
 					),
 				)
 			})
@@ -125,7 +125,7 @@ var _ = Describe("Workers", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workers"),
-						ghttp.RespondWith(http.StatusOK, `[{"ErrorMessage":"","Isolation":"","MachineType":"free","KubeVersion":"","PrivateIP":"","PublicIP":"","PrivateVlan":"vlan","PublicVlan":"vlan","state":"normal","status":"ready"}]`),
+						ghttp.RespondWith(http.StatusOK, `[{"ErrorMessage":"","Isolation":"","MachineType":"u2c.2x4","KubeVersion":"","PrivateIP":"","PublicIP":"","PrivateVlan":"vlan","PublicVlan":"vlan","state":"normal","status":"ready"}]`),
 					),
 				)
 			})
@@ -178,7 +178,7 @@ var _ = Describe("Workers", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodGet, "/v1/clusters/myCluster/workers"),
-						ghttp.RespondWith(http.StatusOK, `[{"ErrorMessage":"","Isolation":"","MachineType":"free","KubeVersion":"","PrivateIP":"","PublicIP":"","PrivateVlan":"vlan","PublicVlan":"vlan","state":"normal","status":"ready"}]`),
+						ghttp.RespondWith(http.StatusOK, `[{"ErrorMessage":"","Isolation":"","MachineType":"u2c.2x4","KubeVersion":"","PrivateIP":"","PublicIP":"","PrivateVlan":"vlan","PublicVlan":"vlan","state":"normal","status":"ready"}]`),
 					),
 				)
 			})
