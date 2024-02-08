@@ -90,7 +90,7 @@ var _ = Describe("Albs", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/alb/albs"),
-						ghttp.VerifyJSON(`{"albID":"123","clusterID":"345","name":"test","albType":"public","enable":true,"state":"active","createdDate":"","numOfInstances":"1","resize":false,"albip":"169.0.0.1","zone": "ams03","disableDeployment":false}`),
+						ghttp.VerifyJSON(`{"albID":"123","clusterID":"345","name":"test","albType":"public","enable":true,"state":"active","createdDate":"","numOfInstances":"1","resize":false,"albip":"169.0.0.1","zone": "ams03","disableDeployment":false,"albBuild":"1.1.1_123","vlanID":"12345","status":"healthy"}`),
 						ghttp.RespondWith(http.StatusCreated, `{}`),
 					),
 				)
@@ -104,7 +104,7 @@ var _ = Describe("Albs", func() {
 					Region:    "eu-de",
 				}
 				params := ALBConfig{
-					ALBID: "123", ClusterID: "345", Name: "test", ALBType: "public", Enable: true, State: "active", CreatedDate: "", NumOfInstances: "1", Resize: false, ALBIP: "169.0.0.1", Zone: "ams03", DisableDeployment: false,
+					ALBID: "123", ClusterID: "345", Name: "test", ALBType: "public", Enable: true, State: "active", CreatedDate: "", NumOfInstances: "1", Resize: false, ALBIP: "169.0.0.1", Zone: "ams03", DisableDeployment: false, VlanID: "12345", ALBBuild: "1.1.1_123", Status: "healthy",
 				}
 				err := newAlbs(server.URL()).ConfigureALB("123", params, false, target)
 				Expect(err).NotTo(HaveOccurred())
@@ -117,7 +117,7 @@ var _ = Describe("Albs", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/v1/alb/albs"),
-						ghttp.VerifyJSON(`{"albID":"123","clusterID":"345","name":"test","albType":"public","enable":true,"state":"active","createdDate":"","numOfInstances":"1","resize":false,"albip":"169.0.0.1","zone": "ams03","disableDeployment":false}
+						ghttp.VerifyJSON(`{"albID":"123","clusterID":"345","name":"test","albType":"public","enable":true,"state":"active","createdDate":"","numOfInstances":"1","resize":false,"albip":"169.0.0.1","zone": "ams03","disableDeployment":false,"albBuild":"1.1.1_123","vlanID":"12345","status":"healthy"}
 `),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to configure alb`),
 					),
@@ -126,7 +126,7 @@ var _ = Describe("Albs", func() {
 
 			It("should return error during configuring alb", func() {
 				params := ALBConfig{
-					ALBID: "123", ClusterID: "345", Name: "test", ALBType: "public", Enable: true, State: "active", CreatedDate: "", NumOfInstances: "1", Resize: false, ALBIP: "169.0.0.1", Zone: "ams03", DisableDeployment: false,
+					ALBID: "123", ClusterID: "345", Name: "test", ALBType: "public", Enable: true, State: "active", CreatedDate: "", NumOfInstances: "1", Resize: false, ALBIP: "169.0.0.1", Zone: "ams03", DisableDeployment: false, VlanID: "12345", ALBBuild: "1.1.1_123", Status: "healthy",
 				}
 				target := ClusterTargetHeader{
 					OrgID:     "abc",
