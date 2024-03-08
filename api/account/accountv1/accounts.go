@@ -34,6 +34,7 @@ type Accounts interface {
 	InviteAccountUser(accountGuid string, userEmail string) (AccountInviteResponse, error)
 	DeleteAccountUser(accountGuid string, userGuid string) error
 	FindAccountUserByUserId(accountGuid string, userId string) (*models.AccountUser, error)
+	List() ([]models.V2Account, error)
 }
 
 type account struct {
@@ -238,4 +239,21 @@ func (a *account) FindAccountUserByUserId(accountGuid string, userId string) (*m
 		accountUser := queryResp.AccountUsers[0].ToModel()
 		return &accountUser, nil
 	}
+}
+
+func (a *account) List() ([]models.V2Account, error) {
+	var accounts []models.V2Account
+	resp, err := a.client.GetPaginated("/coe/v2/accounts", NewAccountPaginatedResources(AccountResource{}), func(resource interface{}) bool {
+		if accountResource, ok := resource.(AccountResource); ok {
+			accounts = append(accounts, accountResource.ToModel())
+			return true
+		}
+		return false
+	})
+
+	if resp.StatusCode == 404 {
+		return []models.V2Account{}, nil
+	}
+
+	return accounts, err
 }
