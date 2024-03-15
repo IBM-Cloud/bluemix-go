@@ -35,6 +35,7 @@ type Accounts interface {
 	DeleteAccountUser(accountGuid string, userGuid string) error
 	FindAccountUserByUserId(accountGuid string, userId string) (*models.AccountUser, error)
 	List() ([]models.V2Account, error)
+	Get(accountId string) (models.V1Account, error)
 }
 
 type account struct {
@@ -256,4 +257,21 @@ func (a *account) List() ([]models.V2Account, error) {
 	}
 
 	return accounts, err
+}
+
+func (a *account) Get(accountId string) (models.V1Account, error) {
+	account := models.V1Account{}
+	response, err := a.client.Get(fmt.Sprintf("/coe/v2/accounts/%s", accountId), &account)
+	if err != nil {
+
+		if response.StatusCode == 404 {
+			return models.V1Account{}, bmxerror.New(ErrCodeNoAccountExists,
+				fmt.Sprintf("Account %q does not exists", accountId))
+		}
+		return models.V1Account{}, err
+
+	}
+
+	return account, nil
+
 }
