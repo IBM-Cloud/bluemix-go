@@ -20,17 +20,18 @@ import (
 
 // ClusterCreateRequest ...
 type ClusterCreateRequest struct {
-	DisablePublicServiceEndpoint bool             `json:"disablePublicServiceEndpoint"`
-	KubeVersion                  string           `json:"kubeVersion" description:"kubeversion of cluster"`
-	Billing                      string           `json:"billing,omitempty"`
-	PodSubnet                    string           `json:"podSubnet"`
-	Provider                     string           `json:"provider"`
-	ServiceSubnet                string           `json:"serviceSubnet"`
-	Name                         string           `json:"name" binding:"required" description:"The cluster's name"`
-	DefaultWorkerPoolEntitlement string           `json:"defaultWorkerPoolEntitlement"`
-	CosInstanceCRN               string           `json:"cosInstanceCRN"`
-	WorkerPools                  WorkerPoolConfig `json:"workerPool"`
-	SecurityGroupIDs             []string         `json:"securityGroupIDs,omitempty"`
+	DisablePublicServiceEndpoint     bool             `json:"disablePublicServiceEndpoint"`
+	KubeVersion                      string           `json:"kubeVersion" description:"kubeversion of cluster"`
+	Billing                          string           `json:"billing,omitempty"`
+	PodSubnet                        string           `json:"podSubnet"`
+	Provider                         string           `json:"provider"`
+	ServiceSubnet                    string           `json:"serviceSubnet"`
+	Name                             string           `json:"name" binding:"required" description:"The cluster's name"`
+	DefaultWorkerPoolEntitlement     string           `json:"defaultWorkerPoolEntitlement"`
+	CosInstanceCRN                   string           `json:"cosInstanceCRN"`
+	WorkerPools                      WorkerPoolConfig `json:"workerPool"`
+	SecurityGroupIDs                 []string         `json:"securityGroupIDs,omitempty"`
+	DisableOutboundTrafficProtection bool             `json:"disableOutboundTrafficProtection,omitempty"`
 }
 
 type WorkerPoolConfig struct {
