@@ -21,7 +21,7 @@ var _ = Describe("VPCs", func() {
 		server.Close()
 	})
 
-	//ListVPCs
+	// ListVPCs
 	Describe("List", func() {
 		Context("When List VPCs is successful", func() {
 			BeforeEach(func() {
@@ -68,6 +68,48 @@ var _ = Describe("VPCs", func() {
 			It("should return error during get VPCs", func() {
 				target := ClusterTargetHeader{}
 				_, err := newVPCs(server.URL()).ListVPCs(target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+
+	// SetOutboundTrafficProtection
+	Describe("SetOutboundTrafficProtection", func() {
+		Context("When SetOutboundTrafficProtection is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/network/v2/outbound-traffic-protection"),
+						ghttp.VerifyJSON(`{"cluster":"testCluster","operation":"enable-outbound-protection"}`),
+						ghttp.RespondWith(http.StatusOK, ""),
+					),
+				)
+			})
+
+			It("should return with 200 OK", func() {
+				target := ClusterTargetHeader{}
+
+				err := newVPCs(server.URL()).SetOutboundTrafficProtection("testCluster", true, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When SetOutboundTrafficProtection is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/network/v2/outbound-traffic-protection"),
+						ghttp.VerifyJSON(`{"cluster":"testCluster","operation":"disable-outbound-protection"}`),
+						ghttp.RespondWith(http.StatusInternalServerError, ""),
+					),
+				)
+			})
+
+			It("should return with 500 Internal server error", func() {
+				target := ClusterTargetHeader{}
+				err := newVPCs(server.URL()).SetOutboundTrafficProtection("testCluster", false, target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
