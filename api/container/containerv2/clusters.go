@@ -80,6 +80,7 @@ type ClusterInfo struct {
 	MultiAzCapable                bool          `json:"multiAzCapable"`
 	APIUser                       string        `json:"apiUser"`
 	ServerURL                     string        `json:"serverURL"`
+	MasterHealth                  string        `json:"masterHealth"`
 	MasterURL                     string        `json:"masterURL"`
 	MasterStatus                  string        `json:"masterStatus"`
 	DisableAutoUpdate             bool          `json:"disableAutoUpdate"`
