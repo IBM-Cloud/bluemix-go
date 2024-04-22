@@ -16,7 +16,7 @@ func main() {
 
 	c := new(bluemix.Config)
 
-	trace.Logger = trace.NewLogger("true")
+	trace.Logger = trace.NewLogger("false")
 
 	target := v2.ClusterTargetHeader{}
 
@@ -35,5 +35,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("ouyt=", out)
+	fmt.Printf("%+v\n", out)
 }
