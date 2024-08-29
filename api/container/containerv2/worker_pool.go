@@ -194,7 +194,7 @@ func (w *workerpool) UpdateWorkerPoolLabels(setWorkerPoolLabelsRequest SetWorker
 
 // SetWorkerPoolOperatingSystem calls the API to set the workerpool operating system.
 func (w *workerpool) SetWorkerPoolOperatingSystem(setWorkerPoolOperatingSystemRequest SetWorkerPoolOperatingSystem, target ClusterTargetHeader) error {
-	// Make the request, don't care about return value
+	// Returns 202 without body
 	_, err := w.client.Post("/v2/setWorkerPoolOperatingSystem", setWorkerPoolOperatingSystemRequest, nil, target.ToMap())
 	return err
 }
