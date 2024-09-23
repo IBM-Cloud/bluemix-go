@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/client"
 	bluemixHttp "github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/session"
@@ -93,6 +93,86 @@ var _ = Describe("Workers", func() {
 			It("should return error during get worker", func() {
 				target := ClusterTargetHeader{}
 				_, err := newWorker(server.URL()).ListByWorkerPool("aaa", "bbb", true, target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+
+	// ListClassicWorkers
+	Describe("ListClassicWorkers", func() {
+		Context("When ListClassicWorkers is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						// https://containers.cloud.ibm.com/global/swagger-global-api/#/v2/classicGetWorkers
+						ghttp.VerifyRequest(http.MethodGet, "/v2/classic/getWorkers"),
+						ghttp.RespondWith(http.StatusOK, `[
+  {
+    "dedicatedHostId": "string",
+    "dedicatedHostPoolId": "string",
+    "flavor": "string",
+    "health": {
+      "message": "string",
+      "state": "string"
+    },
+    "id": "string",
+    "kubeVersion": {
+      "actual": "string",
+      "desired": "string",
+      "eos": "string",
+      "masterEOS": "string",
+      "target": "string"
+    },
+    "lifecycle": {
+      "actualOperatingSystem": "string",
+      "actualState": "string",
+      "desiredOperatingSystem": "string",
+      "desiredState": "string",
+      "message": "string",
+      "messageDate": "string",
+      "messageDetails": "string",
+      "messageDetailsDate": "string",
+      "pendingOperation": "string",
+      "reasonForDelete": "string"
+    },
+    "location": "string",
+    "networkInformation": {
+      "privateIP": "string",
+      "privateVLAN": "string",
+      "publicIP": "string",
+      "publicVLAN": "string"
+    },
+    "poolID": "string",
+    "poolName": "string"
+  }
+]`),
+					),
+				)
+			})
+
+			It("should list workers in a cluster", func() {
+				target := ClusterTargetHeader{}
+
+				_, err := newWorker(server.URL()).ListClassicWorkers("aaa", false, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When ListClassicWorkers is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodGet, "/v2/classic/getWorkers"),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to list worker`),
+					),
+				)
+			})
+
+			It("should return error during get worker", func() {
+				target := ClusterTargetHeader{}
+				_, err := newWorker(server.URL()).ListClassicWorkers("aaa", false, target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
