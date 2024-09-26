@@ -108,6 +108,12 @@ type ResizeWorkerPoolReq struct {
 	Workerpool string `json:"workerpool"`
 }
 
+type SetWorkerPoolOperatingSystem struct {
+	Cluster         string `json:"cluster"`
+	WorkerPool      string `json:"workerPool"`
+	OperatingSystem string `json:"operatingSystem"`
+}
+
 // Workers ...
 type WorkerPool interface {
 	CreateWorkerPool(workerPoolReq WorkerPoolRequest, target ClusterTargetHeader) (WorkerPoolResponse, error)
@@ -118,6 +124,7 @@ type WorkerPool interface {
 	UpdateWorkerPoolTaints(taintRequest WorkerPoolTaintRequest, target ClusterTargetHeader) error
 	ResizeWorkerPool(resizeWorkerPoolReq ResizeWorkerPoolReq, target ClusterTargetHeader) error
 	UpdateWorkerPoolLabels(setWorkerPoolLabelsRequest SetWorkerPoolLabelsRequest, target ClusterTargetHeader) error
+	SetWorkerPoolOperatingSystem(setWorkerPoolOperatingSystemRequest SetWorkerPoolOperatingSystem, target ClusterTargetHeader) error
 }
 
 type workerpool struct {
@@ -182,5 +189,12 @@ func (w *workerpool) ResizeWorkerPool(resizeWorkerPoolReq ResizeWorkerPoolReq, t
 func (w *workerpool) UpdateWorkerPoolLabels(setWorkerPoolLabelsRequest SetWorkerPoolLabelsRequest, target ClusterTargetHeader) error {
 	// Make the request, don't care about return value
 	_, err := w.client.Post("/v2/setWorkerPoolLabels", setWorkerPoolLabelsRequest, nil, target.ToMap())
+	return err
+}
+
+// SetWorkerPoolOperatingSystem calls the API to set the workerpool operating system.
+func (w *workerpool) SetWorkerPoolOperatingSystem(setWorkerPoolOperatingSystemRequest SetWorkerPoolOperatingSystem, target ClusterTargetHeader) error {
+	// Returns 202 without body
+	_, err := w.client.Post("/v2/setWorkerPoolOperatingSystem", setWorkerPoolOperatingSystemRequest, nil, target.ToMap())
 	return err
 }

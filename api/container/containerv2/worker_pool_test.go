@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/client"
 	bluemixHttp "github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/session"
@@ -652,6 +652,54 @@ var _ = Describe("workerpools", func() {
 					err := newWorkerPool(server.URL()).UpdateWorkerPoolLabels(params, target)
 					Expect(err).ToNot(HaveOccurred())
 				})
+			})
+		})
+	})
+
+	Describe("SetWorkerPoolOperatingSystem", func() {
+		Context("When setting workerpool operating system is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v2/setWorkerPoolOperatingSystem"),
+						ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","workerPool":"mywork211","operatingSystem":"UBUNTU_24_64"}`),
+					),
+				)
+			})
+			It("should resize Workerpool in a cluster", func() {
+				target := ClusterTargetHeader{}
+				params := SetWorkerPoolOperatingSystem{
+					Cluster:         "bm64u3ed02o93vv36hb0",
+					WorkerPool:      "mywork211",
+					OperatingSystem: "UBUNTU_24_64",
+				}
+				err := newWorkerPool(server.URL()).SetWorkerPoolOperatingSystem(params, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When setting workerpool operating system is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/v2/setWorkerPoolOperatingSystem"),
+						ghttp.VerifyJSON(`{"cluster":"bm64u3ed02o93vv36hb0","workerPool":"mywork211","operatingSystem":"UBUNTU_24_64"}`),
+						ghttp.RespondWith(http.StatusInternalServerError, `Failed to set operating system`),
+					),
+				)
+			})
+
+			It("should return error during resizing workerpool", func() {
+				params := SetWorkerPoolOperatingSystem{
+					Cluster:         "bm64u3ed02o93vv36hb0",
+					WorkerPool:      "mywork211",
+					OperatingSystem: "UBUNTU_24_64",
+				}
+				target := ClusterTargetHeader{}
+				err := newWorkerPool(server.URL()).SetWorkerPoolOperatingSystem(params, target)
+				Expect(err).To(HaveOccurred())
 			})
 		})
 	})
