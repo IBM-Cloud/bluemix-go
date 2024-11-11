@@ -8,11 +8,9 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/client"
 	bluemixHttp "github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/session"
-
-	"github.com/onsi/gomega/ghttp"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/ghttp"
 )
 
 var _ = Describe("Workers", func() {
@@ -98,9 +96,9 @@ var _ = Describe("Workers", func() {
 		})
 	})
 
-	// ListClassicWorkers
-	Describe("ListClassicWorkers", func() {
-		Context("When ListClassicWorkers is successful", func() {
+	// ListAllWorkers
+	Describe("ListAllWorkers", func() {
+		Context("When ListAllWorkers is successful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
@@ -154,11 +152,11 @@ var _ = Describe("Workers", func() {
 			It("should list workers in a cluster", func() {
 				target := ClusterTargetHeader{}
 
-				_, err := newWorker(server.URL()).ListClassicWorkers("aaa", false, target)
+				_, err := newWorker(server.URL()).ListAllWorkers("aaa", false, target)
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
-		Context("When ListClassicWorkers is unsuccessful", func() {
+		Context("When ListAllWorkers is unsuccessful", func() {
 			BeforeEach(func() {
 				server = ghttp.NewServer()
 				server.SetAllowUnhandledRequests(true)
@@ -172,7 +170,7 @@ var _ = Describe("Workers", func() {
 
 			It("should return error during get worker", func() {
 				target := ClusterTargetHeader{}
-				_, err := newWorker(server.URL()).ListClassicWorkers("aaa", false, target)
+				_, err := newWorker(server.URL()).ListAllWorkers("aaa", false, target)
 				Expect(err).To(HaveOccurred())
 			})
 		})
