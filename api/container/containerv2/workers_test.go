@@ -103,8 +103,8 @@ var _ = Describe("Workers", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						// https://containers.cloud.ibm.com/global/swagger-global-api/#/v2/classicGetWorkers
-						ghttp.VerifyRequest(http.MethodGet, "/v2/classic/getWorkers"),
+						// https://containers.cloud.ibm.com/global/swagger-global-api/#/v2/getWorkers
+						ghttp.VerifyRequest(http.MethodGet, "/v2/getWorkers"),
 						ghttp.RespondWith(http.StatusOK, `[
   {
     "dedicatedHostId": "string",
@@ -162,7 +162,7 @@ var _ = Describe("Workers", func() {
 				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodGet, "/v2/classic/getWorkers"),
+						ghttp.VerifyRequest(http.MethodGet, "/v2/getWorkers"),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to list worker`),
 					),
 				)
