@@ -115,6 +115,48 @@ var _ = Describe("VPCs", func() {
 		})
 	})
 
+	// Enable secure by default
+	Describe("Enable Secure by Default", func() {
+		Context("When EnableSecureByDefault is successful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/network/v2/secure-by-default/enable"),
+						ghttp.VerifyJSON(`{"cluster":"testCluster","disableOutboundTrafficProtection":true}`),
+						ghttp.RespondWith(http.StatusOK, ""),
+					),
+				)
+			})
+
+			It("should return with 200 OK", func() {
+				target := ClusterTargetHeader{}
+
+				err := newVPCs(server.URL()).EnableSecureByDefault("testCluster", true, target)
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+		Context("When EnableSecureByDefault is unsuccessful", func() {
+			BeforeEach(func() {
+				server = ghttp.NewServer()
+				server.SetAllowUnhandledRequests(true)
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest(http.MethodPost, "/network/v2/secure-by-default/enable"),
+						ghttp.VerifyJSON(`{"cluster":"testCluster"}`),
+						ghttp.RespondWith(http.StatusInternalServerError, ""),
+					),
+				)
+			})
+
+			It("should return with 500 Internal server error", func() {
+				target := ClusterTargetHeader{}
+				err := newVPCs(server.URL()).EnableSecureByDefault("testCluster", false, target)
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
+
 })
 
 func newVPCs(url string) VPCs {
