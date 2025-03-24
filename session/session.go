@@ -11,12 +11,12 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
-//Session ...
+// Session ...
 type Session struct {
 	Config *bluemix.Config
 }
 
-//New ...
+// New ...
 func New(configs ...*bluemix.Config) (*Session, error) {
 	var c *bluemix.Config
 
@@ -80,6 +80,9 @@ func New(configs ...*bluemix.Config) (*Session, error) {
 	if len(c.Visibility) == 0 {
 		c.Visibility = helpers.EnvFallBack([]string{"IC_VISIBILITY", "IBMCLOUD_VISIBILITY"}, "public")
 	}
+	if len(c.PrivateEndpointType) == 0 {
+		c.PrivateEndpointType = helpers.EnvFallBack([]string{"IC_PRIVATE_ENDPOINT_TYPE", "IBMCLOUD_PRIVATE_ENDPOINT_TYPE"}, "")
+	}
 	if len(c.EndpointsFile) == 0 {
 		c.EndpointsFile = helpers.EnvFallBack([]string{"IC_ENDPOINTS_FILE_PATH", "IBMCLOUD_ENDPOINTS_FILE_PATH"}, "")
 	}
@@ -96,7 +99,7 @@ func New(configs ...*bluemix.Config) (*Session, error) {
 	return sess, nil
 }
 
-//Copy allows sessions to create a copy of it and optionally override any defaults via the config
+// Copy allows sessions to create a copy of it and optionally override any defaults via the config
 func (s *Session) Copy(mccpgs ...*bluemix.Config) *Session {
 	return &Session{
 		Config: s.Config.Copy(mccpgs...),

@@ -99,10 +99,11 @@ type Config struct {
 
 	HTTPClient *http.Client
 
-	SSLDisable    bool
-	Visibility    string
-	EndpointsFile string
-	UserAgent     string
+	SSLDisable          bool
+	Visibility          string
+	PrivateEndpointType string
+	EndpointsFile       string
+	UserAgent           string
 }
 
 // Copy allows the configuration to be overriden or added
