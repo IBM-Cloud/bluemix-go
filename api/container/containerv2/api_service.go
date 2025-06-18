@@ -11,13 +11,11 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-//ErrCodeAPICreation ...
+// ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-//ContainerServiceAPI is the Aramda K8s client ...
+// ContainerServiceAPI is the Aramda K8s client ...
 type ContainerServiceAPI interface {
-	Monitoring() Monitoring
-	Logging() Logging
 	Clusters() Clusters
 	VPCs() VPCs
 	WorkerPools() WorkerPool
@@ -35,12 +33,12 @@ type ContainerServiceAPI interface {
 	//TODO Add other services
 }
 
-//VpcContainerService holds the client
+// VpcContainerService holds the client
 type csService struct {
 	*client.Client
 }
 
-//New ...
+// New ...
 func New(sess *session.Session) (ContainerServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.VpcContainerService)
@@ -79,32 +77,22 @@ func New(sess *session.Session) (ContainerServiceAPI, error) {
 	}, nil
 }
 
-//Clusters implements Clusters API
+// Clusters implements Clusters API
 func (c *csService) Satellite() Satellite {
 	return newSatelliteAPI(c.Client)
 }
 
-//Clusters implements Clusters API
+// Clusters implements Clusters API
 func (c *csService) Clusters() Clusters {
 	return newClusterAPI(c.Client)
 }
 
-//VPCs implements Cluster VPCs API
+// VPCs implements Cluster VPCs API
 func (c *csService) VPCs() VPCs {
 	return newVPCsAPI(c.Client)
 }
 
-//Monitor implements Monitor API
-func (c *csService) Monitoring() Monitoring {
-	return newMonitoringAPI(c.Client)
-}
-
-//Logging implements Monitor API
-func (c *csService) Logging() Logging {
-	return newLoggingAPI(c.Client)
-}
-
-//WorkerPools implements Cluster WorkerPools API
+// WorkerPools implements Cluster WorkerPools API
 func (c *csService) WorkerPools() WorkerPool {
 	return newWorkerPoolAPI(c.Client)
 }
@@ -118,32 +106,32 @@ func (c *csService) Ingresses() Ingress {
 	return newIngressAPI(c.Client)
 }
 
-//Kms implements Cluster Kms API
+// Kms implements Cluster Kms API
 func (c *csService) Kms() Kms {
 	return newKmsAPI(c.Client)
 }
 
-//Workers implements Cluster Workers API
+// Workers implements Cluster Workers API
 func (c *csService) Workers() Workers {
 	return newWorkerAPI(c.Client)
 }
 
-//Subnets implements Cluster Subnets API
+// Subnets implements Cluster Subnets API
 func (c *csService) Subnets() Subnets {
 	return newSubnetsAPI(c.Client)
 }
 
-//DedicatedHost implements DedicatedHost API
+// DedicatedHost implements DedicatedHost API
 func (c *csService) DedicatedHost() DedicatedHost {
 	return newDedicatedHostAPI(c.Client)
 }
 
-//DedicatedHostPool implements DedicatedHostPool API
+// DedicatedHostPool implements DedicatedHostPool API
 func (c *csService) DedicatedHostPool() DedicatedHostPool {
 	return newDedicatedHostPoolAPI(c.Client)
 }
 
-//DedicatedHostFlavor implements DedicatedHostFlavor API
+// DedicatedHostFlavor implements DedicatedHostFlavor API
 func (c *csService) DedicatedHostFlavor() DedicatedHostFlavor {
 	return newDedicatedHostFlavorAPI(c.Client)
 }
