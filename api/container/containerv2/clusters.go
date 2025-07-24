@@ -10,12 +10,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"gopkg.in/yaml.v2"
-
 	"github.com/IBM-Cloud/bluemix-go/api/container/containerv1"
 	"github.com/IBM-Cloud/bluemix-go/client"
 	"github.com/IBM-Cloud/bluemix-go/helpers"
 	"github.com/IBM-Cloud/bluemix-go/trace"
+	"gopkg.in/yaml.v2"
+	clientcmdv1 "k8s.io/client-go/tools/clientcmd/api/v1"
 )
 
 // ClusterCreateRequest ...
@@ -352,6 +352,31 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 	}
 
 	kubefile, _ := ioutil.ReadFile(kubeyml)
+	if !admin {
+		var config clientcmdv1.Config
+		yaml.Unmarshal(kubefile, &config)
+		if err != nil {
+			return clusterkey, fmt.Errorf("Error unmarshalling YAML file: %s\n", err)
+		}
+
+		// _, refreshToken, err := r.client.TokenRefresher.GetKubeTokens()
+		// if err != nil {
+		// 	return clusterkey, fmt.Errorf("Error getting kube tokens: %s\n", err)
+		// }
+
+		//config.AuthInfos[0].AuthInfo.AuthProvider.Config["refresh-token"] = refreshToken
+
+		kubefile, err = yaml.Marshal(config)
+		if err != nil {
+			return clusterkey, fmt.Errorf("Error marshalling YAML file: %s\n", err)
+		}
+
+		err = os.WriteFile(kubeyml, kubefile, 0755)
+		if err != nil {
+			return clusterkey, fmt.Errorf("Error writing YAML file: %s\n", err)
+		}
+	}
+
 	var yamlConfig containerv1.ConfigFile
 	err = yaml.Unmarshal(kubefile, &yamlConfig)
 	if err != nil {
@@ -364,7 +389,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 		clusterkey.Token = yamlConfig.Users[0].User.AuthProvider.Config.IDToken
 	}
 
-	// Block to add token for openshift clusters (This can be temporary until iks team handles openshift clusters)
+	// Block to add token for openshift clusters
 	clusterInfo, err = r.FindWithOutShowResourcesCompatible(name, target)
 	if err != nil {
 		// Assuming an error means that this is a vpc cluster, and we're returning existing kubeconfig

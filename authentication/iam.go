@@ -9,14 +9,14 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
-//IAMError ...
+// IAMError ...
 type IAMError struct {
 	ErrorCode    string `json:"errorCode"`
 	ErrorMessage string `json:"errorMessage"`
 	ErrorDetails string `json:"errorDetails"`
 }
 
-//Description ...
+// Description ...
 func (e IAMError) Description() string {
 	if e.ErrorDetails != "" {
 		return e.ErrorDetails
@@ -24,7 +24,7 @@ func (e IAMError) Description() string {
 	return e.ErrorMessage
 }
 
-//IAMTokenResponse ...
+// IAMTokenResponse ...
 type IAMTokenResponse struct {
 	AccessToken     string `json:"access_token"`
 	RefreshToken    string `json:"refresh_token"`
@@ -33,14 +33,14 @@ type IAMTokenResponse struct {
 	TokenType       string `json:"token_type"`
 }
 
-//IAMAuthRepository ...
+// IAMAuthRepository ...
 type IAMAuthRepository struct {
 	config   *bluemix.Config
 	client   *rest.Client
 	endpoint string
 }
 
-//NewIAMAuthRepository ...
+// NewIAMAuthRepository ...
 func NewIAMAuthRepository(config *bluemix.Config, client *rest.Client) (*IAMAuthRepository, error) {
 	var endpoint string
 
@@ -61,39 +61,54 @@ func NewIAMAuthRepository(config *bluemix.Config, client *rest.Client) (*IAMAuth
 	}, nil
 }
 
-//AuthenticatePassword ...
+// AuthenticatePassword ...
 func (auth *IAMAuthRepository) AuthenticatePassword(username string, password string) error {
-	return auth.getToken(map[string]string{
+	return auth.setTokens("bx", "bx", map[string]string{
 		"grant_type": "password",
 		"username":   username,
 		"password":   password,
 	})
 }
 
-//AuthenticateAPIKey ...
+// AuthenticateAPIKey ...
 func (auth *IAMAuthRepository) AuthenticateAPIKey(apiKey string) error {
-	return auth.getToken(map[string]string{
+	return auth.setTokens("bx", "bx", map[string]string{
 		"grant_type": "urn:ibm:params:oauth:grant-type:apikey",
 		"apikey":     apiKey,
 	})
 }
 
-//AuthenticateSSO ...
+// AuthenticateSSO ...
 func (auth *IAMAuthRepository) AuthenticateSSO(passcode string) error {
-	return auth.getToken(map[string]string{
+	return auth.setTokens("bx", "bx", map[string]string{
 		"grant_type": "urn:ibm:params:oauth:grant-type:passcode",
 		"passcode":   passcode,
 	})
 }
 
-//RefreshToken ...
+// GetKubeTokens fetches the kube:kube access and refresh tokens.
+func (auth *IAMAuthRepository) GetKubeTokens() (string, string, error) {
+	data := map[string]string{
+		"grant_type":    "refresh_token",
+		"refresh_token": auth.config.IAMRefreshToken,
+	}
+
+	tokens, err := auth.getTokens("kube", "kube", data)
+	if err != nil {
+		return "", "", err
+	}
+
+	return tokens.AccessToken, tokens.RefreshToken, nil
+}
+
+// RefreshToken ...
 func (auth *IAMAuthRepository) RefreshToken() (string, error) {
 	data := map[string]string{
 		"grant_type":    "refresh_token",
 		"refresh_token": auth.config.IAMRefreshToken,
 	}
 
-	err := auth.getToken(data)
+	err := auth.setTokens("bx", "bx", data)
 	if err != nil {
 		return "", err
 	}
@@ -101,7 +116,7 @@ func (auth *IAMAuthRepository) RefreshToken() (string, error) {
 	return auth.config.IAMAccessToken, nil
 }
 
-//GetPasscode ...
+// GetPasscode ...
 func (auth *IAMAuthRepository) GetPasscode() (string, error) {
 	request := rest.PostRequest(auth.endpoint+"/identity/passcode").
 		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("bx:bx"))).
@@ -127,9 +142,9 @@ func (auth *IAMAuthRepository) GetPasscode() (string, error) {
 	return res["passcode"], nil
 }
 
-func (auth *IAMAuthRepository) getToken(data map[string]string) error {
+func (auth *IAMAuthRepository) getTokens(clientId, clientSecret string, data map[string]string) (IAMTokenResponse, error) {
 	request := rest.PostRequest(auth.endpoint+"/identity/token").
-		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("bx:bx"))).
+		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", clientId, clientSecret)))).
 		Field("response_type", "cloud_iam")
 
 	for k, v := range data {
@@ -141,20 +156,31 @@ func (auth *IAMAuthRepository) getToken(data map[string]string) error {
 
 	resp, err := auth.client.Do(request, &tokens, &apiErr)
 	if err != nil {
-		return err
+		return tokens, err
 	}
 
-	if apiErr.ErrorCode != "" {
-		if apiErr.ErrorCode == "BXNIM0407E" {
-			if resp != nil && resp.Header != nil {
-				return bmxerror.New(ErrCodeInvalidToken, fmt.Sprintf("Transaction-Id:%s %s", resp.Header["Transaction-Id"], apiErr.Description()))
-			}
-			return bmxerror.New(ErrCodeInvalidToken, apiErr.Description())
-		}
+	if apiErr.ErrorCode == "" {
+		return tokens, nil
+	}
+
+	if apiErr.ErrorCode == "BXNIM0407E" {
 		if resp != nil && resp.Header != nil {
-			return bmxerror.NewRequestFailure(apiErr.ErrorCode, fmt.Sprintf("Transaction-Id:%s %s", resp.Header["Transaction-Id"], apiErr.Description()), resp.StatusCode)
+			return tokens, bmxerror.New(ErrCodeInvalidToken, fmt.Sprintf("Transaction-Id:%s %s", resp.Header["Transaction-Id"], apiErr.Description()))
 		}
-		return bmxerror.NewRequestFailure(apiErr.ErrorCode, apiErr.Description(), resp.StatusCode)
+		return tokens, bmxerror.New(ErrCodeInvalidToken, apiErr.Description())
+	}
+
+	if resp != nil && resp.Header != nil {
+		return tokens, bmxerror.NewRequestFailure(apiErr.ErrorCode, fmt.Sprintf("Transaction-Id:%s %s", resp.Header["Transaction-Id"], apiErr.Description()), resp.StatusCode)
+	}
+
+	return tokens, bmxerror.NewRequestFailure(apiErr.ErrorCode, apiErr.Description(), resp.StatusCode)
+}
+
+func (auth *IAMAuthRepository) setTokens(clientId, clientSecret string, data map[string]string) error {
+	tokens, err := auth.getTokens(clientId, clientSecret, data)
+	if err != nil {
+		return err
 	}
 
 	auth.config.IAMAccessToken = fmt.Sprintf("%s %s", tokens.TokenType, tokens.AccessToken)

@@ -1,4 +1,4 @@
-//Package client provides a generic client to be used by all services
+// Package client provides a generic client to be used by all services
 package client
 
 import (
@@ -18,12 +18,13 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
-//TokenProvider ...
+// TokenProvider ...
 type TokenProvider interface {
 	RefreshToken() (string, error)
 	GetPasscode() (string, error)
 	AuthenticatePassword(string, string) error
 	AuthenticateAPIKey(string) error
+	GetKubeTokens() (string, string, error)
 }
 
 /*type PaginatedResourcesHandler interface {
@@ -34,7 +35,7 @@ type TokenProvider interface {
 type HandlePagination func(c *Client, path string, paginated PaginatedResourcesHandler, cb func(interface{}) bool) (resp *gohttp.Response, err error)
 */
 
-//Client is the base client for all service api client
+// Client is the base client for all service api client
 type Client struct {
 	Config         *bluemix.Config
 	DefaultHeader  gohttp.Header
@@ -45,13 +46,13 @@ type Client struct {
 	headerLock sync.Mutex
 }
 
-//Config stores any generic service client configurations
+// Config stores any generic service client configurations
 type Config struct {
 	Config   *bluemix.Config
 	Endpoint string
 }
 
-//New ...
+// New ...
 func New(c *bluemix.Config, serviceName bluemix.ServiceName, refresher TokenProvider) *Client {
 	return &Client{
 		Config:         c,
@@ -62,7 +63,7 @@ func New(c *bluemix.Config, serviceName bluemix.ServiceName, refresher TokenProv
 	}
 }
 
-//SendRequest ...
+// SendRequest ...
 func (c *Client) SendRequest(r *rest.Request, respV interface{}) (*gohttp.Response, error) {
 
 	retries := *c.Config.MaxRetries
@@ -151,7 +152,7 @@ func (c *Client) tryHTTPRequest(retries int, wait time.Duration, r *rest.Request
 	return resp, err
 }
 
-//Get ...
+// Get ...
 func (c *Client) Get(path string, respV interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.GetRequest(c.URL(path))
 	for _, t := range extraHeader {
@@ -160,7 +161,7 @@ func (c *Client) Get(path string, respV interface{}, extraHeader ...interface{})
 	return c.SendRequest(r, respV)
 }
 
-//Put ...
+// Put ...
 func (c *Client) Put(path string, data interface{}, respV interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.PutRequest(c.URL(path)).Body(data)
 	for _, t := range extraHeader {
@@ -169,7 +170,7 @@ func (c *Client) Put(path string, data interface{}, respV interface{}, extraHead
 	return c.SendRequest(r, respV)
 }
 
-//Patch ...
+// Patch ...
 func (c *Client) Patch(path string, data interface{}, respV interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.PatchRequest(c.URL(path)).Body(data)
 	for _, t := range extraHeader {
@@ -178,7 +179,7 @@ func (c *Client) Patch(path string, data interface{}, respV interface{}, extraHe
 	return c.SendRequest(r, respV)
 }
 
-//Post ...
+// Post ...
 func (c *Client) Post(path string, data interface{}, respV interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.PostRequest(c.URL(path)).Body(data)
 	for _, t := range extraHeader {
@@ -188,7 +189,7 @@ func (c *Client) Post(path string, data interface{}, respV interface{}, extraHea
 	return c.SendRequest(r, respV)
 }
 
-//PostWithForm ...
+// PostWithForm ...
 func (c *Client) PostWithForm(path string, form interface{}, respV interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.PostRequest(c.URL(path))
 	for _, t := range extraHeader {
@@ -199,7 +200,7 @@ func (c *Client) PostWithForm(path string, form interface{}, respV interface{}, 
 	return c.SendRequest(r, respV)
 }
 
-//Delete ...
+// Delete ...
 func (c *Client) Delete(path string, extraHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.DeleteRequest(c.URL(path))
 	for _, t := range extraHeader {
@@ -208,7 +209,7 @@ func (c *Client) Delete(path string, extraHeader ...interface{}) (*gohttp.Respon
 	return c.SendRequest(r, nil)
 }
 
-//DeleteWithResp ...
+// DeleteWithResp ...
 func (c *Client) DeleteWithResp(path string, respV interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.DeleteRequest(c.URL(path))
 	for _, t := range extraHeader {
@@ -217,7 +218,7 @@ func (c *Client) DeleteWithResp(path string, respV interface{}, extraHeader ...i
 	return c.SendRequest(r, respV)
 }
 
-//DeleteWithBody ...
+// DeleteWithBody ...
 func (c *Client) DeleteWithBody(path string, data interface{}, extraHeader ...interface{}) (*gohttp.Response, error) {
 	r := rest.DeleteRequest(c.URL(path)).Body(data)
 	for _, t := range extraHeader {
@@ -280,7 +281,7 @@ func (c *Client) GetPaginated(path string, paginated PaginatedResourcesHandler, 
 	return
 }
 
-//URL ...
+// URL ...
 func (c *Client) URL(path string) string {
 	return *c.Config.Endpoint + cleanPath(path)
 }
@@ -315,12 +316,10 @@ func getDefaultAuthHeaders(serviceName bluemix.ServiceName, c *bluemix.Config) g
 	case bluemix.ContainerService:
 		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
-		h.Set(iamRefreshTokenHeader, c.IAMRefreshToken)
 		h.Set(uaaAccessTokenHeader, c.UAAAccessToken)
 	case bluemix.VpcContainerService:
 		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
-		h.Set(iamRefreshTokenHeader, c.IAMRefreshToken)
 	case bluemix.SchematicsService:
 		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
