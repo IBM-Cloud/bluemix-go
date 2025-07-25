@@ -359,12 +359,12 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 			return clusterkey, fmt.Errorf("Error unmarshalling YAML file: %s\n", err)
 		}
 
-		// _, refreshToken, err := r.client.TokenRefresher.GetKubeTokens()
-		// if err != nil {
-		// 	return clusterkey, fmt.Errorf("Error getting kube tokens: %s\n", err)
-		// }
+		_, refreshToken, err := r.client.TokenRefresher.GetKubeTokens()
+		if err != nil {
+			return clusterkey, fmt.Errorf("Error getting kube tokens: %s\n", err)
+		}
 
-		//config.AuthInfos[0].AuthInfo.AuthProvider.Config["refresh-token"] = refreshToken
+		config.AuthInfos[0].AuthInfo.AuthProvider.Config["refresh-token"] = refreshToken
 
 		kubefile, err = yaml.Marshal(config)
 		if err != nil {
