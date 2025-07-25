@@ -144,7 +144,7 @@ func (auth *IAMAuthRepository) GetPasscode() (string, error) {
 
 func (auth *IAMAuthRepository) getTokens(clientId, clientSecret string, data map[string]string) (IAMTokenResponse, error) {
 	request := rest.PostRequest(auth.endpoint+"/identity/token").
-		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", clientId, clientSecret)))).
+		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString(fmt.Appendf(nil, "%s:%s", clientId, clientSecret))).
 		Field("response_type", "cloud_iam")
 
 	for k, v := range data {
