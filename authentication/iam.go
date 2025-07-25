@@ -26,11 +26,12 @@ func (e IAMError) Description() string {
 
 // IAMTokenResponse ...
 type IAMTokenResponse struct {
-	AccessToken     string `json:"access_token"`
-	RefreshToken    string `json:"refresh_token"`
-	UAAAccessToken  string `json:"uaa_token"`
-	UAARefreshToken string `json:"uaa_refresh_token"`
-	TokenType       string `json:"token_type"`
+	AccessToken           string `json:"access_token"`
+	RefreshToken          string `json:"refresh_token"`
+	UAAAccessToken        string `json:"uaa_token"`
+	UAARefreshToken       string `json:"uaa_refresh_token"`
+	DelegatedRefreshToken string `json:"delegated_refresh_token"`
+	TokenType             string `json:"token_type"`
 }
 
 // IAMAuthRepository ...
@@ -88,17 +89,26 @@ func (auth *IAMAuthRepository) AuthenticateSSO(passcode string) error {
 
 // GetKubeTokens fetches the kube:kube access and refresh tokens.
 func (auth *IAMAuthRepository) GetKubeTokens() (string, string, error) {
-	data := map[string]string{
-		"grant_type":    "refresh_token",
-		"refresh_token": auth.config.IAMRefreshToken,
-	}
-
-	tokens, err := auth.getTokens("kube", "kube", data)
+	delegatedTokens, err := auth.getTokens("bx", "bx", map[string]string{
+		"grant_type":                     "refresh_token",
+		"refresh_token":                  auth.config.IAMRefreshToken,
+		"response_type":                  "delegated_refresh_token",
+		"delegated_refresh_token_expiry": "600",
+		"receiver_client_ids":            "kube",
+	})
 	if err != nil {
 		return "", "", err
 	}
 
-	return tokens.AccessToken, tokens.RefreshToken, nil
+	kubeTokens, err := auth.getTokens("kube", "kube", map[string]string{
+		"grant_type":    "urn:ibm:params:oauth:grant-type:delegated-refresh-token",
+		"refresh_token": delegatedTokens.DelegatedRefreshToken,
+	})
+	if err != nil {
+		return "", "", err
+	}
+
+	return kubeTokens.AccessToken, kubeTokens.RefreshToken, nil
 }
 
 // RefreshToken ...
