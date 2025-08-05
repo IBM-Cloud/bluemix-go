@@ -354,8 +354,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 	kubefile, _ := ioutil.ReadFile(kubeyml)
 	if !admin {
 		var config clientcmdv1.Config
-		yaml.Unmarshal(kubefile, &config)
-		if err != nil {
+		if err := yaml.Unmarshal(kubefile, &config); err != nil {
 			return clusterkey, fmt.Errorf("Error unmarshalling YAML file: %s\n", err)
 		}
 
@@ -364,16 +363,17 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 			return clusterkey, fmt.Errorf("Error getting kube tokens: %s\n", err)
 		}
 
-		config.AuthInfos[0].AuthInfo.AuthProvider.Config["refresh-token"] = refreshToken
+		if len(config.AuthInfos) > 0 {
+			config.AuthInfos[0].AuthInfo.AuthProvider.Config["refresh-token"] = refreshToken
 
-		kubefile, err = yaml.Marshal(config)
-		if err != nil {
-			return clusterkey, fmt.Errorf("Error marshalling YAML file: %s\n", err)
-		}
+			kubefile, err = yaml.Marshal(config)
+			if err != nil {
+				return clusterkey, fmt.Errorf("Error marshalling YAML file: %s\n", err)
+			}
 
-		err = os.WriteFile(kubeyml, kubefile, 0755)
-		if err != nil {
-			return clusterkey, fmt.Errorf("Error writing YAML file: %s\n", err)
+			if err := os.WriteFile(kubeyml, kubefile, 0755); err != nil {
+				return clusterkey, fmt.Errorf("Error writing YAML file: %s\n", err)
+			}
 		}
 	}
 

@@ -44,6 +44,10 @@ type Request struct {
 	body interface{}
 }
 
+func (r *Request) Debug() url.Values {
+	return r.formParams
+}
+
 // NewRequest creates a new REST request with the given rawUrl.
 func NewRequest(rawUrl string) *Request {
 	return &Request{

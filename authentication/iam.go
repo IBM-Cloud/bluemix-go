@@ -65,25 +65,28 @@ func NewIAMAuthRepository(config *bluemix.Config, client *rest.Client) (*IAMAuth
 // AuthenticatePassword ...
 func (auth *IAMAuthRepository) AuthenticatePassword(username string, password string) error {
 	return auth.setTokens("bx", "bx", map[string]string{
-		"grant_type": "password",
-		"username":   username,
-		"password":   password,
+		"response_type": "cloud_iam",
+		"grant_type":    "password",
+		"username":      username,
+		"password":      password,
 	})
 }
 
 // AuthenticateAPIKey ...
 func (auth *IAMAuthRepository) AuthenticateAPIKey(apiKey string) error {
 	return auth.setTokens("bx", "bx", map[string]string{
-		"grant_type": "urn:ibm:params:oauth:grant-type:apikey",
-		"apikey":     apiKey,
+		"response_type": "cloud_iam",
+		"grant_type":    "urn:ibm:params:oauth:grant-type:apikey",
+		"apikey":        apiKey,
 	})
 }
 
 // AuthenticateSSO ...
 func (auth *IAMAuthRepository) AuthenticateSSO(passcode string) error {
 	return auth.setTokens("bx", "bx", map[string]string{
-		"grant_type": "urn:ibm:params:oauth:grant-type:passcode",
-		"passcode":   passcode,
+		"response_type": "cloud_iam",
+		"grant_type":    "urn:ibm:params:oauth:grant-type:passcode",
+		"passcode":      passcode,
 	})
 }
 
@@ -114,6 +117,7 @@ func (auth *IAMAuthRepository) GetKubeTokens() (string, string, error) {
 // RefreshToken ...
 func (auth *IAMAuthRepository) RefreshToken() (string, error) {
 	data := map[string]string{
+		"response_type": "cloud_iam",
 		"grant_type":    "refresh_token",
 		"refresh_token": auth.config.IAMRefreshToken,
 	}
@@ -154,8 +158,7 @@ func (auth *IAMAuthRepository) GetPasscode() (string, error) {
 
 func (auth *IAMAuthRepository) getTokens(clientId, clientSecret string, data map[string]string) (IAMTokenResponse, error) {
 	request := rest.PostRequest(auth.endpoint+"/identity/token").
-		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString(fmt.Appendf(nil, "%s:%s", clientId, clientSecret))).
-		Field("response_type", "cloud_iam")
+		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString(fmt.Appendf(nil, "%s:%s", clientId, clientSecret)))
 
 	for k, v := range data {
 		request.Field(k, v)
