@@ -352,12 +352,12 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 	}
 
 	kubefile, _ := ioutil.ReadFile(kubeyml)
-	if !admin {
-		var config clientcmdv1.Config
-		if err := yaml.Unmarshal(kubefile, &config); err != nil {
-			return clusterkey, fmt.Errorf("Error unmarshalling YAML file: %s\n", err)
-		}
+	var config clientcmdv1.Config
+	if err := yaml.Unmarshal(kubefile, &config); err != nil {
+		return clusterkey, fmt.Errorf("Error unmarshalling YAML file: %s\n", err)
+	}
 
+	if !admin {
 		_, refreshToken, err := r.client.TokenRefresher.GetKubeTokens()
 		if err != nil {
 			return clusterkey, fmt.Errorf("Error getting kube tokens: %s\n", err)
@@ -377,16 +377,11 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 		}
 	}
 
-	var yamlConfig containerv1.ConfigFile
-	err = yaml.Unmarshal(kubefile, &yamlConfig)
-	if err != nil {
-		fmt.Printf("Error parsing YAML file: %s\n", err)
+	if len(config.Clusters) != 0 {
+		clusterkey.Host = config.Clusters[0].Cluster.Server
 	}
-	if len(yamlConfig.Clusters) != 0 {
-		clusterkey.Host = yamlConfig.Clusters[0].Cluster.Server
-	}
-	if len(yamlConfig.Users) != 0 {
-		clusterkey.Token = yamlConfig.Users[0].User.AuthProvider.Config.IDToken
+	if len(config.AuthInfos) != 0 {
+		clusterkey.Token, _ = config.AuthInfos[0].AuthInfo.AuthProvider.Config["id-token"]
 	}
 
 	// Block to add token for openshift clusters
