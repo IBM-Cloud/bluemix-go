@@ -14,8 +14,8 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/client"
 	"github.com/IBM-Cloud/bluemix-go/helpers"
 	"github.com/IBM-Cloud/bluemix-go/trace"
-	"gopkg.in/yaml.v2"
 	clientcmdv1 "k8s.io/client-go/tools/clientcmd/api/v1"
+	"sigs.k8s.io/yaml"
 )
 
 // ClusterInfo ...
@@ -1014,7 +1014,11 @@ func (r *clusters) readKubeConfig(path string, isAdmin bool) (clientcmdv1.Config
 
 	fileBody, err := os.ReadFile(path)
 	if err != nil {
-		return config, fmt.Errorf("Error reading config file: %s\n", err)
+		return config, fmt.Errorf("Error reading config file: %s", err)
+	}
+
+	if err := yaml.Unmarshal(fileBody, &config); err != nil {
+		return config, fmt.Errorf("Error unmarshalling config: %s", err)
 	}
 
 	if isAdmin || len(config.AuthInfos) == 0 {
@@ -1025,18 +1029,18 @@ func (r *clusters) readKubeConfig(path string, isAdmin bool) (clientcmdv1.Config
 
 	_, refreshToken, err := r.client.TokenRefresher.GetKubeTokens()
 	if err != nil {
-		return config, fmt.Errorf("Error getting kube tokens: %s\n", err)
+		return config, fmt.Errorf("Error getting kube tokens: %s", err)
 	}
 
 	config.AuthInfos[0].AuthInfo.AuthProvider.Config["refresh-token"] = refreshToken
 
 	fileBody, err = yaml.Marshal(config)
 	if err != nil {
-		return config, fmt.Errorf("Error marshalling YAML file: %s\n", err)
+		return config, fmt.Errorf("Error marshalling YAML file: %s", err)
 	}
 
 	if err := os.WriteFile(path, fileBody, 0755); err != nil {
-		return config, fmt.Errorf("Error writing YAML file: %s\n", err)
+		return config, fmt.Errorf("Error writing YAML file: %s", err)
 	}
 
 	return config, nil
