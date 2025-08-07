@@ -269,7 +269,7 @@ func (r *clusters) FindWithOutShowResourcesCompatible(name string, target Cluste
 }
 
 // GetClusterConfigDetail ...
-func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target ClusterTargetHeader, endpointType string) (containerv1.ClusterKeyInfo, error) {
+func (r *clusters) GetClusterConfigDetail(name, dir string, isAdmin bool, target ClusterTargetHeader, endpointType string) (containerv1.ClusterKeyInfo, error) {
 	clusterkey := containerv1.ClusterKeyInfo{}
 	// Block to add token for openshift clusters (This can be temporary until iks team handles openshift clusters)
 	clusterInfo, err := r.FindWithOutShowResourcesCompatible(name, target)
@@ -287,7 +287,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 		"format":  "zip",
 	}
 	rawURL := fmt.Sprintf("/v2/applyRBACAndGetKubeconfig")
-	if admin {
+	if isAdmin {
 		postBody["admin"] = true
 	}
 	if clusterInfo.Provider == "satellite" {
@@ -296,7 +296,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 	} else if endpointType != "" {
 		postBody["endpointType"] = endpointType
 	}
-	resultDir := containerv1.ComputeClusterConfigDir(dir, name, admin)
+	resultDir := containerv1.ComputeClusterConfigDir(dir, name, isAdmin)
 	const kubeConfigName = "config.yml"
 	err = os.MkdirAll(resultDir, 0755)
 	if err != nil {
@@ -320,7 +320,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 		return clusterkey, err
 	}
 	defer helpers.RemoveFilesWithPattern(resultDir, "[^(.yml)|(.pem)]$")
-	var kubeyml string
+	var configPath string
 	files, _ := ioutil.ReadDir(resultDir)
 
 	for _, f := range files {
@@ -339,7 +339,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 			new := filepath.Join(resultDir, f.Name())
 			if strings.HasSuffix(f.Name(), ".yaml") {
 				new = filepath.Join(path.Clean(resultDir), "/", path.Clean(kubeConfigName))
-				kubeyml = new
+				configPath = new
 			}
 			err := os.Rename(old, new)
 			if err != nil {
@@ -351,36 +351,15 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 		return clusterkey, errors.New("Unable to locate kube config in zip archive")
 	}
 
-	kubefile, _ := ioutil.ReadFile(kubeyml)
-	var config clientcmdv1.Config
-	if err := yaml.Unmarshal(kubefile, &config); err != nil {
-		return clusterkey, fmt.Errorf("Error unmarshalling YAML file: %s\n", err)
+	config, err := r.readKubeConfig(configPath, isAdmin)
+	if err != nil {
+		return clusterkey, err
 	}
 
-	if !admin {
-		_, refreshToken, err := r.client.TokenRefresher.GetKubeTokens()
-		if err != nil {
-			return clusterkey, fmt.Errorf("Error getting kube tokens: %s\n", err)
-		}
-
-		if len(config.AuthInfos) > 0 {
-			config.AuthInfos[0].AuthInfo.AuthProvider.Config["refresh-token"] = refreshToken
-
-			kubefile, err = yaml.Marshal(config)
-			if err != nil {
-				return clusterkey, fmt.Errorf("Error marshalling YAML file: %s\n", err)
-			}
-
-			if err := os.WriteFile(kubeyml, kubefile, 0755); err != nil {
-				return clusterkey, fmt.Errorf("Error writing YAML file: %s\n", err)
-			}
-		}
-	}
-
-	if len(config.Clusters) != 0 {
+	if len(config.Clusters) > 0 {
 		clusterkey.Host = config.Clusters[0].Cluster.Server
 	}
-	if len(config.AuthInfos) != 0 {
+	if len(config.AuthInfos) > 0 {
 		clusterkey.Token, _ = config.AuthInfos[0].AuthInfo.AuthProvider.Config["id-token"]
 	}
 
@@ -389,24 +368,24 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 	if err != nil {
 		// Assuming an error means that this is a vpc cluster, and we're returning existing kubeconfig
 		// When we add support for vpcs on openshift clusters, we may want revisit this
-		clusterkey.FilePath, _ = filepath.Abs(kubeyml)
+		clusterkey.FilePath, _ = filepath.Abs(configPath)
 		return clusterkey, err
 	}
 	if clusterInfo.Type == "openshift" && clusterInfo.Provider != "satellite" {
 		trace.Logger.Println("Debug: type is openshift trying login to get token")
 		var yamlConfig []byte
-		if yamlConfig, err = ioutil.ReadFile(kubeyml); err != nil {
+		if yamlConfig, err = ioutil.ReadFile(configPath); err != nil {
 			return clusterkey, err
 		}
 		yamlConfig, clusterkey.Host, err = r.FetchOCTokenForKubeConfig(yamlConfig, &clusterInfo, clusterInfo.IsStagingSatelliteCluster(), endpointType)
 		if err != nil {
 			return clusterkey, err
 		}
-		err = ioutil.WriteFile(kubeyml, yamlConfig, 0644) // 0644 is irrelevant here, since file already exists.
+		err = ioutil.WriteFile(configPath, yamlConfig, 0644) // 0644 is irrelevant here, since file already exists.
 		if err != nil {
 			return clusterkey, err
 		}
-		openshiftyml, _ := ioutil.ReadFile(kubeyml)
+		openshiftyml, _ := ioutil.ReadFile(configPath)
 		var openshiftyaml containerv1.ConfigFileOpenshift
 		err = yaml.Unmarshal(openshiftyml, &openshiftyaml)
 		if err != nil {
@@ -421,7 +400,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 		clusterkey.ClusterCACertificate = ""
 
 	}
-	clusterkey.FilePath, _ = filepath.Abs(kubeyml)
+	clusterkey.FilePath, _ = filepath.Abs(configPath)
 	return clusterkey, err
 }
 
@@ -513,27 +492,27 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 			return "", clusterkey, err
 		}
 	}
-	var kubeconfigFileName string
+	var configPath string
 	for _, baseDirFile := range baseDirFiles {
 		if strings.Contains(baseDirFile.Name(), ".yaml") {
-			kubeconfigFileName = fmt.Sprintf("%s/%s", resultDir, baseDirFile.Name())
+			configPath = fmt.Sprintf("%s/%s", resultDir, baseDirFile.Name())
 			break
 		}
 	}
-	if kubeconfigFileName == "" {
+	if configPath == "" {
 		return "", clusterkey, errors.New("Unable to locate kube config in zip archive")
 	}
-	kubefile, _ := ioutil.ReadFile(kubeconfigFileName)
-	var yamlConfig containerv1.ConfigFile
-	err = yaml.Unmarshal(kubefile, &yamlConfig)
+
+	config, err := r.readKubeConfig(configPath, admin)
 	if err != nil {
-		fmt.Printf("Error parsing YAML file: %s\n", err)
+		return "", clusterkey, err
 	}
-	if len(yamlConfig.Clusters) != 0 {
-		clusterkey.Host = yamlConfig.Clusters[0].Cluster.Server
+
+	if len(config.Clusters) > 0 {
+		clusterkey.Host = config.Clusters[0].Cluster.Server
 	}
-	if len(yamlConfig.Users) != 0 {
-		clusterkey.Token = yamlConfig.Users[0].User.AuthProvider.Config.IDToken
+	if len(config.AuthInfos) > 0 {
+		clusterkey.Token, _ = config.AuthInfos[0].AuthInfo.AuthProvider.Config["id-token"]
 	}
 
 	// Block to add token for openshift clusters (This can be temporary until iks team handles openshift clusters)
@@ -541,25 +520,25 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 	if err != nil {
 		// Assuming an error means that this is a vpc cluster, and we're returning existing kubeconfig
 		// When we add support for vpcs on openshift clusters, we may want revisit this
-		clusterkey.FilePath = kubeconfigFileName
+		clusterkey.FilePath = configPath
 		return calicoConfig, clusterkey, nil
 	}
 
 	if clusterInfo.Type == "openshift" && clusterInfo.Provider != "satellite" {
 		trace.Logger.Println("Cluster Type is openshift trying login to get token")
 		var yamlConfig []byte
-		if yamlConfig, err = ioutil.ReadFile(kubeconfigFileName); err != nil {
+		if yamlConfig, err = ioutil.ReadFile(configPath); err != nil {
 			return "", clusterkey, err
 		}
 		yamlConfig, clusterkey.Host, err = r.FetchOCTokenForKubeConfig(yamlConfig, &clusterInfo, clusterInfo.IsStagingSatelliteCluster(), endpointType)
 		if err != nil {
 			return "", clusterkey, err
 		}
-		err = ioutil.WriteFile(kubeconfigFileName, yamlConfig, 0644) // check about permissions and truncate
+		err = ioutil.WriteFile(configPath, yamlConfig, 0644) // check about permissions and truncate
 		if err != nil {
 			return "", clusterkey, err
 		}
-		openshiftyml, _ := ioutil.ReadFile(kubeconfigFileName)
+		openshiftyml, _ := ioutil.ReadFile(configPath)
 		var openshiftyaml containerv1.ConfigFileOpenshift
 		err = yaml.Unmarshal(openshiftyml, &openshiftyaml)
 		if err != nil {
@@ -574,7 +553,7 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 		clusterkey.ClusterCACertificate = ""
 
 	}
-	clusterkey.FilePath = kubeconfigFileName
+	clusterkey.FilePath = configPath
 	return calicoConfig, clusterkey, nil
 }
 
@@ -590,4 +569,39 @@ func (r *clusters) DisableImageSecurityEnforcement(name string, target ClusterTa
 	body := map[string]string{"cluster": name}
 	_, err := r.client.Post(rawURL, body, nil, target.ToMap())
 	return err
+}
+
+// readKubeConfig reads file at path and inserts refresh token into it for
+// backwards compatibility.
+func (r *clusters) readKubeConfig(path string, isAdmin bool) (clientcmdv1.Config, error) {
+	var config clientcmdv1.Config
+
+	fileBody, err := os.ReadFile(path)
+	if err != nil {
+		return config, fmt.Errorf("Error reading config file: %s\n", err)
+	}
+
+	if isAdmin || len(config.AuthInfos) == 0 {
+		return config, nil
+	}
+
+	// insert refresh token for backwards compatibility
+
+	_, refreshToken, err := r.client.TokenRefresher.GetKubeTokens()
+	if err != nil {
+		return config, fmt.Errorf("Error getting kube tokens: %s\n", err)
+	}
+
+	config.AuthInfos[0].AuthInfo.AuthProvider.Config["refresh-token"] = refreshToken
+
+	fileBody, err = yaml.Marshal(config)
+	if err != nil {
+		return config, fmt.Errorf("Error marshalling YAML file: %s\n", err)
+	}
+
+	if err := os.WriteFile(path, fileBody, 0755); err != nil {
+		return config, fmt.Errorf("Error writing YAML file: %s\n", err)
+	}
+
+	return config, nil
 }

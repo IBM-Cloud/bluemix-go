@@ -11,14 +11,14 @@ import (
 	"path/filepath"
 	"strings"
 
-	"gopkg.in/yaml.v2"
-
 	"github.com/IBM-Cloud/bluemix-go/client"
 	"github.com/IBM-Cloud/bluemix-go/helpers"
 	"github.com/IBM-Cloud/bluemix-go/trace"
+	"gopkg.in/yaml.v2"
+	clientcmdv1 "k8s.io/client-go/tools/clientcmd/api/v1"
 )
 
-//ClusterInfo ...
+// ClusterInfo ...
 type ClusterInfo struct {
 	CreatedDate                   string   `json:"createdDate"`
 	DataCenter                    string   `json:"dataCenter"`
@@ -73,7 +73,7 @@ type ClusterUpdateParam struct {
 	Version string `json:"version"`
 }
 
-//ClusterKeyInfo ...
+// ClusterKeyInfo ...
 type ClusterKeyInfo struct {
 	AdminKey             string `json:"admin-key"`
 	Admin                string `json:"admin"`
@@ -83,7 +83,7 @@ type ClusterKeyInfo struct {
 	FilePath             string `json:"filepath"`
 }
 
-//ConfigFileOpenshift Openshift .yml Structure
+// ConfigFileOpenshift Openshift .yml Structure
 type ConfigFileOpenshift struct {
 	Clusters []struct {
 		Name    string `yaml:"name"`
@@ -119,7 +119,7 @@ type ConfigFile struct {
 	} `yaml:"users"`
 }
 
-//Vlan ...
+// Vlan ...
 type Vlan struct {
 	ID      string `json:"id"`
 	Subnets []struct {
@@ -133,13 +133,13 @@ type Vlan struct {
 	Region string `json:"region"`
 }
 
-//Addon ...
+// Addon ...
 type Addon struct {
 	Name    string `json:"name"`
 	Enabled bool   `json:"enabled"`
 }
 
-//ClusterCreateResponse ...
+// ClusterCreateResponse ...
 type ClusterCreateResponse struct {
 	ID string
 }
@@ -150,7 +150,7 @@ type MasterAPIServer struct {
 	Action string `json:"action" binding:"required" description:"The action to perform on the API Server"`
 }
 
-//ClusterTargetHeader ...
+// ClusterTargetHeader ...
 type ClusterTargetHeader struct {
 	OrgID         string
 	SpaceID       string
@@ -169,7 +169,7 @@ const (
 	resourceGroupHeader = "X-Auth-Resource-Group"
 )
 
-//ToMap ...
+// ToMap ...
 func (c ClusterTargetHeader) ToMap() map[string]string {
 	m := make(map[string]string, 3)
 	m[orgIDHeader] = c.OrgID
@@ -180,13 +180,13 @@ func (c ClusterTargetHeader) ToMap() map[string]string {
 	return m
 }
 
-//ClusterSoftlayerHeader ...
+// ClusterSoftlayerHeader ...
 type ClusterSoftlayerHeader struct {
 	SoftLayerUsername string
 	SoftLayerAPIKey   string
 }
 
-//ToMap ...
+// ToMap ...
 func (c ClusterSoftlayerHeader) ToMap() map[string]string {
 	m := make(map[string]string, 2)
 	m[slAPIKeyHeader] = c.SoftLayerAPIKey
@@ -194,7 +194,7 @@ func (c ClusterSoftlayerHeader) ToMap() map[string]string {
 	return m
 }
 
-//ClusterCreateRequest ...
+// ClusterCreateRequest ...
 type ClusterCreateRequest struct {
 	GatewayEnabled               bool   `json:"GatewayEnabled" description:"true for gateway enabled cluster"`
 	Datacenter                   string `json:"dataCenter" description:"The worker's data center"`
@@ -236,7 +236,7 @@ type ServiceBindResponse struct {
 	Binding             string `json:"binding"`
 }
 
-//BoundService ...
+// BoundService ...
 type BoundService struct {
 	ServiceName    string `json:"servicename"`
 	ServiceID      string `json:"serviceid"`
@@ -252,10 +252,10 @@ type UpdateWorkerCommand struct {
 	Force bool `json:"force,omitempty"`
 }
 
-//BoundServices ..
+// BoundServices ..
 type BoundServices []BoundService
 
-//Clusters interface
+// Clusters interface
 type Clusters interface {
 	Create(params ClusterCreateRequest, target ClusterTargetHeader) (ClusterCreateResponse, error)
 	List(target ClusterTargetHeader) ([]ClusterInfo, error)
@@ -295,14 +295,14 @@ func (r *ClusterInfo) IsStagingSatelliteCluster() bool {
 	return strings.Index(r.ServerURL, "stg") > 0 && r.Provider == "satellite"
 }
 
-//Create ...
+// Create ...
 func (r *clusters) Create(params ClusterCreateRequest, target ClusterTargetHeader) (ClusterCreateResponse, error) {
 	var cluster ClusterCreateResponse
 	_, err := r.client.Post("/v1/clusters", params, &cluster, target.ToMap())
 	return cluster, err
 }
 
-//Update ...
+// Update ...
 func (r *clusters) Update(name string, params ClusterUpdateParam, target ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s", name)
 	_, err := r.client.Put(rawURL, params, nil, target.ToMap())
@@ -332,7 +332,7 @@ func (r *clusters) UpdateClusterWorkers(clusterNameOrID string, workerIDs []stri
 	return nil
 }
 
-//Delete ...
+// Delete ...
 func (r *clusters) Delete(name string, target ClusterTargetHeader, deleteDependencies ...bool) error {
 	var rawURL string
 	if len(deleteDependencies) != 0 {
@@ -344,7 +344,7 @@ func (r *clusters) Delete(name string, target ClusterTargetHeader, deleteDepende
 	return err
 }
 
-//List ...
+// List ...
 func (r *clusters) List(target ClusterTargetHeader) ([]ClusterInfo, error) {
 	clusters := []ClusterInfo{}
 	_, err := r.client.Get("/v1/clusters", &clusters, target.ToMap())
@@ -355,7 +355,7 @@ func (r *clusters) List(target ClusterTargetHeader) ([]ClusterInfo, error) {
 	return clusters, err
 }
 
-//Find ...
+// Find ...
 func (r *clusters) Find(name string, target ClusterTargetHeader) (ClusterInfo, error) {
 	rawURL := fmt.Sprintf("/v1/clusters/%s?showResources=true", name)
 	cluster := ClusterInfo{}
@@ -367,7 +367,7 @@ func (r *clusters) Find(name string, target ClusterTargetHeader) (ClusterInfo, e
 	return cluster, err
 }
 
-//FindWithOutShowResources ...
+// FindWithOutShowResources ...
 func (r *clusters) FindWithOutShowResources(name string, target ClusterTargetHeader) (ClusterInfo, error) {
 	rawURL := fmt.Sprintf("/v1/clusters/%s", name)
 	cluster := ClusterInfo{}
@@ -379,7 +379,7 @@ func (r *clusters) FindWithOutShowResources(name string, target ClusterTargetHea
 	return cluster, err
 }
 
-//FindWithOutShowResourcesCompatible ...
+// FindWithOutShowResourcesCompatible ...
 func (r *clusters) FindWithOutShowResourcesCompatible(name string, target ClusterTargetHeader) (ClusterInfo, error) {
 	rawURL := fmt.Sprintf("/v2/getCluster?v1-compatible&cluster=%s", name)
 	cluster := ClusterInfo{}
@@ -394,7 +394,7 @@ func (r *clusters) FindWithOutShowResourcesCompatible(name string, target Cluste
 	return cluster, err
 }
 
-//GetClusterConfig ...
+// GetClusterConfig ...
 func (r *clusters) GetClusterConfig(name, dir string, admin bool, target ClusterTargetHeader) (string, error) {
 	if !helpers.FileExists(dir) {
 		return "", fmt.Errorf("Path: %q, to download the config doesn't exist", dir)
@@ -479,17 +479,17 @@ func (r *clusters) GetClusterConfig(name, dir string, admin bool, target Cluster
 	return filepath.Abs(kubeyml)
 }
 
-//GetClusterConfigDetail ...
-func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target ClusterTargetHeader) (ClusterKeyInfo, error) {
+// GetClusterConfigDetail ...
+func (r *clusters) GetClusterConfigDetail(name, dir string, isAdmin bool, target ClusterTargetHeader) (ClusterKeyInfo, error) {
 	clusterkey := ClusterKeyInfo{}
 	if !helpers.FileExists(dir) {
 		return clusterkey, fmt.Errorf("Path: %q, to download the config doesn't exist", dir)
 	}
 	rawURL := fmt.Sprintf("/v1/clusters/%s/config", name)
-	if admin {
+	if isAdmin {
 		rawURL += "/admin"
 	}
-	resultDir := ComputeClusterConfigDir(dir, name, admin)
+	resultDir := ComputeClusterConfigDir(dir, name, isAdmin)
 	const kubeConfigName = "config.yml"
 	err := os.MkdirAll(resultDir, 0755)
 	if err != nil {
@@ -513,7 +513,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 		return clusterkey, err
 	}
 	defer helpers.RemoveFilesWithPattern(resultDir, "[^(.yml)|(.pem)]$")
-	var kubedir, kubeyml string
+	var kubedir, configPath string
 	files, _ := ioutil.ReadDir(resultDir)
 	for _, f := range files {
 		if f.IsDir() && strings.HasPrefix(f.Name(), "kube") {
@@ -534,7 +534,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 				new := filepath.Join(kubedir, "../", f.Name())
 				if strings.HasSuffix(f.Name(), ".yml") {
 					new = filepath.Join(path.Clean(kubedir), "../", path.Clean(kubeConfigName))
-					kubeyml = new
+					configPath = new
 				}
 				err := os.Rename(old, new)
 				if err != nil {
@@ -548,17 +548,16 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 		return clusterkey, errors.New("Unable to locate kube config in zip archive")
 	}
 
-	kubefile, _ := ioutil.ReadFile(kubeyml)
-	var yamlConfig ConfigFile
-	err = yaml.Unmarshal(kubefile, &yamlConfig)
+	config, err := r.readKubeConfig(configPath, isAdmin)
 	if err != nil {
-		fmt.Printf("Error parsing YAML file: %s\n", err)
+		return clusterkey, err
 	}
-	if len(yamlConfig.Clusters) != 0 {
-		clusterkey.Host = yamlConfig.Clusters[0].Cluster.Server
+
+	if len(config.Clusters) > 0 {
+		clusterkey.Host = config.Clusters[0].Cluster.Server
 	}
-	if len(yamlConfig.Users) != 0 {
-		clusterkey.Token = yamlConfig.Users[0].User.AuthProvider.Config.IDToken
+	if len(config.AuthInfos) > 0 {
+		clusterkey.Token = config.AuthInfos[0].AuthInfo.AuthProvider.Config["id-token"]
 	}
 
 	// Block to add token for openshift clusters (This can be temporary until iks team handles openshift clusters)
@@ -566,25 +565,25 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 	if err != nil {
 		// Assuming an error means that this is a vpc cluster, and we're returning existing kubeconfig
 		// When we add support for vpcs on openshift clusters, we may want revisit this
-		clusterkey.FilePath, _ = filepath.Abs(kubeyml)
+		clusterkey.FilePath, _ = filepath.Abs(configPath)
 		return clusterkey, err
 	}
 
 	if clusterInfo.Type == "openshift" {
 		trace.Logger.Println("Debug: type is openshift trying login to get token")
 		var yamlConfig []byte
-		if yamlConfig, err = ioutil.ReadFile(kubeyml); err != nil {
+		if yamlConfig, err = ioutil.ReadFile(configPath); err != nil {
 			return clusterkey, err
 		}
 		yamlConfig, err = r.FetchOCTokenForKubeConfig(yamlConfig, &clusterInfo, clusterInfo.IsStagingSatelliteCluster())
 		if err != nil {
 			return clusterkey, err
 		}
-		err = ioutil.WriteFile(kubeyml, yamlConfig, 0644) // 0644 is irrelevant here, since file already exists.
+		err = ioutil.WriteFile(configPath, yamlConfig, 0644) // 0644 is irrelevant here, since file already exists.
 		if err != nil {
 			return clusterkey, err
 		}
-		openshiftyml, _ := ioutil.ReadFile(kubeyml)
+		openshiftyml, _ := ioutil.ReadFile(configPath)
 		var openshiftyaml ConfigFileOpenshift
 		err = yaml.Unmarshal(openshiftyml, &openshiftyaml)
 		if err != nil {
@@ -602,7 +601,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, admin bool, target C
 		clusterkey.ClusterCACertificate = ""
 
 	}
-	clusterkey.FilePath, _ = filepath.Abs(kubeyml)
+	clusterkey.FilePath, _ = filepath.Abs(configPath)
 	return clusterkey, err
 }
 
@@ -711,21 +710,21 @@ func (r *clusters) StoreConfig(name, dir string, admin, createCalicoConfig bool,
 	return kubeconfigFileName, calicoConfig, nil
 }
 
-//StoreConfigDetail ...
-func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig bool, target ClusterTargetHeader) (string, ClusterKeyInfo, error) {
+// StoreConfigDetail ...
+func (r *clusters) StoreConfigDetail(name, dir string, isAdmin, createCalicoConfig bool, target ClusterTargetHeader) (string, ClusterKeyInfo, error) {
 	clusterkey := ClusterKeyInfo{}
 	var calicoConfig string
 	if !helpers.FileExists(dir) {
 		return "", clusterkey, fmt.Errorf("Path: %q, to download the config doesn't exist", dir)
 	}
 	rawURL := fmt.Sprintf("/v1/clusters/%s/config", name)
-	if admin {
+	if isAdmin {
 		rawURL += "/admin"
 	}
 	if createCalicoConfig {
 		rawURL += "?createNetworkConfig=true"
 	}
-	resultDir := ComputeClusterConfigDir(dir, name, admin)
+	resultDir := ComputeClusterConfigDir(dir, name, isAdmin)
 	err := os.MkdirAll(resultDir, 0755)
 	if err != nil {
 		return "", clusterkey, fmt.Errorf("Error creating directory to download the cluster config")
@@ -790,27 +789,27 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 			return "", clusterkey, err
 		}
 	}
-	var kubeconfigFileName string
+	var configPath string
 	for _, baseDirFile := range baseDirFiles {
 		if strings.Contains(baseDirFile.Name(), ".yml") {
-			kubeconfigFileName = fmt.Sprintf("%s/%s", resultDir, baseDirFile.Name())
+			configPath = fmt.Sprintf("%s/%s", resultDir, baseDirFile.Name())
 			break
 		}
 	}
-	if kubeconfigFileName == "" {
+	if configPath == "" {
 		return "", clusterkey, errors.New("Unable to locate kube config in zip archive")
 	}
-	kubefile, _ := ioutil.ReadFile(kubeconfigFileName)
-	var yamlConfig ConfigFile
-	err = yaml.Unmarshal(kubefile, &yamlConfig)
+
+	config, err := r.readKubeConfig(configPath, isAdmin)
 	if err != nil {
-		fmt.Printf("Error parsing YAML file: %s\n", err)
+		return "", clusterkey, err
 	}
-	if len(yamlConfig.Clusters) != 0 {
-		clusterkey.Host = yamlConfig.Clusters[0].Cluster.Server
+
+	if len(config.Clusters) > 0 {
+		clusterkey.Host = config.Clusters[0].Cluster.Server
 	}
-	if len(yamlConfig.Users) != 0 {
-		clusterkey.Token = yamlConfig.Users[0].User.AuthProvider.Config.IDToken
+	if len(config.AuthInfos) > 0 {
+		clusterkey.Token = config.AuthInfos[0].AuthInfo.AuthProvider.Config["id-token"]
 	}
 
 	// Block to add token for openshift clusters (This can be temporary until iks team handles openshift clusters)
@@ -818,25 +817,25 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 	if err != nil {
 		// Assuming an error means that this is a vpc cluster, and we're returning existing kubeconfig
 		// When we add support for vpcs on openshift clusters, we may want revisit this
-		clusterkey.FilePath = kubeconfigFileName
+		clusterkey.FilePath = configPath
 		return calicoConfig, clusterkey, nil
 	}
 
 	if clusterInfo.Type == "openshift" {
 		trace.Logger.Println("Cluster Type is openshift trying login to get token")
 		var yamlConfig []byte
-		if yamlConfig, err = ioutil.ReadFile(kubeconfigFileName); err != nil {
+		if yamlConfig, err = ioutil.ReadFile(configPath); err != nil {
 			return "", clusterkey, err
 		}
 		yamlConfig, err = r.FetchOCTokenForKubeConfig(yamlConfig, &clusterInfo, clusterInfo.IsStagingSatelliteCluster())
 		if err != nil {
 			return "", clusterkey, err
 		}
-		err = ioutil.WriteFile(kubeconfigFileName, yamlConfig, 0644) // check about permissions and truncate
+		err = ioutil.WriteFile(configPath, yamlConfig, 0644) // check about permissions and truncate
 		if err != nil {
 			return "", clusterkey, err
 		}
-		openshiftyml, _ := ioutil.ReadFile(kubeconfigFileName)
+		openshiftyml, _ := ioutil.ReadFile(configPath)
 		var openshiftyaml ConfigFileOpenshift
 		err = yaml.Unmarshal(openshiftyml, &openshiftyaml)
 		if err != nil {
@@ -854,11 +853,11 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 		clusterkey.ClusterCACertificate = ""
 
 	}
-	clusterkey.FilePath = kubeconfigFileName
+	clusterkey.FilePath = configPath
 	return calicoConfig, clusterkey, nil
 }
 
-//kubeConfigDir ...
+// kubeConfigDir ...
 func kubeConfigDir(baseDir string) (string, error) {
 	baseDirFiles, err := ioutil.ReadDir(baseDir)
 	if err != nil {
@@ -875,7 +874,7 @@ func kubeConfigDir(baseDir string) (string, error) {
 	return "", errors.New("Unable to locate extracted configuration directory")
 }
 
-//GenerateCalicoConfig ...
+// GenerateCalicoConfig ...
 func GenerateCalicoConfig(desiredConfigPath string) (string, error) {
 	// Proccess calico golang template file if it exists
 	calicoConfigFile := fmt.Sprintf("%s/%s", desiredConfigPath, "calicoctl.cfg.template")
@@ -904,14 +903,14 @@ func GenerateCalicoConfig(desiredConfigPath string) (string, error) {
 	return "", nil
 }
 
-//UnsetCredentials ...
+// UnsetCredentials ...
 func (r *clusters) UnsetCredentials(target ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/credentials")
 	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
 }
 
-//SetCredentials ...
+// SetCredentials ...
 func (r *clusters) SetCredentials(slUsername, slAPIKey string, target ClusterTargetHeader) error {
 	slHeader := &ClusterSoftlayerHeader{
 		SoftLayerAPIKey:   slAPIKey,
@@ -921,7 +920,7 @@ func (r *clusters) SetCredentials(slUsername, slAPIKey string, target ClusterTar
 	return err
 }
 
-//BindService ...
+// BindService ...
 func (r *clusters) BindService(params ServiceBindRequest, target ClusterTargetHeader) (ServiceBindResponse, error) {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/services", params.ClusterNameOrID)
 	payLoad := struct {
@@ -941,14 +940,14 @@ func (r *clusters) BindService(params ServiceBindRequest, target ClusterTargetHe
 	return cluster, err
 }
 
-//UnBindService ...
+// UnBindService ...
 func (r *clusters) UnBindService(clusterNameOrID, namespaceID, serviceInstanceGUID string, target ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/services/%s/%s", clusterNameOrID, namespaceID, serviceInstanceGUID)
 	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
 }
 
-//ComputeClusterConfigDir ...
+// ComputeClusterConfigDir ...
 func ComputeClusterConfigDir(dir, name string, admin bool) string {
 	resultDirPrefix := name
 	resultDirSuffix := "_k8sconfig"
@@ -965,7 +964,7 @@ func ComputeClusterConfigDir(dir, name string, admin bool) string {
 	return resultDir
 }
 
-//ListServicesBoundToCluster ...
+// ListServicesBoundToCluster ...
 func (r *clusters) ListServicesBoundToCluster(clusterNameOrID, namespace string, target ClusterTargetHeader) (BoundServices, error) {
 	var boundServices BoundServices
 	var path string
@@ -984,7 +983,7 @@ func (r *clusters) ListServicesBoundToCluster(clusterNameOrID, namespace string,
 	return boundServices, err
 }
 
-//FindServiceBoundToCluster...
+// FindServiceBoundToCluster...
 func (r *clusters) FindServiceBoundToCluster(clusterNameOrID, serviceNameOrId, namespace string, target ClusterTargetHeader) (BoundService, error) {
 	var boundService BoundService
 	boundServices, err := r.ListServicesBoundToCluster(clusterNameOrID, namespace, target)
@@ -1000,10 +999,45 @@ func (r *clusters) FindServiceBoundToCluster(clusterNameOrID, serviceNameOrId, n
 	return boundService, err
 }
 
-//RefreshAPIServers requests a refresh of a cluster's API server(s)
+// RefreshAPIServers requests a refresh of a cluster's API server(s)
 func (r *clusters) RefreshAPIServers(clusterNameOrID string, target ClusterTargetHeader) error {
 	params := MasterAPIServer{Action: "refresh"}
 	rawURL := fmt.Sprintf("/v1/clusters/%s/masters", clusterNameOrID)
 	_, err := r.client.Put(rawURL, params, nil, target.ToMap())
 	return err
+}
+
+// readKubeConfig reads file at path and inserts refresh token into it for
+// backwards compatibility.
+func (r *clusters) readKubeConfig(path string, isAdmin bool) (clientcmdv1.Config, error) {
+	var config clientcmdv1.Config
+
+	fileBody, err := os.ReadFile(path)
+	if err != nil {
+		return config, fmt.Errorf("Error reading config file: %s\n", err)
+	}
+
+	if isAdmin || len(config.AuthInfos) == 0 {
+		return config, nil
+	}
+
+	// insert refresh token for backwards compatibility
+
+	_, refreshToken, err := r.client.TokenRefresher.GetKubeTokens()
+	if err != nil {
+		return config, fmt.Errorf("Error getting kube tokens: %s\n", err)
+	}
+
+	config.AuthInfos[0].AuthInfo.AuthProvider.Config["refresh-token"] = refreshToken
+
+	fileBody, err = yaml.Marshal(config)
+	if err != nil {
+		return config, fmt.Errorf("Error marshalling YAML file: %s\n", err)
+	}
+
+	if err := os.WriteFile(path, fileBody, 0755); err != nil {
+		return config, fmt.Errorf("Error writing YAML file: %s\n", err)
+	}
+
+	return config, nil
 }
