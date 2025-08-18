@@ -100,10 +100,13 @@ func (c *Client) MakeRequest(r *rest.Request, respV interface{}) (*gohttp.Respon
 			if c.Config.BluemixAPIKey != "" {
 				log.Println("Retrying authentication using API Key")
 				err = c.TokenRefresher.AuthenticateAPIKey(c.Config.BluemixAPIKey)
-			} else {
+			} else if c.Config.IAMRefreshToken != "" {
 				log.Println("Retrying authentication using Refresh Token")
 				_, err = c.TokenRefresher.RefreshToken()
+			} else {
+				return resp, err
 			}
+
 			switch err.(type) {
 			case nil:
 				restClient.DefaultHeader = getDefaultAuthHeaders(c.ServiceName, c.Config)
