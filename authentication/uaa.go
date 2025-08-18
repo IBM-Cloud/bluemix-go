@@ -9,27 +9,27 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
-//UAAError ...
+// UAAError ...
 type UAAError struct {
 	ErrorCode   string `json:"error"`
 	Description string `json:"error_description"`
 }
 
-//UAATokenResponse ...
+// UAATokenResponse ...
 type UAATokenResponse struct {
 	AccessToken  string `json:"access_token"`
 	TokenType    string `json:"token_type"`
 	RefreshToken string `json:"refresh_token"`
 }
 
-//UAARepository ...
+// UAARepository ...
 type UAARepository struct {
 	config   *bluemix.Config
 	client   *rest.Client
 	endpoint string
 }
 
-//NewUAARepository ...
+// NewUAARepository ...
 func NewUAARepository(config *bluemix.Config, client *rest.Client) (*UAARepository, error) {
 	var endpoint string
 
@@ -49,31 +49,46 @@ func NewUAARepository(config *bluemix.Config, client *rest.Client) (*UAAReposito
 	}, nil
 }
 
-//AuthenticatePassword ...
+// AuthenticatePassword ...
 func (auth *UAARepository) AuthenticatePassword(username string, password string) error {
-	return auth.getToken(map[string]string{
+	return auth.setTokens("cf", "", map[string]string{
 		"grant_type": "password",
 		"username":   username,
 		"password":   password,
 	})
 }
 
-//AuthenticateSSO ...
+// AuthenticateSSO ...
 func (auth *UAARepository) AuthenticateSSO(passcode string) error {
-	return auth.getToken(map[string]string{
+	return auth.setTokens("cf", "", map[string]string{
 		"grant_type": "password",
 		"passcode":   passcode,
 	})
 }
 
-//AuthenticateAPIKey ...
+// AuthenticateAPIKey ...
 func (auth *UAARepository) AuthenticateAPIKey(apiKey string) error {
 	return auth.AuthenticatePassword("apikey", apiKey)
 }
 
-//RefreshToken ...
+// GetKubeTokens fetches the kube:kube access and refresh tokens.
+func (auth *UAARepository) GetKubeTokens() (string, string, error) {
+	data := map[string]string{
+		"grant_type":    "refresh_token",
+		"refresh_token": auth.config.IAMRefreshToken,
+	}
+
+	tokens, err := auth.getTokens("kube", "kube", data)
+	if err != nil {
+		return "", "", err
+	}
+
+	return tokens.AccessToken, tokens.RefreshToken, nil
+}
+
+// RefreshToken ...
 func (auth *UAARepository) RefreshToken() (string, error) {
-	err := auth.getToken(map[string]string{
+	err := auth.setTokens("cf", "", map[string]string{
 		"grant_type":    "refresh_token",
 		"refresh_token": auth.config.UAARefreshToken,
 	})
@@ -84,14 +99,14 @@ func (auth *UAARepository) RefreshToken() (string, error) {
 	return auth.config.UAAAccessToken, nil
 }
 
-//GetPasscode ...
+// GetPasscode ...
 func (auth *UAARepository) GetPasscode() (string, error) {
 	return "", nil
 }
 
-func (auth *UAARepository) getToken(data map[string]string) error {
+func (auth *UAARepository) getTokens(clientId, clientSecret string, data map[string]string) (UAATokenResponse, error) {
 	request := rest.PostRequest(auth.endpoint+"/oauth/token").
-		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("cf:"))).
+		Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString(fmt.Appendf(nil, "%s:%s", clientId, clientSecret))).
 		Field("scope", "")
 
 	for k, v := range data {
@@ -103,13 +118,23 @@ func (auth *UAARepository) getToken(data map[string]string) error {
 
 	resp, err := auth.client.Do(request, &tokens, &apiErr)
 	if err != nil {
-		return err
+		return tokens, err
 	}
-	if apiErr.ErrorCode != "" {
-		if apiErr.ErrorCode == "invalid-token" {
-			return bmxerror.NewInvalidTokenError(apiErr.Description)
-		}
-		return bmxerror.NewRequestFailure(apiErr.ErrorCode, apiErr.Description, resp.StatusCode)
+
+	if apiErr.ErrorCode == "" {
+		return tokens, nil
+	}
+
+	if apiErr.ErrorCode == "invalid-token" {
+		return tokens, bmxerror.NewInvalidTokenError(apiErr.Description)
+	}
+	return tokens, bmxerror.NewRequestFailure(apiErr.ErrorCode, apiErr.Description, resp.StatusCode)
+}
+
+func (auth *UAARepository) setTokens(clientId, clientSecret string, data map[string]string) error {
+	tokens, err := auth.getTokens(clientId, clientSecret, data)
+	if err != nil {
+		return err
 	}
 
 	auth.config.UAAAccessToken = fmt.Sprintf("%s %s", tokens.TokenType, tokens.AccessToken)
