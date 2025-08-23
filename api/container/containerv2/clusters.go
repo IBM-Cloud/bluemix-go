@@ -371,7 +371,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, isAdmin bool, target
 		clusterkey.FilePath, _ = filepath.Abs(configPath)
 		return clusterkey, err
 	}
-	if clusterInfo.Type == "openshift" && clusterInfo.Provider != "satellite" {
+	if clusterInfo.Type == "openshift" && clusterInfo.Provider == "satellite" {
 		trace.Logger.Println("Debug: type is openshift trying login to get token")
 		var yamlConfig []byte
 		if yamlConfig, err = ioutil.ReadFile(configPath); err != nil {
@@ -524,7 +524,7 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 		return calicoConfig, clusterkey, nil
 	}
 
-	if clusterInfo.Type == "openshift" && clusterInfo.Provider != "satellite" {
+	if clusterInfo.Type == "openshift" && clusterInfo.Provider == "satellite" {
 		trace.Logger.Println("Cluster Type is openshift trying login to get token")
 		var yamlConfig []byte
 		if yamlConfig, err = ioutil.ReadFile(configPath); err != nil {
