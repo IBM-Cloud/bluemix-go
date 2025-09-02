@@ -359,8 +359,8 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, isAdmin bool, target
 	if len(config.Clusters) > 0 {
 		clusterkey.Host = config.Clusters[0].Cluster.Server
 	}
-	if len(config.AuthInfos) > 0 {
-		clusterkey.Token, _ = config.AuthInfos[0].AuthInfo.AuthProvider.Config["id-token"]
+	if len(config.AuthInfos) > 0 && config.AuthInfos[0].AuthInfo.AuthProvider != nil {
+		clusterkey.Token = config.AuthInfos[0].AuthInfo.AuthProvider.Config["id-token"]
 	}
 
 	// Block to add token for openshift clusters
@@ -511,8 +511,8 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 	if len(config.Clusters) > 0 {
 		clusterkey.Host = config.Clusters[0].Cluster.Server
 	}
-	if len(config.AuthInfos) > 0 {
-		clusterkey.Token, _ = config.AuthInfos[0].AuthInfo.AuthProvider.Config["id-token"]
+	if len(config.AuthInfos) > 0 && config.AuthInfos[0].AuthInfo.AuthProvider != nil {
+		clusterkey.Token = config.AuthInfos[0].AuthInfo.AuthProvider.Config["id-token"]
 	}
 
 	// Block to add token for openshift clusters (This can be temporary until iks team handles openshift clusters)
