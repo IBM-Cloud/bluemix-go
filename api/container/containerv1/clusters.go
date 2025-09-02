@@ -556,7 +556,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, isAdmin bool, target
 	if len(config.Clusters) > 0 {
 		clusterkey.Host = config.Clusters[0].Cluster.Server
 	}
-	if len(config.AuthInfos) > 0 {
+	if len(config.AuthInfos) > 0 && config.AuthInfos[0].AuthInfo.AuthProvider != nil {
 		clusterkey.Token = config.AuthInfos[0].AuthInfo.AuthProvider.Config["id-token"]
 	}
 
@@ -808,7 +808,7 @@ func (r *clusters) StoreConfigDetail(name, dir string, isAdmin, createCalicoConf
 	if len(config.Clusters) > 0 {
 		clusterkey.Host = config.Clusters[0].Cluster.Server
 	}
-	if len(config.AuthInfos) > 0 {
+	if len(config.AuthInfos) > 0 && config.AuthInfos[0].AuthInfo.AuthProvider != nil {
 		clusterkey.Token = config.AuthInfos[0].AuthInfo.AuthProvider.Config["id-token"]
 	}
 
