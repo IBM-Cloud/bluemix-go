@@ -11,7 +11,7 @@ require (
 	github.com/onsi/gomega v1.38.2
 	golang.org/x/net v0.43.0
 	k8s.io/client-go v0.33.4
-	sigs.k8s.io/yaml v1.4.0
+	sigs.k8s.io/yaml v1.6.0
 )
 
 require (
@@ -30,6 +30,7 @@ require (
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	go.mongodb.org/mongo-driver v1.11.3 // indirect
+	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
