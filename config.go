@@ -104,6 +104,7 @@ type Config struct {
 	PrivateEndpointType string
 	EndpointsFile       string
 	UserAgent           string
+	IAMTrustedProfileID string
 }
 
 // Copy allows the configuration to be overriden or added

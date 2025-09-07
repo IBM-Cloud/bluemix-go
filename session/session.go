@@ -49,6 +49,10 @@ func New(configs ...*bluemix.Config) (*Session, error) {
 		c.IAMRefreshToken = helpers.EnvFallBack([]string{"IC_IAM_REFRESH_TOKEN", "IBMCLOUD_IAM_REFRESH_TOKEN"}, "")
 	}
 
+	if len(c.IAMTrustedProfileID) == 0 {
+		c.IAMTrustedProfileID = helpers.EnvFallBack([]string{"IC_IAM_PROFILE_ID", "IBMCLOUD_IAM_PROFILE_ID"}, "")
+	}
+
 	if len(c.Region) == 0 {
 		c.Region = helpers.EnvFallBack([]string{"IC_REGION", "IBMCLOUD_REGION", "BM_REGION", "BLUEMIX_REGION"}, "us-south")
 	}
