@@ -71,6 +71,11 @@ func (auth *UAARepository) AuthenticateAPIKey(apiKey string) error {
 	return auth.AuthenticatePassword("apikey", apiKey)
 }
 
+// IAMAssumeAuthenticator ...
+func (auth *UAARepository) AuthenticateAssume(apiKey string, trustedProfileId string) error {
+	return auth.setAssumeTokens(apiKey, trustedProfileId)
+}
+
 // GetKubeTokens fetches the kube:kube access and refresh tokens.
 func (auth *UAARepository) GetKubeTokens() (string, string, error) {
 	data := map[string]string{
@@ -140,4 +145,37 @@ func (auth *UAARepository) setTokens(clientId, clientSecret string, data map[str
 	auth.config.UAAAccessToken = fmt.Sprintf("%s %s", tokens.TokenType, tokens.AccessToken)
 	auth.config.UAARefreshToken = tokens.RefreshToken
 	return nil
+}
+
+func (auth *UAARepository) setAssumeTokens(apiKey, trustedProfileId string) error {
+	tokens, err := auth.getAssumeToken(apiKey, trustedProfileId)
+	if err != nil {
+		return err
+	}
+
+	auth.config.UAAAccessToken = fmt.Sprintf("%s %s", tokens.TokenType, tokens.AccessToken)
+	return nil
+}
+
+// getAssumeTokens
+func (auth *UAARepository) getAssumeToken(apiKey, trustedProfileId string) (UAATokenResponse, error) {
+	delegatedTokens, err := auth.getTokens("bx", "bx", map[string]string{
+		"grant_type":    "urn:ibm:params:oauth:grant-type:apikey",
+		"apiKey":        apiKey,
+		"response_type": "cloud_iam",
+	})
+	if err != nil {
+		return delegatedTokens, err
+	}
+
+	assumeTokens, err := auth.getTokens("bx", "bx", map[string]string{
+		"grant_type":   "urn:ibm:params:oauth:grant-type:assume",
+		"access_token": delegatedTokens.AccessToken,
+		"profile_id":   trustedProfileId,
+	})
+	if err != nil {
+		return assumeTokens, err
+	}
+
+	return assumeTokens, nil
 }

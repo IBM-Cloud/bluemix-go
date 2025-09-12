@@ -12,14 +12,18 @@ const (
 	ErrCodeInvalidToken = "InvalidToken"
 )
 
-//PopulateTokens populate the relevant tokens in the bluemix Config using the token provider
+// PopulateTokens populate the relevant tokens in the bluemix Config using the token provider
 func PopulateTokens(tokenProvider client.TokenProvider, c *bluemix.Config) error {
 	if c.IBMID != "" && c.IBMIDPassword != "" {
 		err := tokenProvider.AuthenticatePassword(c.IBMID, c.IBMIDPassword)
 		return err
 	}
-	if c.BluemixAPIKey != "" {
+	if c.BluemixAPIKey != "" && c.IAMTrustedProfileID == "" {
 		err := tokenProvider.AuthenticateAPIKey(c.BluemixAPIKey)
+		return err
+	}
+	if c.BluemixAPIKey != "" && c.IAMTrustedProfileID != "" {
+		err := tokenProvider.AuthenticateAssume(c.BluemixAPIKey, c.IAMTrustedProfileID)
 		return err
 	}
 	return errors.New("Insufficient credentials, need IBMID/IBMIDPassword or IBM Cloud API Key or IAM/IAM refresh tokens")

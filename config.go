@@ -104,6 +104,7 @@ type Config struct {
 	PrivateEndpointType string
 	EndpointsFile       string
 	UserAgent           string
+	IAMTrustedProfileID string
 }
 
 // Copy allows the configuration to be overriden or added
@@ -124,7 +125,7 @@ func (c *Config) Copy(mccpgs ...*Config) *Config {
 
 // ValidateConfigForService ...
 func (c *Config) ValidateConfigForService(svc ServiceName) error {
-	if (c.IBMID == "" || c.IBMIDPassword == "") && c.BluemixAPIKey == "" && (c.IAMAccessToken == "" || c.IAMRefreshToken == "") {
+	if (c.IBMID == "" || c.IBMIDPassword == "") && c.BluemixAPIKey == "" && c.IAMAccessToken == "" && c.IAMRefreshToken == "" {
 		return bmxerror.New(ErrInsufficientCredentials, "Please check the documentation on how to configure the IBM Cloud credentials")
 	}
 

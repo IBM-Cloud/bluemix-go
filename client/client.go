@@ -24,6 +24,7 @@ type TokenProvider interface {
 	GetPasscode() (string, error)
 	AuthenticatePassword(string, string) error
 	AuthenticateAPIKey(string) error
+	AuthenticateAssume(string, string) error
 	GetKubeTokens() (string, string, error)
 }
 
@@ -97,10 +98,13 @@ func (c *Client) MakeRequest(r *rest.Request, respV interface{}) (*gohttp.Respon
 			c.headerLock.Lock()
 			defer c.headerLock.Unlock()
 			var err error
-			if c.Config.BluemixAPIKey != "" {
+			if c.Config.BluemixAPIKey != "" && c.Config.IAMTrustedProfileID == "" {
 				log.Println("Retrying authentication using API Key")
 				err = c.TokenRefresher.AuthenticateAPIKey(c.Config.BluemixAPIKey)
-			} else {
+			} else if c.Config.BluemixAPIKey != "" && c.Config.IAMTrustedProfileID != "" {
+				log.Println("Retrying authentication using API Key and Trusted Profile ID")
+				err = c.TokenRefresher.AuthenticateAssume(c.Config.BluemixAPIKey, c.Config.IAMTrustedProfileID)
+			} else if c.Config.IAMRefreshToken != "" {
 				log.Println("Retrying authentication using Refresh Token")
 				_, err = c.TokenRefresher.RefreshToken()
 			}
@@ -122,7 +126,7 @@ func (c *Client) MakeRequest(r *rest.Request, respV interface{}) (*gohttp.Respon
 			case *bmxerror.InvalidTokenError:
 				return resp, bmxerror.NewRequestFailure("InvalidToken", fmt.Sprintf("%v", err), 401)
 			default:
-				return resp, fmt.Errorf("Authentication failed, Unable to refresh auth token: %v. Try again later", err)
+				return resp, fmt.Errorf("Error: %v", err)
 			}
 		}
 
