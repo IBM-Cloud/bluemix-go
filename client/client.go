@@ -320,12 +320,10 @@ func getDefaultAuthHeaders(serviceName bluemix.ServiceName, c *bluemix.Config) g
 	case bluemix.ContainerService:
 		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
-		h.Set(iamRefreshTokenHeader, c.IAMRefreshToken) // TODO: delete once IAM removes it
 		h.Set(uaaAccessTokenHeader, c.UAAAccessToken)
 	case bluemix.VpcContainerService:
 		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
-		h.Set(iamRefreshTokenHeader, c.IAMRefreshToken) // TODO: delete once IAM removes it
 	case bluemix.SchematicsService:
 		h.Set(userAgentHeader, http.UserAgent())
 		h.Set(authorizationHeader, c.IAMAccessToken)
