@@ -5,9 +5,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/IBM-Cloud/bluemix-go/api/globaltagging/globaltaggingv3"
-	"github.com/IBM-Cloud/bluemix-go/session"
-	"github.com/IBM-Cloud/bluemix-go/trace"
+	"github.com/Mavrickk3/bluemix-go/api/globaltagging/globaltaggingv3"
+	"github.com/Mavrickk3/bluemix-go/session"
+	"github.com/Mavrickk3/bluemix-go/trace"
 )
 
 func main() {

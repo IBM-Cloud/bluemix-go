@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/models"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/models"
 )
 
-//Certificate Interface
+// Certificate Interface
 type Certificate interface {
 	ImportCertificate(InstanceID string, importData models.CertificateImportData) (models.CertificateInfo, error)
 	OrderCertificate(InstanceID string, orderData models.CertificateOrderData) (models.CertificateInfo, error)
@@ -22,7 +22,7 @@ type Certificate interface {
 	UpdateOrderPolicy(CertID string, autoRenew models.OrderPolicy) (models.OrderPolicy, error)
 }
 
-//Certificates client struct
+// Certificates client struct
 type Certificates struct {
 	client *client.Client
 }
@@ -33,7 +33,7 @@ func newCertificateAPI(c *client.Client) Certificate {
 	}
 }
 
-//ImportCertificate ..
+// ImportCertificate ..
 func (r *Certificates) ImportCertificate(InstanceID string, importData models.CertificateImportData) (models.CertificateInfo, error) {
 	certInfo := models.CertificateInfo{}
 	_, err := r.client.Post(fmt.Sprintf("/api/v3/%s/certificates/import", url.QueryEscape(InstanceID)), importData, &certInfo)
@@ -43,7 +43,7 @@ func (r *Certificates) ImportCertificate(InstanceID string, importData models.Ce
 	return certInfo, err
 }
 
-//OrderCertificate ...
+// OrderCertificate ...
 func (r *Certificates) OrderCertificate(InstanceID string, orderdata models.CertificateOrderData) (models.CertificateInfo, error) {
 	certInfo := models.CertificateInfo{}
 	_, err := r.client.Post(fmt.Sprintf("/api/v1/%s/certificates/order", url.QueryEscape(InstanceID)), orderdata, &certInfo)
@@ -53,7 +53,7 @@ func (r *Certificates) OrderCertificate(InstanceID string, orderdata models.Cert
 	return certInfo, err
 }
 
-//RenewCertificate ...
+// RenewCertificate ...
 func (r *Certificates) RenewCertificate(CertID string, renewdata models.CertificateRenewData) (models.CertificateInfo, error) {
 	certInfo := models.CertificateInfo{}
 	_, err := r.client.Post(fmt.Sprintf("/api/v1/certificate/%s/renew", url.QueryEscape(CertID)), renewdata, &certInfo)
@@ -63,7 +63,7 @@ func (r *Certificates) RenewCertificate(CertID string, renewdata models.Certific
 	return certInfo, err
 }
 
-//GetMetaData ...
+// GetMetaData ...
 func (r *Certificates) GetMetaData(CertID string) (models.CertificateInfo, error) {
 	certInfo := models.CertificateInfo{}
 	_, err := r.client.Get(fmt.Sprintf("/api/v1/certificate/%s/metadata", url.QueryEscape(CertID)), &certInfo)
@@ -73,7 +73,7 @@ func (r *Certificates) GetMetaData(CertID string) (models.CertificateInfo, error
 	return certInfo, err
 }
 
-//GetCertData ...
+// GetCertData ...
 func (r *Certificates) GetCertData(CertID string) (models.CertificateGetData, error) {
 	certInfo := models.CertificateGetData{}
 	_, err := r.client.Get(fmt.Sprintf("/api/v2/certificate/%s", url.QueryEscape(CertID)), &certInfo)
@@ -105,7 +105,7 @@ func (r *Certificates) ReimportCertificate(CertID string, reimportData models.Ce
 	return certInfo, err
 }
 
-//ListCertificates ...
+// ListCertificates ...
 func (r *Certificates) ListCertificates(InstanceID string) ([]models.CertificateInfo, error) {
 	certificatesInfo := models.CertificatesInfo{}
 	rawURL := fmt.Sprintf("/api/v3/%s/certificates?page_size=200", url.QueryEscape(InstanceID))
@@ -121,7 +121,7 @@ func (r *Certificates) ListCertificates(InstanceID string) ([]models.Certificate
 	return certificatesInfo.CertificateList, nil
 }
 
-//UpdateOrderPolicy ..
+// UpdateOrderPolicy ..
 func (r *Certificates) UpdateOrderPolicy(CertID string, autoRenew models.OrderPolicy) (models.OrderPolicy, error) {
 	orderPolicyInfo := models.OrderPolicy{}
 	_, err := r.client.Put(fmt.Sprintf("/api/v1/certificate/%s/order/policy", url.QueryEscape(CertID)), autoRenew, &orderPolicyInfo)

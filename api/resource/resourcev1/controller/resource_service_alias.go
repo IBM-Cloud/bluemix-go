@@ -6,11 +6,11 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/IBM-Cloud/bluemix-go/bmxerror"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/crn"
-	"github.com/IBM-Cloud/bluemix-go/models"
-	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/bmxerror"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/crn"
+	"github.com/Mavrickk3/bluemix-go/models"
+	"github.com/Mavrickk3/bluemix-go/rest"
 )
 
 type ServiceAliasQueryFilter struct {
@@ -33,7 +33,7 @@ type UpdateServiceAliasParams struct {
 	Parameters map[string]interface{} `json:"parameters,omitempty"`
 }
 
-//ErrCodeResourceServiceAliasDoesnotExist ...
+// ErrCodeResourceServiceAliasDoesnotExist ...
 const ErrCodeResourceServiceAliasDoesnotExist = "ResourceServiceAliasDoesnotExist"
 
 type ResourceServiceAliasRepository interface {

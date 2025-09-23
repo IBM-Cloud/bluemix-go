@@ -2,7 +2,7 @@ package cisv1
 
 import (
 	"fmt"
-	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/client"
 )
 
 type IpsList struct {

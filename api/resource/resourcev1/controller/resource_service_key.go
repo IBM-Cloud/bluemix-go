@@ -4,11 +4,11 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/crn"
-	"github.com/IBM-Cloud/bluemix-go/helpers"
-	"github.com/IBM-Cloud/bluemix-go/models"
-	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/crn"
+	"github.com/Mavrickk3/bluemix-go/helpers"
+	"github.com/Mavrickk3/bluemix-go/models"
+	"github.com/Mavrickk3/bluemix-go/rest"
 )
 
 const (
@@ -22,10 +22,10 @@ type CreateServiceKeyRequest struct {
 	Parameters map[string]interface{} `json:"parameters,omitempty"`
 }
 
-//ErrCodeResourceServiceInstanceDoesnotExist ...
+// ErrCodeResourceServiceInstanceDoesnotExist ...
 const ErrCodeResourceServiceKeyDoesnotExist = "ResourceServiceInstanceDoesnotExist"
 
-//ResourceServiceInstanceQuery ...
+// ResourceServiceInstanceQuery ...
 type ResourceServiceKeyRepository interface {
 	GetKey(keyID string) (models.ServiceKey, error)
 	GetKeys(keyName string) ([]models.ServiceKey, error)

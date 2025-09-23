@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/IBM-Cloud/bluemix-go/bmxerror"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/bmxerror"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/rest"
 )
 
-//SpaceQuotaCreateRequest ...
+// SpaceQuotaCreateRequest ...
 type SpaceQuotaCreateRequest struct {
 	Name                    string `json:"name"`
 	OrgGUID                 string `json:"organization_guid"`
@@ -20,7 +20,7 @@ type SpaceQuotaCreateRequest struct {
 	NonBasicServicesAllowed bool   `json:"non_basic_services_allowed"`
 }
 
-//SpaceQuotaUpdateRequest ...
+// SpaceQuotaUpdateRequest ...
 type SpaceQuotaUpdateRequest struct {
 	Name                    string `json:"name"`
 	OrgGUID                 string `json:"organization_guid,omitempty"`
@@ -45,19 +45,19 @@ type SpaceQuota struct {
 	AppTaskLimit            int
 }
 
-//SpaceQuotaFields ...
+// SpaceQuotaFields ...
 type SpaceQuotaFields struct {
 	Metadata SpaceQuotaMetadata
 	Entity   SpaceQuotaEntity
 }
 
-//SpaceQuotaMetadata ...
+// SpaceQuotaMetadata ...
 type SpaceQuotaMetadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
 }
 
-//ErrCodeSpaceQuotaDoesnotExist ...
+// ErrCodeSpaceQuotaDoesnotExist ...
 const ErrCodeSpaceQuotaDoesnotExist = "SpaceQuotaDoesnotExist"
 
 type SpaceQuotaResource struct {
@@ -96,7 +96,7 @@ func (resource SpaceQuotaResource) ToFields() SpaceQuota {
 	}
 }
 
-//SpaceQuotas ...
+// SpaceQuotas ...
 type SpaceQuotas interface {
 	FindByName(name, orgGUID string) (*SpaceQuota, error)
 	Create(createRequest SpaceQuotaCreateRequest) (*SpaceQuotaFields, error)

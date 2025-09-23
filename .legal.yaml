@@ -1,6 +1,6 @@
 schemaVersion: oss-license-declaration.cloud.ibm.com:v4
 name: bluemix-go
-source: https://github.com/IBM-Cloud/bluemix-go
+source: https://github.com/Mavrickk3/bluemix-go
 issues: https://github.ibm.com/blueprint/security-project-management/issues
 objectCodeOnly: false
 additionalDownloads:

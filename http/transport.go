@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/IBM-Cloud/bluemix-go/trace"
+	"github.com/Mavrickk3/bluemix-go/trace"
 )
 
 // TraceLoggingTransport is a thin wrapper around Transport. It dumps HTTP
@@ -31,7 +31,7 @@ func NewTraceLoggingTransport(rt http.RoundTripper) *TraceLoggingTransport {
 	}
 }
 
-//RoundTrip ...
+// RoundTrip ...
 func (r *TraceLoggingTransport) RoundTrip(req *http.Request) (resp *http.Response, err error) {
 	start := time.Now()
 	r.dumpRequest(req, start)

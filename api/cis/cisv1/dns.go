@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/client"
 )
 
 type DnsRecord struct {

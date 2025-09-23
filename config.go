@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/IBM-Cloud/bluemix-go/bmxerror"
-	"github.com/IBM-Cloud/bluemix-go/endpoints"
+	"github.com/Mavrickk3/bluemix-go/bmxerror"
+	"github.com/Mavrickk3/bluemix-go/endpoints"
 )
 
 // ServiceName ..

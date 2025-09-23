@@ -3,28 +3,28 @@ package hpcs
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/IBM-Cloud/bluemix-go"
-	"github.com/IBM-Cloud/bluemix-go/authentication"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/http"
-	"github.com/IBM-Cloud/bluemix-go/rest"
-	"github.com/IBM-Cloud/bluemix-go/session"
+	bluemix "github.com/Mavrickk3/bluemix-go"
+	"github.com/Mavrickk3/bluemix-go/authentication"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/http"
+	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/session"
 )
 
-//HPCSV2 is the resource client ...
+// HPCSV2 is the resource client ...
 type HPCSV2 interface {
 	Endpoint() EndpointRepository
 }
 
-//ErrCodeAPICreation ...
+// ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-//hpcsService holds the client
+// hpcsService holds the client
 type hpcsService struct {
 	*client.Client
 }
 
-//New ...
+// New ...
 func New(sess *session.Session) (HPCSV2, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.HPCService)
@@ -63,7 +63,7 @@ func New(sess *session.Session) (HPCSV2, error) {
 	}, nil
 }
 
-//Hpcs API
+// Hpcs API
 func (a *hpcsService) Endpoint() EndpointRepository {
 	return NewHpcsEndpointRepository(a.Client)
 }

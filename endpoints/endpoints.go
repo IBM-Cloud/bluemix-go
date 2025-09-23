@@ -7,11 +7,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/IBM-Cloud/bluemix-go/bmxerror"
-	"github.com/IBM-Cloud/bluemix-go/helpers"
+	"github.com/Mavrickk3/bluemix-go/bmxerror"
+	"github.com/Mavrickk3/bluemix-go/helpers"
 )
 
-//EndpointLocator ...
+// EndpointLocator ...
 type EndpointLocator interface {
 	AccountManagementEndpoint() (string, error)
 	CertificateManagerEndpoint() (string, error)
@@ -106,7 +106,7 @@ type endpointLocator struct {
 	endpointsFile map[string]interface{}
 }
 
-//NewEndpointLocator ...
+// NewEndpointLocator ...
 func NewEndpointLocator(region, visibility, file string) EndpointLocator {
 	var fileMap map[string]interface{}
 	if f := helpers.EnvFallBack([]string{"IBMCLOUD_ENDPOINTS_FILE_PATH", "IC_ENDPOINTS_FILE_PATH"}, file); f != "" {

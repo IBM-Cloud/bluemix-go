@@ -3,7 +3,7 @@ package models
 import (
 	"encoding/json"
 
-	"github.com/IBM-Cloud/bluemix-go/crn"
+	"github.com/Mavrickk3/bluemix-go/crn"
 )
 
 type Service struct {

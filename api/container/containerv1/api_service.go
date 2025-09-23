@@ -3,18 +3,18 @@ package containerv1
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/IBM-Cloud/bluemix-go"
-	"github.com/IBM-Cloud/bluemix-go/authentication"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/http"
-	"github.com/IBM-Cloud/bluemix-go/rest"
-	"github.com/IBM-Cloud/bluemix-go/session"
+	bluemix "github.com/Mavrickk3/bluemix-go"
+	"github.com/Mavrickk3/bluemix-go/authentication"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/http"
+	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/session"
 )
 
-//ErrCodeAPICreation ...
+// ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-//ContainerServiceAPI is the Aramda K8s client ...
+// ContainerServiceAPI is the Aramda K8s client ...
 type ContainerServiceAPI interface {
 	Albs() Albs
 	Clusters() Clusters
@@ -29,12 +29,12 @@ type ContainerServiceAPI interface {
 	Apikeys() Apikeys
 }
 
-//ContainerService holds the client
+// ContainerService holds the client
 type csService struct {
 	*client.Client
 }
 
-//New ...
+// New ...
 func New(sess *session.Session) (ContainerServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.ContainerService)
@@ -73,57 +73,57 @@ func New(sess *session.Session) (ContainerServiceAPI, error) {
 	}, nil
 }
 
-//Albs implement albs API
+// Albs implement albs API
 func (c *csService) Albs() Albs {
 	return newAlbAPI(c.Client)
 }
 
-//Clusters implements Clusters API
+// Clusters implements Clusters API
 func (c *csService) Clusters() Clusters {
 	return newClusterAPI(c.Client)
 }
 
-//Workers implements Cluster Workers API
+// Workers implements Cluster Workers API
 func (c *csService) Workers() Workers {
 	return newWorkerAPI(c.Client)
 }
 
-//WorkerPools implements Cluster WorkerPools API
+// WorkerPools implements Cluster WorkerPools API
 func (c *csService) WorkerPools() WorkerPool {
 	return newWorkerPoolAPI(c.Client)
 }
 
-//Subnets implements Cluster Subnets API
+// Subnets implements Cluster Subnets API
 func (c *csService) Subnets() Subnets {
 	return newSubnetAPI(c.Client)
 }
 
-//Webhooks implements Cluster WebHooks API
+// Webhooks implements Cluster WebHooks API
 func (c *csService) WebHooks() Webhooks {
 	return newWebhookAPI(c.Client)
 }
 
-//KubeVersions implements Cluster WebHooks API
+// KubeVersions implements Cluster WebHooks API
 func (c *csService) KubeVersions() KubeVersions {
 	return newKubeVersionAPI(c.Client)
 }
 
-//Vlans implements DC Cluster Vlan API
+// Vlans implements DC Cluster Vlan API
 func (c *csService) Vlans() Vlans {
 	return newVlanAPI(c.Client)
 }
 
-//Kms implements Cluster Kms API
+// Kms implements Cluster Kms API
 func (c *csService) Kms() Kms {
 	return newKmsAPI(c.Client)
 }
 
-//AddOns implements Cluster Add Ons
+// AddOns implements Cluster Add Ons
 func (c *csService) AddOns() AddOns {
 	return newAddOnsAPI(c.Client)
 }
 
-//AddOns implements Cluster Add Ons
+// AddOns implements Cluster Add Ons
 func (c *csService) Apikeys() Apikeys {
 	return newApiKeyAPI(c.Client)
 }

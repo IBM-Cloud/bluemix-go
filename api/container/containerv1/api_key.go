@@ -3,9 +3,9 @@ package containerv1
 import (
 	"fmt"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/helpers"
-	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/helpers"
+	"github.com/Mavrickk3/bluemix-go/rest"
 )
 
 type ApiKeyInfo struct {
@@ -30,7 +30,7 @@ func newApiKeyAPI(c *client.Client) Apikeys {
 	}
 }
 
-//GetApiKeyInfo ...
+// GetApiKeyInfo ...
 func (r *apikeys) GetApiKeyInfo(cluster string, target ClusterTargetHeader) (ApiKeyInfo, error) {
 	retVal := ApiKeyInfo{}
 	req := rest.GetRequest(helpers.GetFullURL(*r.client.Config.Endpoint, fmt.Sprintf("/v1/logging/%s/clusterkeyowner", cluster)))
@@ -46,7 +46,7 @@ func (r *apikeys) GetApiKeyInfo(cluster string, target ClusterTargetHeader) (Api
 	return retVal, err
 }
 
-//ResetApiKey ...
+// ResetApiKey ...
 func (r *apikeys) ResetApiKey(target ClusterTargetHeader) error {
 	req := rest.PostRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/v1/keys"))
 

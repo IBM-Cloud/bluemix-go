@@ -8,11 +8,11 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/ghttp"
 
-	bluemix "github.com/IBM-Cloud/bluemix-go"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	bluemixHttp "github.com/IBM-Cloud/bluemix-go/http"
-	"github.com/IBM-Cloud/bluemix-go/models"
-	"github.com/IBM-Cloud/bluemix-go/session"
+	bluemix "github.com/Mavrickk3/bluemix-go"
+	"github.com/Mavrickk3/bluemix-go/client"
+	bluemixHttp "github.com/Mavrickk3/bluemix-go/http"
+	"github.com/Mavrickk3/bluemix-go/models"
+	"github.com/Mavrickk3/bluemix-go/session"
 )
 
 var _ = Describe("Certificate_Manager", func() {

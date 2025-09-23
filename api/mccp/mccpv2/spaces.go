@@ -5,24 +5,24 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/IBM-Cloud/bluemix-go/bmxerror"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/bmxerror"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/rest"
 )
 
-//SpaceCreateRequest ...
+// SpaceCreateRequest ...
 type SpaceCreateRequest struct {
 	Name           string `json:"name"`
 	OrgGUID        string `json:"organization_guid"`
 	SpaceQuotaGUID string `json:"space_quota_definition_guid,omitempty"`
 }
 
-//SpaceUpdateRequest ...
+// SpaceUpdateRequest ...
 type SpaceUpdateRequest struct {
 	Name *string `json:"name,omitempty"`
 }
 
-//Space ...
+// Space ...
 type Space struct {
 	GUID           string
 	Name           string
@@ -31,48 +31,48 @@ type Space struct {
 	AllowSSH       bool
 }
 
-//SpaceRole ...
+// SpaceRole ...
 type SpaceRole struct {
 	UserGUID string
 	Admin    bool
 	UserName string
 }
 
-//SpaceFields ...
+// SpaceFields ...
 type SpaceFields struct {
 	Metadata SpaceMetadata
 	Entity   SpaceEntity
 }
 
-//SpaceMetadata ...
+// SpaceMetadata ...
 type SpaceMetadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
 }
 
-//ErrCodeSpaceDoesnotExist ...
+// ErrCodeSpaceDoesnotExist ...
 const ErrCodeSpaceDoesnotExist = "SpaceDoesnotExist"
 
-//SpaceResource ...
+// SpaceResource ...
 type SpaceResource struct {
 	Resource
 	Entity SpaceEntity
 }
 
-//SpaceRoleResource ...
+// SpaceRoleResource ...
 type SpaceRoleResource struct {
 	Resource
 	Entity SpaceRoleEntity
 }
 
-//SpaceRoleEntity ...
+// SpaceRoleEntity ...
 type SpaceRoleEntity struct {
 	UserGUID string `json:"guid"`
 	Admin    bool   `json:"bool"`
 	UserName string `json:"username"`
 }
 
-//SpaceEntity ...
+// SpaceEntity ...
 type SpaceEntity struct {
 	Name           string `json:"name"`
 	OrgGUID        string `json:"organization_guid"`
@@ -80,7 +80,7 @@ type SpaceEntity struct {
 	AllowSSH       bool   `json:"allow_ssh"`
 }
 
-//ToFields ...
+// ToFields ...
 func (resource *SpaceResource) ToFields() Space {
 	entity := resource.Entity
 
@@ -93,7 +93,7 @@ func (resource *SpaceResource) ToFields() Space {
 	}
 }
 
-//ToFields ...
+// ToFields ...
 func (resource *SpaceRoleResource) ToFields() SpaceRole {
 	entity := resource.Entity
 
@@ -104,7 +104,7 @@ func (resource *SpaceRoleResource) ToFields() SpaceRole {
 	}
 }
 
-//RouteFilter ...
+// RouteFilter ...
 type RouteFilter struct {
 	DomainGUID string
 	Host       *string
@@ -112,7 +112,7 @@ type RouteFilter struct {
 	Port       *int
 }
 
-//Spaces ...
+// Spaces ...
 type Spaces interface {
 	ListSpacesInOrg(orgGUID, region string) ([]Space, error)
 	FindByNameInOrg(orgGUID, name, region string) (*Space, error)

@@ -3,7 +3,7 @@ package containerv2
 import (
 	"fmt"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/client"
 )
 
 type SubnetConfig struct {
@@ -22,7 +22,7 @@ type subnet struct {
 	client *client.Client
 }
 
-//Subnets interface
+// Subnets interface
 type Subnets interface {
 	ListSubnets(vpcID, zone string, target ClusterTargetHeader) ([]SubnetConfig, error)
 }
@@ -33,7 +33,7 @@ func newSubnetsAPI(c *client.Client) Subnets {
 	}
 }
 
-//ListSubnets list the subnets for a given VPC
+// ListSubnets list the subnets for a given VPC
 func (r *subnet) ListSubnets(vpcID, zone string, target ClusterTargetHeader) ([]SubnetConfig, error) {
 	var successV []SubnetConfig
 	_, err := r.client.Get(fmt.Sprintf("/v2/vpc/getSubnets?vpc=%s&provider=%s&zone=%s", vpcID, target.Provider, zone), &successV, target.ToMap())

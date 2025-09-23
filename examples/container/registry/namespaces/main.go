@@ -6,9 +6,9 @@ import (
 	"log"
 	"os"
 
-	registryv1 "github.com/IBM-Cloud/bluemix-go/api/container/registryv1"
-	"github.com/IBM-Cloud/bluemix-go/session"
-	"github.com/IBM-Cloud/bluemix-go/trace"
+	registryv1 "github.com/Mavrickk3/bluemix-go/api/container/registryv1"
+	"github.com/Mavrickk3/bluemix-go/session"
+	"github.com/Mavrickk3/bluemix-go/trace"
 )
 
 func main() {

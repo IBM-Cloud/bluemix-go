@@ -3,8 +3,8 @@ package iampapv2
 import (
 	"fmt"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/rest"
 )
 
 type CreateRoleRequest struct {
@@ -109,7 +109,7 @@ func (r *roleRepository) Update(request UpdateRoleRequest, roleID, etag string) 
 	return res, nil
 }
 
-//Delete Function
+// Delete Function
 func (r *roleRepository) Delete(roleID string) error {
 	_, err := r.client.Delete(fmt.Sprintf("/v2/roles/%s", roleID))
 	return err

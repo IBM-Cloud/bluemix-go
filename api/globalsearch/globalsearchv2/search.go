@@ -3,7 +3,7 @@ package globalsearchv2
 import (
 	"fmt"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/client"
 )
 
 type SearchResult struct {

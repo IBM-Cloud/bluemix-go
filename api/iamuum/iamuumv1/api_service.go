@@ -3,29 +3,29 @@ package iamuumv1
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/IBM-Cloud/bluemix-go"
-	"github.com/IBM-Cloud/bluemix-go/authentication"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/http"
-	"github.com/IBM-Cloud/bluemix-go/rest"
-	"github.com/IBM-Cloud/bluemix-go/session"
+	bluemix "github.com/Mavrickk3/bluemix-go"
+	"github.com/Mavrickk3/bluemix-go/authentication"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/http"
+	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/session"
 )
 
-//IAMUUMServiceAPI is the resource client ...
+// IAMUUMServiceAPI is the resource client ...
 type IAMUUMServiceAPI interface {
 	AccessGroup() AccessGroupRepository
 	AccessGroupMember() AccessGroupMemberRepository
 }
 
-//ErrCodeAPICreation ...
+// ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-//iamService holds the client
+// iamService holds the client
 type iamuumService struct {
 	*client.Client
 }
 
-//New ...
+// New ...
 func New(sess *session.Session) (IAMUUMServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.IAMUUMService)
@@ -64,12 +64,12 @@ func New(sess *session.Session) (IAMUUMServiceAPI, error) {
 	}, nil
 }
 
-//AccessGroup API
+// AccessGroup API
 func (a *iamuumService) AccessGroup() AccessGroupRepository {
 	return NewAccessGroupRepository(a.Client)
 }
 
-//AccessGroupMember API
+// AccessGroupMember API
 func (a *iamuumService) AccessGroupMember() AccessGroupMemberRepository {
 	return NewAccessGroupMemberRepository(a.Client)
 }

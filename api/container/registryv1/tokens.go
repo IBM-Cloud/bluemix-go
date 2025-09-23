@@ -7,23 +7,23 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/helpers"
-	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/helpers"
+	"github.com/Mavrickk3/bluemix-go/rest"
 )
 
 type TokenTargetHeader struct {
 	AccountID string
 }
 
-//ToMap ...
+// ToMap ...
 func (c TokenTargetHeader) ToMap() map[string]string {
 	m := make(map[string]string, 1)
 	m[accountIDHeader] = c.AccountID
 	return m
 }
 
-//Subnets interface
+// Subnets interface
 type Tokens interface {
 	GetToken(tokenUUID string, target TokenTargetHeader) (*TokenResponse, error)
 	GetTokens(target TokenTargetHeader) (*GetTokensResponse, error)
@@ -59,7 +59,8 @@ type TokenResponse struct {
 	Token string `json:"token,omitempty"`
 }
 
-/*TokenIssueParams contains all the parameters to send to the API endpoint
+/*
+TokenIssueParams contains all the parameters to send to the API endpoint
 for the token issue operation typically these are written to a http.Request
 */
 type IssueTokenRequest struct {
@@ -85,7 +86,7 @@ func DefaultIssueTokenRequest() *IssueTokenRequest {
 	}
 }
 
-//GetTokens ...
+// GetTokens ...
 func (r *tokens) GetTokens(target TokenTargetHeader) (*GetTokensResponse, error) {
 
 	var retVal GetTokensResponse
@@ -121,7 +122,7 @@ func getTokID(token string) (string, error) {
 	return jwtID.ID, nil
 }
 
-//GetToken ...
+// GetToken ...
 func (r *tokens) GetToken(tokenUUID string, target TokenTargetHeader) (*TokenResponse, error) {
 
 	var retVal TokenResponse
@@ -140,7 +141,7 @@ func (r *tokens) GetToken(tokenUUID string, target TokenTargetHeader) (*TokenRes
 	return &retVal, err
 }
 
-//Add ...
+// Add ...
 func (r *tokens) IssueToken(params IssueTokenRequest, target TokenTargetHeader) (*TokenResponse, error) {
 
 	var retVal TokenResponse
@@ -162,7 +163,7 @@ func (r *tokens) IssueToken(params IssueTokenRequest, target TokenTargetHeader) 
 	return &retVal, err
 }
 
-//Delete...
+// Delete...
 func (r *tokens) DeleteToken(tokenUUID string, target TokenTargetHeader) error {
 	req := rest.DeleteRequest(helpers.GetFullURL(*r.client.Config.Endpoint, fmt.Sprintf("/api/v1/tokens/%s", tokenUUID)))
 
@@ -174,7 +175,7 @@ func (r *tokens) DeleteToken(tokenUUID string, target TokenTargetHeader) error {
 	return err
 }
 
-//Delete By Description
+// Delete By Description
 func (r *tokens) DeleteTokenByDescription(tokenDescription string, target TokenTargetHeader) error {
 	req := rest.DeleteRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/api/v1/tokens")).
 		Query("secondaryOwner", tokenDescription)

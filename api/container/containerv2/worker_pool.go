@@ -3,7 +3,7 @@ package containerv2
 import (
 	"fmt"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/client"
 )
 
 // CommonWorkerPoolConfig provides common worker pool data for cluster and workerpool operations

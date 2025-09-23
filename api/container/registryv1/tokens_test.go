@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	ibmcloud "github.com/IBM-Cloud/bluemix-go"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	ibmcloudHttp "github.com/IBM-Cloud/bluemix-go/http"
-	"github.com/IBM-Cloud/bluemix-go/session"
+	ibmcloud "github.com/Mavrickk3/bluemix-go"
+	"github.com/Mavrickk3/bluemix-go/client"
+	ibmcloudHttp "github.com/Mavrickk3/bluemix-go/http"
+	"github.com/Mavrickk3/bluemix-go/session"
 
 	"github.com/onsi/gomega/ghttp"
 

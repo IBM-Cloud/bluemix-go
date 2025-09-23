@@ -4,43 +4,43 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/rest"
 )
 
-//ServiceBindingRequest ...
+// ServiceBindingRequest ...
 type ServiceBindingRequest struct {
 	ServiceInstanceGUID string `json:"service_instance_guid"`
 	AppGUID             string `json:"app_guid"`
 	Parameters          string `json:"parameters,omitempty"`
 }
 
-//ServiceBindingMetadata ...
+// ServiceBindingMetadata ...
 type ServiceBindingMetadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
 }
 
-//ServiceBindingEntity ...
+// ServiceBindingEntity ...
 type ServiceBindingEntity struct {
 	ServiceInstanceGUID string                 `json:"service_instance_guid"`
 	AppGUID             string                 `json:"app_guid"`
 	Credentials         map[string]interface{} `json:"credentials"`
 }
 
-//ServiceBindingResource ...
+// ServiceBindingResource ...
 type ServiceBindingResource struct {
 	Resource
 	Entity ServiceBindingEntity
 }
 
-//ServiceBindingFields ...
+// ServiceBindingFields ...
 type ServiceBindingFields struct {
 	Metadata ServiceBindingMetadata
 	Entity   ServiceBindingEntity
 }
 
-//ServiceBinding model
+// ServiceBinding model
 type ServiceBinding struct {
 	GUID                string
 	ServiceInstanceGUID string
@@ -48,7 +48,7 @@ type ServiceBinding struct {
 	Credentials         map[string]interface{}
 }
 
-//ToFields ..
+// ToFields ..
 func (resource ServiceBindingResource) ToFields() ServiceBinding {
 	entity := resource.Entity
 
@@ -60,7 +60,7 @@ func (resource ServiceBindingResource) ToFields() ServiceBinding {
 	}
 }
 
-//ServiceBindings ...
+// ServiceBindings ...
 type ServiceBindings interface {
 	Create(req ServiceBindingRequest) (*ServiceBindingFields, error)
 	Get(guid string) (*ServiceBindingFields, error)

@@ -1,8 +1,8 @@
 package iampapv1
 
 import (
-	"github.com/IBM-Cloud/bluemix-go/api/iampap/iampapv2"
-	"github.com/IBM-Cloud/bluemix-go/models"
+	"github.com/Mavrickk3/bluemix-go/api/iampap/iampapv2"
+	"github.com/Mavrickk3/bluemix-go/models"
 )
 
 // Policy is the model of IAM PAP policy

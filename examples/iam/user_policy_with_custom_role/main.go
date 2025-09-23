@@ -6,15 +6,15 @@ import (
 	"os"
 	"strings"
 
-	bluemix "github.com/IBM-Cloud/bluemix-go"
-	"github.com/IBM-Cloud/bluemix-go/api/account/accountv1"
-	"github.com/IBM-Cloud/bluemix-go/api/account/accountv2"
-	"github.com/IBM-Cloud/bluemix-go/api/iampap/iampapv1"
-	"github.com/IBM-Cloud/bluemix-go/api/iampap/iampapv2"
-	"github.com/IBM-Cloud/bluemix-go/api/mccp/mccpv2"
-	"github.com/IBM-Cloud/bluemix-go/session"
-	"github.com/IBM-Cloud/bluemix-go/trace"
-	"github.com/IBM-Cloud/bluemix-go/utils"
+	bluemix "github.com/Mavrickk3/bluemix-go"
+	"github.com/Mavrickk3/bluemix-go/api/account/accountv1"
+	"github.com/Mavrickk3/bluemix-go/api/account/accountv2"
+	"github.com/Mavrickk3/bluemix-go/api/iampap/iampapv1"
+	"github.com/Mavrickk3/bluemix-go/api/iampap/iampapv2"
+	"github.com/Mavrickk3/bluemix-go/api/mccp/mccpv2"
+	"github.com/Mavrickk3/bluemix-go/session"
+	"github.com/Mavrickk3/bluemix-go/trace"
+	"github.com/Mavrickk3/bluemix-go/utils"
 )
 
 func main() {

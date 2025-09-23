@@ -1,6 +1,6 @@
 package models
 
-import "github.com/IBM-Cloud/bluemix-go/crn"
+import "github.com/Mavrickk3/bluemix-go/crn"
 
 type ServiceKey struct {
 	MetadataType

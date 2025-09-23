@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IBM-Cloud/bluemix-go/bmxerror"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/helpers"
-	"github.com/IBM-Cloud/bluemix-go/models"
-	"github.com/IBM-Cloud/bluemix-go/rest"
-	"github.com/IBM-Cloud/bluemix-go/utils"
+	"github.com/Mavrickk3/bluemix-go/bmxerror"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/helpers"
+	"github.com/Mavrickk3/bluemix-go/models"
+	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/utils"
 )
 
 // ErrCodeServiceDoesnotExist ...

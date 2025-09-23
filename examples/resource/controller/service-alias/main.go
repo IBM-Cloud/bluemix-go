@@ -6,16 +6,16 @@ import (
 	"log"
 	"os"
 
-	"github.com/IBM-Cloud/bluemix-go/crn"
-	"github.com/IBM-Cloud/bluemix-go/models"
-	"github.com/IBM-Cloud/bluemix-go/utils"
+	"github.com/Mavrickk3/bluemix-go/crn"
+	"github.com/Mavrickk3/bluemix-go/models"
+	"github.com/Mavrickk3/bluemix-go/utils"
 
-	"github.com/IBM-Cloud/bluemix-go/api/mccp/mccpv2"
-	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev1/catalog"
-	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev1/controller"
-	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev1/management"
-	"github.com/IBM-Cloud/bluemix-go/session"
-	"github.com/IBM-Cloud/bluemix-go/trace"
+	"github.com/Mavrickk3/bluemix-go/api/mccp/mccpv2"
+	"github.com/Mavrickk3/bluemix-go/api/resource/resourcev1/catalog"
+	"github.com/Mavrickk3/bluemix-go/api/resource/resourcev1/controller"
+	"github.com/Mavrickk3/bluemix-go/api/resource/resourcev1/management"
+	"github.com/Mavrickk3/bluemix-go/session"
+	"github.com/Mavrickk3/bluemix-go/trace"
 )
 
 func main() {

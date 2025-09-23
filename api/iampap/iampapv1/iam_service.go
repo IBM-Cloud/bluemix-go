@@ -1,7 +1,7 @@
 package iampapv1
 
 import (
-	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/client"
 )
 
 type IAMService interface {
@@ -19,7 +19,7 @@ func newIAMServiceAPI(c *client.Client) IAMService {
 	}
 }
 
-//GetServiceName ...
+// GetServiceName ...
 func (r *iamservice) GetServiceName(serviceDispName string) (string, error) {
 	serviceMap := make(map[string]string)
 	serviceMap["IBM Bluemix Container Service"] = "containers-kubernetes"
@@ -29,7 +29,7 @@ func (r *iamservice) GetServiceName(serviceDispName string) (string, error) {
 	return serviceMap[serviceDispName], nil
 }
 
-//GetServiceDisplayName ...
+// GetServiceDisplayName ...
 func (r *iamservice) GetServiceDispalyName(serviceName string) (string, error) {
 	serviceMap := make(map[string]string)
 	serviceMap["containers-kubernetes"] = "IBM Bluemix Container Service"

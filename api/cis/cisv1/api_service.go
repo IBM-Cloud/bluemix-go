@@ -4,18 +4,18 @@ import (
 	gohttp "net/http"
 	"strconv"
 
-	bluemix "github.com/IBM-Cloud/bluemix-go"
-	"github.com/IBM-Cloud/bluemix-go/authentication"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/http"
-	"github.com/IBM-Cloud/bluemix-go/rest"
-	"github.com/IBM-Cloud/bluemix-go/session"
+	bluemix "github.com/Mavrickk3/bluemix-go"
+	"github.com/Mavrickk3/bluemix-go/authentication"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/http"
+	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/session"
 )
 
-//ErrCodeAPICreation ...
+// ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-//CisServiceAPI is the Cloud Internet Services API ...
+// CisServiceAPI is the Cloud Internet Services API ...
 type CisServiceAPI interface {
 	Zones() Zones
 	Monitors() Monitors
@@ -28,12 +28,12 @@ type CisServiceAPI interface {
 	RateLimit() RateLimit
 }
 
-//CisService holds the client
+// CisService holds the client
 type cisService struct {
 	*client.Client
 }
 
-//New ...
+// New ...
 func New(sess *session.Session) (CisServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.CisService)
@@ -72,37 +72,37 @@ func New(sess *session.Session) (CisServiceAPI, error) {
 	}, nil
 }
 
-//Zones implement albs API
+// Zones implement albs API
 func (c *cisService) Zones() Zones {
 	return newZoneAPI(c.Client)
 }
 
-//Monitors implements Monitors API
+// Monitors implements Monitors API
 func (c *cisService) Monitors() Monitors {
 	return newMonitorAPI(c.Client)
 }
 
-//Pools implements Pools API
+// Pools implements Pools API
 func (c *cisService) Pools() Pools {
 	return newPoolAPI(c.Client)
 }
 
-//Glbs implements Glbs API
+// Glbs implements Glbs API
 func (c *cisService) Glbs() Glbs {
 	return newGlbAPI(c.Client)
 }
 
-//Settings implements Settings API
+// Settings implements Settings API
 func (c *cisService) Settings() Settings {
 	return newSettingsAPI(c.Client)
 }
 
-//Settings implements Settings API
+// Settings implements Settings API
 func (c *cisService) Ips() Ips {
 	return newIpsAPI(c.Client)
 }
 
-//Settings implements DNS records API
+// Settings implements DNS records API
 func (c *cisService) Dns() Dns {
 	return newDnsAPI(c.Client)
 }

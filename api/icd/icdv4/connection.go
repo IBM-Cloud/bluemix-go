@@ -3,8 +3,8 @@ package icdv4
 import (
 	"fmt"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/utils"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/utils"
 )
 
 type ConnectionReq struct {

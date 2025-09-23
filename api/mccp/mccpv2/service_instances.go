@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/rest"
 )
 
-//ServiceInstanceCreateRequest ...
+// ServiceInstanceCreateRequest ...
 type ServiceInstanceCreateRequest struct {
 	Name      string                 `json:"name"`
 	SpaceGUID string                 `json:"space_guid"`
@@ -17,7 +17,7 @@ type ServiceInstanceCreateRequest struct {
 	Tags      []string               `json:"tags,omitempty"`
 }
 
-//ServiceInstanceUpdateRequest ...
+// ServiceInstanceUpdateRequest ...
 type ServiceInstanceUpdateRequest struct {
 	Name     *string                `json:"name,omitempty"`
 	PlanGUID *string                `json:"service_plan_guid,omitempty"`
@@ -25,7 +25,7 @@ type ServiceInstanceUpdateRequest struct {
 	Tags     []string               `json:"tags,omitempty"`
 }
 
-//ServiceInstance ...
+// ServiceInstance ...
 type ServiceInstance struct {
 	GUID              string
 	Name              string                 `json:"name"`
@@ -46,19 +46,19 @@ type ServiceInstance struct {
 	ServicePlan       ServicePlanFields      `json:"service_plan"`
 }
 
-//ServiceInstanceFields ...
+// ServiceInstanceFields ...
 type ServiceInstanceFields struct {
 	Metadata ServiceInstanceMetadata
 	Entity   ServiceInstance
 }
 
-//ServiceInstanceMetadata ...
+// ServiceInstanceMetadata ...
 type ServiceInstanceMetadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
 }
 
-//LastOperationFields ...
+// LastOperationFields ...
 type LastOperationFields struct {
 	Type        string `json:"type"`
 	State       string `json:"state"`
@@ -67,13 +67,13 @@ type LastOperationFields struct {
 	UpdatedAt   string `json:"updated_at"`
 }
 
-//ServiceInstanceResource ...
+// ServiceInstanceResource ...
 type ServiceInstanceResource struct {
 	Resource
 	Entity ServiceInstanceEntity
 }
 
-//ServiceInstanceEntity ...
+// ServiceInstanceEntity ...
 type ServiceInstanceEntity struct {
 	Name              string                 `json:"name"`
 	Credentials       map[string]interface{} `json:"credentials"`
@@ -93,7 +93,7 @@ type ServiceInstanceEntity struct {
 	ServicePlan       ServicePlanFields      `json:"service_plan"`
 }
 
-//ToModel ...
+// ToModel ...
 func (resource ServiceInstanceResource) ToModel() ServiceInstance {
 
 	entity := resource.Entity
@@ -117,7 +117,7 @@ func (resource ServiceInstanceResource) ToModel() ServiceInstance {
 	}
 }
 
-//ServiceInstances ...
+// ServiceInstances ...
 type ServiceInstances interface {
 	Create(req ServiceInstanceCreateRequest) (*ServiceInstanceFields, error)
 	Update(instanceGUID string, req ServiceInstanceUpdateRequest) (*ServiceInstanceFields, error)

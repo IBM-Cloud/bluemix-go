@@ -3,22 +3,22 @@ package accountv2
 import (
 	"fmt"
 
-	"github.com/IBM-Cloud/bluemix-go/bmxerror"
-	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/bmxerror"
+	"github.com/Mavrickk3/bluemix-go/client"
 )
 
-//Metadata ...
+// Metadata ...
 type Metadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
 }
 
-//Resource ...
+// Resource ...
 type Resource struct {
 	Metadata Metadata
 }
 
-//Account Model ...
+// Account Model ...
 type Account struct {
 	GUID          string
 	Name          string
@@ -34,26 +34,26 @@ type Account struct {
 	Members       []AccountMember `json:"members"`
 }
 
-//AccountOrganization ...
+// AccountOrganization ...
 type AccountOrganization struct {
 	GUID   string `json:"guid"`
 	Region string `json:"region"`
 }
 
-//AccountMember ...
+// AccountMember ...
 type AccountMember struct {
 	GUID     string `json:"guid"`
 	UserID   string `json:"user_id"`
 	UniqueID string `json:"unique_id"`
 }
 
-//AccountResource ...
+// AccountResource ...
 type AccountResource struct {
 	Resource
 	Entity AccountEntity
 }
 
-//AccountEntity ...
+// AccountEntity ...
 type AccountEntity struct {
 	Name          string                `json:"name"`
 	Type          string                `json:"type"`
@@ -68,7 +68,7 @@ type AccountEntity struct {
 	Members       []AccountMember       `json:"members"`
 }
 
-//ToModel ...
+// ToModel ...
 func (resource AccountResource) ToModel() Account {
 	entity := resource.Entity
 
@@ -108,19 +108,19 @@ func (nameQueryResponse AccountNameQueryResponse) ToModel() Account {
 	}
 }
 
-//AccountQueryResponse ...
+// AccountQueryResponse ...
 type AccountQueryResponse struct {
 	Metadata Metadata
 	Accounts []AccountResource `json:"resources"`
 }
 
-//AccountQueryResponse ...
+// AccountQueryResponse ...
 type AccountNameQueryResponse struct {
 	Metadata Metadata
 	Entity   AccountEntity
 }
 
-//Accounts ...
+// Accounts ...
 type Accounts interface {
 	List() ([]Account, error)
 	FindByOrg(orgGUID string, region string) (*Account, error)
@@ -138,7 +138,7 @@ func newAccountAPI(c *client.Client) Accounts {
 	}
 }
 
-//FindByOrg ...
+// FindByOrg ...
 func (a *account) FindByOrg(orgGUID, region string) (*Account, error) {
 	type organizationRegion struct {
 		GUID   string `json:"guid"`
@@ -195,7 +195,7 @@ func (a *account) List() ([]Account, error) {
 	return accounts, err
 }
 
-//FindByOwner ...
+// FindByOwner ...
 func (a *account) FindByOwner(userID string) (*Account, error) {
 	accounts, err := a.List()
 	if err != nil {
@@ -211,7 +211,7 @@ func (a *account) FindByOwner(userID string) (*Account, error) {
 		fmt.Sprintf("No account exists for the user %q", userID))
 }
 
-//Get ...
+// Get ...
 func (a *account) Get(accountId string) (*Account, error) {
 	queryResp := AccountNameQueryResponse{}
 	response, err := a.client.Get(fmt.Sprintf("/coe/v2/accounts/%s", accountId), &queryResp)

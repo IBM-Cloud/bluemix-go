@@ -3,28 +3,28 @@ package functions
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/IBM-Cloud/bluemix-go"
-	"github.com/IBM-Cloud/bluemix-go/authentication"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/http"
-	"github.com/IBM-Cloud/bluemix-go/rest"
-	"github.com/IBM-Cloud/bluemix-go/session"
+	bluemix "github.com/Mavrickk3/bluemix-go"
+	"github.com/Mavrickk3/bluemix-go/authentication"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/http"
+	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/session"
 )
 
-//ErrCodeAPICreation ...
+// ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-//FunctionServiceAPI ..
+// FunctionServiceAPI ..
 type FunctionServiceAPI interface {
 	Namespaces() Functions
 }
 
-//fnService holds the client
+// fnService holds the client
 type fnService struct {
 	*client.Client
 }
 
-//New ...
+// New ...
 func New(sess *session.Session) (FunctionServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.FunctionsService)
@@ -64,7 +64,7 @@ func New(sess *session.Session) (FunctionServiceAPI, error) {
 	}, nil
 }
 
-//NewCF ...
+// NewCF ...
 func NewCF(sess *session.Session) (FunctionServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.FunctionsService)
@@ -105,7 +105,7 @@ func NewCF(sess *session.Session) (FunctionServiceAPI, error) {
 	}, nil
 }
 
-//Namespaces ..
+// Namespaces ..
 func (ns *fnService) Namespaces() Functions {
 	return newFunctionsAPI(ns.Client)
 }

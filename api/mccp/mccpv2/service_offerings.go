@@ -3,16 +3,16 @@ package mccpv2
 import (
 	"fmt"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/client"
 
-	"github.com/IBM-Cloud/bluemix-go/bmxerror"
-	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/bmxerror"
+	"github.com/Mavrickk3/bluemix-go/rest"
 )
 
-//ErrCodeServiceDoesnotExist ...
+// ErrCodeServiceDoesnotExist ...
 const ErrCodeServiceDoesnotExist = "ServiceDoesnotExist"
 
-//ServiceOffering model
+// ServiceOffering model
 type ServiceOffering struct {
 	GUID              string
 	Label             string   `json:"label"`
@@ -34,13 +34,13 @@ type ServiceOffering struct {
 	IsPlanUpdateable  bool     `json:"plan_updateable"`
 }
 
-//ServiceOfferingResource ...
+// ServiceOfferingResource ...
 type ServiceOfferingResource struct {
 	Resource
 	Entity ServiceOfferingEntity
 }
 
-//ServiceOfferingEntity ...
+// ServiceOfferingEntity ...
 type ServiceOfferingEntity struct {
 	Label             string   `json:"label"`
 	Provider          string   `json:"provider"`
@@ -61,7 +61,7 @@ type ServiceOfferingEntity struct {
 	IsPlanUpdateable  bool     `json:"plan_updateable"`
 }
 
-//ToFields ...
+// ToFields ...
 func (resource ServiceOfferingResource) ToFields() ServiceOffering {
 	entity := resource.Entity
 
@@ -87,19 +87,19 @@ func (resource ServiceOfferingResource) ToFields() ServiceOffering {
 	}
 }
 
-//ServiceOfferingFields ...
+// ServiceOfferingFields ...
 type ServiceOfferingFields struct {
 	Metadata ServiceOfferingMetadata
 	Entity   ServiceOffering
 }
 
-//ServiceOfferingMetadata ...
+// ServiceOfferingMetadata ...
 type ServiceOfferingMetadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
 }
 
-//ServiceOfferings ...
+// ServiceOfferings ...
 type ServiceOfferings interface {
 	FindByLabel(serviceName string) (*ServiceOffering, error)
 	Get(svcOfferingGUID string) (*ServiceOfferingFields, error)

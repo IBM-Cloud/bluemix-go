@@ -3,27 +3,27 @@ package mccpv2
 import (
 	"fmt"
 
-	"github.com/IBM-Cloud/bluemix-go/bmxerror"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/bmxerror"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/rest"
 )
 
-//ErrCodePrivateDomainDoesnotExist ...
+// ErrCodePrivateDomainDoesnotExist ...
 var ErrCodePrivateDomainDoesnotExist = "PrivateDomainDoesnotExist"
 
-//PrivateDomainRequest ...
+// PrivateDomainRequest ...
 type PrivateDomainRequest struct {
 	Name    string `json:"name,omitempty"`
 	OrgGUID string `json:"owning_organization_guid,omitempty"`
 }
 
-//PrivateDomaineMetadata ...
+// PrivateDomaineMetadata ...
 type PrivateDomainMetadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
 }
 
-//PrivateDomainEntity ...
+// PrivateDomainEntity ...
 type PrivateDomainEntity struct {
 	Name                   string `json:"name"`
 	OwningOrganizationGUID string `json:"owning_organization_guid"`
@@ -31,19 +31,19 @@ type PrivateDomainEntity struct {
 	SharedOrganizationURL  string `json:"shared_organizations_url"`
 }
 
-//PrivateDomainResource ...
+// PrivateDomainResource ...
 type PrivateDomainResource struct {
 	Resource
 	Entity PrivateDomainEntity
 }
 
-//PrivateDomainFields ...
+// PrivateDomainFields ...
 type PrivateDomainFields struct {
 	Metadata PrivateDomainMetadata
 	Entity   PrivateDomainEntity
 }
 
-//ToFields ..
+// ToFields ..
 func (resource PrivateDomainResource) ToFields() PrivateDomain {
 	entity := resource.Entity
 
@@ -56,7 +56,7 @@ func (resource PrivateDomainResource) ToFields() PrivateDomain {
 	}
 }
 
-//PrivateDomain model
+// PrivateDomain model
 type PrivateDomain struct {
 	GUID                   string
 	Name                   string
@@ -65,7 +65,7 @@ type PrivateDomain struct {
 	SharedOrganizationURL  string
 }
 
-//PrivateDomains ...
+// PrivateDomains ...
 type PrivateDomains interface {
 	FindByNameInOrg(orgGUID, domainName string) (*PrivateDomain, error)
 	FindByName(domainName string) (*PrivateDomain, error)
@@ -132,7 +132,9 @@ func listPrivateDomainWithPath(c *client.Client, path string) ([]PrivateDomain, 
 	return privateDomain, err
 }
 
-/* opts is list of boolean parametes
+/*
+	opts is list of boolean parametes
+
 opts[0] - async - Will run the create request in a background job. Recommended: 'true'. Default to 'true'.
 */
 func (d *privateDomain) Create(req PrivateDomainRequest, opts ...bool) (*PrivateDomainFields, error) {

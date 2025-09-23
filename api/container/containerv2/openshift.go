@@ -30,10 +30,10 @@ import (
 
 	yaml "github.com/ghodss/yaml"
 
-	"github.com/IBM-Cloud/bluemix-go/client"
-	bxhttp "github.com/IBM-Cloud/bluemix-go/http"
-	"github.com/IBM-Cloud/bluemix-go/rest"
-	"github.com/IBM-Cloud/bluemix-go/trace"
+	"github.com/Mavrickk3/bluemix-go/client"
+	bxhttp "github.com/Mavrickk3/bluemix-go/http"
+	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/trace"
 )
 
 const (

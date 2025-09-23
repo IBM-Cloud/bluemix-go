@@ -3,29 +3,29 @@ package managementv2
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/IBM-Cloud/bluemix-go"
-	"github.com/IBM-Cloud/bluemix-go/authentication"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/http"
-	"github.com/IBM-Cloud/bluemix-go/rest"
-	"github.com/IBM-Cloud/bluemix-go/session"
+	bluemix "github.com/Mavrickk3/bluemix-go"
+	"github.com/Mavrickk3/bluemix-go/authentication"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/http"
+	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/session"
 )
 
-//ResourceManagementAPI is the resource client ...
+// ResourceManagementAPI is the resource client ...
 type ResourceManagementAPIv2 interface {
 	ResourceQuota() ResourceQuotaRepository
 	ResourceGroup() ResourceGroupRepository
 }
 
-//ErrCodeAPICreation ...
+// ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-//resourceManagementService holds the client
+// resourceManagementService holds the client
 type resourceManagementService struct {
 	*client.Client
 }
 
-//New ...
+// New ...
 func New(sess *session.Session) (ResourceManagementAPIv2, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.ResourceManagementService)
@@ -63,12 +63,12 @@ func New(sess *session.Session) (ResourceManagementAPIv2, error) {
 	}, nil
 }
 
-//ResourceQuota API
+// ResourceQuota API
 func (a *resourceManagementService) ResourceQuota() ResourceQuotaRepository {
 	return newResourceQuotaAPI(a.Client)
 }
 
-//ResourceGroup API
+// ResourceGroup API
 func (a *resourceManagementService) ResourceGroup() ResourceGroupRepository {
 	return newResourceGroupAPI(a.Client)
 }

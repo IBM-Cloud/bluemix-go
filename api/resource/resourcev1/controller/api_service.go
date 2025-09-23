@@ -3,30 +3,30 @@ package controller
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/IBM-Cloud/bluemix-go"
-	"github.com/IBM-Cloud/bluemix-go/authentication"
-	"github.com/IBM-Cloud/bluemix-go/client"
-	"github.com/IBM-Cloud/bluemix-go/http"
-	"github.com/IBM-Cloud/bluemix-go/rest"
-	"github.com/IBM-Cloud/bluemix-go/session"
+	bluemix "github.com/Mavrickk3/bluemix-go"
+	"github.com/Mavrickk3/bluemix-go/authentication"
+	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/Mavrickk3/bluemix-go/http"
+	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/Mavrickk3/bluemix-go/session"
 )
 
-//ResourceControllerAPI is the resource client ...
+// ResourceControllerAPI is the resource client ...
 type ResourceControllerAPI interface {
 	ResourceServiceInstance() ResourceServiceInstanceRepository
 	ResourceServiceAlias() ResourceServiceAliasRepository
 	ResourceServiceKey() ResourceServiceKeyRepository
 }
 
-//ErrCodeAPICreation ...
+// ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-//resourceControllerService holds the client
+// resourceControllerService holds the client
 type resourceControllerService struct {
 	*client.Client
 }
 
-//New ...
+// New ...
 func New(sess *session.Session) (ResourceControllerAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.ResourceControllerService)
@@ -64,17 +64,17 @@ func New(sess *session.Session) (ResourceControllerAPI, error) {
 	}, nil
 }
 
-//ResourceController API
+// ResourceController API
 func (a *resourceControllerService) ResourceServiceInstance() ResourceServiceInstanceRepository {
 	return newResourceServiceInstanceAPI(a.Client)
 }
 
-//ResourceController API
+// ResourceController API
 func (a *resourceControllerService) ResourceServiceKey() ResourceServiceKeyRepository {
 	return newResourceServiceKeyAPI(a.Client)
 }
 
-//ResourceController API
+// ResourceController API
 func (a *resourceControllerService) ResourceServiceAlias() ResourceServiceAliasRepository {
 	return newResourceServiceAliasRepository(a.Client)
 }
