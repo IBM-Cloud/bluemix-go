@@ -16,6 +16,7 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/bmxerror"
 	"github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM/go-sdk-core/v5/core"
 )
 
 // TokenProvider ...
@@ -26,6 +27,7 @@ type TokenProvider interface {
 	AuthenticateAPIKey(string) error
 	AuthenticateAssume(string, string) error
 	GetKubeTokens() (string, string, error)
+	FetchAuthorizationData(core.Authenticator) error
 }
 
 /*type PaginatedResourcesHandler interface {
@@ -98,7 +100,10 @@ func (c *Client) MakeRequest(r *rest.Request, respV interface{}) (*gohttp.Respon
 			c.headerLock.Lock()
 			defer c.headerLock.Unlock()
 			var err error
-			if c.Config.BluemixAPIKey != "" && c.Config.IAMTrustedProfileID == "" {
+			if c.Config.Authenticator != nil {
+				log.Println("Retrying authentication using authenticator")
+				err = c.TokenRefresher.FetchAuthorizationData(c.Config.Authenticator)
+			} else if c.Config.BluemixAPIKey != "" && c.Config.IAMTrustedProfileID == "" {
 				log.Println("Retrying authentication using API Key")
 				err = c.TokenRefresher.AuthenticateAPIKey(c.Config.BluemixAPIKey)
 			} else if c.Config.BluemixAPIKey != "" && c.Config.IAMTrustedProfileID != "" {
