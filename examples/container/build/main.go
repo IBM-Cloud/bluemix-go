@@ -186,7 +186,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf(string(jsonBytes))
+	fmt.Print(string(jsonBytes))
 
 	fmt.Println("\nScanning Built Image...")
 	imageVulnerabiliyRequst := registryv1.DefaultImageVulnerabilitiesRequest()
@@ -199,5 +199,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf(string(jsonBytes))
+	fmt.Print(string(jsonBytes))
 }
