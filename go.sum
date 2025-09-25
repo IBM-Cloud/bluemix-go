@@ -2,8 +2,8 @@ github.com/IBM/go-sdk-core/v5 v5.21.0 h1:DUnYhvC4SoC8T84rx5omnhY3+xcQg/Whyoa3mDP
 github.com/IBM/go-sdk-core/v5 v5.21.0/go.mod h1:Q3BYO6iDA2zweQPDGbNTtqft5tDcEpm6RTuqMlPcvbw=
 github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
 github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
-github.com/Mavrickk3/bluemix-go v0.0.0-20250925125604-158becab6cb9 h1:VbM8LyuA8mSSQIp2MZVVbLKT7BRYcbHlTJGR57ryztg=
-github.com/Mavrickk3/bluemix-go v0.0.0-20250925125604-158becab6cb9/go.mod h1:lU1/3aolIs4y062yTTokFEiIEssAZqqjdj/5qvkBeq8=
+github.com/Mavrickk3/bluemix-go v0.0.0-20250925130042-6fe8d6dba6b0 h1:iXLqK+6rMQOO5nizMtIoCT1IsxROISCuUvjaytWyLnE=
+github.com/Mavrickk3/bluemix-go v0.0.0-20250925130042-6fe8d6dba6b0/go.mod h1:tnIT9R0IFdHqy6XYqUNr8juwju8gpKjHqP1ubJEiXM4=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

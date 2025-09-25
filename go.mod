@@ -53,4 +53,4 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.6.0 // indirect
 )
 
-replace github.com/IBM-Cloud/bluemix-go v0.0.0-20250925065941-e1953cea5812 => github.com/Mavrickk3/bluemix-go v0.0.0-20250925125604-158becab6cb9
+replace github.com/IBM-Cloud/bluemix-go v0.0.0-20250925065941-e1953cea5812 => github.com/Mavrickk3/bluemix-go v0.0.0-20250925130042-6fe8d6dba6b0
