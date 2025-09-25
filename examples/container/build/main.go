@@ -81,7 +81,7 @@ func tarGzContext(context string) (string, error) {
 	return tarfile.Name(), err
 }
 
-//Example: ./build -f Dockerfile -t registry.ng.bluemix.net/ibmcloud-go/imagtest .")
+// Example: ./build -f Dockerfile -t registry.ng.bluemix.net/ibmcloud-go/imagtest .")
 func main() {
 
 	c := new(bluemix.Config)
@@ -186,7 +186,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf(string(jsonBytes))
+	fmt.Print(string(jsonBytes))
 
 	fmt.Println("\nScanning Built Image...")
 	imageVulnerabiliyRequst := registryv1.DefaultImageVulnerabilitiesRequest()
@@ -199,5 +199,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf(string(jsonBytes))
+	fmt.Print(string(jsonBytes))
 }
