@@ -3,10 +3,12 @@ package authentication
 import (
 	"encoding/base64"
 	"fmt"
+	"net/http"
 
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/bmxerror"
 	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM/go-sdk-core/v5/core"
 )
 
 // IAMError ...
@@ -93,6 +95,19 @@ func (auth *IAMAuthRepository) AuthenticateSSO(passcode string) error {
 // IAMAssumeAuthenticator ...
 func (auth *IAMAuthRepository) AuthenticateAssume(apiKey string, trustedProfileId string) error {
 	return auth.setAssumeTokens(apiKey, trustedProfileId)
+}
+
+// IAMAssumeAuthenticator ...
+func (auth *IAMAuthRepository) FetchAuthorizationData(authenticator core.Authenticator) error {
+	req := &http.Request{
+		Header: make(http.Header),
+	}
+	if err := authenticator.Authenticate(req); err != nil {
+		return err
+	}
+
+	auth.config.IAMAccessToken = req.Header.Get("Authorization")
+	return nil
 }
 
 // GetKubeTokens fetches the kube:kube access and refresh tokens.

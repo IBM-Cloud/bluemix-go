@@ -6,6 +6,7 @@ import (
 
 	"github.com/IBM-Cloud/bluemix-go/bmxerror"
 	"github.com/IBM-Cloud/bluemix-go/endpoints"
+	"github.com/IBM/go-sdk-core/v5/core"
 )
 
 // ServiceName ..
@@ -105,6 +106,10 @@ type Config struct {
 	EndpointsFile       string
 	UserAgent           string
 	IAMTrustedProfileID string
+	// The authenticator implementation to be used by the
+	// service instance to authenticate outbound requests
+	// Required
+	Authenticator core.Authenticator
 }
 
 // Copy allows the configuration to be overriden or added
@@ -125,7 +130,7 @@ func (c *Config) Copy(mccpgs ...*Config) *Config {
 
 // ValidateConfigForService ...
 func (c *Config) ValidateConfigForService(svc ServiceName) error {
-	if (c.IBMID == "" || c.IBMIDPassword == "") && c.BluemixAPIKey == "" && c.IAMAccessToken == "" && c.IAMRefreshToken == "" {
+	if (c.IBMID == "" || c.IBMIDPassword == "") && c.BluemixAPIKey == "" && c.IAMAccessToken == "" && c.IAMRefreshToken == "" && c.Authenticator == nil {
 		return bmxerror.New(ErrInsufficientCredentials, "Please check the documentation on how to configure the IBM Cloud credentials")
 	}
 

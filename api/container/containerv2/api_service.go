@@ -64,6 +64,7 @@ func New(sess *session.Session) (ContainerServiceAPI, error) {
 			return nil, err
 		}
 	}
+
 	if config.Endpoint == nil {
 		ep, err := config.EndpointLocator.ContainerEndpoint()
 		if err != nil {
