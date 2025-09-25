@@ -60,7 +60,7 @@ func newTaggingAPI(c *client.Client) Tags {
 func (r *tags) GetTags(resourceID string) (TaggingResult, error) {
 	taggingResult := TaggingResult{}
 	query := fmt.Sprintf("?attached_to=%v", resourceID)
-	rawURL := "/v3/tags" + query
+	rawURL := fmt.Sprintf("/v3/tags" + query)
 	_, err := r.client.Get(rawURL, &taggingResult)
 	if err != nil {
 		return taggingResult, err
