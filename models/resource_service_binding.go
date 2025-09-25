@@ -1,6 +1,6 @@
 package models
 
-import "github.com/Mavrickk3/bluemix-go/crn"
+import "github.com/IBM-Cloud/bluemix-go/crn"
 
 type ServiceBinding struct {
 	*MetadataType

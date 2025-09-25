@@ -1,4 +1,4 @@
-module github.com/Mavrickk3/bluemix-go
+module github.com/IBM-Cloud/bluemix-go
 
 go 1.24.0
 

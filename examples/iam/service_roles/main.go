@@ -4,12 +4,12 @@ import (
 	"flag"
 	"log"
 
-	"github.com/Mavrickk3/bluemix-go/models"
+	"github.com/IBM-Cloud/bluemix-go/models"
 
-	"github.com/Mavrickk3/bluemix-go/api/iam/iamv1"
-	"github.com/Mavrickk3/bluemix-go/api/resource/resourcev1/catalog"
-	"github.com/Mavrickk3/bluemix-go/session"
-	"github.com/Mavrickk3/bluemix-go/trace"
+	"github.com/IBM-Cloud/bluemix-go/api/iam/iamv1"
+	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev1/catalog"
+	"github.com/IBM-Cloud/bluemix-go/session"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 func main() {

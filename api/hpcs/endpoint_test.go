@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/session"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/ghttp"

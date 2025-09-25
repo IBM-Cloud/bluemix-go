@@ -4,12 +4,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Mavrickk3/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go"
 
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/crn"
-	"github.com/Mavrickk3/bluemix-go/models"
-	"github.com/Mavrickk3/bluemix-go/session"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/crn"
+	"github.com/IBM-Cloud/bluemix-go/models"
+	"github.com/IBM-Cloud/bluemix-go/session"
 	"github.com/onsi/gomega/ghttp"
 
 	. "github.com/onsi/ginkgo"

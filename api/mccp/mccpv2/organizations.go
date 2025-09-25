@@ -4,32 +4,32 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Mavrickk3/bluemix-go/bmxerror"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
-// ErrCodeOrgDoesnotExist ...
+//ErrCodeOrgDoesnotExist ...
 var ErrCodeOrgDoesnotExist = "OrgDoesnotExist"
 
-// Metadata ...
+//Metadata ...
 type Metadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
 }
 
-// Resource ...
+//Resource ...
 type Resource struct {
 	Metadata Metadata
 }
 
-// OrgResource ...
+//OrgResource ...
 type OrgResource struct {
 	Resource
 	Entity OrgEntity
 }
 
-// OrgEntity ...
+//OrgEntity ...
 type OrgEntity struct {
 	Name                   string `json:"name"`
 	Region                 string `json:"region"`
@@ -38,7 +38,7 @@ type OrgEntity struct {
 	OrgQuotaDefinitionGUID string `json:"quota_definition_guid"`
 }
 
-// ToFields ..
+//ToFields ..
 func (resource OrgResource) ToFields() Organization {
 	entity := resource.Entity
 
@@ -52,20 +52,20 @@ func (resource OrgResource) ToFields() Organization {
 	}
 }
 
-// OrgCreateRequest ...
+//OrgCreateRequest ...
 type OrgCreateRequest struct {
 	Name                   string `json:"name"`
 	OrgQuotaDefinitionGUID string `json:"quota_definition_guid,omitempty"`
 	Status                 string `json:"status,omitempty"`
 }
 
-// OrgUpdateRequest ...
+//OrgUpdateRequest ...
 type OrgUpdateRequest struct {
 	Name                   *string `json:"name,omitempty"`
 	OrgQuotaDefinitionGUID string  `json:"quota_definition_guid,omitempty"`
 }
 
-// Organization model
+//Organization model
 type Organization struct {
 	GUID                   string
 	Name                   string
@@ -75,33 +75,33 @@ type Organization struct {
 	OrgQuotaDefinitionGUID string
 }
 
-// OrganizationFields ...
+//OrganizationFields ...
 type OrganizationFields struct {
 	Metadata Metadata
 	Entity   OrgEntity
 }
 
-// OrgRole ...
+//OrgRole ...
 type OrgRole struct {
 	UserGUID string
 	Admin    bool
 	UserName string
 }
 
-// OrgRoleResource ...
+//OrgRoleResource ...
 type OrgRoleResource struct {
 	Resource
 	Entity OrgRoleEntity
 }
 
-// OrgRoleEntity ...
+//OrgRoleEntity ...
 type OrgRoleEntity struct {
 	UserGUID string `json:"guid"`
 	Admin    bool   `json:"bool"`
 	UserName string `json:"username"`
 }
 
-// ToFields ...
+//ToFields ...
 func (resource *OrgRoleResource) ToFields() OrgRole {
 	entity := resource.Entity
 
@@ -153,7 +153,7 @@ type OrgRegionInformation struct {
 	OrgGUID string `json:"org_guid"`
 }
 
-// Organizations ...
+//Organizations ...
 type Organizations interface {
 	Create(req OrgCreateRequest, opts ...bool) (*OrganizationFields, error)
 	Get(orgGUID string) (*OrganizationFields, error)
@@ -287,7 +287,7 @@ func (o *organization) List(region string) ([]Organization, error) {
 	return orgs, err
 }
 
-// FindByName ...
+//FindByName ...
 func (o *organization) FindByName(name string, region string) (*Organization, error) {
 	path, err := o.urlOfOrgWithName(name, region, false)
 	if err != nil {

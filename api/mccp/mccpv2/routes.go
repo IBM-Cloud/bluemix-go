@@ -3,14 +3,14 @@ package mccpv2
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
-// ErrCodeRouteDoesnotExist ...
+//ErrCodeRouteDoesnotExist ...
 var ErrCodeRouteDoesnotExist = "RouteDoesnotExist"
 
-// RouteRequest ...
+//RouteRequest ...
 type RouteRequest struct {
 	Host       string `json:"host,omitempty"`
 	SpaceGUID  string `json:"space_guid"`
@@ -19,20 +19,20 @@ type RouteRequest struct {
 	Port       *int   `json:"port,omitempty"`
 }
 
-// RouteUpdateRequest ...
+//RouteUpdateRequest ...
 type RouteUpdateRequest struct {
 	Host *string `json:"host,omitempty"`
 	Path *string `json:"path,omitempty"`
 	Port *int    `json:"port,omitempty"`
 }
 
-// RouteMetadata ...
+//RouteMetadata ...
 type RouteMetadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
 }
 
-// RouteEntity ...
+//RouteEntity ...
 type RouteEntity struct {
 	Host                string `json:"host"`
 	Path                string `json:"path"`
@@ -46,19 +46,19 @@ type RouteEntity struct {
 	RouteMappingURL     string `json:"route_mapping_url"`
 }
 
-// RouteResource ...
+//RouteResource ...
 type RouteResource struct {
 	Resource
 	Entity RouteEntity
 }
 
-// RouteFields ...
+//RouteFields ...
 type RouteFields struct {
 	Metadata RouteMetadata
 	Entity   RouteEntity
 }
 
-// ToFields ..
+//ToFields ..
 func (resource RouteResource) ToFields() Route {
 	entity := resource.Entity
 
@@ -77,7 +77,7 @@ func (resource RouteResource) ToFields() Route {
 	}
 }
 
-// Route model
+//Route model
 type Route struct {
 	GUID                string
 	Host                string
@@ -92,7 +92,7 @@ type Route struct {
 	RouteMappingURL     string
 }
 
-// Routes ...
+//Routes ...
 type Routes interface {
 	Find(hostname, domainGUID string) ([]Route, error)
 	Create(req RouteRequest, opts ...bool) (*RouteFields, error)

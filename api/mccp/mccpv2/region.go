@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/models"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/models"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 const mccpEndpointOfPublicBluemix = "https://mccp.ng.bluemix.net"

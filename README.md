@@ -1,6 +1,6 @@
 # IBM Cloud SDK for Go
 
-[![Build Status](https://travis-ci.org/IBM-Cloud/bluemix-go.svg?branch=master)](https://travis-ci.org/IBM-Cloud/bluemix-go) [![GoDoc](https://godoc.org/github.com/Mavrickk3/bluemix-go?status.svg)](https://godoc.org/github.com/Mavrickk3/bluemix-go)
+[![Build Status](https://travis-ci.org/IBM-Cloud/bluemix-go.svg?branch=master)](https://travis-ci.org/IBM-Cloud/bluemix-go) [![GoDoc](https://godoc.org/github.com/IBM-Cloud/bluemix-go?status.svg)](https://godoc.org/github.com/IBM-Cloud/bluemix-go)
 
 bluemix-go provides the Go implementation for operating the IBM Cloud platform, which is based on the [Cloud Foundry API][cloudfoundry_api].
 
@@ -9,13 +9,13 @@ bluemix-go provides the Go implementation for operating the IBM Cloud platform, 
 1. Install the SDK using the following command
 
 ```bash
-go get github.com/Mavrickk3/bluemix-go
+go get github.com/IBM-Cloud/bluemix-go
 ```
 
 2. Update the SDK to the latest version using the following command
 
 ```bash
-go get -u github.com/Mavrickk3/bluemix-go
+go get -u github.com/IBM-Cloud/bluemix-go
 ```
 
 
@@ -27,7 +27,7 @@ The SDK has ```examples``` folder which cites few examples on how to use the SDK
 First you need to create a session.
 
 ```go
-import "github.com/Mavrickk3/bluemix-go/session"
+import "github.com/IBM-Cloud/bluemix-go/session"
 
 func main(){
 
@@ -80,5 +80,5 @@ You have created a key! Press the eyeball to show the key. Copy or save it becau
 
 [ibmcloud_signup]: https://console.ng.bluemix.net/registration/?target=%2Fdashboard%2Fapps
 [ibmcloud_login]: https://console.ng.bluemix.net
-[ibmcloud_go_config]: https://godoc.org/github.com/Mavrickk3/bluemix-go#Config
+[ibmcloud_go_config]: https://godoc.org/github.com/IBM-Cloud/bluemix-go#Config
 [cloudfoundry_api]: https://apidocs.cloudfoundry.org/264/

@@ -3,28 +3,28 @@ package accountv2
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/authentication"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/http"
-	"github.com/Mavrickk3/bluemix-go/rest"
-	"github.com/Mavrickk3/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/authentication"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/http"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// AccountServiceAPI is the accountv2 client ...
+//AccountServiceAPI is the accountv2 client ...
 type AccountServiceAPI interface {
 	Accounts() Accounts
 }
 
-// ErrCodeNoAccountExists ...
+//ErrCodeNoAccountExists ...
 const ErrCodeNoAccountExists = "NoAccountExists"
 
-// MccpService holds the client
+//MccpService holds the client
 type accountService struct {
 	*client.Client
 }
 
-// New ...
+//New ...
 func New(sess *session.Session) (AccountServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.AccountService)
@@ -62,7 +62,7 @@ func New(sess *session.Session) (AccountServiceAPI, error) {
 	}, nil
 }
 
-// Accounts API
+//Accounts API
 func (a *accountService) Accounts() Accounts {
 	return newAccountAPI(a.Client)
 }

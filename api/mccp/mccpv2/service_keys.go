@@ -4,22 +4,22 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Mavrickk3/bluemix-go/bmxerror"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
-// ErrCodeServiceKeyDoesNotExist ...
+//ErrCodeServiceKeyDoesNotExist ...
 const ErrCodeServiceKeyDoesNotExist = "erviceKeyDoesNotExist"
 
-// ServiceKeyRequest ...
+//ServiceKeyRequest ...
 type ServiceKeyRequest struct {
 	Name                string                 `json:"name"`
 	ServiceInstanceGUID string                 `json:"service_instance_guid"`
 	Params              map[string]interface{} `json:"parameters,omitempty"`
 }
 
-// ServiceKey  model...
+//ServiceKey  model...
 type ServiceKey struct {
 	GUID                string
 	Name                string                 `json:"name"`
@@ -28,13 +28,13 @@ type ServiceKey struct {
 	Credentials         map[string]interface{} `json:"credentials"`
 }
 
-// ServiceKeyFields ...
+//ServiceKeyFields ...
 type ServiceKeyFields struct {
 	Metadata ServiceKeyMetadata
 	Entity   ServiceKey
 }
 
-// ServiceKeyMetadata ...
+//ServiceKeyMetadata ...
 type ServiceKeyMetadata struct {
 	GUID      string `json:"guid"`
 	URL       string `json:"url"`
@@ -42,13 +42,13 @@ type ServiceKeyMetadata struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
-// ServiceKeyResource ...
+//ServiceKeyResource ...
 type ServiceKeyResource struct {
 	Resource
 	Entity ServiceKeyEntity
 }
 
-// ServiceKeyEntity ...
+//ServiceKeyEntity ...
 type ServiceKeyEntity struct {
 	Name                string                 `json:"name"`
 	ServiceInstanceGUID string                 `json:"service_instance_guid"`
@@ -56,7 +56,7 @@ type ServiceKeyEntity struct {
 	Credentials         map[string]interface{} `json:"credentials"`
 }
 
-// ToModel ...
+//ToModel ...
 func (resource ServiceKeyResource) ToModel() ServiceKey {
 
 	entity := resource.Entity
@@ -70,7 +70,7 @@ func (resource ServiceKeyResource) ToModel() ServiceKey {
 	}
 }
 
-// ServiceKeys ...
+//ServiceKeys ...
 type ServiceKeys interface {
 	Create(serviceInstanceGUID string, keyName string, params map[string]interface{}) (*ServiceKeyFields, error)
 	FindByName(serviceInstanceGUID string, keyName string) (*ServiceKey, error)

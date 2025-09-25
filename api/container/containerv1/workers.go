@@ -3,10 +3,10 @@ package containerv1
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
-// Worker ...
+//Worker ...
 type Worker struct {
 	Billing          string `json:"billing,omitempty"`
 	ErrorMessage     string `json:"errorMessage"`
@@ -30,7 +30,7 @@ type Worker struct {
 	TargetVersion    string `json:"targetVersion"`
 }
 
-// WorkerParam ...
+//WorkerParam ...
 type WorkerParam struct {
 	MachineType string `json:"machineType,omitempty" description:"The worker's machine type"`
 	PrivateVlan string `json:"privateVlan,omitempty" description:"The worker's private vlan"`
@@ -42,12 +42,12 @@ type WorkerParam struct {
 	Count       int    `json:"count,omitempty"`
 }
 
-// WorkerUpdateParam ...
+//WorkerUpdateParam ...
 type WorkerUpdateParam struct {
 	Action string `json:"action" binding:"required" description:"Action to perform of the worker"`
 }
 
-// Workers ...
+//Workers ...
 type Workers interface {
 	List(clusterName string, target ClusterTargetHeader) ([]Worker, error)
 	ListByWorkerPool(clusterIDOrName, workerPoolIDOrName string, showDeleted bool, target ClusterTargetHeader) ([]Worker, error)
@@ -67,7 +67,7 @@ func newWorkerAPI(c *client.Client) Workers {
 	}
 }
 
-// Get ...
+//Get ...
 func (r *worker) Get(id string, target ClusterTargetHeader) (Worker, error) {
 	rawURL := fmt.Sprintf("/v1/workers/%s", id)
 	worker := Worker{}
@@ -85,21 +85,21 @@ func (r *worker) Add(name string, params WorkerParam, target ClusterTargetHeader
 	return err
 }
 
-// Delete ...
+//Delete ...
 func (r *worker) Delete(name string, workerID string, target ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/workers/%s", name, workerID)
 	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
 }
 
-// Update ...
+//Update ...
 func (r *worker) Update(name string, workerID string, params WorkerUpdateParam, target ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/workers/%s", name, workerID)
 	_, err := r.client.Put(rawURL, params, nil, target.ToMap())
 	return err
 }
 
-// List ...
+//List ...
 func (r *worker) List(name string, target ClusterTargetHeader) ([]Worker, error) {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/workers", name)
 	workers := []Worker{}
@@ -110,7 +110,7 @@ func (r *worker) List(name string, target ClusterTargetHeader) ([]Worker, error)
 	return workers, err
 }
 
-// ListByWorkerPool ...
+//ListByWorkerPool ...
 func (r *worker) ListByWorkerPool(clusterIDOrName, workerPoolIDOrName string, showDeleted bool, target ClusterTargetHeader) ([]Worker, error) {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/workers?showDeleted=%t", clusterIDOrName, showDeleted)
 	if len(workerPoolIDOrName) > 0 {

@@ -3,16 +3,16 @@ package management
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/bmxerror"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/models"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/models"
 )
 
 type quotaDefinitionQueryResult struct {
 	QuotaDefinitions []models.QuotaDefinition `json:"resources"`
 }
 
-// ErrCodeResourceQuotaDoesnotExist ...
+//ErrCodeResourceQuotaDoesnotExist ...
 const ErrCodeResourceQuotaDoesnotExist = "ResourceQuotaDoesnotExist"
 
 type ResourceQuotaRepository interface {

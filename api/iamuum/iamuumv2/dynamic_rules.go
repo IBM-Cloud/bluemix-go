@@ -3,7 +3,7 @@ package iamuumv2
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 type CreateRuleRequest struct {
@@ -91,7 +91,7 @@ func (r *dynamicRuleRepository) Replace(groupID, ruleID string, request CreateRu
 	return res, nil
 }
 
-// Delete Function
+//Delete Function
 func (r *dynamicRuleRepository) Delete(groupID, ruleID string) error {
 	_, err := r.client.Delete(fmt.Sprintf("/v2/groups/%s/rules/%s", groupID, ruleID))
 	return err

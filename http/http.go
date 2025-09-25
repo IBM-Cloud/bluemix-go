@@ -8,10 +8,10 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/Mavrickk3/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go"
 )
 
-// NewHTTPClient ...
+//NewHTTPClient ...
 func NewHTTPClient(config *bluemix.Config) *http.Client {
 	return &http.Client{
 		Transport: makeTransport(config),
@@ -40,7 +40,7 @@ func makeTransport(config *bluemix.Config) http.RoundTripper {
 	})
 }
 
-// UserAgent ...
+//UserAgent ...
 func UserAgent() string {
 	return fmt.Sprintf("Bluemix-go SDK %s / %s ", bluemix.Version, runtime.GOOS)
 }

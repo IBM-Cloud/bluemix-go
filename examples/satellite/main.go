@@ -7,11 +7,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Mavrickk3/bluemix-go"
-	v2 "github.com/Mavrickk3/bluemix-go/api/container/containerv2"
-	"github.com/Mavrickk3/bluemix-go/api/satellite/satellitev1"
-	"github.com/Mavrickk3/bluemix-go/session"
-	"github.com/Mavrickk3/bluemix-go/trace"
+	"github.com/IBM-Cloud/bluemix-go"
+	v2 "github.com/IBM-Cloud/bluemix-go/api/container/containerv2"
+	"github.com/IBM-Cloud/bluemix-go/api/satellite/satellitev1"
+	"github.com/IBM-Cloud/bluemix-go/session"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 const sourceName = "portworx-service"

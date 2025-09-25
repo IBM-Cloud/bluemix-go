@@ -3,8 +3,8 @@ package managementv2
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/bmxerror"
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 type quotaDefinitionQueryResult struct {
@@ -33,7 +33,7 @@ type ResourceQuota struct {
 	Limit      int    `json:"limit,omitempty"`
 }
 
-// ErrCodeResourceQuotaDoesnotExist ...
+//ErrCodeResourceQuotaDoesnotExist ...
 const ErrCodeResourceQuotaDoesnotExist = "ResourceQuotaDoesnotExist"
 
 type ResourceQuotaRepository interface {

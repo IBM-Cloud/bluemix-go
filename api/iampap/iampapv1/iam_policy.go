@@ -3,7 +3,7 @@ package iampapv1
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 type AccessPolicyRequest struct {
@@ -58,7 +58,7 @@ func newIAMPolicyAPI(c *client.Client) IAMPolicy {
 	}
 }
 
-// Create ...
+//Create ...
 func (r *iampolicy) Create(scope, userId string, params AccessPolicyRequest) (AccessPolicyResponse, string, error) {
 	var accessPolicy AccessPolicyResponse
 	rawURL := fmt.Sprintf("/acms/v1/scopes/%s/users/%s/policies", IAM_ACCOUNT_ESCAPE+scope, userId)
@@ -67,7 +67,7 @@ func (r *iampolicy) Create(scope, userId string, params AccessPolicyRequest) (Ac
 	return accessPolicy, eTag, err
 }
 
-// List ...
+//List ...
 func (r *iampolicy) List(scope, userId string) (AccessPolicyListResponse, error) {
 	var accessPolicyListResponse AccessPolicyListResponse
 	rawURL := fmt.Sprintf("/acms/v1/scopes/%s/users/%s/policies", IAM_ACCOUNT_ESCAPE+scope, userId)
@@ -75,7 +75,7 @@ func (r *iampolicy) List(scope, userId string) (AccessPolicyListResponse, error)
 	return accessPolicyListResponse, err
 }
 
-// Find ...
+//Find ...
 func (r *iampolicy) Get(scope, userId, policyId string) (AccessPolicyResponse, error) {
 	var accessPolicyResponse AccessPolicyResponse
 	rawURL := fmt.Sprintf("/acms/v1/scopes/%s/users/%s/policies/%s", IAM_ACCOUNT_ESCAPE+scope, userId, policyId)
@@ -83,7 +83,7 @@ func (r *iampolicy) Get(scope, userId, policyId string) (AccessPolicyResponse, e
 	return accessPolicyResponse, err
 }
 
-// Update ...
+//Update ...
 func (r *iampolicy) Update(scope, userId, policyId, etag string, params AccessPolicyRequest) (AccessPolicyResponse, string, error) {
 	var accessPolicy AccessPolicyResponse
 	rawURL := fmt.Sprintf("/acms/v1/scopes/%s/users/%s/policies/%s", IAM_ACCOUNT_ESCAPE+scope, userId, policyId)
@@ -95,7 +95,7 @@ func (r *iampolicy) Update(scope, userId, policyId, etag string, params AccessPo
 	return accessPolicy, eTag, err
 }
 
-// Delete ...
+//Delete ...
 func (r *iampolicy) Delete(scope, userId, policyId string) error {
 	rawURL := fmt.Sprintf("/acms/v1/scopes/%s/users/%s/policies/%s", IAM_ACCOUNT_ESCAPE+scope, userId, policyId)
 	_, err := r.client.Delete(rawURL)

@@ -3,7 +3,7 @@ package containerv2
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 // Worker ...

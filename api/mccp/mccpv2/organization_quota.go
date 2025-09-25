@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/bmxerror"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
-// OrgQuota ...
+//OrgQuota ...
 type OrgQuota struct {
 	GUID                    string
 	Name                    string
@@ -26,28 +26,28 @@ type OrgQuota struct {
 	RoutePortsLimit         int
 }
 
-// OrgQuotaFields ...
+//OrgQuotaFields ...
 type OrgQuotaFields struct {
 	Metadata OrgQuotaMetadata
 	Entity   OrgQuotaEntity
 }
 
-// OrgQuotaMetadata ...
+//OrgQuotaMetadata ...
 type OrgQuotaMetadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
 }
 
-// ErrCodeOrgQuotaDoesnotExist ...
+//ErrCodeOrgQuotaDoesnotExist ...
 const ErrCodeOrgQuotaDoesnotExist = "OrgQuotaDoesnotExist"
 
-// OrgQuotaResource ...
+//OrgQuotaResource ...
 type OrgQuotaResource struct {
 	Resource
 	Entity OrgQuotaEntity
 }
 
-// OrgQuotaEntity ...
+//OrgQuotaEntity ...
 type OrgQuotaEntity struct {
 	Name                    string      `json:"name"`
 	NonBasicServicesAllowed bool        `json:"non_basic_services_allowed"`
@@ -63,7 +63,7 @@ type OrgQuotaEntity struct {
 	RoutePortsLimit         int         `json:"total_reserved_route_ports"`
 }
 
-// ToFields ...
+//ToFields ...
 func (resource OrgQuotaResource) ToFields() OrgQuota {
 	entity := resource.Entity
 
@@ -84,7 +84,7 @@ func (resource OrgQuotaResource) ToFields() OrgQuota {
 	}
 }
 
-// OrgQuotas ...
+//OrgQuotas ...
 type OrgQuotas interface {
 	FindByName(name string) (*OrgQuota, error)
 	Get(orgQuotaGUID string) (*OrgQuotaFields, error)

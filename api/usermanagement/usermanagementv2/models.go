@@ -1,6 +1,6 @@
 package usermanagementv2
 
-import "github.com/Mavrickk3/bluemix-go/api/iampap/iampapv1"
+import "github.com/IBM-Cloud/bluemix-go/api/iampap/iampapv1"
 
 // User ...
 type User struct {
@@ -64,12 +64,12 @@ type UserPolicy struct {
 	Resources []iampapv1.Resource `json:"resources"`
 }
 
-// InfraPermissions ...
+//InfraPermissions ...
 type InfraPermissions struct {
 	Permissions []string `json:"permissions"`
 }
 
-// OrgRole ...
+//OrgRole ...
 type OrgRole struct {
 	Users           []string `json:"users"`
 	Region          string   `json:"region"`
@@ -80,7 +80,7 @@ type OrgRole struct {
 	Spaces          []Space  `json:"spaces"`
 }
 
-// Space ...
+//Space ...
 type Space struct {
 	ID         string   `json:"id"`
 	Managers   []string `json:"managers,omitempty"`

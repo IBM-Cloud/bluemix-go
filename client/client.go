@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/bmxerror"
-	"github.com/Mavrickk3/bluemix-go/http"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/http"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 // TokenProvider ...

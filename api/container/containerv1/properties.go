@@ -3,17 +3,17 @@ package containerv1
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
-// Vlan ...
+//Vlan ...
 type DCVlan struct {
 	ID         string           `json:"id"`
 	Properties DCVlanProperties `json:"properties"`
 	Type       string           `json:"type"`
 }
 
-// VlanProperties ...
+//VlanProperties ...
 type DCVlanProperties struct {
 	LocalDiskStorageCapability string `json:"local_disk_storage_capability"`
 	Location                   string `json:"location"`
@@ -25,7 +25,7 @@ type DCVlanProperties struct {
 	VlanType                   string `json:"vlan_type"`
 }
 
-// Subnets interface
+//Subnets interface
 type Vlans interface {
 	List(datacenter string, target ClusterTargetHeader) ([]DCVlan, error)
 }
@@ -40,7 +40,7 @@ func newVlanAPI(c *client.Client) Vlans {
 	}
 }
 
-// GetVlans ...
+//GetVlans ...
 func (r *vlan) List(datacenter string, target ClusterTargetHeader) ([]DCVlan, error) {
 	vlans := []DCVlan{}
 	rawURL := fmt.Sprintf("/v1/datacenters/%s/vlans", datacenter)

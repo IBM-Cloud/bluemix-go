@@ -3,10 +3,10 @@ package iamv1
 import (
 	"net/url"
 
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/helpers"
-	"github.com/Mavrickk3/bluemix-go/models"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
+	"github.com/IBM-Cloud/bluemix-go/models"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 type serviceRoleQueryResponse struct {

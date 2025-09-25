@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 type nlbdns struct {
 	client *client.Client
 }
 
-// Clusters interface
+//Clusters interface
 type Nlbdns interface {
 	GetNLBDNSList(clusterNameOrID string) ([]NlbVPCListConfig, error)
 	GetLocationNLBDNSList(location string) ([]NlbVPCListConfig, error)

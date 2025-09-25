@@ -4,16 +4,16 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/helpers"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 type BuildTargetHeader struct {
 	AccountID string
 }
 
-// ToMap ...
+//ToMap ...
 func (c BuildTargetHeader) ToMap() map[string]string {
 	m := make(map[string]string, 1)
 	m[accountIDHeader] = c.AccountID
@@ -74,7 +74,7 @@ type Progressdetail struct {
 	Total   int `json:"total,omitempty"`
 }
 
-// ImageBuildResponse
+//ImageBuildResponse
 type ImageBuildResponse struct {
 	ID             string                 `json:"id,omitempty"`
 	Stream         string                 `json:"stream,omitempty"`
@@ -88,7 +88,7 @@ type ImageBuildResponse struct {
 // Callback function for build response stream
 type ImageBuildResponseCallback func(respV ImageBuildResponse) bool
 
-// Subnets interface
+//Subnets interface
 type Builds interface {
 	ImageBuild(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader, out io.Writer) error
 	ImageBuildCallback(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader, callback ImageBuildResponseCallback) error
@@ -104,7 +104,7 @@ func newBuildAPI(c *client.Client) Builds {
 	}
 }
 
-// Create ...
+//Create ...
 func (r *builds) ImageBuildCallback(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader, callback ImageBuildResponseCallback) error {
 	req := rest.PostRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/api/v1/builds")).
 		Query("t", params.T).
@@ -124,7 +124,7 @@ func (r *builds) ImageBuildCallback(params ImageBuildRequest, buildContext io.Re
 	return err
 }
 
-// Create ...
+//Create ...
 func (r *builds) ImageBuild(params ImageBuildRequest, buildContext io.Reader, target BuildTargetHeader, out io.Writer) error {
 	req := rest.PostRequest(helpers.GetFullURL(*r.client.Config.Endpoint, "/api/v1/builds")).
 		Query("t", params.T).

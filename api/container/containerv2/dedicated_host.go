@@ -3,7 +3,7 @@ package containerv2
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 // CreateDedicatedHostRequest provides dedicated host data for create call
@@ -76,7 +76,7 @@ type UpdateDedicatedHostPlacementRequest struct {
 	HostID     string `json:"hostID"`
 }
 
-// DedicatedHost ...
+//DedicatedHost ...
 type DedicatedHost interface {
 	CreateDedicatedHost(dedicatedHostReq CreateDedicatedHostRequest, target ClusterTargetHeader) (CreateDedicatedHostResponse, error)
 	GetDedicatedHost(dedicatedHostID, dedicatedHostPoolID string, target ClusterTargetHeader) (GetDedicatedHostResponse, error)

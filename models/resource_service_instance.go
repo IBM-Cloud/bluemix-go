@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"github.com/Mavrickk3/bluemix-go/crn"
+	"github.com/IBM-Cloud/bluemix-go/crn"
 )
 
 type MetadataType struct {

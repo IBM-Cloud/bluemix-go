@@ -3,8 +3,8 @@ package satellitev1
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/api/container/containerv2"
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/api/container/containerv2"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 type CreateSatelliteEndpointSourceRequest struct {

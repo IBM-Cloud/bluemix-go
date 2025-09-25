@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"time"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/endpoints"
-	"github.com/Mavrickk3/bluemix-go/helpers"
-	"github.com/Mavrickk3/bluemix-go/trace"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/endpoints"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 // Session ...

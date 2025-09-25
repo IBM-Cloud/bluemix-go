@@ -5,10 +5,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
-// FirewallRecord ...
+//FirewallRecord ...
 type FirewallRecord struct {
 	ID             string          `json:"id"`
 	Description    string          `json:"description,omitempty"`
@@ -23,13 +23,13 @@ type FirewallRecord struct {
 	Priority       int             `json:"priority,omitempty"`
 }
 
-// Configuration ...
+//Configuration ...
 type Configuration struct {
 	Target string `json:"target,omitempty"`
 	Value  string `json:"value,omitempty"`
 }
 
-// FirewallResults ...
+//FirewallResults ...
 type FirewallResults struct {
 	FirewallList []FirewallRecord `json:"result"`
 	ResultsInfo  ResultsCount     `json:"result_info"`
@@ -37,7 +37,7 @@ type FirewallResults struct {
 	Errors       []Error          `json:"errors"`
 }
 
-// FirewallResult ...
+//FirewallResult ...
 type FirewallResult struct {
 	Firewall FirewallRecord `json:"result"`
 	Success  bool           `json:"success"`
@@ -45,7 +45,7 @@ type FirewallResult struct {
 	Messages []string       `json:"messages"`
 }
 
-// FirewallBody ...
+//FirewallBody ...
 type FirewallBody struct {
 	Description    string          `json:"description,omitempty"`
 	Urls           []string        `json:"urls,omitempty"`
@@ -57,7 +57,7 @@ type FirewallBody struct {
 	Priority       int             `json:"priority,omitempty"`
 }
 
-// Firewall ...
+//Firewall ...
 type Firewall interface {
 	ListFirewall(cisID string, zoneID string, firewallType string) ([]FirewallRecord, error)
 	GetFirewall(cisID string, zoneID string, firewallType string, firewallID string) (*FirewallRecord, error)
@@ -66,7 +66,7 @@ type Firewall interface {
 	UpdateFirewall(cisID string, zoneID string, firewallType string, firewallID string, firewallBody FirewallBody) (*FirewallRecord, error)
 }
 
-// firewall ...
+//firewall ...
 type firewall struct {
 	client *client.Client
 }

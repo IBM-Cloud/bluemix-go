@@ -3,28 +3,28 @@ package iampapv2
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/authentication"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/http"
-	"github.com/Mavrickk3/bluemix-go/rest"
-	"github.com/Mavrickk3/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/authentication"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/http"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// IAMPAPAPIV2 is the resource client ...
+//IAMPAPAPIV2 is the resource client ...
 type IAMPAPAPIV2 interface {
 	IAMRoles() RoleRepository
 }
 
-// ErrCodeAPICreation ...
+//ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-// iamService holds the client
+//iamService holds the client
 type roleService struct {
 	*client.Client
 }
 
-// New ...
+//New ...
 func New(sess *session.Session) (IAMPAPAPIV2, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.IAMPAPServicev2)
@@ -63,7 +63,7 @@ func New(sess *session.Session) (IAMPAPAPIV2, error) {
 	}, nil
 }
 
-// CustomRole API
+//CustomRole API
 func (a *roleService) IAMRoles() RoleRepository {
 	return NewRoleRepository(a.Client)
 }

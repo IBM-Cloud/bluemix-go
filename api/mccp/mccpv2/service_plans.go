@@ -3,15 +3,15 @@ package mccpv2
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/bmxerror"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
-// ErrCodeServicePlanDoesNotExist ...
+//ErrCodeServicePlanDoesNotExist ...
 const ErrCodeServicePlanDoesNotExist = "ServicePlanDoesNotExist"
 
-// ServicePlan ...
+//ServicePlan ...
 type ServicePlan struct {
 	GUID                string
 	Name                string `json:"name"`
@@ -24,13 +24,13 @@ type ServicePlan struct {
 	ServiceInstancesURL string `json:"service_instances_url"`
 }
 
-// ServicePlanResource ...
+//ServicePlanResource ...
 type ServicePlanResource struct {
 	Resource
 	Entity ServicePlanEntity
 }
 
-// ServicePlanEntity ...
+//ServicePlanEntity ...
 type ServicePlanEntity struct {
 	Name                string `json:"name"`
 	Description         string `json:"description"`
@@ -42,7 +42,7 @@ type ServicePlanEntity struct {
 	ServiceInstancesURL string `json:"service_instances_url"`
 }
 
-// ToFields ...
+//ToFields ...
 func (resource ServicePlanResource) ToFields() ServicePlan {
 	entity := resource.Entity
 
@@ -59,19 +59,19 @@ func (resource ServicePlanResource) ToFields() ServicePlan {
 	}
 }
 
-// ServicePlanFields ...
+//ServicePlanFields ...
 type ServicePlanFields struct {
 	Metadata ServicePlanMetadata
 	Entity   ServicePlan
 }
 
-// ServicePlanMetadata ...
+//ServicePlanMetadata ...
 type ServicePlanMetadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
 }
 
-// ServicePlans ...
+//ServicePlans ...
 type ServicePlans interface {
 	FindPlanInServiceOffering(serviceOfferingGUID string, planType string) (*ServicePlan, error)
 	Get(planGUID string) (*ServicePlanFields, error)

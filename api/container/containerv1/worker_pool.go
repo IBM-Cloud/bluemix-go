@@ -3,7 +3,7 @@ package containerv1
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 // WorkerPoolConfig common worker pool data
@@ -81,7 +81,7 @@ type WorkerPoolZoneResponse struct {
 // swagger:model
 type WorkerPoolZoneResponses []WorkerPoolZoneResponse
 
-// Workers ...
+//Workers ...
 type WorkerPool interface {
 	CreateWorkerPool(clusterNameOrID string, workerPoolReq WorkerPoolRequest, target ClusterTargetHeader) (WorkerPoolResponse, error)
 	ResizeWorkerPool(clusterNameOrID, workerPoolNameOrID string, size int, target ClusterTargetHeader) error

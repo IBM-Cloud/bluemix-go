@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/session"
 
-	v2 "github.com/Mavrickk3/bluemix-go/api/container/containerv2"
+	v2 "github.com/IBM-Cloud/bluemix-go/api/container/containerv2"
 )
 
 func main() {

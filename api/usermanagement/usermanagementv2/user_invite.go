@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 const (
@@ -40,7 +40,7 @@ func NewUserInviteHandler(c *client.Client) Users {
 	}
 }
 
-// GetUsers returns users in the first page alone
+//GetUsers returns users in the first page alone
 func (r *inviteUsersHandler) GetUsers(ibmUniqueID string) (UsersList, error) {
 	result := UsersList{}
 	URL := fmt.Sprintf(_UsersURL, ibmUniqueID)
@@ -57,7 +57,7 @@ func (r *inviteUsersHandler) GetUsers(ibmUniqueID string) (UsersList, error) {
 	return result, nil
 }
 
-// ListUsers returns all the users in the account
+//ListUsers returns all the users in the account
 func (r *inviteUsersHandler) ListUsers(ibmUniqueID string) ([]UserInfo, error) {
 	URL := fmt.Sprintf(_UsersURL, ibmUniqueID)
 

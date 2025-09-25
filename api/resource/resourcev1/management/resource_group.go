@@ -3,13 +3,13 @@ package management
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/bmxerror"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/models"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/models"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
-// ResourceGroupUpdateRequest ...
+//ResourceGroupUpdateRequest ...
 type ResourceGroupUpdateRequest struct {
 	Name    string `json:"name,omitempty"`
 	QuotaID string `json:"quota_id,omitempty"`
@@ -24,10 +24,10 @@ type ResourceGroupQuery struct {
 	ResourceOrigin models.ResourceOrigin
 }
 
-// ErrCodeResourceGroupDoesnotExist ...
+//ErrCodeResourceGroupDoesnotExist ...
 const ErrCodeResourceGroupDoesnotExist = "ResourceGroupDoesnotExist"
 
-// ResourceGroupQuery ...
+//ResourceGroupQuery ...
 type ResourceGroupRepository interface {
 	// List all available resource groups
 	List(*ResourceGroupQuery) ([]models.ResourceGroup, error)

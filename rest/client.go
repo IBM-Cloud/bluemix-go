@@ -33,15 +33,14 @@
 // 		GetRequest("http://www.example.com").Build()
 
 // Sending request:
-//
-//	client := NewClient()
-//	var foo = struct {
-//		Bar string
-//	}{}
-//	var apiErr = struct {
-//		Message string
-//	}{}
-//	resp, err := client.Do(request, &foo, &apiErr)
+// 		client := NewClient()
+// 		var foo = struct {
+// 			Bar string
+// 		}{}
+// 		var apiErr = struct {
+// 			Message string
+// 		}{}
+// 		resp, err := client.Do(request, &foo, &apiErr)
 package rest
 
 import (
@@ -52,7 +51,7 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/Mavrickk3/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
 )
 
 const (
@@ -60,7 +59,7 @@ const (
 	ErrCodeEmptyResponse = "EmptyResponseBody"
 )
 
-// ErrEmptyResponseBody ...
+//ErrEmptyResponseBody ...
 var ErrEmptyResponseBody = bmxerror.New(ErrCodeEmptyResponse, "empty response body")
 
 // Client is a REST client. It's recommend that a client be created with the

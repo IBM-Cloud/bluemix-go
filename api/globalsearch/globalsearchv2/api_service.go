@@ -3,28 +3,28 @@ package globalsearchv2
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/authentication"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/http"
-	"github.com/Mavrickk3/bluemix-go/rest"
-	"github.com/Mavrickk3/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/authentication"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/http"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// ErrCodeAPICreation ...
+//ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-// ICDServiceAPI is the Cloud Internet Services API ...
+//ICDServiceAPI is the Cloud Internet Services API ...
 type GlobalSearchServiceAPI interface {
 	Searches() Searches
 }
 
-// ICDService holds the client
+//ICDService holds the client
 type globalSearchService struct {
 	*client.Client
 }
 
-// New ...
+//New ...
 func New(sess *session.Session) (GlobalSearchServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.GlobalSearchService)
@@ -63,7 +63,7 @@ func New(sess *session.Session) (GlobalSearchServiceAPI, error) {
 	}, nil
 }
 
-// Search implements the global search API
+//Search implements the global search API
 func (c *globalSearchService) Searches() Searches {
 	return newSearchAPI(c.Client)
 }

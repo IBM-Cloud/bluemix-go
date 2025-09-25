@@ -3,10 +3,10 @@ package containerv1
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
-// Subnet ...
+//Subnet ...
 type Subnet struct {
 	ID          string           `json:"id"`
 	Type        string           `json:"type"`
@@ -15,7 +15,7 @@ type Subnet struct {
 	Properties  SubnetProperties `json:"properties"`
 }
 
-// SubnetProperties ...
+//SubnetProperties ...
 type SubnetProperties struct {
 	CIDR              string `json:"cidr"`
 	NetworkIdentifier string `json:"network_identifier"`
@@ -30,7 +30,7 @@ type UserSubnet struct {
 	VLANID string `json:"vlan_id" binding:"required" description:"The private VLAN where the CIDR exists'"`
 }
 
-// Subnets interface
+//Subnets interface
 type Subnets interface {
 	AddSubnet(clusterName string, subnetID string, target ClusterTargetHeader) error
 	List(target ClusterTargetHeader, opts ...string) ([]Subnet, error)
@@ -49,7 +49,7 @@ func newSubnetAPI(c *client.Client) Subnets {
 	}
 }
 
-// GetSubnets ...
+//GetSubnets ...
 func (r *subnet) List(target ClusterTargetHeader, opts ...string) ([]Subnet, error) {
 	subnets := []Subnet{}
 	rawURL := "/v1/subnets"
@@ -64,28 +64,28 @@ func (r *subnet) List(target ClusterTargetHeader, opts ...string) ([]Subnet, err
 	return subnets, err
 }
 
-// AddSubnetToCluster ...
+//AddSubnetToCluster ...
 func (r *subnet) AddSubnet(name string, subnetID string, target ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/subnets/%s", name, subnetID)
 	_, err := r.client.Put(rawURL, nil, nil, target.ToMap())
 	return err
 }
 
-// AddClusterUserSubnet ...
+//AddClusterUserSubnet ...
 func (r *subnet) AddClusterUserSubnet(clusterID string, userSubnet UserSubnet, target ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/usersubnets", clusterID)
 	_, err := r.client.Post(rawURL, nil, nil, target.ToMap())
 	return err
 }
 
-// DeleteClusterUserSubnet ...
+//DeleteClusterUserSubnet ...
 func (r *subnet) DeleteClusterUserSubnet(clusterID string, subnetID string, vlanID string, target ClusterTargetHeader) error {
 	rawURL := fmt.Sprintf("/v1/clusters/%s/usersubnets/%s/vlans/%s", clusterID, subnetID, vlanID)
 	_, err := r.client.Delete(rawURL, target.ToMap())
 	return err
 }
 
-// GetClusterUserSubnet ...
+//GetClusterUserSubnet ...
 func (r *subnet) ListClusterUserSubnets(clusterID string, target ClusterTargetHeader) ([]Vlan, error) {
 	vlans := []Vlan{}
 	rawURL := fmt.Sprintf("/v1/clusters/%s/usersubnets", clusterID)

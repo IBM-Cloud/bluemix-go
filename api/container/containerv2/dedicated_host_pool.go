@@ -3,7 +3,7 @@ package containerv2
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 // CreateDedicatedHostPoolRequest provides dedicated host pool data for create call
@@ -52,7 +52,7 @@ type RemoveDedicatedHostPoolRequest struct {
 	HostPoolID string `json:"hostPool" description:""`
 }
 
-// DedicatedHostPool ...
+//DedicatedHostPool ...
 type DedicatedHostPool interface {
 	CreateDedicatedHostPool(dedicatedHostPoolReq CreateDedicatedHostPoolRequest, target ClusterTargetHeader) (CreateDedicatedHostPoolResponse, error)
 	GetDedicatedHostPool(dedicatedHostPoolID string, target ClusterTargetHeader) (GetDedicatedHostPoolResponse, error)

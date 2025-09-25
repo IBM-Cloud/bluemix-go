@@ -3,7 +3,7 @@ package cisv1
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 // RateLimitRecord is a policy than can be applied to limit traffic within a customer domain
@@ -19,7 +19,7 @@ type RateLimitRecord struct {
 	Match       RateLimitMatch      `json:"match"`
 }
 
-// RateLimitByPass ...
+//  RateLimitByPass ...
 type RateLimitByPass struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
@@ -70,7 +70,7 @@ type MatchResponseHeader struct {
 	Value string `json:"value,omitempty"`
 }
 
-// RateLimitResult ...
+//RateLimitResult ...
 type RateLimitResult struct {
 	RateLimit RateLimitRecord `json:"result"`
 	Success   bool            `json:"success"`
@@ -78,7 +78,7 @@ type RateLimitResult struct {
 	Messages  []string        `json:"messages"`
 }
 
-// RateLimitResults ...
+//RateLimitResults ...
 type RateLimitResults struct {
 	RateLimitList []RateLimitRecord `json:"result"`
 	ResultsInfo   ResultsCount      `json:"result_info"`
@@ -86,7 +86,7 @@ type RateLimitResults struct {
 	Errors        []Error           `json:"errors"`
 }
 
-// RateLimit ...
+//RateLimit ...
 type RateLimit interface {
 	ListRateLimit(cisID string, zoneID string) ([]RateLimitRecord, error)
 	GetRateLimit(cisID string, zoneID string, rateLimitID string) (*RateLimitRecord, error)
@@ -95,7 +95,7 @@ type RateLimit interface {
 	UpdateRateLimit(cisID string, zoneID string, rateLimitID string, rateLimitBody RateLimitRecord) (*RateLimitRecord, error)
 }
 
-// RateLimit ...
+//RateLimit ...
 type ratelimit struct {
 	client *client.Client
 }

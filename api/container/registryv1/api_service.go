@@ -3,15 +3,15 @@ package registryv1
 import (
 	gohttp "net/http"
 
-	ibmcloud "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/authentication"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/http"
-	"github.com/Mavrickk3/bluemix-go/rest"
-	"github.com/Mavrickk3/bluemix-go/session"
+	ibmcloud "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/authentication"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/http"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// ErrCodeAPICreation ...
+//ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
 const (
@@ -19,7 +19,7 @@ const (
 	resourceGroupHeader = "X-Auth-Resource-Group"
 )
 
-// RegistryServiceAPI is the IBM Cloud Registry client ...
+//RegistryServiceAPI is the IBM Cloud Registry client ...
 type RegistryServiceAPI interface {
 	Builds() Builds
 	Namespaces() Namespaces
@@ -32,7 +32,7 @@ type RegistryServiceAPI interface {
 	*/
 }
 
-// RegistryService holds the client
+//RegistryService holds the client
 type rsService struct {
 	*client.Client
 }
@@ -46,7 +46,7 @@ func addToRequestHeader(h interface{}, r *rest.Request) {
 	}
 }
 
-// New ...
+//New ...
 func New(sess *session.Session) (RegistryServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(ibmcloud.ContainerRegistryService)
@@ -85,22 +85,22 @@ func New(sess *session.Session) (RegistryServiceAPI, error) {
 	}, nil
 }
 
-// Builds implements builds API
+//Builds implements builds API
 func (c *rsService) Builds() Builds {
 	return newBuildAPI(c.Client)
 }
 
-// Namespaces implements Namespaces API
+//Namespaces implements Namespaces API
 func (c *rsService) Namespaces() Namespaces {
 	return newNamespaceAPI(c.Client)
 }
 
-// Tokens implements Tokens API
+//Tokens implements Tokens API
 func (c *rsService) Tokens() Tokens {
 	return newTokenAPI(c.Client)
 }
 
-// Images implements Images API
+//Images implements Images API
 func (c *rsService) Images() Images {
 	return newImageAPI(c.Client)
 }

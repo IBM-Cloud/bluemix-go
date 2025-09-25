@@ -3,30 +3,30 @@ package schematics
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/authentication"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/http"
-	"github.com/Mavrickk3/bluemix-go/rest"
-	"github.com/Mavrickk3/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/authentication"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/http"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// ErrCodeAPICreation ...
+//ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-// SchematicsServiceAPI is the Aramda K8s client ...
+//SchematicsServiceAPI is the Aramda K8s client ...
 type SchematicsServiceAPI interface {
 	Workspaces() Workspaces
 
 	//TODO Add other services
 }
 
-// VpcContainerService holds the client
+//VpcContainerService holds the client
 type scService struct {
 	*client.Client
 }
 
-// New ...
+//New ...
 func New(sess *session.Session) (SchematicsServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.SchematicsService)
@@ -65,7 +65,7 @@ func New(sess *session.Session) (SchematicsServiceAPI, error) {
 	}, nil
 }
 
-// Clusters implements Clusters API
+//Clusters implements Clusters API
 func (c scService) Workspaces() Workspaces {
 	return newWorkspaceAPI(c.Client)
 }

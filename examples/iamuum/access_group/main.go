@@ -5,13 +5,13 @@ import (
 	"log"
 	"os"
 
-	"github.com/Mavrickk3/bluemix-go/models"
+	"github.com/IBM-Cloud/bluemix-go/models"
 
-	"github.com/Mavrickk3/bluemix-go/api/account/accountv2"
-	"github.com/Mavrickk3/bluemix-go/api/iamuum/iamuumv2"
-	"github.com/Mavrickk3/bluemix-go/api/mccp/mccpv2"
-	"github.com/Mavrickk3/bluemix-go/session"
-	"github.com/Mavrickk3/bluemix-go/trace"
+	"github.com/IBM-Cloud/bluemix-go/api/account/accountv2"
+	"github.com/IBM-Cloud/bluemix-go/api/iamuum/iamuumv2"
+	"github.com/IBM-Cloud/bluemix-go/api/mccp/mccpv2"
+	"github.com/IBM-Cloud/bluemix-go/session"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 func main() {

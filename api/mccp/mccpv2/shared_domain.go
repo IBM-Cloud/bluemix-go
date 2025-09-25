@@ -3,46 +3,46 @@ package mccpv2
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/bmxerror"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
-// ErrCodeSharedDomainDoesnotExist ...
+//ErrCodeSharedDomainDoesnotExist ...
 var ErrCodeSharedDomainDoesnotExist = "SharedDomainDoesnotExist"
 
-// SharedDomainRequest ...
+//SharedDomainRequest ...
 type SharedDomainRequest struct {
 	Name            string `json:"name"`
 	RouterGroupGUID string `json:"router_group_guid,omitempty"`
 }
 
-// SharedDomaineMetadata ...
+//SharedDomaineMetadata ...
 type SharedDomainMetadata struct {
 	GUID string `json:"guid"`
 	URL  string `json:"url"`
 }
 
-// SharedDomainEntity ...
+//SharedDomainEntity ...
 type SharedDomainEntity struct {
 	Name            string `json:"name"`
 	RouterGroupGUID string `json:"router_group_guid"`
 	RouterGroupType string `json:"router_group_type"`
 }
 
-// SharedDomainResource ...
+//SharedDomainResource ...
 type SharedDomainResource struct {
 	Resource
 	Entity SharedDomainEntity
 }
 
-// SharedDomainFields ...
+//SharedDomainFields ...
 type SharedDomainFields struct {
 	Metadata SharedDomainMetadata
 	Entity   SharedDomainEntity
 }
 
-// ToFields ..
+//ToFields ..
 func (resource SharedDomainResource) ToFields() SharedDomain {
 	entity := resource.Entity
 
@@ -54,7 +54,7 @@ func (resource SharedDomainResource) ToFields() SharedDomain {
 	}
 }
 
-// SharedDomain model
+//SharedDomain model
 type SharedDomain struct {
 	GUID            string
 	Name            string
@@ -62,7 +62,7 @@ type SharedDomain struct {
 	RouterGroupType string
 }
 
-// SharedDomains ...
+//SharedDomains ...
 type SharedDomains interface {
 	FindByName(domainName string) (*SharedDomain, error)
 	Create(req SharedDomainRequest, opts ...bool) (*SharedDomainFields, error)

@@ -3,18 +3,18 @@ package icdv4
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/authentication"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/http"
-	"github.com/Mavrickk3/bluemix-go/rest"
-	"github.com/Mavrickk3/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/authentication"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/http"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// ErrCodeAPICreation ...
+//ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-// ICDServiceAPI is the Cloud Internet Services API ...
+//ICDServiceAPI is the Cloud Internet Services API ...
 type ICDServiceAPI interface {
 	Cdbs() Cdbs
 	Users() Users
@@ -26,12 +26,12 @@ type ICDServiceAPI interface {
 	Configurations() Configurations
 }
 
-// ICDService holds the client
+//ICDService holds the client
 type icdService struct {
 	*client.Client
 }
 
-// New ...
+//New ...
 func New(sess *session.Session) (ICDServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.ICDService)
@@ -70,12 +70,12 @@ func New(sess *session.Session) (ICDServiceAPI, error) {
 	}, nil
 }
 
-// Cdbs implements deployments API
+//Cdbs implements deployments API
 func (c *icdService) Cdbs() Cdbs {
 	return newCdbAPI(c.Client)
 }
 
-// Users implements users API
+//Users implements users API
 func (c *icdService) Users() Users {
 	return newUsersAPI(c.Client)
 }
@@ -83,27 +83,27 @@ func (c *icdService) Configurations() Configurations {
 	return newConfigurationsAPI(c.Client)
 }
 
-// Whilelists implements whitelists API
+//Whilelists implements whitelists API
 func (c *icdService) Whitelists() Whitelists {
 	return newWhitelistAPI(c.Client)
 }
 
-// Groups implements groups API
+//Groups implements groups API
 func (c *icdService) Groups() Groups {
 	return newGroupAPI(c.Client)
 }
 
-// Tasks implements tasks API
+//Tasks implements tasks API
 func (c *icdService) Tasks() Tasks {
 	return newTaskAPI(c.Client)
 }
 
-// Tasks implements tasks API
+//Tasks implements tasks API
 func (c *icdService) Connections() Connections {
 	return newConnectionAPI(c.Client)
 }
 
-// AutoScaling implements AutoScaling API
+//AutoScaling implements AutoScaling API
 func (c *icdService) AutoScaling() AutoScaling {
 	return newAutoScalingAPI(c.Client)
 }

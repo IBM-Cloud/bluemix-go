@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/Mavrickk3/bluemix-go/bmxerror"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/models"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/models"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 type CreateServiceInstanceRequest struct {
@@ -42,10 +42,10 @@ type ServiceInstanceQuery struct {
 	Guid            string
 }
 
-// ErrCodeResourceServiceInstanceDoesnotExist ...
+//ErrCodeResourceServiceInstanceDoesnotExist ...
 const ErrCodeResourceServiceInstanceDoesnotExist = "ResourceServiceInstanceDoesnotExist"
 
-// ResourceServiceInstanceQuery ...
+//ResourceServiceInstanceQuery ...
 type ResourceServiceInstanceRepository interface {
 	ListInstances(query ServiceInstanceQuery) ([]models.ServiceInstanceV2, error)
 	GetInstance(serviceInstanceID string) (models.ServiceInstanceV2, error)

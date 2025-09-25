@@ -6,15 +6,15 @@ import (
 	"log"
 	"os"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/session"
 
-	"github.com/Mavrickk3/bluemix-go/api/account/accountv2"
-	v1 "github.com/Mavrickk3/bluemix-go/api/container/containerv1"
-	"github.com/Mavrickk3/bluemix-go/api/mccp/mccpv2"
+	"github.com/IBM-Cloud/bluemix-go/api/account/accountv2"
+	v1 "github.com/IBM-Cloud/bluemix-go/api/container/containerv1"
+	"github.com/IBM-Cloud/bluemix-go/api/mccp/mccpv2"
 )
 
-// Example to list all supported versions of the kube in the IBM Container Service
+//Example to list all supported versions of the kube in the IBM Container Service
 func main() {
 	c := new(bluemix.Config)
 	flag.StringVar(&c.IBMID, "ibmid", "", "The IBM ID. You can also source it from env IBMID")

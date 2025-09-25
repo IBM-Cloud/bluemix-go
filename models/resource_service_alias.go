@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/Mavrickk3/bluemix-go/crn"
+	"github.com/IBM-Cloud/bluemix-go/crn"
 )
 
 type ServiceAlias struct {

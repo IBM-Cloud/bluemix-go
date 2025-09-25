@@ -3,7 +3,7 @@ package containerv2
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
 // GetDedicatedHostFlavor is a response to a dedicated host pool get request.
@@ -31,7 +31,7 @@ type InstanceStorage struct {
 	Size int `json:"size"`
 }
 
-// DedicatedHostFlavor ...
+//DedicatedHostFlavor ...
 type DedicatedHostFlavor interface {
 	ListDedicatedHostFlavors(zone string, target ClusterTargetHeader) (GetDedicatedHostFlavors, error)
 }

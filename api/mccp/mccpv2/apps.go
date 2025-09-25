@@ -6,14 +6,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Mavrickk3/bluemix-go/bmxerror"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/helpers"
-	"github.com/Mavrickk3/bluemix-go/rest"
-	"github.com/Mavrickk3/bluemix-go/trace"
+	"github.com/IBM-Cloud/bluemix-go/bmxerror"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
-// AppState ...
+//AppState ...
 type AppState struct {
 	PackageState  string
 	InstanceState string
@@ -48,7 +48,7 @@ const (
 	DefaultRetryDelayForStatusCheck = 10 * time.Second
 )
 
-// AppRequest ...
+//AppRequest ...
 type AppRequest struct {
 	Name                     *string                 `json:"name,omitempty"`
 	Memory                   int                     `json:"memory,omitempty"`
@@ -73,7 +73,7 @@ type AppRequest struct {
 	EnvironmentJSON          *map[string]interface{} `json:"environment_json,omitempty"`
 }
 
-// AppEntity ...
+//AppEntity ...
 type AppEntity struct {
 	Name                     string                 `json:"name"`
 	SpaceGUID                string                 `json:"space_guid"`
@@ -102,31 +102,31 @@ type AppEntity struct {
 	EnvironmentJSON          map[string]interface{} `json:"environment_json"`
 }
 
-// AppResource ...
+//AppResource ...
 type AppResource struct {
 	Resource
 	Entity AppEntity
 }
 
-// AppFields ...
+//AppFields ...
 type AppFields struct {
 	Metadata Metadata
 	Entity   AppEntity
 }
 
-// UploadBitsEntity ...
+//UploadBitsEntity ...
 type UploadBitsEntity struct {
 	GUID   string `json:"guid"`
 	Status string `json:"status"`
 }
 
-// UploadBitFields ...
+//UploadBitFields ...
 type UploadBitFields struct {
 	Metadata Metadata
 	Entity   UploadBitsEntity
 }
 
-// AppSummaryFields ...
+//AppSummaryFields ...
 type AppSummaryFields struct {
 	GUID             string `json:"guid"`
 	Name             string `json:"name"`
@@ -135,12 +135,12 @@ type AppSummaryFields struct {
 	RunningInstances int    `json:"running_instances"`
 }
 
-// AppStats ...
+//AppStats ...
 type AppStats struct {
 	State string `json:"state"`
 }
 
-// ToFields ..
+//ToFields ..
 func (resource AppResource) ToFields() App {
 	entity := resource.Entity
 
@@ -172,7 +172,7 @@ func (resource AppResource) ToFields() App {
 	}
 }
 
-// App model
+//App model
 type App struct {
 	Name                    string
 	SpaceGUID               string
@@ -200,7 +200,7 @@ type App struct {
 	EnvironmentJSON         map[string]interface{}
 }
 
-// Apps ...
+//Apps ...
 type Apps interface {
 	Create(appPayload AppRequest, opts ...bool) (*AppFields, error)
 	List() ([]App, error)

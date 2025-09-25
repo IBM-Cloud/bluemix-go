@@ -5,23 +5,23 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/helpers"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 type ImageTargetHeader struct {
 	AccountID string
 }
 
-// ToMap ...
+//ToMap ...
 func (c ImageTargetHeader) ToMap() map[string]string {
 	m := make(map[string]string, 1)
 	m[accountIDHeader] = c.AccountID
 	return m
 }
 
-// Subnets interface
+//Subnets interface
 type Images interface {
 	GetImages(params GetImageRequest, target ImageTargetHeader) (*GetImagesResponse, error)
 	InspectImage(imageName string, target ImageTargetHeader) (*ImageInspectResponse, error)
@@ -176,8 +176,7 @@ type ImageVulnerabilitiesResponse struct {
 	} `json:"detail"`
 }
 
-/*
-GetImageRequest contains all the parameters to send to the API endpoint
+/*GetImageRequest contains all the parameters to send to the API endpoint
 for the image list operation typically these are written to a http.Request
 */
 type GetImageRequest struct {

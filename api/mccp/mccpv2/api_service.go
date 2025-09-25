@@ -3,18 +3,18 @@ package mccpv2
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/authentication"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/http"
-	"github.com/Mavrickk3/bluemix-go/rest"
-	"github.com/Mavrickk3/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/authentication"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/http"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// ErrCodeAPICreation ...
+//ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-// MccpServiceAPI is the mccpv2 client ...
+//MccpServiceAPI is the mccpv2 client ...
 type MccpServiceAPI interface {
 	Organizations() Organizations
 	Spaces() Spaces
@@ -32,12 +32,12 @@ type MccpServiceAPI interface {
 	Regions() RegionRepository
 }
 
-// MccpService holds the client
+//MccpService holds the client
 type mccpService struct {
 	*client.Client
 }
 
-// New ...
+//New ...
 func New(sess *session.Session) (MccpServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.MccpService)
@@ -76,47 +76,47 @@ func New(sess *session.Session) (MccpServiceAPI, error) {
 	}, nil
 }
 
-// Organizations implements Organizations APIs
+//Organizations implements Organizations APIs
 func (c *mccpService) Organizations() Organizations {
 	return newOrganizationAPI(c.Client)
 }
 
-// Spaces implements Spaces APIs
+//Spaces implements Spaces APIs
 func (c *mccpService) Spaces() Spaces {
 	return newSpacesAPI(c.Client)
 }
 
-// ServicePlans implements ServicePlans APIs
+//ServicePlans implements ServicePlans APIs
 func (c *mccpService) ServicePlans() ServicePlans {
 	return newServicePlanAPI(c.Client)
 }
 
-// ServiceOfferings implements ServiceOfferings APIs
+//ServiceOfferings implements ServiceOfferings APIs
 func (c *mccpService) ServiceOfferings() ServiceOfferings {
 	return newServiceOfferingAPI(c.Client)
 }
 
-// ServiceInstances implements ServiceInstances APIs
+//ServiceInstances implements ServiceInstances APIs
 func (c *mccpService) ServiceInstances() ServiceInstances {
 	return newServiceInstanceAPI(c.Client)
 }
 
-// ServiceKeys implements ServiceKey APIs
+//ServiceKeys implements ServiceKey APIs
 func (c *mccpService) ServiceKeys() ServiceKeys {
 	return newServiceKeyAPI(c.Client)
 }
 
-// SpaceQuotas implements SpaceQuota APIs
+//SpaceQuotas implements SpaceQuota APIs
 func (c *mccpService) SpaceQuotas() SpaceQuotas {
 	return newSpaceQuotasAPI(c.Client)
 }
 
-// OrgQuotas implements OrgQuota APIs
+//OrgQuotas implements OrgQuota APIs
 func (c *mccpService) OrgQuotas() OrgQuotas {
 	return newOrgQuotasAPI(c.Client)
 }
 
-// ServiceBindings implements ServiceBindings APIs
+//ServiceBindings implements ServiceBindings APIs
 func (c *mccpService) ServiceBindings() ServiceBindings {
 	return newServiceBindingAPI(c.Client)
 }

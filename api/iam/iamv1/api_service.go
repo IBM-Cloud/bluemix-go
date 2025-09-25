@@ -3,15 +3,15 @@ package iamv1
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/authentication"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/http"
-	"github.com/Mavrickk3/bluemix-go/rest"
-	"github.com/Mavrickk3/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/authentication"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/http"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// IAMServiceAPI is the resource client ...
+//IAMServiceAPI is the resource client ...
 type IAMServiceAPI interface {
 	ServiceRoles() ServiceRoleRepository
 	ServiceIds() ServiceIDRepository
@@ -21,15 +21,15 @@ type IAMServiceAPI interface {
 	Identity() Identity
 }
 
-// ErrCodeAPICreation ...
+//ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-// iamService holds the client
+//iamService holds the client
 type iamService struct {
 	*client.Client
 }
 
-// New ...
+//New ...
 func New(sess *session.Session) (IAMServiceAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.IAMService)
@@ -68,32 +68,32 @@ func New(sess *session.Session) (IAMServiceAPI, error) {
 	}, nil
 }
 
-// ServiceRoles API
+//ServiceRoles API
 func (a *iamService) ServiceRoles() ServiceRoleRepository {
 	return NewServiceRoleRepository(a.Client)
 }
 
-// ServiceIdsAPI
+//ServiceIdsAPI
 func (a *iamService) ServiceIds() ServiceIDRepository {
 	return NewServiceIDRepository(a.Client)
 }
 
-// APIkeys
+//APIkeys
 func (a *iamService) APIKeys() APIKeyRepository {
 	return NewAPIKeyRepository(a.Client)
 }
 
-// ServicePolicyAPI
+//ServicePolicyAPI
 func (a *iamService) ServicePolicies() ServicePolicyRepository {
 	return NewServicePolicyRepository(a.Client)
 }
 
-// UserPoliciesAPI
+//UserPoliciesAPI
 func (a *iamService) UserPolicies() UserPolicyRepository {
 	return NewUserPolicyRepository(a.Client)
 }
 
-// IdentityAPI
+//IdentityAPI
 func (a *iamService) Identity() Identity {
 	return NewIdentity(a.Client)
 }

@@ -1,10 +1,10 @@
 package containerv1
 
 import (
-	"github.com/Mavrickk3/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/client"
 )
 
-// KubeVersion ...
+//KubeVersion ...
 type KubeVersion struct {
 	Major   int
 	Minor   int
@@ -14,7 +14,7 @@ type KubeVersion struct {
 
 type V1Version map[string][]KubeVersion
 
-// KubeVersions interface
+//KubeVersions interface
 type KubeVersions interface {
 	List(target ClusterTargetHeader) ([]KubeVersion, error)
 	ListV1(target ClusterTargetHeader) (V1Version, error)
@@ -30,7 +30,7 @@ func newKubeVersionAPI(c *client.Client) KubeVersions {
 	}
 }
 
-// List ...
+//List ...
 func (v *version) List(target ClusterTargetHeader) ([]KubeVersion, error) {
 	versions := []KubeVersion{}
 	_, err := v.client.Get("/v1/kube-versions", &versions, target.ToMap())

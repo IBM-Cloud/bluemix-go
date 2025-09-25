@@ -15,12 +15,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/session"
 
-	"github.com/Mavrickk3/bluemix-go/api/container/registryv1"
-	"github.com/Mavrickk3/bluemix-go/api/iam/iamv1"
-	"github.com/Mavrickk3/bluemix-go/trace"
+	"github.com/IBM-Cloud/bluemix-go/api/container/registryv1"
+	"github.com/IBM-Cloud/bluemix-go/api/iam/iamv1"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 func tarGzContext(context string) (string, error) {
@@ -81,7 +81,7 @@ func tarGzContext(context string) (string, error) {
 	return tarfile.Name(), err
 }
 
-// Example: ./build -f Dockerfile -t registry.ng.bluemix.net/ibmcloud-go/imagtest .")
+//Example: ./build -f Dockerfile -t registry.ng.bluemix.net/ibmcloud-go/imagtest .")
 func main() {
 
 	c := new(bluemix.Config)

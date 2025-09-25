@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Mavrickk3/bluemix-go"
-	v "github.com/Mavrickk3/bluemix-go/api/certificatemanager"
-	"github.com/Mavrickk3/bluemix-go/models"
-	"github.com/Mavrickk3/bluemix-go/session"
-	"github.com/Mavrickk3/bluemix-go/trace"
+	"github.com/IBM-Cloud/bluemix-go"
+	v "github.com/IBM-Cloud/bluemix-go/api/certificatemanager"
+	"github.com/IBM-Cloud/bluemix-go/models"
+	"github.com/IBM-Cloud/bluemix-go/session"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 )
 
 func main() {

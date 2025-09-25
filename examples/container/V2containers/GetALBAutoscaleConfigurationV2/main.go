@@ -6,11 +6,11 @@ import (
 	"log"
 	"os"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/session"
-	"github.com/Mavrickk3/bluemix-go/trace"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/session"
+	"github.com/IBM-Cloud/bluemix-go/trace"
 
-	v2 "github.com/Mavrickk3/bluemix-go/api/container/containerv2"
+	v2 "github.com/IBM-Cloud/bluemix-go/api/container/containerv2"
 )
 
 func main() {

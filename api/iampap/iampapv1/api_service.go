@@ -3,15 +3,15 @@ package iampapv1
 import (
 	gohttp "net/http"
 
-	bluemix "github.com/Mavrickk3/bluemix-go"
-	"github.com/Mavrickk3/bluemix-go/authentication"
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/http"
-	"github.com/Mavrickk3/bluemix-go/rest"
-	"github.com/Mavrickk3/bluemix-go/session"
+	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go/authentication"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/http"
+	"github.com/IBM-Cloud/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// IAMPAPAPI is the IAMpapv2 client ...
+//IAMPAPAPI is the IAMpapv2 client ...
 type IAMPAPAPI interface {
 	IAMPolicy() IAMPolicy
 	IAMService() IAMService
@@ -19,15 +19,15 @@ type IAMPAPAPI interface {
 	V1Policy() V1PolicyRepository
 }
 
-// ErrCodeAPICreation ...
+//ErrCodeAPICreation ...
 const ErrCodeAPICreation = "APICreationError"
 
-// IamPapService holds the client
+//IamPapService holds the client
 type iampapService struct {
 	*client.Client
 }
 
-// New ...
+//New ...
 func New(sess *session.Session) (IAMPAPAPI, error) {
 	config := sess.Config.Copy()
 	err := config.ValidateConfigForService(bluemix.IAMPAPService)
@@ -65,17 +65,17 @@ func New(sess *session.Session) (IAMPAPAPI, error) {
 	}, nil
 }
 
-// IAMPolicy API
+//IAMPolicy API
 func (a *iampapService) IAMPolicy() IAMPolicy {
 	return newIAMPolicyAPI(a.Client)
 }
 
-// IAMService API
+//IAMService API
 func (a *iampapService) IAMService() IAMService {
 	return newIAMServiceAPI(a.Client)
 }
 
-// AuthorizationPolicies API
+//AuthorizationPolicies API
 func (a *iampapService) AuthorizationPolicies() AuthorizationPolicyRepository {
 	return NewAuthorizationPolicyRepository(a.Client)
 }

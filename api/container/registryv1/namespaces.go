@@ -3,9 +3,9 @@ package registryv1
 import (
 	"fmt"
 
-	"github.com/Mavrickk3/bluemix-go/client"
-	"github.com/Mavrickk3/bluemix-go/helpers"
-	"github.com/Mavrickk3/bluemix-go/rest"
+	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/helpers"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 // NamespaceTargetHeader ...
@@ -14,7 +14,7 @@ type NamespaceTargetHeader struct {
 	ResourceGroup string
 }
 
-// NamespaceInfo ...
+//NamespaceInfo ...
 type NamespaceInfo struct {
 	AccountID           string `json:"account,omitempty"`
 	CreatedDate         string `json:"created_date,omitempty"`
@@ -25,7 +25,7 @@ type NamespaceInfo struct {
 	UpdatedDate         string `json:"updated_date,omitempty"`
 }
 
-// ToMap ...
+//ToMap ...
 func (c NamespaceTargetHeader) ToMap() map[string]string {
 	m := make(map[string]string, 1)
 	m[accountIDHeader] = c.AccountID
@@ -57,7 +57,7 @@ type PutNamespaceResponse struct {
 	Namespace string `json:"namespace,omitempty"`
 }
 
-// Create ...
+//Create ...
 func (r *namespaces) GetNamespaces(target NamespaceTargetHeader) ([]string, error) {
 
 	var retVal []string
@@ -88,7 +88,7 @@ func (r *namespaces) GetDetailedNamespaces(target NamespaceTargetHeader) ([]Name
 	return retVal, err
 }
 
-// Add ...
+//Add ...
 func (r *namespaces) AddNamespace(namespace string, target NamespaceTargetHeader) (*PutNamespaceResponse, error) {
 
 	var retVal PutNamespaceResponse
@@ -120,7 +120,7 @@ func (r *namespaces) AssignNamespace(namespace string, target NamespaceTargetHea
 	return &retVal, err
 }
 
-// Delete...
+//Delete...
 func (r *namespaces) DeleteNamespace(namespace string, target NamespaceTargetHeader) error {
 
 	req := rest.DeleteRequest(helpers.GetFullURL(*r.client.Config.Endpoint, fmt.Sprintf("/api/v1/namespaces/%s", namespace)))
