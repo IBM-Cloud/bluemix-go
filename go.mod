@@ -1,11 +1,10 @@
-module github.com/Mavrickk3/bluemix-go
+module github.com/IBM-Cloud/bluemix-go
 
 go 1.24.0
 
 toolchain go1.24.5
 
 require (
-	github.com/IBM-Cloud/bluemix-go v0.0.0-20250925065941-e1953cea5812
 	github.com/IBM/go-sdk-core/v5 v5.21.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-openapi/strfmt v0.23.0
@@ -52,5 +51,3 @@ require (
 	sigs.k8s.io/json v0.0.0-20241010143419-9aa6b5e7a4b3 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.6.0 // indirect
 )
-
-replace github.com/IBM-Cloud/bluemix-go v0.0.0-20250925065941-e1953cea5812 => github.com/Mavrickk3/bluemix-go v0.0.0-20250925125604-158becab6cb9
