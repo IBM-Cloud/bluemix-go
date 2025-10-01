@@ -107,6 +107,11 @@ func (auth *IAMAuthRepository) FetchAuthorizationData(authenticator core.Authent
 	}
 
 	auth.config.IAMAccessToken = req.Header.Get("Authorization")
+
+	iamAuth, ok := authenticator.(*core.IamAuthenticator)
+	if ok {
+		auth.config.IAMRefreshToken = iamAuth.RefreshToken
+	}
 	return nil
 }
 
