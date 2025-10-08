@@ -10,7 +10,7 @@ require (
 	github.com/go-openapi/strfmt v0.23.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.38.2
-	golang.org/x/net v0.43.0
+	golang.org/x/net v0.45.0
 	k8s.io/client-go v0.33.4
 	sigs.k8s.io/yaml v1.4.0
 )
@@ -40,9 +40,9 @@ require (
 	github.com/x448/float16 v0.8.4 // indirect
 	go.mongodb.org/mongo-driver v1.17.2 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.41.0 // indirect
-	golang.org/x/sys v0.35.0 // indirect
-	golang.org/x/text v0.28.0 // indirect
+	golang.org/x/crypto v0.42.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
+	golang.org/x/text v0.29.0 // indirect
 	google.golang.org/protobuf v1.36.7 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
