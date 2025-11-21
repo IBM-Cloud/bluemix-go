@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/IBM-Cloud/bluemix-go/api/container/containerv1"
 	"github.com/IBM-Cloud/bluemix-go/client"
@@ -286,7 +287,7 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, isAdmin bool, target
 		"cluster": name,
 		"format":  "zip",
 	}
-	rawURL := fmt.Sprintf("/v2/applyRBACAndGetKubeconfig")
+	applyRBACAndGetKubeconfigRawURL := fmt.Sprintf("/v2/applyRBACAndGetKubeconfig")
 	if isAdmin {
 		postBody["admin"] = true
 	}
@@ -311,10 +312,15 @@ func (r *clusters) GetClusterConfigDetail(name, dir string, isAdmin bool, target
 	}
 	defer out.Close()
 	defer helpers.RemoveFile(downloadPath)
-	_, err = r.client.Post(rawURL, postBody, out, target.ToMap())
+	_, err = r.client.Post(applyRBACAndGetKubeconfigRawURL, postBody, out, target.ToMap())
 	if err != nil {
 		return clusterkey, err
 	}
+
+	if err = r.waitForRBACSync(name, target); err != nil {
+		return clusterkey, err
+	}
+
 	trace.Logger.Println("Downloaded the kubeconfig at", downloadPath)
 	if err = helpers.Unzip(downloadPath, resultDir); err != nil {
 		return clusterkey, err
@@ -420,7 +426,7 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 	if !helpers.FileExists(dir) {
 		return "", clusterkey, fmt.Errorf("Path: %q, to download the config doesn't exist", dir)
 	}
-	rawURL := fmt.Sprintf("/v2/applyRBACAndGetKubeconfig")
+	applyRBACAndGetKubeconfigRawURL := fmt.Sprintf("/v2/applyRBACAndGetKubeconfig")
 	if admin {
 		postBody["admin"] = true
 	}
@@ -447,10 +453,15 @@ func (r *clusters) StoreConfigDetail(name, dir string, admin, createCalicoConfig
 	}
 	defer out.Close()
 	defer helpers.RemoveFile(downloadPath)
-	_, err = r.client.Post(rawURL, postBody, out, target.ToMap())
+	_, err = r.client.Post(applyRBACAndGetKubeconfigRawURL, postBody, out, target.ToMap())
 	if err != nil {
 		return "", clusterkey, err
 	}
+
+	if err = r.waitForRBACSync(name, target); err != nil {
+		return "", clusterkey, err
+	}
+
 	trace.Logger.Println("Downloaded the kubeconfig at", downloadPath)
 	if err = helpers.Unzip(downloadPath, resultDir); err != nil {
 		return "", clusterkey, err
@@ -608,4 +619,49 @@ func (r *clusters) readKubeConfig(path string, isAdmin bool) (clientcmdv1.Config
 	}
 
 	return config, nil
+}
+
+func (r *clusters) waitForRBACSync(name string, target ClusterTargetHeader) error {
+	u := url.URL{
+		Path: "/v2/getRBACStatus",
+	}
+	query := u.Query()
+	query.Set("cluster", name)
+	u.RawQuery = query.Encode()
+	getRBACStatusResponse := struct {
+		Synchronized bool `json:"synchronized"`
+		Error        bool `json:"error"`
+	}{}
+
+	_, err := r.client.Get(u.String(), &getRBACStatusResponse, target.ToMap())
+	if err != nil {
+		return err
+	}
+
+	if getRBACStatusResponse.Synchronized {
+		trace.Logger.Println("RBAC synchronization completed successfully.")
+	} else {
+		backoff := time.Second
+		maxBackoff := 32 * time.Second
+		for backoff <= maxBackoff {
+			_, err = r.client.Get(u.String(), &getRBACStatusResponse, target.ToMap())
+			if err != nil {
+				return err
+			}
+			if getRBACStatusResponse.Synchronized {
+				trace.Logger.Println("RBAC synchronization completed successfully.")
+				break
+			}
+			if getRBACStatusResponse.Error {
+				trace.Logger.Println("An error occurred while waiting for RBAC to synchronize. Kubectl commands might fail.")
+				break
+			}
+			time.Sleep(backoff)
+			backoff *= 2
+		}
+		if backoff > maxBackoff {
+			trace.Logger.Println("Timed out while waiting for RBAC to synchronize. 'Kubectl' commands might fail.")
+		}
+	}
+	return nil
 }
