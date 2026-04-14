@@ -281,7 +281,8 @@ var _ = Describe("Workers", func() {
 				server = ghttp.NewServer()
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test/workers/abc-123-def-ghi"),
+						ghttp.VerifyRequest(http.MethodPost, "/graphql"),
+						ghttp.VerifyBody([]byte(`{"query": "mutation{reinitializeKubernetesNode(input:{id: "abc-123-def-ghi" }){node{id}}}"}`)),
 						ghttp.RespondWith(http.StatusCreated, `{}`),
 					),
 				)
@@ -306,7 +307,8 @@ var _ = Describe("Workers", func() {
 				server.SetAllowUnhandledRequests(true)
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest(http.MethodPut, "/v1/clusters/test/workers/abc-123-def-ghi"),
+						ghttp.VerifyRequest(http.MethodPost, "/graphql"),
+						ghttp.VerifyBody([]byte(`{"query": "mutation{reinitializeKubernetesNode(input:{id: "abc-123-def-ghi" }){node{id}}}"}`)),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to add worker to cluster`),
 					),
 				)
