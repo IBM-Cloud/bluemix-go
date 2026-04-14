@@ -95,15 +95,11 @@ func (r *worker) Delete(name string, workerID string, target ClusterTargetHeader
 // Update ...
 func (r *worker) Update(name string, workerID string, params WorkerUpdateParam, target ClusterTargetHeader) error {
 	if params.Action == "reload" {
-
 		graphqlURL := "/graphql"
-		// bypassUnhealthyControlPlane: \"%s\"
 		body := fmt.Sprintf(`{"query": "mutation{reinitializeKubernetesNode(input:{id: "%s" }){node{id}}}"}`, workerID)
-
 		_, err := r.client.Post(graphqlURL, body, nil, target.ToMap())
 		return err
 	} else {
-
 		rawURL := fmt.Sprintf("/v1/clusters/%s/workers/%s", name, workerID)
 		_, err := r.client.Put(rawURL, params, nil, target.ToMap())
 		return err
