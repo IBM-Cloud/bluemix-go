@@ -2,8 +2,10 @@ package containerv1
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/IBM-Cloud/bluemix-go/client"
+	"github.com/IBM-Cloud/bluemix-go/rest"
 )
 
 // Worker ...
@@ -95,9 +97,16 @@ func (r *worker) Delete(name string, workerID string, target ClusterTargetHeader
 // Update ...
 func (r *worker) Update(name string, workerID string, params WorkerUpdateParam, target ClusterTargetHeader) error {
 	if params.Action == "reload" {
-		graphqlURL := "/graphql"
-		body := fmt.Sprintf(`{"query": "mutation{reinitializeKubernetesNode(input:{id: "%s" }){node{id}}}"}`, workerID)
-		_, err := r.client.Post(graphqlURL, body, nil, target.ToMap())
+		u, err := url.Parse(*r.client.Config.Endpoint)
+		u.Path = "/graphql"
+		body := fmt.Sprintf(`{"query": "mutation{reinitializeKubernetesNode(input:{id: \"%s\" }){node{id}}}"}`, workerID)
+
+		req := rest.PostRequest(u.String()).Body(body)
+		for header, value := range target.ToMap() {
+			req.Set(header, value)
+		}
+
+		_, err = r.client.SendRequest(req, nil)
 		return err
 	} else {
 		rawURL := fmt.Sprintf("/v1/clusters/%s/workers/%s", name, workerID)
