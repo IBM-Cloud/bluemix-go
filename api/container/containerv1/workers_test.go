@@ -282,7 +282,7 @@ var _ = Describe("Workers", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/graphql"),
-						ghttp.VerifyBody([]byte(`{"query":"\nmutation($input: ReinitializeKubernetesNodeInput!) {\n    reinitializeKubernetesNode(input: $input) {\n        node {\n            id\n        }\n    }\n}\n","variables":{"input":{"ID":"abc-123-def-ghi"}}}`)),
+						ghttp.VerifyBody([]byte(`{"query":"\nmutation($input: ReinitializeKubernetesNodeInput!) {\n    reinitializeKubernetesNode(input: $input) {\n        node {\n            id\n        }\n    }\n}\n","variables":{"input":{"id":"abc-123-def-ghi"}}}`)),
 						ghttp.RespondWith(http.StatusCreated, `{}`),
 					),
 				)
@@ -308,7 +308,7 @@ var _ = Describe("Workers", func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
 						ghttp.VerifyRequest(http.MethodPost, "/graphql"),
-						ghttp.VerifyBody([]byte(`{"query":"\nmutation($input: ReinitializeKubernetesNodeInput!) {\n    reinitializeKubernetesNode(input: $input) {\n        node {\n            id\n        }\n    }\n}\n","variables":{"input":{"ID":"abc-123-def-ghi"}}}`)),
+						ghttp.VerifyBody([]byte(`{"query":"\nmutation($input: ReinitializeKubernetesNodeInput!) {\n    reinitializeKubernetesNode(input: $input) {\n        node {\n            id\n        }\n    }\n}\n","variables":{"input":{"id":"abc-123-def-ghi"}}}`)),
 						ghttp.RespondWith(http.StatusInternalServerError, `Failed to add worker to cluster`),
 					),
 				)

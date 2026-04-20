@@ -101,7 +101,7 @@ type graphqlRequest struct {
 }
 
 type reinitializeKubernetesNodeInput struct {
-	ID string
+	ID string `json:"id"`
 }
 
 // Update ...
