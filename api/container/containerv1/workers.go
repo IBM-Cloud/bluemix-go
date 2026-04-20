@@ -1,6 +1,7 @@
 package containerv1
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 
@@ -94,12 +95,40 @@ func (r *worker) Delete(name string, workerID string, target ClusterTargetHeader
 	return err
 }
 
+type graphqlRequest struct {
+	Query     string         `json:"query"`
+	Variables map[string]any `json:"variables"`
+}
+
+type reinitializeKubernetesNodeInput struct {
+	ID string
+}
+
 // Update ...
 func (r *worker) Update(name string, workerID string, params WorkerUpdateParam, target ClusterTargetHeader) error {
 	if params.Action == "reload" {
 		u, err := url.Parse(*r.client.Config.Endpoint)
 		u.Path = "/graphql"
-		body := fmt.Sprintf(`{"query": "mutation{reinitializeKubernetesNode(input:{id: \"%s\" }){node{id}}}"}`, workerID)
+
+		body, err := json.Marshal(graphqlRequest{
+			Query: `
+mutation($input: ReinitializeKubernetesNodeInput!) {
+    reinitializeKubernetesNode(input: $input) {
+        node {
+            id
+        }
+    }
+}
+`,
+			Variables: map[string]any{
+				"input": reinitializeKubernetesNodeInput{
+					ID: workerID,
+				},
+			},
+		})
+		if err != nil {
+			return err
+		}
 
 		req := rest.PostRequest(u.String()).Body(body)
 		for header, value := range target.ToMap() {
