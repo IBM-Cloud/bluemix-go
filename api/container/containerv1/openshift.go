@@ -108,7 +108,7 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 	defer func() {
 		err := PanicCatch(recover())
 		if err != nil {
-			rerr = fmt.Errorf("Could not login to openshift account %s", err)
+			rerr = fmt.Errorf("could not login to openshift account %s", err)
 		}
 	}()
 
@@ -121,8 +121,11 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 	var token string
 	trace.Logger.Println("Creating user passcode to login for getting oc token")
 	passcode, err := r.client.TokenRefresher.GetPasscode()
-
+	if err != nil {
+		return kubecfg, err
+	}
 	authEP, err := func(meta *ClusterInfo) (*authEndpoints, error) {
+		trace.Logger.Println("using the following server-url to get oauth-server address: ", meta.ServerURL)
 		request := rest.GetRequest(meta.ServerURL + "/.well-known/oauth-authorization-server")
 		var auth authEndpoints
 		tempVar := r.client.ServiceName
@@ -145,14 +148,19 @@ func (r *clusters) FetchOCTokenForKubeConfig(kubecfg []byte, cMeta *ClusterInfo,
 		defer resp.Body.Close()
 		if resp.StatusCode > 299 {
 			msg, _ := ioutil.ReadAll(resp.Body)
-			return nil, fmt.Errorf("Bad status code [%d] returned when fetching Cluster authentication endpoints: %s", resp.StatusCode, msg)
+			return nil, fmt.Errorf("bad status code [%d] returned when fetching Cluster authentication endpoints: %s", resp.StatusCode, msg)
 		}
 		auth.ServerURL = meta.ServerURL
 		return &auth, nil
 	}(cMeta)
-
+	if err != nil {
+		return kubecfg, err
+	}
 	trace.Logger.Println("Got authentication end points for getting oc token")
 	token, uname, err := r.openShiftAuthorizePasscode(authEP, passcode, cMeta.IsStagingSatelliteCluster())
+	if err != nil {
+		return kubecfg, err
+	}
 	trace.Logger.Println("Got the token and user ", uname)
 	clusterName, _ := NormalizeName(authEP.ServerURL[len("https://"):len(authEP.ServerURL)]) //TODO deal with http
 	ccontext := "default/" + clusterName + "/" + uname
