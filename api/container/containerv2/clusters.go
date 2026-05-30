@@ -33,6 +33,7 @@ type ClusterCreateRequest struct {
 	WorkerPools                      WorkerPoolConfig `json:"workerPool"`
 	SecurityGroupIDs                 []string         `json:"securityGroupIDs,omitempty"`
 	DisableOutboundTrafficProtection bool             `json:"disableOutboundTrafficProtection,omitempty"`
+	NetworkPlugin                    string           `json:"networkPlugin,omitempty"`
 }
 
 type WorkerPoolConfig struct {
@@ -100,6 +101,7 @@ type ClusterInfo struct {
 	Features                      Feat          `json:"features"`
 	ImageSecurityEnabled          bool          `json:"imageSecurityEnabled"`
 	VirtualPrivateEndpointURL     string        `json:"virtualPrivateEndpointURL"`
+	NetworkPlugin                 string        `json:"networkPlugin,omitempty"`
 }
 type Feat struct {
 	KeyProtectEnabled bool `json:"keyProtectEnabled"`
