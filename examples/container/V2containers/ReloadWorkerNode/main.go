@@ -32,10 +32,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	target := v1.ClusterTargetHeader{}
 
 	clusterClient, err := v1.New(sess)

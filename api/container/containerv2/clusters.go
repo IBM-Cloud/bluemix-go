@@ -34,6 +34,7 @@ type ClusterCreateRequest struct {
 	SecurityGroupIDs                 []string         `json:"securityGroupIDs,omitempty"`
 	DisableOutboundTrafficProtection bool             `json:"disableOutboundTrafficProtection,omitempty"`
 	NetworkPlugin                    string           `json:"networkPlugin,omitempty"`
+	Offering                         string           `json:"offering,omitempty"`
 }
 
 type WorkerPoolConfig struct {
