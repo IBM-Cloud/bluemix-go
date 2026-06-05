@@ -103,6 +103,7 @@ type ClusterInfo struct {
 	ImageSecurityEnabled          bool          `json:"imageSecurityEnabled"`
 	VirtualPrivateEndpointURL     string        `json:"virtualPrivateEndpointURL"`
 	NetworkPlugin                 string        `json:"networkPlugin,omitempty"`
+	Offering                      string        `json:"offering"`
 }
 type Feat struct {
 	KeyProtectEnabled bool `json:"keyProtectEnabled"`
