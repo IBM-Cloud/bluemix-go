@@ -33,7 +33,7 @@ type inviteUsersHandler struct {
 	client *client.Client
 }
 
-// NewUsers
+// NewUserInviteHandler ...
 func NewUserInviteHandler(c *client.Client) Users {
 	return &inviteUsersHandler{
 		client: c,
