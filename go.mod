@@ -3,7 +3,7 @@ module github.com/IBM-Cloud/bluemix-go
 go 1.25.0
 
 require (
-	github.com/IBM/go-sdk-core/v5 v5.21.2
+	github.com/IBM/go-sdk-core/v5 v5.22.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-openapi/strfmt v0.25.0
 	github.com/onsi/ginkgo v1.16.5
