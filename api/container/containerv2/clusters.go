@@ -149,8 +149,6 @@ type ClusterCreateResponse struct {
 type Clusters interface {
 	Create(params ClusterCreateRequest, target ClusterTargetHeader) (ClusterCreateResponse, error)
 	List(target ClusterTargetHeader) ([]ClusterInfo, error)
-	// Delete accepts optional flags: deleteOptions[0] is deleteDependencies (deleteResources),
-	// deleteOptions[1] is deleteOpenShiftRegistryCOSBucket.
 	Delete(name string, target ClusterTargetHeader, deleteOptions ...bool) error
 	GetCluster(name string, target ClusterTargetHeader) (*ClusterInfo, error)
 	GetClusterConfigDetail(name, homeDir string, admin bool, target ClusterTargetHeader, endpointType string) (containerv1.ClusterKeyInfo, error)
