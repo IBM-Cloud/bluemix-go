@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -148,7 +149,9 @@ type ClusterCreateResponse struct {
 type Clusters interface {
 	Create(params ClusterCreateRequest, target ClusterTargetHeader) (ClusterCreateResponse, error)
 	List(target ClusterTargetHeader) ([]ClusterInfo, error)
-	Delete(name string, target ClusterTargetHeader, deleteDependencies ...bool) error
+	// Delete accepts optional flags: deleteOptions[0] is deleteDependencies (deleteResources),
+	// deleteOptions[1] is deleteOpenShiftRegistryCOSBucket.
+	Delete(name string, target ClusterTargetHeader, deleteOptions ...bool) error
 	GetCluster(name string, target ClusterTargetHeader) (*ClusterInfo, error)
 	GetClusterConfigDetail(name, homeDir string, admin bool, target ClusterTargetHeader, endpointType string) (containerv1.ClusterKeyInfo, error)
 	StoreConfigDetail(name, baseDir string, admin bool, createCalicoConfig bool, target ClusterTargetHeader, endpointType string) (string, containerv1.ClusterKeyInfo, error)
@@ -217,14 +220,23 @@ func (r *clusters) Create(params ClusterCreateRequest, target ClusterTargetHeade
 }
 
 // Delete ...
-func (r *clusters) Delete(name string, target ClusterTargetHeader, deleteDependencies ...bool) error {
-	var rawURL string
-	if len(deleteDependencies) != 0 {
-		rawURL = fmt.Sprintf("/v1/clusters/%s?deleteResources=%t", name, deleteDependencies[0])
-	} else {
-		rawURL = fmt.Sprintf("/v1/clusters/%s", name)
+func (r *clusters) Delete(name string, target ClusterTargetHeader, deleteOptions ...bool) error {
+	u := url.URL{
+		Path: fmt.Sprintf("/v1/clusters/%s", name),
 	}
-	_, err := r.client.Delete(rawURL, target.ToMap())
+	params := url.Values{}
+	optionLength := len(deleteOptions)
+
+	if optionLength > 0 {
+		params.Set("deleteResources", strconv.FormatBool(deleteOptions[0]))
+
+		if optionLength > 1 {
+			params.Set("deleteOpenShiftRegistryCOSBucket", strconv.FormatBool(deleteOptions[1]))
+		}
+	}
+
+	u.RawQuery = params.Encode()
+	_, err := r.client.Delete(u.String(), target.ToMap())
 	return err
 }
 
