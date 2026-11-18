@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -218,13 +219,22 @@ func (r *clusters) Create(params ClusterCreateRequest, target ClusterTargetHeade
 
 // Delete ...
 func (r *clusters) Delete(name string, target ClusterTargetHeader, deleteDependencies ...bool) error {
-	var rawURL string
-	if len(deleteDependencies) != 0 {
-		rawURL = fmt.Sprintf("/v1/clusters/%s?deleteResources=%t", name, deleteDependencies[0])
-	} else {
-		rawURL = fmt.Sprintf("/v1/clusters/%s", name)
+	u := url.URL{
+		Path: fmt.Sprintf("/v1/clusters/%s", name),
 	}
-	_, err := r.client.Delete(rawURL, target.ToMap())
+	params := url.Values{}
+	optionLength := len(deleteDependencies)
+
+	if optionLength > 0 {
+		params.Set("deleteResources", strconv.FormatBool(deleteDependencies[0]))
+
+		if optionLength > 1 {
+			params.Set("deleteOpenShiftRegistryCOSBucket", strconv.FormatBool(deleteDependencies[1]))
+		}
+	}
+
+	u.RawQuery = params.Encode()
+	_, err := r.client.Delete(u.String(), target.ToMap())
 	return err
 }
 
